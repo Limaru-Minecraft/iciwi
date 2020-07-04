@@ -1,0 +1,4 @@
+name: Iciwi
+version: ${project.version}
+main: mikeshafter.iciwi.Iciwi
+api-version: 1.13
