@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -17,15 +16,16 @@ import java.util.Arrays;
 public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
   
   @Override
-  public void onEnable(){
+  public void onEnable(){ // Use config to store station names and fares
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "ICIWI Plugin has been invoked!");
-    loadConfig();
-    getConfig().set("Stations.ESE.ESE", "0");
+    getConfig().options().copyDefaults(true);
+    saveConfig();
     getServer().getPluginManager().registerEvents(new events(), this);
   }
   
   @Override
   public void onDisable(){
+    saveConfig();
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "ICIWI Plugin has been disabled!");
   }
   
@@ -49,7 +49,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
         sender.sendMessage("Correct usage: /checkfare <from> <to>"); return false;
       } else {
         if (isDouble(args[0]) && isDouble(args[1])) {
-          Double price = Double.parseDouble(getConfig().getString("Stations." + args[0] + "." + args[1]));
+          double price = Double.parseDouble(getConfig().getString("Stations."+args[0]+"."+args[1]));
           sender.sendMessage(ChatColor.AQUA + "Fare from " + args[0] + " to " + args[1] + ": " + price);
           return true;
         } else {return false;}
