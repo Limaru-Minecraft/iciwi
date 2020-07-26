@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="com.github.jsurfer:jsurfer-jsonsimple:1.6.0" type="repository">
+    <properties maven-id="com.github.jsurfer:jsurfer-jsonsimple:1.6.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/jsurfer/jsurfer-jsonsimple/1.6.0/jsurfer-jsonsimple-1.6.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/jsurfer/jsurfer-core/1.6.0/jsurfer-core-1.6.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/antlr/antlr4-runtime/4.7.2/antlr4-runtime-4.7.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.10/junit-4.10.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

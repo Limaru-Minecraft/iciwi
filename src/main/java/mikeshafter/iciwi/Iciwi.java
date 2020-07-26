@@ -14,10 +14,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.Arrays;
 
 public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
+  private ConfigManager cfgm;
+  
+  private static boolean isDouble(final String str){
+    if (str == null || str.length() == 0){
+      return false;
+    }  // String not present
+    for (char c : str.toCharArray()){  // Check every char
+      if (!Character.isDigit(c) | c != '.'){
+        return false;
+      }  // Check if the char is not a digit or decimal
+    }
+    return true;  //
+  }
   
   @Override
   public void onEnable(){ // Use config to store station names and fares
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "ICIWI Plugin has been invoked!");
+    loadConfigManager();
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
     getConfig().options().copyDefaults(true);
     saveConfig();
     getServer().getPluginManager().registerEvents(new events(), this);
@@ -26,24 +40,21 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
   @Override
   public void onDisable(){
     saveConfig();
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA + "ICIWI Plugin has been disabled!");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been disabled!");
   }
   
-  public void loadConfig() {
+  public void loadConfigManager(){
+    cfgm = new ConfigManager();
+    cfgm.setupFares();
+  }
+  
+  public void loadConfig(){
     getConfig().options().copyDefaults(true);
     saveConfig();
   }
   
-  private static boolean isDouble(final String str) {
-    if (str == null || str.length() == 0) {return false;}  // String not present
-    for (char c : str.toCharArray()) {  // Check every char
-      if (!Character.isDigit(c) | c != '.') {return false;}  // Check if the char is not a digit or decimal
-    }
-    return true;  //
-  }
-  
   @Override
-  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
     if (cmd.getName().equalsIgnoreCase("checkfare")){
       if (args.length != 2){
         sender.sendMessage("Correct usage: /checkfare <from> <to>"); return false;
