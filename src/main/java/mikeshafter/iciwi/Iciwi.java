@@ -1,36 +1,38 @@
 package mikeshafter.iciwi;
 
+import java.util.logging.Logger;
+
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Arrays;
-
 public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
-  private ConfigManager cfgm;
   
-  private static boolean isDouble(final String str){
-    if (str == null || str.length() == 0){
-      return false;
-    }  // String not present
-    for (char c : str.toCharArray()){  // Check every char
-      if (!Character.isDigit(c) | c != '.'){
-        return false;
-      }  // Check if the char is not a digit or decimal
-    }
-    return true;  //
-  }
+  private static final Logger log = Logger.getLogger("Minecraft");
+  
+//  private static boolean isDouble(final String str){
+//    if (str == null || str.length() == 0){
+//      return false;
+//    }  // String not present
+//    for (char c : str.toCharArray()){  // Check every char
+//      if (!Character.isDigit(c) | c != '.'){
+//        return false;
+//      }  // Check if the char is not a digit or decimal
+//    }
+//    return true;
+//  }
   
   @Override
   public void onEnable(){ // Use config to store station names and fares
-    loadConfigManager();
+    setupEconomy();
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
     getConfig().options().copyDefaults(true);
     saveConfig();
@@ -43,46 +45,53 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been disabled!");
   }
   
-  public void loadConfigManager(){
-    cfgm = new ConfigManager();
-    cfgm.setupFares();
+// Vault setup code starts
+// ==================================
+  public static Permission permission = null;
+  public static Economy economy = null;
+  public static Chat chat = null;
+  
+  private boolean setupPermissions()
+  {
+    RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+    if (permissionProvider != null) {
+      permission = permissionProvider.getProvider();
+    }
+    return (permission != null);
   }
   
-  public void loadConfig(){
-    getConfig().options().copyDefaults(true);
-    saveConfig();
+  private boolean setupChat()
+  {
+    RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
+    if (chatProvider != null) {
+      chat = chatProvider.getProvider();
+    }
+    
+    return (chat != null);
   }
+  
+  private boolean setupEconomy()
+  {
+    RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+    if (economyProvider != null) {
+      economy = economyProvider.getProvider();
+    }
+    
+    return (economy != null);
+  }
+// ==================================
+// Vault setup code ends
   
   @Override
-  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
-    if (cmd.getName().equalsIgnoreCase("checkfare")){
-      if (args.length != 2){
-        sender.sendMessage("Correct usage: /checkfare <from> <to>"); return false;
-      } else {
-        if (isDouble(args[0]) && isDouble(args[1])) {
-          double price = Double.parseDouble(getConfig().getString("Stations."+args[0]+"."+args[1]));
-          sender.sendMessage(ChatColor.AQUA + "Fare from " + args[0] + " to " + args[1] + ": " + price);
-          return true;
-        } else {return false;}
-      }
-      
-    } else if (cmd.getName().equalsIgnoreCase("ticket")){
-      if (!(sender instanceof Player)){
-        sender.sendMessage("This command can only be run by a player."); return false;
-      } else if (args.length != 2){
-        sender.sendMessage("Correct usage: /ticket <from> <to>"); return false;
-      } else {
-        Player player = (Player) sender;
-        // Item format:
-        //   Name: Train Ticket
-        //   Lore1: From » To
-        ItemStack ticket = new ItemStack(Material.PAPER);
-        ItemMeta ticketMeta = ticket.getItemMeta();
-        ticketMeta.setDisplayName(ChatColor.AQUA + "Train Ticket");
-        ticketMeta.setLore(Arrays.asList(ChatColor.GOLD + args[0] + "»" + args[1], ChatColor.GREEN + "Valid for one (1) journey only."));
-        player.getInventory().addItem(ticket);
-      }
+  public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+    if (command.getLabel().equalsIgnoreCase("checkFare")) {
+      String from = args[0];
+      String to = args[1];
+      double fare = JSONmanager.getjson(from, to);
+      sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
+      return true;
+    } else {
+      return false;
     }
-    return false;
   }
 }

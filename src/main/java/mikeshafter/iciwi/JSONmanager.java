@@ -1,5 +1,7 @@
 package mikeshafter.iciwi;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -8,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class JSONmanager{
   
@@ -37,11 +40,9 @@ public class JSONmanager{
       JSONObject from = (JSONObject) dict.get(inSystem);
       return (double) from.get(station);
       
-    } catch (FileNotFoundException e){
-      e.printStackTrace();
-      return 0;
-    } catch (ParseException e){
-      e.printStackTrace();
+    } catch (FileNotFoundException | ParseException e){
+      Logger log = Bukkit.getLogger();
+      log.info(ChatColor.RED+"Fare "+inSystem+"->"+station+" is not set up!");
       return 0;
     }
   }

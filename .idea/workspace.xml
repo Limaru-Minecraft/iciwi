@@ -6,21 +6,28 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="update stuff">
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/com_github_jsurfer_jsurfer_jsonsimple_1_6_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/ConfigManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JSONmanager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/fares.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_milkbowl_vault_Vault_1_7_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Vault.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/EssentialsX-2.18.0.7.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/LuckPerms-Bukkit-5.1.84.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Vault.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/iciwi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/iciwi.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/ConfigManager.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JSONmanager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JSONmanager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/fares.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/JSONmanager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/JSONmanager.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/iciwi-1.0-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
@@ -79,14 +86,24 @@
     <property name="GenerateAntBuildDialog.enableUiFormCompile" value="true" />
     <property name="GenerateAntBuildDialog.forceTargetJdk" value="true" />
     <property name="GenerateAntBuildDialog.outputFileNameProperty" value="iciwi" />
-    <property name="Repository.Attach.Annotations" value="false" />
-    <property name="Repository.Attach.JavaDocs" value="false" />
-    <property name="Repository.Attach.Sources" value="false" />
+    <property name="Repository.Attach.Annotations" value="true" />
+    <property name="Repository.Attach.JavaDocs" value="true" />
+    <property name="Repository.Attach.Sources" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.General" />
+    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/lib" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="iciwi build" type="MavenRunConfiguration" factoryName="Maven">
@@ -127,6 +144,14 @@
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
     </task>
+    <task id="LOCAL-00001" summary="new json fare structure">
+      <created>1595804706329</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1595804706330</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="UpdateCopyrightCheckinHandler">
@@ -135,41 +160,82 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="update stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="update stuff" />
+    <MESSAGE value="new json fare structure" />
+    <option name="LAST_COMMIT_MESSAGE" value="new json fare structure" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1595812450572">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595812450572" />
     <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser" timestamp="1595756945957">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1595756945957" />
-    <state width="1638" height="295" key="GridCell.Tab.0.bottom" timestamp="1595758691927">
+    <state x="415" y="102" key="CommitChangelistDialog2" timestamp="1595804705813">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1638" height="295" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1595758691927" />
-    <state width="1638" height="295" key="GridCell.Tab.0.center" timestamp="1595758691926">
+    <state x="415" y="102" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1595804705813" />
+    <state width="1640" height="295" key="GridCell.Tab.0.bottom" timestamp="1595853143738">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1638" height="295" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1595758691926" />
-    <state width="1638" height="295" key="GridCell.Tab.0.left" timestamp="1595758691925">
+    <state width="1640" height="295" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143738" />
+    <state width="1640" height="364" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719362" />
+    <state width="1640" height="295" key="GridCell.Tab.0.center" timestamp="1595853143737">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1638" height="295" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1595758691925" />
-    <state width="1638" height="295" key="GridCell.Tab.0.right" timestamp="1595758691926">
+    <state width="1640" height="295" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143737" />
+    <state width="1640" height="364" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719360" />
+    <state width="1640" height="295" key="GridCell.Tab.0.left" timestamp="1595853143736">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1638" height="295" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1595758691926" />
-    <state x="341" y="155" key="SettingsEditor" timestamp="1595753790567">
+    <state width="1640" height="295" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143736" />
+    <state width="1640" height="364" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719360" />
+    <state width="1640" height="295" key="GridCell.Tab.0.right" timestamp="1595853143738">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1595753790567" />
+    <state width="1640" height="295" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143738" />
+    <state width="1640" height="364" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719361" />
+    <state width="1640" height="364" key="GridCell.Tab.1.bottom" timestamp="1595812762564">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1640" height="364" key="GridCell.Tab.1.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1595812762564" />
+    <state width="1640" height="364" key="GridCell.Tab.1.center" timestamp="1595812762563">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1640" height="364" key="GridCell.Tab.1.center/0.0.1680.1050@0.0.1680.1050" timestamp="1595812762563" />
+    <state width="1640" height="364" key="GridCell.Tab.1.left" timestamp="1595812762563">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1640" height="364" key="GridCell.Tab.1.left/0.0.1680.1050@0.0.1680.1050" timestamp="1595812762563" />
+    <state width="1640" height="364" key="GridCell.Tab.1.right" timestamp="1595812762564">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state width="1640" height="364" key="GridCell.Tab.1.right/0.0.1680.1050@0.0.1680.1050" timestamp="1595812762564" />
+    <state x="378" y="188" key="Maven.ArtifactSearchDialog" timestamp="1595813360178">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="378" y="188" key="Maven.ArtifactSearchDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595813360178" />
+    <state x="341" y="155" key="SettingsEditor" timestamp="1595816017035">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1595816017035" />
     <state x="341" y="175" key="SettingsEditor/0.23.1680.1027@0.23.1680.1027" timestamp="1595327331965" />
-    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1595753696093">
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1595804712120">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1680.1050@0.0.1680.1050" timestamp="1595753696093" />
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1595804712120" />
+    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1595807569220">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1680.1050@0.0.1680.1050" timestamp="1595807569220" />
+    <state x="545" y="308" key="refactoring.ChangeSignatureDialog" timestamp="1595809573540">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="545" y="308" key="refactoring.ChangeSignatureDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595809573540" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />

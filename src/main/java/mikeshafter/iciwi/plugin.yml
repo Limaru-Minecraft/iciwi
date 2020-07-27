@@ -2,6 +2,7 @@ name: iciwi
 main: mikeshafter.iciwi.iciwi
 version: 1.0-SNAPSHOT
 author: mikeshafter
+depend: [Vault]
 commands:
   checkfare:
     description: Checks fare
