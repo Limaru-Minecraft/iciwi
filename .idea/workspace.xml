@@ -5,33 +5,34 @@
       <artifact name="iciwi" />
     </artifacts-to-build>
   </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_milkbowl_vault_Vault_1_7_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Vault.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/EssentialsX-2.18.0.7.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/LuckPerms-Bukkit-5.1.84.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Vault.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_json_simple_json_simple_1_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_10.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__net_milkbowl_vault_Vault_1_7_3.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_bukkit_bukkit_1_15_2_R0_1_SNAPSHOT.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_25.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/iciwi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/iciwi.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/ConfigManager.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JSONmanager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JSONmanager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/csvToFaresJson.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/fares.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/JSONmanager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/JSONmanager.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/original-iciwi-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/original-iciwi-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/original-iciwi-1.0-SNAPSHOT.jar" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +68,11 @@
     </ignored-facets>
   </component>
   <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+    </option>
     <option name="importingSettings">
       <MavenImportingSettings>
         <option name="downloadDocsAutomatically" value="true" />
@@ -91,7 +97,7 @@
     <property name="Repository.Attach.Sources" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
@@ -105,7 +111,33 @@
       <recent name="$PROJECT_DIR$/lib" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Maven.iciwi build">
+    <configuration name="116 build" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="clean" />
+                <option value="package" />
+              </list>
+            </option>
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/116" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
     <configuration name="iciwi build" type="MavenRunConfiguration" factoryName="Maven">
       <MavenSettings>
         <option name="myGeneralSettings" />
@@ -133,6 +165,7 @@
       <method v="2" />
     </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -167,38 +200,50 @@
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="578" y="357" key="#Notifications" timestamp="1596788195838">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="578" y="357" key="#Notifications/0.0.1680.1050@0.0.1680.1050" timestamp="1596788195838" />
     <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1595812450572">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595812450572" />
-    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser" timestamp="1595756945957">
+    <state x="559" y="335" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1595904883240">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1595756945957" />
+    <state x="559" y="335" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1595904883240" />
+    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser" timestamp="1596750943494">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1596750943494" />
+    <state x="257" y="218" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1596508819869">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="257" y="218" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1596508819869" />
     <state x="415" y="102" key="CommitChangelistDialog2" timestamp="1595804705813">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="415" y="102" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1595804705813" />
-    <state width="1640" height="295" key="GridCell.Tab.0.bottom" timestamp="1595853143738">
+    <state width="1640" height="295" key="GridCell.Tab.0.bottom" timestamp="1596790730041">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="295" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143738" />
-    <state width="1640" height="364" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719362" />
-    <state width="1640" height="295" key="GridCell.Tab.0.center" timestamp="1595853143737">
+    <state width="1640" height="295" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1596790730041" />
+    <state width="1640" height="295" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1596621720164" />
+    <state width="1640" height="295" key="GridCell.Tab.0.center" timestamp="1596790730039">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="295" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143737" />
-    <state width="1640" height="364" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719360" />
-    <state width="1640" height="295" key="GridCell.Tab.0.left" timestamp="1595853143736">
+    <state width="1640" height="295" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1596790730039" />
+    <state width="1640" height="295" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1596621720162" />
+    <state width="1640" height="295" key="GridCell.Tab.0.left" timestamp="1596790730037">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="295" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143736" />
-    <state width="1640" height="364" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719360" />
-    <state width="1640" height="295" key="GridCell.Tab.0.right" timestamp="1595853143738">
+    <state width="1640" height="295" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1596790730037" />
+    <state width="1640" height="295" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1596621720157" />
+    <state width="1640" height="295" key="GridCell.Tab.0.right" timestamp="1596790730040">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="295" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1595853143738" />
-    <state width="1640" height="364" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1595812719361" />
+    <state width="1640" height="295" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1596790730040" />
+    <state width="1640" height="295" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1596621720163" />
     <state width="1640" height="364" key="GridCell.Tab.1.bottom" timestamp="1595812762564">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -219,10 +264,10 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="378" y="188" key="Maven.ArtifactSearchDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595813360178" />
-    <state x="341" y="155" key="SettingsEditor" timestamp="1595816017035">
+    <state x="341" y="155" key="SettingsEditor" timestamp="1596252056820">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1595816017035" />
+    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1596252056820" />
     <state x="341" y="175" key="SettingsEditor/0.23.1680.1027@0.23.1680.1027" timestamp="1595327331965" />
     <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1595804712120">
       <screen x="0" y="0" width="1680" height="1050" />
@@ -232,14 +277,14 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1680.1050@0.0.1680.1050" timestamp="1595807569220" />
+    <state x="250" y="117" key="new project wizard" timestamp="1596252041305">
+      <screen x="0" y="0" width="1680" height="1050" />
+    </state>
+    <state x="250" y="117" key="new project wizard/0.0.1680.1050@0.0.1680.1050" timestamp="1596252041305" />
     <state x="545" y="308" key="refactoring.ChangeSignatureDialog" timestamp="1595809573540">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="545" y="308" key="refactoring.ChangeSignatureDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595809573540" />
-  </component>
-  <component name="antWorkspaceConfiguration">
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="mavenExecuteGoalHistory">
     <option value="" />

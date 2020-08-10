@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>iciwi</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -17,12 +17,11 @@
   </properties>
 
   <build>
-    <defaultGoal>clean package</defaultGoal>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
+        <version>3.8.1</version>
         <configuration>
           <source>${java.version}</source>
           <target>${java.version}</target>
@@ -31,7 +30,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.2</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -56,7 +55,11 @@
   <repositories>
     <repository>
       <id>spigotmc-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>sonatype</id>
+      <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
 
     <repository>
@@ -67,9 +70,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.15.2-R0.1-SNAPSHOT</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 

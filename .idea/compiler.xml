@@ -7,9 +7,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="iciwi" />
+        <module name="116" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="116" target="1.8" />
       <module name="iciwi" target="1.8" />
     </bytecodeTargetLevel>
   </component>
