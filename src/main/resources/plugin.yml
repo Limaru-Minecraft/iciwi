@@ -2,3 +2,12 @@ name: Iciwi
 version: ${project.version}
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
+description: Iciwi plugin for Limaru
+
+commands:
+  checkFare:
+    usage: /<command> <from> <to>
+    description: checks fare
+  ticketmachine:
+    usage: /<command> <station>
+    description: Ticket machine

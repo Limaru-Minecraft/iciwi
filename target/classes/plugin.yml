@@ -1,4 +1,13 @@
 name: Iciwi
-version: 1.1-SNAPSHOT
+version: 1.16.3a1
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
+description: Iciwi plugin for Limaru
+
+commands:
+  checkFare:
+    usage: /<command> <from> <to>
+    description: checks fare
+  ticketmachine:
+    usage: /<command> <station>
+    description: Ticket machine

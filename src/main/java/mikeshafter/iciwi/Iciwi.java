@@ -7,9 +7,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
 
@@ -40,6 +42,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
   public void onEnable(){ // Use config to store station names and fares
     boolean eco = setupEconomy();
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked! Economy status: "+eco);
+  
     getConfig().options().copyDefaults(true);
     saveConfig();
     getServer().getPluginManager().registerEvents(new events(), this);
@@ -79,14 +82,31 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-    if (command.getLabel().equalsIgnoreCase("checkFare")) {
-      String from = args[0];
-      String to = args[1];
-      double fare = JSONmanager.getjson(from, to);
-      sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
-      return true;
+    if (command.getName().equalsIgnoreCase("checkfare")){
+      try{
+        String from = args[0];
+        String to = args[1];
+        double fare = JSONmanager.getjson(to, from);
+        sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
+        return true;
+      } catch (Exception e){
+        sender.sendMessage("Error while checking fare.");
+      }
+    } else if (command.getName().equalsIgnoreCase("ticketmachine")){
+      if (sender instanceof Player && !args[0].isEmpty()){
+        Player player = (Player) sender;
+        String station = args[0];
+        CustomInventory inventory = new CustomInventory();
+        inventory.newTicket(player, station);
+        return true;
+      
+      } else {
+        sender.sendMessage("Usage: /ticketmachine <station>");
+        return false;
+      }
     } else {
-      return false;
+      return true;
     }
+    return false;
   }
 }
