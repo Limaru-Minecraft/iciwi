@@ -17,15 +17,17 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
 
 public class events implements Listener{
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  
   
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event){  // Create ICIWI for new player
@@ -44,33 +46,35 @@ public class events implements Listener{
     }
   }
   
-  int x;
-  int y;
-  int z;
-  Material gateMaterial;
-  BlockData gateData;
   
   public void maxfare(double fare, Player player, String message){
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: "+fare);
     economy.withdrawPlayer(player, fare);
   }
   
-  public void exit(String inSystem, String station, Player player){
+  int x;
+  int y;
+  int z;
+  Material gateMaterial;
+  BlockData gateData;
+  
+  public void exit(String inSystem, String station, Player player, String ticketType, double fare){
     String playerName = player.getName();
-//    double fare;
-//    try{
-//      // Get fare
-//      fare = JSONmanager.getjson(station, inSystem);
-//    } catch (Exception e){
-//      // JSONmanager has a built-in exception catcher, this is placed here for redundancy
-//      fare = 4.0;
-//      player.sendMessage(ChatColor.RED+"Fare "+inSystem+"->"+station+" is not set up!");
-//    }
-    player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+". ");
-    //economy.withdrawPlayer(player, fare);
-    player.getInventory().setItem(player.getInventory().getHeldItemSlot(), new ItemStack(Material.AIR, 0));
+    player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+". Fare: "+ChatColor.YELLOW+fare);
+    if (ticketType.equals(inSystem)){
+      player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
+    } else if (ticketType.equals("Remaining value:")){
+      ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
+      assert ticketMeta != null;
+      List<String> lore = ticketMeta.getLore();
+      assert lore != null;
+      lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))+8.00-fare));
+      ticketMeta.setLore(lore);
+      player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
+    }
     plugin.getConfig().set(playerName, "");  // Sets config such that inSystem will be null the next time
   }
+  
   
   @EventHandler
   public void CheckPlayerMove(PlayerMoveEvent event){
@@ -129,9 +133,7 @@ public class events implements Listener{
     }
   }
   
-  
   @EventHandler
-
   public void signClick(PlayerInteractEvent event){
     if (event.getClickedBlock() != null){
       Action action = event.getAction();
@@ -152,7 +154,7 @@ public class events implements Listener{
           String station = sign.getLine(1);
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
-            maxfare(4.0, player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
+            maxfare(8.0, player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
             decideGate(signDirection, location);
             enter(station, player);
           } else {
@@ -162,12 +164,18 @@ public class events implements Listener{
             if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals(station)){
               decideGate(signDirection, location); // open fare gates
               enter(station, player);
+            } else if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:")){
+              decideGate(signDirection, location);
+              ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
+              List<String> lore = ticketMeta.getLore();
+              lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))-8.0));
+              ticketMeta.setLore(lore);
+              player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
+              enter(station, player);
             } else {
               player.sendMessage(ChatColor.RED+"Wrong ticket!");
             }
           }
-    
-    
         } else if (sign.getLine(0).equalsIgnoreCase("[Exit]")){
           String station = sign.getLine(1);
           String inSystem = plugin.getConfig().getString(player.getName());
@@ -175,17 +183,20 @@ public class events implements Listener{
     
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
-          if (inSystem != null && !inSystem.isEmpty() && // if inSystem has something
-                  fare <= Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))){
+          String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
+    
+          String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+          if (inSystem != null && !inSystem.isEmpty() && (temp.equals(station) || Double.parseDouble(temp) >= fare)){
             decideGate(signDirection, location); // open fare gates
-            exit(inSystem, station, player);
-          } else if (inSystem != null && !inSystem.isEmpty() && // if inSystem has something
-                         fare > Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))){
+            exit(inSystem, station, player, ticketType, fare);
+          } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare){
             player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is "+ChatColor.GOLD+fare+ChatColor.RED+".");
+          } else if (inSystem != null && !inSystem.isEmpty()){
+            player.sendMessage(ChatColor.RED+"Wrong ticket!");
           } else { // Max fare
-            maxfare(4.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
+            maxfare(8.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
             decideGate(signDirection, location);
-            exit(inSystem, station, player);
+            exit(inSystem, station, player, ticketType, 8.0);
           }
         } else if (sign.getLine(0).equalsIgnoreCase("[Transfer]")){
           String station = sign.getLine(1);
@@ -205,12 +216,13 @@ public class events implements Listener{
               player.sendMessage(ChatColor.RED+"Wrong ticket!");
             }
           }
-    
-          // === TICKET MACHINE ===
-        } else if (sign.getLine(0).equalsIgnoreCase("[Tickets]")){
-          CustomInventory inventory = new CustomInventory();
+        }
+  
+        // === TICKET MACHINE ===
+        else if (sign.getLine(0).equalsIgnoreCase("[Tickets]")){
+          CustomInventory tm = new CustomInventory();
           String station = sign.getLine(1);
-          inventory.newTicket(player, station);
+          tm.newTM(player, station);
         }
       } // === END OF SIGN CLICK ===
     }

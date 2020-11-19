@@ -10,24 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_googlecode_json_simple_json_simple_1_1_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_10.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_md_5_bungeecord_chat_1_16_R0_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_milkbowl_vault_Vault_1_7_3.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jetbrains_annotations_20_1_0.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_26.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/InventoryEvent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Vault.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/iciwi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/iciwi.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/InventoryEvent.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
@@ -101,7 +89,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -223,9 +211,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.Alice" />
-        <item itemvalue="Application.Alice" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main (1)" />
+        <item itemvalue="Application.Alice" />
       </list>
     </recent_temporary>
   </component>
@@ -255,7 +243,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597048955938</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="1.16.3 Alpha 1">
+      <created>1603891881727</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1603891881727</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="UpdateCopyrightCheckinHandler">
@@ -266,7 +261,8 @@
     <MESSAGE value="update stuff" />
     <MESSAGE value="new json fare structure" />
     <MESSAGE value="1.16.1 Alpha 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.16.1 Alpha 1" />
+    <MESSAGE value="1.16.3 Alpha 1" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.16.3 Alpha 1" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -276,18 +272,10 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="578" y="357" key="#Notifications/0.0.1680.1050@0.0.1680.1050" timestamp="1599963218482" />
-    <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1595812450572">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="578" y="298" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595812450572" />
     <state x="304" y="188" width="1071" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600131047331">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="304" y="188" width="1071" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600131047331" />
-    <state x="559" y="335" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1595904883240">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="559" y="335" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1595904883240" />
     <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser" timestamp="1603888742113">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -296,33 +284,33 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="577" y="347" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600130857057" />
-    <state x="257" y="218" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1596508819869">
+    <state x="415" y="102" key="CommitChangelistDialog2" timestamp="1603891881397">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="257" y="218" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1596508819869" />
-    <state x="415" y="102" key="CommitChangelistDialog2" timestamp="1597048955419">
+    <state x="415" y="102" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1603891881397" />
+    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog" timestamp="1605663316069">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="415" y="102" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1597048955419" />
-    <state width="1640" height="294" key="GridCell.Tab.0.bottom" timestamp="1603891327911">
+    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1605663316069" />
+    <state width="1640" height="294" key="GridCell.Tab.0.bottom" timestamp="1605778620906">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1603891327911" />
+    <state width="1640" height="294" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620906" />
     <state width="1640" height="280" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067030" />
-    <state width="1640" height="294" key="GridCell.Tab.0.center" timestamp="1603891327908">
+    <state width="1640" height="294" key="GridCell.Tab.0.center" timestamp="1605778620890">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1603891327908" />
+    <state width="1640" height="294" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620890" />
     <state width="1640" height="280" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067028" />
-    <state width="1640" height="294" key="GridCell.Tab.0.left" timestamp="1603891327907">
+    <state width="1640" height="294" key="GridCell.Tab.0.left" timestamp="1605778620889">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1603891327907" />
+    <state width="1640" height="294" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620889" />
     <state width="1640" height="280" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1598189066975" />
-    <state width="1640" height="294" key="GridCell.Tab.0.right" timestamp="1603891327909">
+    <state width="1640" height="294" key="GridCell.Tab.0.right" timestamp="1605778620892">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1603891327909" />
+    <state width="1640" height="294" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620892" />
     <state width="1640" height="280" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067030" />
     <state width="1640" height="364" key="GridCell.Tab.1.bottom" timestamp="1601886524949">
       <screen x="0" y="0" width="1680" height="1050" />
@@ -344,15 +332,14 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="378" y="188" key="Maven.ArtifactSearchDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600050101723" />
-    <state x="341" y="155" key="SettingsEditor" timestamp="1602720729111">
+    <state x="341" y="155" key="SettingsEditor" timestamp="1605662881219">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1602720729111" />
-    <state x="341" y="175" key="SettingsEditor/0.23.1680.1027@0.23.1680.1027" timestamp="1595327331965" />
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1597048962345">
+    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1605662881219" />
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1603891884652">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1597048962345" />
+    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1603891884652" />
     <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1602719882354">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
@@ -361,19 +348,19 @@
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="393" y="269" width="894" height="620" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1680.1050@0.0.1680.1050" timestamp="1600132461898" />
-    <state x="250" y="117" key="new project wizard" timestamp="1600133354559">
+    <state x="250" y="117" key="new project wizard" timestamp="1604231398618">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="250" y="117" key="new project wizard/0.0.1680.1050@0.0.1680.1050" timestamp="1600133354559" />
-    <state x="545" y="308" key="refactoring.ChangeSignatureDialog" timestamp="1595809573540">
+    <state x="250" y="117" key="new project wizard/0.0.1680.1050@0.0.1680.1050" timestamp="1604231398618" />
+    <state x="545" y="308" key="refactoring.ChangeSignatureDialog" timestamp="1604194624908">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
-    <state x="545" y="308" key="refactoring.ChangeSignatureDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1595809573540" />
-    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup" timestamp="1602718496970">
+    <state x="545" y="308" key="refactoring.ChangeSignatureDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1604194624908" />
+    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup" timestamp="1604408881735">
       <screen x="0" y="0" width="1680" height="1050" />
     </state>
     <state x="308" y="170" width="670" height="506" key="search.everywhere.popup/0.0.1024.768@0.0.1024.768" timestamp="1598423270933" />
-    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1602718496970" />
+    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1604408881735" />
     <state x="505" y="250" width="670" height="676" key="search.everywhere.popup/0.23.1680.1027@0.23.1680.1027" timestamp="1598187572223" />
   </component>
   <component name="XDebuggerManager">
