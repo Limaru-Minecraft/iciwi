@@ -1,9 +1,6 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -20,14 +17,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static mikeshafter.iciwi.Iciwi.economy;
+import static org.bukkit.Bukkit.getServer;
 
-public class events implements Listener{
+public class Events implements Listener{
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  
+  DecimalFormat currency = new DecimalFormat("##.00");
   
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event){  // Create ICIWI for new player
@@ -68,7 +68,7 @@ public class events implements Listener{
       assert ticketMeta != null;
       List<String> lore = ticketMeta.getLore();
       assert lore != null;
-      lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))+8.00-fare));
+      lore.set(1, currency.format(String.valueOf(Double.parseDouble(lore.get(1))-fare)));
       ticketMeta.setLore(lore);
       player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
     }
@@ -77,7 +77,7 @@ public class events implements Listener{
   
   
   @EventHandler
-  public void CheckPlayerMove(PlayerMoveEvent event){
+  public void checkPlayerMove(PlayerMoveEvent event){
     if (event.getFrom().getBlockX() == x && event.getFrom().getBlockY() == y && event.getFrom().getBlockZ() == z){
       Location location = new Location(event.getPlayer().getWorld(), x, y, z);
       Block block = location.getBlock();
@@ -142,14 +142,13 @@ public class events implements Listener{
       BlockState state = block.getState();
       BlockData blockData = block.getBlockData();
       
-      // Check if sign is right clicked
       if (action == Action.RIGHT_CLICK_BLOCK && state instanceof Sign && blockData instanceof WallSign){
         Sign sign = (Sign) state;
         WallSign wallSign = (WallSign) blockData;
         Location location = sign.getLocation();
         BlockFace signDirection = wallSign.getFacing();  // Get sign direction
   
-        // Entry
+        // === ENTRY ===
         if (sign.getLine(0).equalsIgnoreCase("[Entry]")){
           String station = sign.getLine(1);
           String inSystem = plugin.getConfig().getString(player.getName());
@@ -158,35 +157,31 @@ public class events implements Listener{
             decideGate(signDirection, location);
             enter(station, player);
           } else {
-      
+  
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
-            if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals(station)){
+            if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals(station) || player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:")){
               decideGate(signDirection, location); // open fare gates
-              enter(station, player);
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:")){
-              decideGate(signDirection, location);
-              ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
-              List<String> lore = ticketMeta.getLore();
-              lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))-8.0));
-              ticketMeta.setLore(lore);
-              player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
               enter(station, player);
             } else {
               player.sendMessage(ChatColor.RED+"Wrong ticket!");
             }
           }
-        } else if (sign.getLine(0).equalsIgnoreCase("[Exit]")){
+        }
+
+        // === EXIT ===
+        else if (sign.getLine(0).equalsIgnoreCase("[Exit]")){
           String station = sign.getLine(1);
           String inSystem = plugin.getConfig().getString(player.getName());
           double fare = JSONmanager.getjson(station, inSystem);
-    
+  
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
+  
           String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
-    
           String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
-          if (inSystem != null && !inSystem.isEmpty() && (temp.equals(station) || Double.parseDouble(temp) >= fare)){
+  
+          if (inSystem != null && !inSystem.isEmpty() && (Double.parseDouble(temp) >= fare || temp.equals(station))){
             decideGate(signDirection, location); // open fare gates
             exit(inSystem, station, player, ticketType, fare);
           } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare){
@@ -198,10 +193,13 @@ public class events implements Listener{
             decideGate(signDirection, location);
             exit(inSystem, station, player, ticketType, 8.0);
           }
-        } else if (sign.getLine(0).equalsIgnoreCase("[Transfer]")){
+        }
+
+        // === TRANSFER ===
+        else if (sign.getLine(0).equalsIgnoreCase("[Transfer]")){
           String station = sign.getLine(1);
           String inSystem = plugin.getConfig().getString(player.getName());
-    
+  
           // If the player is already in the system
           if (inSystem != null && !inSystem.isEmpty()){
             player.sendMessage("Transfer: "+station);
@@ -217,14 +215,27 @@ public class events implements Listener{
             }
           }
         }
-  
+
         // === TICKET MACHINE ===
         else if (sign.getLine(0).equalsIgnoreCase("[Tickets]")){
           CustomInventory tm = new CustomInventory();
           String station = sign.getLine(1);
           tm.newTM(player, station);
         }
-      } // === END OF SIGN CLICK ===
+
+        // === PAYMENT ===
+        else if (sign.getLine(0).equalsIgnoreCase("[Payment]")){
+          double amt = Double.parseDouble(sign.getLine(1));
+          String playerName = sign.getLine(2);
+          OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(UUID.fromString(playerName));
+          economy.depositPlayer(offlinePlayer, amt);
+          assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
+          assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
+          if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:") && Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1)) >= amt){
+            player.getInventory().getItemInMainHand().getItemMeta().getLore().set(1, currency.format(String.valueOf(Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))-amt)));
+          } else player.sendMessage(ChatColor.RED+"Requires ICIWI card with at least the amount set on the sign!");
+        } // === END OF SIGN CLICK ===
+      }
     }
   }
 }
