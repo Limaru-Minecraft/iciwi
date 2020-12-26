@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>mikeshafter</groupId>
-  <artifactId>iciwi</artifactId>
-  <version>1.16.3r2</version>
+  <artifactId>Iciwi</artifactId>
+  <version>1.16.4a1</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.16.3-R0.1-SNAPSHOT</version>
+      <version>1.16.4-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 

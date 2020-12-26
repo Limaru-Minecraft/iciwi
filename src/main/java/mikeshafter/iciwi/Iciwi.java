@@ -1,10 +1,12 @@
 package mikeshafter.iciwi;
 
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -15,6 +17,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
   
   
   public static Economy economy = null;
+  public boolean destroy = true;
 
   @Override
   public void onDisable(){
@@ -32,9 +35,30 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
 //    if (JSONmanager.getjson("Shitty Hall", "Hairookie Road") == 420.69) {
     getConfig().options().copyDefaults(true);
     saveConfig();
-    getServer().getPluginManager().registerEvents(new events(), this);
+    getServer().getPluginManager().registerEvents(new Events(), this);
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
+  
+    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+      public void run(){
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §cWARNING! §eAll trains will be destroyed in 1 minute!");
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §ePlease do not board the next train.");
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §c§ePlease alight at the next station. Thank you!");
+      }
+    }, 72000, 216000);
+    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+      public void run(){
+        if (destroy = true){
+          ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+          Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §cNOTICE: All trains are now destroyed!");
+          Bukkit.dispatchCommand(console, "train destroyall");
+          Bukkit.dispatchCommand(console, "ekillall minecart");
+        } else {
+          destroy = true;
+          Bukkit.broadcastMessage(ChatColor.GREEN+"TrainDestroy rescheduled, trains will be destroyed in the next cycle.");
+        }
+      }
+    }, 73200, 216000);
   }
   
   
@@ -73,7 +97,8 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-    } else {
+    } else if (command.getName().equalsIgnoreCase("settraindestroy")) destroy = false;
+    else {
       return true;
     }
     return false;
