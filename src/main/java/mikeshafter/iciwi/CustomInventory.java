@@ -248,7 +248,11 @@ public class CustomInventory implements Listener{
     
     // Final amount display
     if (action == 2){
-      keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New ICIWI Card");
+      if (current==0.0) {
+    	  keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New ICIWI Card - Enter Value");  
+      } else {
+    	  keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New ICIWI Card - £%.2f", current));
+      }
       amount = new ItemStack(Material.NAME_TAG, 1);
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
@@ -272,7 +276,7 @@ public class CustomInventory implements Listener{
     
     ArrayList<String> lore = new ArrayList<>();
     lore.add(lore1);
-    lore.add(Double.toString(current));
+    lore.add(String.format("£%.2f", current));
     newTicketMeta.setLore(lore);
     amount.setItemMeta(newTicketMeta);
     keypad.setItem(0, amount);
