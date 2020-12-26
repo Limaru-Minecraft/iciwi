@@ -69,7 +69,6 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
         CustomInventory inventory = new CustomInventory();
         inventory.newTM(player, station);
         return true;
-  
       } else {
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
