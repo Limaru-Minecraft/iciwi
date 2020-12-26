@@ -7,7 +7,10 @@ description: Iciwi plugin for Limaru
 commands:
   checkFare:
     usage: /<command> <from> <to>
-    description: checks fare
+    description: Checks fare.
   ticketmachine:
     usage: /<command> <station>
-    description: Ticket machine
+    description: Ticket machine.
+  settraindestroy:
+    usage: /<command> <true|false>
+    description: Turns off automatic train destroy, resets after 1h automatically.

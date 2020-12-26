@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -96,40 +97,72 @@ public class Events implements Listener{
     
     if (face == BlockFace.SOUTH){
       Location location = new Location(world, x-1, y, z-1);
+      --x;
+      --z;
       Block gate = location.getBlock();
       gateData = gate.getBlockData();
       gateMaterial = gate.getType();
       gate.setType(Material.AIR);
-      x--;
-      z--;
-      
+      BukkitScheduler scheduler = getServer().getScheduler();
+      scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
+        @Override
+        public void run(){
+          gate.setType(gateMaterial);
+          gate.setBlockData(gateData);
+        }
+      }, 30L);
+  
     } else if (face == BlockFace.NORTH){
       Location location = new Location(world, x+1, y, z+1);
+      ++x;
+      ++z;
       Block gate = location.getBlock();
       gateData = gate.getBlockData();
       gateMaterial = gate.getType();
       gate.setType(Material.AIR);
-      x++;
-      z++;
-      
+      BukkitScheduler scheduler = getServer().getScheduler();
+      scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
+        @Override
+        public void run(){
+          gate.setType(gateMaterial);
+          gate.setBlockData(gateData);
+        }
+      }, 30L);
+  
     } else if (face == BlockFace.WEST){
       Location location = new Location(world, x+1, y, z-1);
+      ++x;
+      --z;
       Block gate = location.getBlock();
       gateData = gate.getBlockData();
       gateMaterial = gate.getType();
       gate.setType(Material.AIR);
-      x++;
-      z--;
-      
+      BukkitScheduler scheduler = getServer().getScheduler();
+      scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
+        @Override
+        public void run(){
+          gate.setType(gateMaterial);
+          gate.setBlockData(gateData);
+        }
+      }, 30L);
+  
     } else if (face == BlockFace.EAST){
       Location location = new Location(world, x-1, y, z+1);
+      --x;
+      ++z;
       Block gate = location.getBlock();
       gateData = gate.getBlockData();
       gateMaterial = gate.getType();
       gate.setType(Material.AIR);
-      x--;
-      z++;
-      
+      BukkitScheduler scheduler = getServer().getScheduler();
+      scheduler.scheduleSyncDelayedTask(plugin, new Runnable(){
+        @Override
+        public void run(){
+          gate.setType(gateMaterial);
+          gate.setBlockData(gateData);
+        }
+      }, 30L);
+  
     }
   }
   

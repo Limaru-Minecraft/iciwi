@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="iciwi" />
         <module name="116" />
+        <module name="iciwi" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
