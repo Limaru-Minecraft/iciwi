@@ -218,7 +218,7 @@ public class events implements Listener{
         }
   
         // === TICKET MACHINE ===
-        else if (signLine0.equalsIgnoreCase("[Tickets]")||sign.getLine(0).equalsIgnoreCase("-Tickets-")||sign.getLine(0).equalsIgnoreCase("[Ticket Machine]")){
+        else if (signLine0.equalsIgnoreCase("[Tickets]")||signLine0.equalsIgnoreCase("-Tickets-")||signLine0.equalsIgnoreCase("[Ticket Machine]")){
           CustomInventory tm = new CustomInventory();
           tm.newTM(player, station);
         }
