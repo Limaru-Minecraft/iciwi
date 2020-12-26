@@ -25,7 +25,7 @@ import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
 
-public class events implements Listener{
+public class Events implements Listener{
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   
   

@@ -10,18 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/InventoryEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/events.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/events.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Events.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,10 +29,35 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="LOCAL">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="BetterMath" />
+              </list>
+            </value>
+          </entry>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/BetterMath" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
         <option value="Mike Shafter &lt;yuhang.061@gmail.com&gt;" />
       </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="BetterMath" />
+      </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="SIGN_OFF_COMMIT" value="true" />
@@ -55,19 +69,6 @@
     <ignored-facets>
       <facet id="iciwi/invalid/Minecraft" />
     </ignored-facets>
-  </component>
-  <component name="MavenImportPreferences">
-    <option name="generalSettings">
-      <MavenGeneralSettings>
-        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
-      </MavenGeneralSettings>
-    </option>
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="downloadDocsAutomatically" value="true" />
-        <option name="downloadSourcesAutomatically" value="true" />
-      </MavenImportingSettings>
-    </option>
   </component>
   <component name="ProjectId" id="1ezVmyBkz6A4wHiBIGmryM9yGD7" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -89,12 +90,15 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/src/main/java" />
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi" />
+      <recent name="$PROJECT_DIR$/src/main" />
+      <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi" />
@@ -210,7 +214,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Alice" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main (1)" />
         <item itemvalue="Application.Alice" />
@@ -250,8 +253,32 @@
       <option name="project" value="LOCAL" />
       <updated>1603891881727</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="1.16.3 Release 2">
+      <created>1605778886989</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1605778886989</updated>
+    </task>
+    <task id="LOCAL-00005" summary="1.16.3 Release 2">
+      <created>1607877349520</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1607877349522</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst">
+      <created>1608989321893</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1608989321893</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.configurationType" implementationName="PythonConfigurationType" />
   </component>
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
@@ -262,106 +289,12 @@
     <MESSAGE value="new json fare structure" />
     <MESSAGE value="1.16.1 Alpha 1" />
     <MESSAGE value="1.16.3 Alpha 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.16.3 Alpha 1" />
+    <MESSAGE value="1.16.3 Release 2" />
+    <MESSAGE value="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="578" y="357" key="#Notifications" timestamp="1599963218482">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="578" y="357" key="#Notifications/0.0.1680.1050@0.0.1680.1050" timestamp="1599963218482" />
-    <state x="304" y="188" width="1071" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1600131047331">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="304" y="188" width="1071" height="721" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600131047331" />
-    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser" timestamp="1603888742113">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="653" y="238" key="#com.intellij.ide.util.MemberChooser/0.0.1680.1050@0.0.1680.1050" timestamp="1603888742113" />
-    <state x="577" y="347" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1600130857057">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="577" y="347" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600130857057" />
-    <state x="415" y="102" key="CommitChangelistDialog2" timestamp="1603891881397">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="415" y="102" key="CommitChangelistDialog2/0.0.1680.1050@0.0.1680.1050" timestamp="1603891881397" />
-    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog" timestamp="1605663316069">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="100" y="100" width="1480" height="850" key="DiffContextDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1605663316069" />
-    <state width="1640" height="294" key="GridCell.Tab.0.bottom" timestamp="1605778620906">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620906" />
-    <state width="1640" height="280" key="GridCell.Tab.0.bottom/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067030" />
-    <state width="1640" height="294" key="GridCell.Tab.0.center" timestamp="1605778620890">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.center/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620890" />
-    <state width="1640" height="280" key="GridCell.Tab.0.center/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067028" />
-    <state width="1640" height="294" key="GridCell.Tab.0.left" timestamp="1605778620889">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.left/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620889" />
-    <state width="1640" height="280" key="GridCell.Tab.0.left/0.23.1680.1027@0.23.1680.1027" timestamp="1598189066975" />
-    <state width="1640" height="294" key="GridCell.Tab.0.right" timestamp="1605778620892">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="294" key="GridCell.Tab.0.right/0.0.1680.1050@0.0.1680.1050" timestamp="1605778620892" />
-    <state width="1640" height="280" key="GridCell.Tab.0.right/0.23.1680.1027@0.23.1680.1027" timestamp="1598189067030" />
-    <state width="1640" height="364" key="GridCell.Tab.1.bottom" timestamp="1601886524949">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="364" key="GridCell.Tab.1.bottom/0.0.1680.1050@0.0.1680.1050" timestamp="1601886524949" />
-    <state width="1640" height="364" key="GridCell.Tab.1.center" timestamp="1601886524947">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="364" key="GridCell.Tab.1.center/0.0.1680.1050@0.0.1680.1050" timestamp="1601886524947" />
-    <state width="1640" height="364" key="GridCell.Tab.1.left" timestamp="1601886524947">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="364" key="GridCell.Tab.1.left/0.0.1680.1050@0.0.1680.1050" timestamp="1601886524947" />
-    <state width="1640" height="364" key="GridCell.Tab.1.right" timestamp="1601886524948">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state width="1640" height="364" key="GridCell.Tab.1.right/0.0.1680.1050@0.0.1680.1050" timestamp="1601886524948" />
-    <state x="378" y="188" key="Maven.ArtifactSearchDialog" timestamp="1600050101723">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="378" y="188" key="Maven.ArtifactSearchDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1600050101723" />
-    <state x="341" y="155" key="SettingsEditor" timestamp="1605662881219">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="341" y="155" key="SettingsEditor/0.0.1680.1050@0.0.1680.1050" timestamp="1605662881219" />
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2" timestamp="1603891884652">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="440" y="265" key="Vcs.Push.Dialog.v2/0.0.1680.1050@0.0.1680.1050" timestamp="1603891884652" />
-    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD" timestamp="1602719882354">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="550" y="473" key="com.intellij.jarRepository.RepositoryAttachDialog-DOWNLOAD/0.0.1680.1050@0.0.1680.1050" timestamp="1602719882354" />
-    <state x="393" y="269" width="894" height="620" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1600132461898">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="393" y="269" width="894" height="620" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1680.1050@0.0.1680.1050" timestamp="1600132461898" />
-    <state x="250" y="117" key="new project wizard" timestamp="1604231398618">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="250" y="117" key="new project wizard/0.0.1680.1050@0.0.1680.1050" timestamp="1604231398618" />
-    <state x="545" y="308" key="refactoring.ChangeSignatureDialog" timestamp="1604194624908">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="545" y="308" key="refactoring.ChangeSignatureDialog/0.0.1680.1050@0.0.1680.1050" timestamp="1604194624908" />
-    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup" timestamp="1604408881735">
-      <screen x="0" y="0" width="1680" height="1050" />
-    </state>
-    <state x="308" y="170" width="670" height="506" key="search.everywhere.popup/0.0.1024.768@0.0.1024.768" timestamp="1598423270933" />
-    <state x="505" y="232" width="1100" height="692" key="search.everywhere.popup/0.0.1680.1050@0.0.1680.1050" timestamp="1604408881735" />
-    <state x="505" y="250" width="670" height="676" key="search.everywhere.popup/0.23.1680.1027@0.23.1680.1027" timestamp="1598187572223" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
