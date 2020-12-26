@@ -274,7 +274,14 @@
       <option name="project" value="LOCAL" />
       <updated>1608989321893</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Updated stuff">
+      <created>1608989393320</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1608989393320</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -291,7 +298,8 @@
     <MESSAGE value="1.16.3 Alpha 1" />
     <MESSAGE value="1.16.3 Release 2" />
     <MESSAGE value="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
+    <MESSAGE value="Updated stuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated stuff" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
