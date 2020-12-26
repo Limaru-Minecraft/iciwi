@@ -1,9 +1,6 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -20,14 +17,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import static mikeshafter.iciwi.Iciwi.economy;
+import static org.bukkit.Bukkit.getServer;
 
 public class Events implements Listener{
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  
+  DecimalFormat currency = new DecimalFormat("##.00");
   
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event){  // Create ICIWI for new player
@@ -218,9 +218,22 @@ public class Events implements Listener{
         }
   
         // === TICKET MACHINE ===
-        else if (signLine0.equalsIgnoreCase("[Tickets]")||signLine0.equalsIgnoreCase("-Tickets-")||signLine0.equalsIgnoreCase("[Ticket Machine]")){
+        else if (signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")){
           CustomInventory tm = new CustomInventory();
           tm.newTM(player, station);
+        }
+
+        // === PAYMENT ===
+        else if (sign.getLine(0).equalsIgnoreCase("[Payment]")){
+          double amt = Double.parseDouble(sign.getLine(1));
+          String playerName = sign.getLine(2);
+          OfflinePlayer offlinePlayer = getServer().getOfflinePlayer(UUID.fromString(playerName));
+          economy.depositPlayer(offlinePlayer, amt);
+          assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
+          assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
+          if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:") && Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1)) >= amt){
+            player.getInventory().getItemInMainHand().getItemMeta().getLore().set(1, currency.format(String.valueOf(Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))-amt)));
+          } else player.sendMessage(ChatColor.RED+"Requires ICIWI card with at least the amount set on the sign!");
         }
       } // === END OF SIGN CLICK ===
     }
