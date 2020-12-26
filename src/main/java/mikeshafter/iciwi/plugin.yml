@@ -6,7 +6,7 @@ depend: [Vault]
 commands:
   checkfare:
     description: Checks fare
-    usage: /checkfare <from> <to>
+    usage: /checkfare <from> <to> (Replace <from> with the starting station, and <to> with the destination station.)
     permission: iciwi.cf
     permission-message: You don't have <permission>!
 permissions:

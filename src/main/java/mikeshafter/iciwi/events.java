@@ -46,7 +46,7 @@ public class events implements Listener{
     }
   }
   
-  
+  // Charge maximum fare
   public void maxfare(double fare, Player player, String message){
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: "+fare);
     economy.withdrawPlayer(player, fare);
@@ -148,10 +148,11 @@ public class events implements Listener{
         WallSign wallSign = (WallSign) blockData;
         Location location = sign.getLocation();
         BlockFace signDirection = wallSign.getFacing();  // Get sign direction
-  
+        String signLine0 = ChatColor.stripColor(sign.getLine(0));
+        String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+","");
+        
         // Entry
-        if (sign.getLine(0).equalsIgnoreCase("[Entry]")){
-          String station = sign.getLine(1);
+        if (signLine0.equalsIgnoreCase("[Entry]")){
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
             maxfare(8.0, player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
@@ -176,8 +177,7 @@ public class events implements Listener{
               player.sendMessage(ChatColor.RED+"Wrong ticket!");
             }
           }
-        } else if (sign.getLine(0).equalsIgnoreCase("[Exit]")){
-          String station = sign.getLine(1);
+        } else if (signLine0.equalsIgnoreCase("[Exit]")){
           String inSystem = plugin.getConfig().getString(player.getName());
           double fare = JSONmanager.getjson(station, inSystem);
     
@@ -198,8 +198,7 @@ public class events implements Listener{
             decideGate(signDirection, location);
             exit(inSystem, station, player, ticketType, 8.0);
           }
-        } else if (sign.getLine(0).equalsIgnoreCase("[Transfer]")){
-          String station = sign.getLine(1);
+        } else if (signLine0.equalsIgnoreCase("[Transfer]")){
           String inSystem = plugin.getConfig().getString(player.getName());
     
           // If the player is already in the system
@@ -219,9 +218,8 @@ public class events implements Listener{
         }
   
         // === TICKET MACHINE ===
-        else if (sign.getLine(0).equalsIgnoreCase("[Tickets]")){
+        else if (signLine0.equalsIgnoreCase("[Tickets]")||sign.getLine(0).equalsIgnoreCase("-Tickets-")||sign.getLine(0).equalsIgnoreCase("[Ticket Machine]")){
           CustomInventory tm = new CustomInventory();
-          String station = sign.getLine(1);
           tm.newTM(player, station);
         }
       } // === END OF SIGN CLICK ===
