@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -38,22 +39,36 @@ public class CustomInventory implements Listener{
     lore.add("");
     newTicketMeta.setLore(lore);
     newTicket.setItemMeta(newTicketMeta);
-    tm.setItem(1, newTicket);
+    tm.setItem(0, newTicket);
     
     ItemStack newICIWI = new ItemStack(Material.NAME_TAG, 1);
     ItemMeta newICIWIMeta = newICIWI.getItemMeta();
     assert newICIWIMeta != null;
     newICIWIMeta.setDisplayName(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card");
     newICIWI.setItemMeta(newICIWIMeta);
-    tm.setItem(4, newICIWI);
-    
+    tm.setItem(2, newICIWI);
+  
     ItemStack topUp = new ItemStack(Material.NAME_TAG, 1);
     ItemMeta topUpMeta = topUp.getItemMeta();
     assert topUpMeta != null;
     topUpMeta.setDisplayName(ChatColor.YELLOW+"Top Up ICIWI Card");
     topUp.setItemMeta(topUpMeta);
-    tm.setItem(7, topUp);
-    
+    tm.setItem(4, topUp);
+  
+    ItemStack checkFare = new ItemStack(Material.PAPER, 1);
+    ItemMeta checkFareMeta = topUp.getItemMeta();
+    assert checkFareMeta != null;
+    checkFareMeta.setDisplayName(ChatColor.AQUA+"Check fares");
+    checkFare.setItemMeta(checkFareMeta);
+    tm.setItem(6, topUp);
+  
+    ItemStack refund = new ItemStack(Material.NAME_TAG, 1);
+    ItemMeta refundMeta = topUp.getItemMeta();
+    assert refundMeta != null;
+    refundMeta.setDisplayName(ChatColor.GOLD+"Refund ICIWI Card");
+    refund.setItemMeta(refundMeta);
+    tm.setItem(4, topUp);
+  
     player.openInventory(tm);
   }
   
@@ -90,6 +105,14 @@ public class CustomInventory implements Listener{
         player.closeInventory();
         Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card...");
         player.openInventory(selectCard);
+      } else if (temp.equals(ChatColor.AQUA+"Check fares")){
+        player.closeInventory();
+        String url = "https://mineshafter61.github.io/LimaruSite/farecharts/"+station+".png";
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "/tellraw "+player.getName()+" {text:\""+ChatColor.GOLD+">> Fare chart <<\",clickEvent:{action:open_url,value:\""+url+"\"}}");
+      } else if (temp.equals(ChatColor.GOLD+"Refund ICIWI Card")){
+        player.closeInventory();
+        Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card to refund...");
+        player.openInventory(selectCard);
       }
     }
     
@@ -112,8 +135,27 @@ public class CustomInventory implements Listener{
         newKeypad(player, 3, 0.0, ChatColor.BLUE+"Amount to top up:");
       }
     } // end of select card
-    
-    
+
+
+    // refund card
+    else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...")){
+      event.setCancelled(true);
+  
+      if (item == null || !item.hasItemMeta()){
+        return;
+      }
+      String temp = "";
+      try{
+        temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
+      } catch (Exception ignored){
+      }
+      if (temp.equals("Remaining value:")){
+        economy.depositPlayer(player, Double.parseDouble(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1)));
+        player.getInventory().remove(item);
+      }
+    } // end of select card
+
+
     // newKeypad method: New ICIWI Card
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New ICIWI Card")){
       event.setCancelled(true);
@@ -153,8 +195,8 @@ public class CustomInventory implements Listener{
         }
       }
     } // End of New ICIWI card
-    
-    
+
+
     // newKeypad Method: New ticket
     else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"New Single Journey Ticket")){
       event.setCancelled(true);
@@ -194,8 +236,8 @@ public class CustomInventory implements Listener{
         }
       }
     } // End of new ticket
-    
-    
+
+
     // newKeypad Method: Top up ICIWI
     else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Top Up ICIWI Card")){
       event.setCancelled(true);

@@ -68,7 +68,7 @@ public class Events implements Listener{
       assert ticketMeta != null;
       List<String> lore = ticketMeta.getLore();
       assert lore != null;
-      lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))+8.00-fare));
+      lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))-fare));
       ticketMeta.setLore(lore);
       player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
     }
@@ -169,7 +169,7 @@ public class Events implements Listener{
               decideGate(signDirection, location);
               ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
               List<String> lore = ticketMeta.getLore();
-              lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))-8.0));
+              lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))));
               ticketMeta.setLore(lore);
               player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
               enter(station, player);
