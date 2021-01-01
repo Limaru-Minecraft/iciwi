@@ -41,18 +41,16 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
   
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
-        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §cWARNING! §eAll trains will be destroyed in 1 minute!");
-        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §ePlease do not board the next train.");
-        Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §c§ePlease alight at the next station. Thank you!");
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
       }
     }, 72000, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         if (destroy = true){
           ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-          Bukkit.broadcastMessage(ChatColor.GREEN+"§8§l[§7§lTrainDestroy§8§l] §cNOTICE: All trains are now destroyed!");
+          Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains have been destroyed!");
           Bukkit.dispatchCommand(console, "train destroyall");
-          Bukkit.dispatchCommand(console, "ekillall minecart");
+          Bukkit.dispatchCommand(console, "ekillall minecarts");
         } else {
           destroy = true;
           Bukkit.broadcastMessage(ChatColor.GREEN+"TrainDestroy rescheduled, trains will be destroyed in the next cycle.");
@@ -97,7 +95,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-    } else if (command.getName().equalsIgnoreCase("settraindestroy")) destroy = false;
+    } else if (command.getName().equalsIgnoreCase("traindestroydelay")) destroy = false;
     else {
       return true;
     }

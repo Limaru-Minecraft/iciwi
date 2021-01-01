@@ -1,5 +1,5 @@
 name: Iciwi
-version: 1.16.4a1
+version: 1.16.4a2
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
 description: Iciwi plugin for Limaru
@@ -12,5 +12,5 @@ commands:
     usage: /<command> <station>
     description: Ticket machine.
   settraindestroy:
-    usage: /<command> <true|false>
+    usage: /<command>
     description: Turns off automatic train destroy, resets after 1h automatically.

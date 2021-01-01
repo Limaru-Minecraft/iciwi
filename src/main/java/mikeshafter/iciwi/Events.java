@@ -151,7 +151,7 @@ public class Events implements Listener{
         String signLine0 = ChatColor.stripColor(sign.getLine(0));
         String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+","");
         
-        // Entry
+        // === Entry ===
         if (signLine0.equalsIgnoreCase("[Entry]")){
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
@@ -159,34 +159,29 @@ public class Events implements Listener{
             decideGate(signDirection, location);
             enter(station, player);
           } else {
-      
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
-            if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals(station)){
+            String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
+            if (ticketType.equals(station) || ChatColor.stripColor(ticketType).equals("Remaining value:")){
               decideGate(signDirection, location); // open fare gates
-              enter(station, player);
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:")){
-              decideGate(signDirection, location);
-              ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
-              List<String> lore = ticketMeta.getLore();
-              lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))));
-              ticketMeta.setLore(lore);
-              player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
               enter(station, player);
             } else {
               player.sendMessage(ChatColor.RED+"Wrong ticket!");
             }
           }
-        } else if (signLine0.equalsIgnoreCase("[Exit]")){
+        }
+
+        // === Exit ===
+        else if (signLine0.equalsIgnoreCase("[Exit]")){
           String inSystem = plugin.getConfig().getString(player.getName());
           double fare = JSONmanager.getjson(station, inSystem);
-    
+  
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
           String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
-    
+  
           String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
-          if (inSystem != null && !inSystem.isEmpty() && (temp.equals(station) || Double.parseDouble(temp) >= fare)){
+          if (Double.parseDouble(temp) >= fare || (inSystem != null && !inSystem.isEmpty() && temp.equals(station))){
             decideGate(signDirection, location); // open fare gates
             exit(inSystem, station, player, ticketType, fare);
           } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare){
@@ -232,7 +227,7 @@ public class Events implements Listener{
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
           if (player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0).equals("Remaining value:") && Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1)) >= amt){
-            player.getInventory().getItemInMainHand().getItemMeta().getLore().set(1, currency.format(String.valueOf(Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))-amt)));
+            player.getInventory().getItemInMainHand().getItemMeta().getLore().set(1, String.format("£%.2f", Double.parseDouble(player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1))-amt));
           } else player.sendMessage(ChatColor.RED+"Requires ICIWI card with at least the amount set on the sign!");
         }
       } // === END OF SIGN CLICK ===

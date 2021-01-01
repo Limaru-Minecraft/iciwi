@@ -12,5 +12,5 @@ commands:
     usage: /<command> <station>
     description: Ticket machine.
   settraindestroy:
-    usage: /<command> <true|false>
+    usage: /<command>
     description: Turns off automatic train destroy, resets after 1h automatically.
