@@ -297,37 +297,37 @@ public class CustomInventory implements Listener{
     Inventory keypad;
     ItemStack amount;
     ItemMeta newTicketMeta;
-    
+  
     // Final amount display
     if (action == 2){
-      if (current==0.0){
+      if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New ICIWI Card - Enter Value");
-      } else {
+      else
         keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.GOLD+"New ICIWI Card - £%.2f", current));
-      }
+    
       amount = new ItemStack(Material.NAME_TAG, 1);
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
       newTicketMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
     } else if (action == 3){
-      if (current == 0.0){
+      if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.GOLD+"Top Up ICIWI Card - Enter Value");
-      } else {
+      else
         keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.GOLD+"Top Up ICIWI Card - £%.2f", current));
-      }
+    
       amount = new ItemStack(Material.NAME_TAG, 1);
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
       newTicketMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-  
+    
       // Put the existing ICIWI card in Slot 9
       keypad.setItem(9, cardToCharge);
     } else {/* action == 1 */
-      if (current == 0.0){
+      if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.GOLD+"New Single Journey Ticket - Enter Value");
-      } else {
+      else
         keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.GOLD+"New Single Journey Ticket - £%.2f", current));
-      }
+    
       amount = new ItemStack(Material.PAPER, 1);
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
