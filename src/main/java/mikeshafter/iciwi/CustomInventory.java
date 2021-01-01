@@ -324,9 +324,9 @@ public class CustomInventory implements Listener{
       keypad.setItem(9, cardToCharge);
     } else {/* action == 1 */
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.GOLD+"New Single Journey Ticket - Enter Value");
+        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New Single Journey Ticket - Enter Value");
       else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.GOLD+"New Single Journey Ticket - £%.2f", current));
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New Single Journey Ticket - £%.2f", current));
     
       amount = new ItemStack(Material.PAPER, 1);
       newTicketMeta = amount.getItemMeta();
