@@ -218,20 +218,24 @@ public class CustomInventory implements Listener{
         newKeypad(player, 1, 0.00, station);
         val = 0.0d;
       } else if (temp.equals("ENTER")){
-        economy.withdrawPlayer(player, val);
-        player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+val);
-        ItemStack card = new ItemStack(Material.PAPER, 1);
-        ItemMeta cardMeta = card.getItemMeta();
-        assert cardMeta != null;
-        cardMeta.setDisplayName(ChatColor.AQUA+"Train Ticket");
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(station);
-        lore.add(String.format("£%.2f", val));
-        cardMeta.setLore(lore);
-        card.setItemMeta(cardMeta);
-        player.getInventory().addItem(card);
-        player.closeInventory();
-        val = 0.0d;
+    	  if (economy.getBalance(player)>=val) {
+			economy.withdrawPlayer(player, val);
+			player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+val);
+			ItemStack card = new ItemStack(Material.PAPER, 1);
+			ItemMeta cardMeta = card.getItemMeta();
+			assert cardMeta != null;
+			cardMeta.setDisplayName(ChatColor.AQUA+"Train Ticket");
+			ArrayList<String> lore = new ArrayList<>();
+			lore.add(station);
+			lore.add(String.format("£%.2f", val));
+			cardMeta.setLore(lore);
+			card.setItemMeta(cardMeta);
+			player.getInventory().addItem(card);
+			player.closeInventory();
+			val = 0.0d;  
+    	  } else {
+    		  player.sendMessage(ChatColor.RED+"You do not have enough money in your bank account!");
+    	  }
       } else {
         try{
           float value = Float.parseFloat(temp)/100.0f;

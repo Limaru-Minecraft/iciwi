@@ -163,6 +163,7 @@ public class Events implements Listener{
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
             String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
             if (ticketType.equals(station) || ChatColor.stripColor(ticketType).equals("Remaining value:")){
+              player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 1.414f);
               decideGate(signDirection, location); // open fare gates
               enter(station, player);
             } else {
@@ -182,6 +183,7 @@ public class Events implements Listener{
   
           String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
           if (Double.parseDouble(temp) >= fare || (inSystem != null && !inSystem.isEmpty() && temp.equals(station))){
+        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 1.414f);
             decideGate(signDirection, location); // open fare gates
             exit(inSystem, station, player, ticketType, fare);
           } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare){
@@ -190,6 +192,7 @@ public class Events implements Listener{
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
           } else { // Max fare
             maxfare(8.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 0.707f);
             decideGate(signDirection, location);
             exit(inSystem, station, player, ticketType, 8.0);
           }
