@@ -11,7 +11,11 @@
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomInventory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Events.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Events.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -305,7 +309,14 @@
       <option name="project" value="LOCAL" />
       <updated>1609467289439</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Made some lol changes">
+      <created>1609470655481</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1609470655481</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -325,7 +336,8 @@
     <MESSAGE value="Updated stuff" />
     <MESSAGE value="1.16.4a2" />
     <MESSAGE value="Bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Bug fixes" />
+    <MESSAGE value="Made some lol changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made some lol changes" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

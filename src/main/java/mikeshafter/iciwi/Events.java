@@ -68,7 +68,7 @@ public class Events implements Listener{
       assert ticketMeta != null;
       List<String> lore = ticketMeta.getLore();
       assert lore != null;
-      lore.set(1, String.valueOf(Double.parseDouble(lore.get(1))-fare));
+      lore.set(1, String.format("%.2f", Double.parseDouble(lore.get(1))-fare));
       ticketMeta.setLore(lore);
       player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
     }
@@ -155,7 +155,7 @@ public class Events implements Listener{
         if (signLine0.equalsIgnoreCase("[Entry]")){
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
-        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.7f);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.7f);
             maxfare(8.0, player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
             decideGate(signDirection, location);
             enter(station, player);
@@ -182,24 +182,28 @@ public class Events implements Listener{
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
           String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
   
+          // temp is remaining value of Iciwi Card
           String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
           if (Double.parseDouble(temp) >= fare || (inSystem != null && !inSystem.isEmpty() && temp.equals(station))){
-        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
             decideGate(signDirection, location); // open fare gates
             exit(inSystem, station, player, ticketType, fare);
-          } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare){
+          } else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare)
             player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is "+ChatColor.GOLD+fare+ChatColor.RED+".");
-          } else if (inSystem != null && !inSystem.isEmpty()){
-            player.sendMessage(ChatColor.RED+"Wrong ticket!");
-          } else { // Max fare
+          else if (inSystem != null && !inSystem.isEmpty()) player.sendMessage(ChatColor.RED+"Wrong ticket!");
+  
+          else { // Max fare
             maxfare(8.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.7f);
             decideGate(signDirection, location);
             exit(inSystem, station, player, ticketType, 8.0);
           }
-        } else if (signLine0.equalsIgnoreCase("[Transfer]")){
+        }
+
+        // === Transfer ===
+        else if (signLine0.equalsIgnoreCase("[Transfer]")){
           String inSystem = plugin.getConfig().getString(player.getName());
-    
+  
           // If the player is already in the system
           if (inSystem != null && !inSystem.isEmpty()){
             player.sendMessage("Transfer: "+station);

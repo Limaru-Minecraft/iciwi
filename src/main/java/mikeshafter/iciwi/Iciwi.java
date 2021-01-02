@@ -15,7 +15,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
   
-  
   public static Economy economy = null;
   public boolean destroy = true;
 
