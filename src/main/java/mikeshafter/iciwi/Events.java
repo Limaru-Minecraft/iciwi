@@ -142,8 +142,8 @@ public class Events implements Listener{
       BlockState state = block.getState();
       BlockData blockData = block.getBlockData();
       
-      // Check if sign is right clicked
-      if (action == Action.RIGHT_CLICK_BLOCK && state instanceof Sign && blockData instanceof WallSign){
+      // Check if sign is left/right clicked
+      if ((action == Action.RIGHT_CLICK_BLOCK || action == Action.LEFT_CLICK_BLOCK) && state instanceof Sign && blockData instanceof WallSign){
         Sign sign = (Sign) state;
         WallSign wallSign = (WallSign) blockData;
         Location location = sign.getLocation();
