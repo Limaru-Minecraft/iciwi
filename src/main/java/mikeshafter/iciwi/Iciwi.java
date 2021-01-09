@@ -45,7 +45,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
     }, 72000, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
-        if (destroy = true){
+        if (destroy){
           ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
           Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains have been destroyed!");
           Bukkit.dispatchCommand(console, "train destroyall");

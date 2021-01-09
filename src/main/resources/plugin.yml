@@ -3,6 +3,7 @@ version: ${project.version}
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
 description: Iciwi plugin for Limaru
+depend: [ Vault ]
 
 commands:
   checkFare:
@@ -11,6 +12,6 @@ commands:
   ticketmachine:
     usage: /<command> <station>
     description: Ticket machine.
-  settraindestroy:
+  traindestroydelay:
     usage: /<command>
     description: Turns off automatic train destroy, resets after 1h automatically.
