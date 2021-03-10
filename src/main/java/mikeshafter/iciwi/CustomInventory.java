@@ -25,6 +25,8 @@ public class CustomInventory implements Listener{
   double val;
   ItemStack cardToCharge;
   
+  //TODO: Make SQL database to store cards
+  //TODO: Make cards use a serial number
   
   public void newTM(Player player, String sta){
     station = sta;
@@ -83,9 +85,7 @@ public class CustomInventory implements Listener{
     Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
-    if (inventory == null){
-      return;
-    }
+    if (inventory == null) return;
   
     // === newTM method ===
     if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Ticket Machine")){
@@ -93,41 +93,49 @@ public class CustomInventory implements Listener{
       if (item == null || !item.hasItemMeta()){
         return;
       }
-      String temp = "";
-      try{
-        temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
-      } catch (Exception ignored){
-      }
+      String temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
+    
+      // Buy a single journey ticket
       if (temp.equals(ChatColor.GREEN+"Buy a single journey ticket")){
         player.closeInventory();
         station = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getCurrentItem()).getItemMeta()).getLore()).get(0);
         newKeypad(player, 1, 0.00, station);
-      } else if (temp.equals(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card")){
+      }
+    
+      // Buy New ICIWI Card
+      else if (temp.equals(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card")){
         player.closeInventory();
         newKeypad(player, 2, 0.00, ChatColor.BLUE+"ICIWI Card");
-      } else if (temp.equals(ChatColor.YELLOW+"Top Up ICIWI Card")){
+      }
+    
+      // Top Up ICIWI Card
+      else if (temp.equals(ChatColor.YELLOW+"Top Up ICIWI Card")){
         player.closeInventory();
         Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card to top up...");
         player.openInventory(selectCard);
-      } else if (temp.equals(ChatColor.AQUA+"Check fares")){
+      }
+    
+      // Check fares
+      else if (temp.equals(ChatColor.AQUA+"Check fares")){
         player.closeInventory();
         station = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getCurrentItem()).getItemMeta()).getLore()).get(0);
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+player.getName()+" {\"text\":\">> Fare chart <<\",\"color\":\"gold\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://mineshafter61.github.io/LimaruSite/farecharts/"+station+".png\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\"Click to view the fare chart.\"}}");
-      } else if (temp.equals(ChatColor.GOLD+"Refund ICIWI Card")){
+      }
+    
+      // Refund
+      else if (temp.equals(ChatColor.GOLD+"Refund ICIWI Card")){
         player.closeInventory();
         Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...");
         player.openInventory(selectCard);
       }
     }
-
-
-    // selectCard (top up)
+  
+  
+    // === selectCard (top up) ===
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Select ICIWI Card to top up...")){
       event.setCancelled(true);
-  
-      if (item == null || !item.hasItemMeta()){
-        return;
-      }
+    
+      if (item == null || !item.hasItemMeta()) return;
       String temp = "";
       try{
         temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
@@ -138,10 +146,10 @@ public class CustomInventory implements Listener{
         cardToCharge = item;
         newKeypad(player, 3, 0.0, ChatColor.BLUE+"Amount to top up:");
       }
-    } // end of select card
-
-
-    // refund card
+    }
+  
+  
+    // === refund card ===
     else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...")){
       event.setCancelled(true);
   
@@ -149,18 +157,20 @@ public class CustomInventory implements Listener{
         return;
       }
       String temp = "";
+      // Check if it's really an ICIWI card
       try{
         temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
       } catch (Exception ignored){
       }
+      // if yes, delete the card
       if (temp.equals("Remaining value:")){
-        economy.depositPlayer(player, Double.parseDouble(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1)));
+        economy.depositPlayer(player, 5d+Double.parseDouble(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1)));
         player.getInventory().remove(item);
       }
     } // end of select card
-
-
-    // newKeypad method: New ICIWI Card
+  
+  
+    // === newKeypad/New ICIWI Card ===
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New ICIWI Card")){
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()){
@@ -197,10 +207,10 @@ public class CustomInventory implements Listener{
         } catch (NumberFormatException ignored){
         }
       }
-    } // End of New ICIWI card
-
-
-    // newKeypad Method: New ticket
+    }
+  
+  
+    // === newKeypad/New paper ticket ===
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New Single Journey Ticket")){
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()){
@@ -239,10 +249,10 @@ public class CustomInventory implements Listener{
         } catch (NumberFormatException ignored){
         }
       }
-    } // End of new ticket
-
-
-    // newKeypad Method: Top up ICIWI
+    }
+  
+  
+    // === newKeypad/Top up ICIWI ===
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Top Up ICIWI Card")){
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()){
@@ -281,9 +291,9 @@ public class CustomInventory implements Listener{
         } catch (NumberFormatException ignored){
         }
       }
-    } // End of Top Up ICIWI
-    
-  } // End of TMClick
+    }
+  
+  }
   
   
   public void newKeypad(Player player, int action, double current, String lore1){
@@ -291,8 +301,8 @@ public class CustomInventory implements Listener{
     ItemStack amount;
     ItemMeta newTicketMeta;
   
-    // Final amount display
-    if (action == 2){ // New Iciwi card
+    // New Iciwi card
+    if (action == 2){
       if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New ICIWI Card - Enter Value");
       else
@@ -302,7 +312,10 @@ public class CustomInventory implements Listener{
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
       newTicketMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-    } else if (action == 3){ // Top up
+    }
+  
+    // Top up iciwi card
+    else if (action == 3){
       if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"Top Up ICIWI Card - Enter Value");
       else
@@ -315,7 +328,10 @@ public class CustomInventory implements Listener{
       // Put the existing ICIWI card in Slot 9
       keypad.setItem(9, cardToCharge);
     
-    } else {/* action == 1 */ // New paper ticket
+    }
+  
+    // New paper ticket
+    else {
       if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New Single Journey Ticket - Enter Value");
       else
@@ -326,45 +342,37 @@ public class CustomInventory implements Listener{
       assert newTicketMeta != null;
       newTicketMeta.setDisplayName(ChatColor.GREEN+"Train Ticket");
     }
-    
+  
+    // === Items ===
+  
+    // Top left dummy item
     ArrayList<String> lore = new ArrayList<>();
     lore.add(lore1);
     lore.add(String.format("£%.2f", current));
     newTicketMeta.setLore(lore);
     amount.setItemMeta(newTicketMeta);
     keypad.setItem(0, amount);
-    
-    
+  
     // Keypad buttons
-    ItemStack button;
-    ItemMeta buttonMeta;
-    int j = 1;
-    for (int i : new int[]{3, 4, 5, 12, 13, 14, 21, 22, 23}){
-      button = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
-      buttonMeta = button.getItemMeta();
-      assert buttonMeta != null;
-      buttonMeta.setDisplayName(String.valueOf(j));
-      button.setItemMeta(buttonMeta);
-      keypad.setItem(i, button);
-      j++;
-    }
-    button = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
-    buttonMeta = button.getItemMeta();
+    ItemStack button = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
+    ItemMeta buttonMeta = button.getItemMeta();
     assert buttonMeta != null;
+    for (int[] i : new int[][]{{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}}){
+      buttonMeta.setDisplayName(String.valueOf(i[1]));
+      button.setItemMeta(buttonMeta);
+      keypad.setItem(i[0], button);
+    }
+    button.setType(Material.RED_STAINED_GLASS_PANE);
     buttonMeta.setDisplayName("CLEAR");
     button.setItemMeta(buttonMeta);
     keypad.setItem(30, button);
-    
-    button = new ItemStack(Material.GRAY_STAINED_GLASS_PANE, 1);
-    buttonMeta = button.getItemMeta();
-    assert buttonMeta != null;
+  
+    button.setType(Material.GRAY_STAINED_GLASS_PANE);
     buttonMeta.setDisplayName("0");
     button.setItemMeta(buttonMeta);
     keypad.setItem(31, button);
-    
-    button = new ItemStack(Material.LIME_STAINED_GLASS_PANE, 1);
-    buttonMeta = button.getItemMeta();
-    assert buttonMeta != null;
+  
+    button.setType(Material.LIME_STAINED_GLASS_PANE);
     buttonMeta.setDisplayName("ENTER");
     button.setItemMeta(buttonMeta);
     keypad.setItem(32, button);

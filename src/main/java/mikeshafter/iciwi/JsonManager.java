@@ -12,11 +12,11 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-public class JSONmanager{
+public class JsonManager{
   
   private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   
-  public static double getjson(String station, String inSystem){
+  public static double getJson(String station, String inSystem){
     
     JSONParser parser = new JSONParser();
     
@@ -28,10 +28,10 @@ public class JSONmanager{
       while (scanner.hasNextLine()){
         jsonList.add(scanner.nextLine());
       }
-      String jsonstring = jsonList.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
+      String jsonString = jsonList.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
       
       // Parse json
-      Object obj = parser.parse(jsonstring);
+      Object obj = parser.parse(jsonString);
       JSONObject dict = (JSONObject) obj;
       
       // From var inSystem to var station

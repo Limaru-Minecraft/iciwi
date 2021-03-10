@@ -8,34 +8,31 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor{
+public final class Iciwi extends JavaPlugin implements CommandExecutor{
   
   public static Economy economy = null;
   public boolean destroy = true;
-
+  
   @Override
   public void onDisable(){
     saveConfig();
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61 for Limaru. Join now: play.limaru.cf:25580.");
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
 
   @Override
   public void onEnable(){ // Use config to store station names and fares
     boolean eco = setupEconomy();
-//    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61 for Limaru. PARTNER SERVER RELEASE: DO NOT DISTRIBUTE! Economy status: "+eco);
-//    getServer().getConsoleSender().sendMessage(ChatColor.GREEN+"Limaru: play.limaru.cf:25580.");
-//    getServer().getConsoleSender().sendMessage(ChatColor.RED+"WARNING: IF YOUR SERVER IS NOT IN THE FOLLOWING LIST, YOU'RE NOT PERMITTED TO USE THIS PLUGIN:");
-//    getServer().getConsoleSender().sendMessage(ChatColor.RED+"StellaniaMCNetwork, Luminis World");
-//    if (JSONmanager.getjson("Shitty Hall", "Hairookie Road") == 420.69) {
     getConfig().options().copyDefaults(true);
     saveConfig();
-    getServer().getPluginManager().registerEvents(new Events(), this);
+    getServer().getPluginManager().registerEvents(new EventSigns(), this);
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
+    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    Bukkit.dispatchCommand(console, "train destroyall");
+    Bukkit.dispatchCommand(console, "ekillall minecarts world");
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
@@ -49,10 +46,10 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
           ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
           Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains have been destroyed!");
           Bukkit.dispatchCommand(console, "train destroyall");
-          Bukkit.dispatchCommand(console, "ekillall minecarts");
+          Bukkit.dispatchCommand(console, "ekillall minecarts world");
         } else {
           destroy = true;
-          Bukkit.broadcastMessage(ChatColor.GREEN+"TrainDestroy rescheduled, trains will be destroyed in the next cycle.");
+          Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrainDestroy rescheduled, trains will be destroyed in the next cycle.");
         }
       }
     }, 73200, 216000);
@@ -64,7 +61,6 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
     if (economyProvider != null){
       economy = economyProvider.getProvider();
     }
-    
     return (economy != null);
   }
 // ==================================
@@ -77,7 +73,7 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
       try{
         String from = args[0];
         String to = args[1];
-        double fare = JSONmanager.getjson(to, from);
+        double fare = JsonManager.getJson(to, from);
         sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
         return true;
       } catch (Exception e){
@@ -94,8 +90,9 @@ public final class Iciwi extends JavaPlugin implements Listener, CommandExecutor
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-    } else if (command.getName().equalsIgnoreCase("traindestroydelay")) destroy = false;
-    else {
+    } else if (command.getName().equalsIgnoreCase("traindestroydelay")){
+      destroy = false;
+      sender.sendMessage("§b[§aICIWI§b] §fTrainDestroy rescheduled.");
       return true;
     }
     return false;
