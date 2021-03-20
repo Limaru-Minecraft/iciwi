@@ -66,17 +66,21 @@ public class EventSigns implements Listener{
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
     
-      // Iciwi card
-    else if (ticketType.equals("Remaining value:")){
+    // Iciwi card
+    
+    else if (ticketType.equals("Serial number:")){
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
       assert ticketMeta != null;
-      List<String> lore = ticketMeta.getLore();
-      assert lore != null;
-    
-      // Deduct fare from lore[1]
-      lore.set(1, String.format("%.2f", Double.parseDouble(lore.get(1))-fare));
-      ticketMeta.setLore(lore);
-      player.getInventory().getItemInMainHand().setItemMeta(ticketMeta);
+      String lore = Objects.requireNonNull(ticketMeta.getLore()).get(1);
+      
+//      lore.set(1, String.format("%.2f", Double.parseDouble(lore.get(1))-fare));
+//      ticketMeta.setLore(lore);
+      // Deduct from SQL
+      String serial_prefix = lore.substring(0,2);
+      int serial = Integer.parseInt(lore.substring(3));
+      CardSql app = new CardSql();
+      app.updateCard(serial_prefix,serial,app.getCardValue(serial_prefix,serial)-fare);
+      player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+app.getCardValue(serial_prefix,serial));
     }
     // remove player from insystem
     plugin.getConfig().set(playerName, "");
@@ -155,7 +159,7 @@ public class EventSigns implements Listener{
         // Including a left click is problematic when editing signs, so we'll not do that
     
         // === Entry ===
-        if (signLine0.equalsIgnoreCase("[Entry]")){
+        if (signLine0.equalsIgnoreCase("[Entry]") && (player.getInventory().getItemInMainHand().getType() == Material.PAPER || player.getInventory().getItemInMainHand().getType() == Material.NAME_TAG) ) {
           // Check if the player tapped out
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
@@ -173,7 +177,7 @@ public class EventSigns implements Listener{
             String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
         
             // Ticket || Iciwi Card
-            if (ticketType.equals(station) || ChatColor.stripColor(ticketType).equals("Remaining value:")){
+            if (ticketType.equals(station) || ChatColor.stripColor(ticketType).equals("Serial number:")){
               decideGate(signDirection, location); // open fare gates
               enter(station, player);
             } else player.sendMessage(ChatColor.RED+"Wrong ticket!");
@@ -190,18 +194,20 @@ public class EventSigns implements Listener{
           // Get ticket type
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
-          String ticketType = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(0);
+          List<String> lore = player.getInventory().getItemInMainHand().getItemMeta().getLore();
+          String ticketType = lore.get(0);
       
-          // temp is remaining value of Iciwi Card
-          String temp = player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+          // Temp is the price/destination
+          String paid = ticketType.equals("Serial number:") ? String.valueOf(new CardSql().getCardValue(lore.get(1).substring(0,2), Integer.parseInt(lore.get(1).substring(3)))) : player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+          player.sendMessage(paid);
       
           // Check if the fare paid ≥ real fare || Check if the second line is the name of the station
-          if (Double.parseDouble(temp) >= fare || (inSystem != null && !inSystem.isEmpty() && temp.equals(station))){
+          if (Double.parseDouble(paid) >= fare || (inSystem != null && !inSystem.isEmpty() && paid.equals(station))){
             decideGate(signDirection, location); // open fare gates
             exit(inSystem, station, player, ticketType, fare);
           }
           // Wrong ticket
-          else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(temp) < fare)
+          else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(paid) < fare)
             player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is "+ChatColor.GOLD+fare+ChatColor.RED+".");
           else if (inSystem != null && !inSystem.isEmpty())
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
@@ -239,6 +245,7 @@ public class EventSigns implements Listener{
         }
 
         // === PAYMENT ===
+        //TODO: Payment system, I have not figured out how to do this
         else if (sign.getLine(0).equalsIgnoreCase("[Payment]")){
           double amt = Double.parseDouble(sign.getLine(1));
           String playerName = sign.getLine(2);

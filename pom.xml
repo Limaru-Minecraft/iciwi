@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.16.5r1</version>
+  <version>1.16.5a3</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -83,20 +83,14 @@
       <version>1.1.1</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
-    <dependency>
-      <groupId>org.xerial</groupId>
-      <artifactId>sqlite-jdbc</artifactId>
-      <version>3.34.0</version>
-    </dependency>
-
-
     <!-- https://mvnrepository.com/artifact/net.milkbowl.vault/Vault -->
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
       <version>1.7.3</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>

@@ -11,6 +11,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor{
   
@@ -25,16 +29,24 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
 
   @Override
   public void onEnable(){ // Use config to store station names and fares
+    
+    // === Economy ===
     boolean eco = setupEconomy();
+    
+    // === Config ===
     getConfig().options().copyDefaults(true);
     saveConfig();
+    
+    // === Register events ===
     getServer().getPluginManager().registerEvents(new EventSigns(), this);
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    
+    // === Destroy minecarts ===
     Bukkit.dispatchCommand(console, "train destroyall");
     Bukkit.dispatchCommand(console, "ekillall minecarts world");
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   
+    // === Periodic train destroyer ===
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
@@ -50,9 +62,13 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
         } else {
           destroy = true;
           Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrainDestroy rescheduled, trains will be destroyed in the next cycle.");
-        }
-      }
-    }, 73200, 216000);
+        }}}, 73200, 216000);
+
+    // === SQL ===
+    CardSql app = new CardSql();
+    app.initTables(new String[] {"Entetsu", "Lipan"});
+
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
   
   
@@ -63,8 +79,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     }
     return (economy != null);
   }
-// ==================================
-// Vault setup code ends
   
   
   @Override
