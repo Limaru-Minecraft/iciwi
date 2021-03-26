@@ -11,9 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.time.Instant;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor{
@@ -83,18 +81,18 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-    if (command.getName().equalsIgnoreCase("checkfare")){
-      try{
+    if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
+      try {
         String from = args[0];
         String to = args[1];
         double fare = JsonManager.getJson(to, from);
         sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
         return true;
-      } catch (Exception e){
+      } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
       }
-    } else if (command.getName().equalsIgnoreCase("ticketmachine")){
-      if (sender instanceof Player && !args[0].isEmpty()){
+    } else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
+      if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         String station = args[0];
         CustomInventory inventory = new CustomInventory();
@@ -104,9 +102,13 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-    } else if (command.getName().equalsIgnoreCase("traindestroydelay")){
+    } else if (command.getName().equalsIgnoreCase("traindestroydelay") && sender.hasPermission("iciwi.traindestroydelay")) {
       destroy = false;
-      sender.sendMessage("§b[§aICIWI§b] §fTrainDestroy rescheduled.");
+      Bukkit.broadcastMessage("§b[§aICIWI§b] §fTrainDestroy rescheduled.");
+      return true;
+    } else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
+      long expiry = Long.parseLong(args[3])*86400+Instant.now().getEpochSecond();
+      new CardSql().setDiscount(args[0], Integer.parseInt(args[1]), args[2], expiry);
       return true;
     }
     return false;

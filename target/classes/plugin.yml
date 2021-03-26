@@ -1,17 +1,45 @@
 name: Iciwi
-version: 1.16.5a3
+version: 1.16.5a4
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
 description: Iciwi plugin for Limaru
 depend: [ Vault ]
 
 commands:
-  checkFare:
+  checkfare:
     usage: /<command> <from> <to>
     description: Checks fare.
+    permission: iciwi.checkfare
   ticketmachine:
     usage: /<command> <station>
     description: Ticket machine.
+    permission: iciwi.ticketmachine
   traindestroydelay:
     usage: /<command>
     description: Turns off automatic train destroy, resets after 1h automatically.
+    permission: iciwi.traindestroydelay
+  newdiscount:
+    usage: /<command> <serial prefix> <serial> <operator> <days before expiry>
+    description: Adds a rail pass ("discounts") onto existing cards
+    permission: iciwi.newdiscount
+
+permissions:
+  iciwi.*:
+    description: Gives access to all Iciwi commands
+    children:
+      iciwi.checkfare: true
+      iciwi.ticketmachine: true
+      iciwi.traindestorydelay: true
+      iciwi.newdiscount: true
+  iciwi.checkfare:
+    description: Allows the use of /checkfare
+    default: true
+  iciwi.ticketmachine:
+    description: Allows the use of /ticketmachine
+    default: op
+  iciwi.traindestroydelay:
+    description: Allows the use of /traindestroydelay
+    default: op
+  iciwi.newdiscount:
+    description: Allows the use of /newdiscount
+    default: op

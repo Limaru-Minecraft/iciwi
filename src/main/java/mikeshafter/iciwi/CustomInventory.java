@@ -26,58 +26,49 @@ public class CustomInventory implements Listener{
   String station;
   double val;
   ItemStack cardToCharge;
-
-  //TODO: Make SQL database to store cards
-  //TODO: Make cards use a serial number
-
-  public void newTM(Player player, String sta){
+  
+  
+  public void newTM(Player player, String sta) {
     station = sta;
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
-
+    
     // Single Journey Ticket
-    ItemStack newTicket = new ItemStack(Material.PAPER, 1);
-    ItemMeta newTicketMeta = newTicket.getItemMeta();
-    assert newTicketMeta != null;
-    newTicketMeta.setDisplayName(ChatColor.GREEN+"Buy a single journey ticket");
+    ItemStack item = new ItemStack(Material.PAPER, 1);
+    ItemMeta itemMeta = item.getItemMeta();
+    assert itemMeta != null;
+    itemMeta.setDisplayName(ChatColor.GREEN+"Buy a single journey ticket");
     ArrayList<String> lore = new ArrayList<>();
     lore.add(station);
-    newTicketMeta.setLore(lore);
-    newTicket.setItemMeta(newTicketMeta);
-    tm.setItem(0, newTicket);
-
+    itemMeta.setLore(lore);
+    item.setItemMeta(itemMeta);
+    tm.setItem(0, item);
+    
     // New ICIWI Card
-    ItemStack newICIWI = new ItemStack(Material.NAME_TAG, 1);
-    ItemMeta newICIWIMeta = newICIWI.getItemMeta();
-    assert newICIWIMeta != null;
-    newICIWIMeta.setDisplayName(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card");
-    newICIWI.setItemMeta(newICIWIMeta);
-    tm.setItem(2, newICIWI);
-
+    item.setType(Material.NAME_TAG);
+    itemMeta.setDisplayName(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card");
+    itemMeta.setLore(null);
+    item.setItemMeta(itemMeta);
+    tm.setItem(2, item);
+    
     // Top Up Card
-    ItemStack topUp = new ItemStack(Material.NAME_TAG, 1);
-    ItemMeta topUpMeta = topUp.getItemMeta();
-    assert topUpMeta != null;
-    topUpMeta.setDisplayName(ChatColor.YELLOW+"Top Up ICIWI Card");
-    topUp.setItemMeta(topUpMeta);
-    tm.setItem(4, topUp);
-
+    itemMeta.setDisplayName(ChatColor.YELLOW+"Check Value and Top Up");
+    item.setItemMeta(itemMeta);
+    tm.setItem(4, item);
+    
     // Check Fares
-    ItemStack checkFare = new ItemStack(Material.PAPER, 1);
-    ItemMeta checkFareMeta = topUp.getItemMeta();
-    assert checkFareMeta != null;
-    checkFareMeta.setDisplayName(ChatColor.AQUA+"Check fares");
-    checkFareMeta.setLore(lore);
-    checkFare.setItemMeta(checkFareMeta);
-    tm.setItem(6, checkFare);
-
+    item.setType(Material.PAPER);
+    itemMeta.setDisplayName(ChatColor.AQUA+"Check fares");
+    itemMeta.setLore(lore);
+    item.setItemMeta(itemMeta);
+    tm.setItem(6, item);
+    
     // Refund Card
-    ItemStack refund = new ItemStack(Material.NAME_TAG, 1);
-    ItemMeta refundMeta = topUp.getItemMeta();
-    assert refundMeta != null;
-    refundMeta.setDisplayName(ChatColor.GOLD+"Refund ICIWI Card");
-    refund.setItemMeta(refundMeta);
-    tm.setItem(8, refund);
-
+    item.setType(Material.NAME_TAG);
+    itemMeta.setDisplayName(ChatColor.GOLD+"Refund ICIWI Card");
+    itemMeta.setLore(null);
+    item.setItemMeta(itemMeta);
+    tm.setItem(8, item);
+    
     player.openInventory(tm);
   }
 
@@ -106,27 +97,27 @@ public class CustomInventory implements Listener{
       }
 
       // Buy New ICIWI Card
-      else if (temp.equals(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card")){
+      else if (temp.equals(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card")) {
         player.closeInventory();
         newKeypad(player, 2, 0.00, ChatColor.BLUE+"ICIWI Card");
       }
 
-      // Top Up ICIWI Card
-      else if (temp.equals(ChatColor.YELLOW+"Top Up ICIWI Card")){
+      // Check Value and Top Up
+      else if (temp.equals(ChatColor.YELLOW+"Check Value and Top Up")) {
         player.closeInventory();
-        Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card to top up...");
+        Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card...");
         player.openInventory(selectCard);
       }
 
       // Check fares
-      else if (temp.equals(ChatColor.AQUA+"Check fares")){
+      else if (temp.equals(ChatColor.AQUA+"Check fares")) {
         player.closeInventory();
         station = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getCurrentItem()).getItemMeta()).getLore()).get(0);
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+player.getName()+" {\"text\":\">> Fare chart <<\",\"color\":\"gold\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://mineshafter61.github.io/LimaruSite/farecharts/"+station+".png\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\"Click to view the fare chart.\"}}");
       }
 
       // Refund
-      else if (temp.equals(ChatColor.GOLD+"Refund ICIWI Card")){
+      else if (temp.equals(ChatColor.GOLD+"Refund ICIWI Card")) {
         player.closeInventory();
         Inventory selectCard = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...");
         player.openInventory(selectCard);
@@ -135,17 +126,17 @@ public class CustomInventory implements Listener{
 
 
     // === selectCard (top up) ===
-    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Select ICIWI Card to top up...")){
+    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Select ICIWI Card...")) {
       event.setCancelled(true);
-
+  
       if (item == null || !item.hasItemMeta()) return;
       // Check if it's really an ICIWI card
       String temp = "";
-      try{
+      try {
         temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
-      } catch (Exception ignored){
+      } catch (Exception ignored) {
       }
-      if (temp.equals("Serial number:")){
+      if (temp.equals("Serial number:")) {
         player.closeInventory();
         cardToCharge = item;
         newKeypad(player, 3, 0.0, ChatColor.BLUE+"Amount to top up:");
@@ -168,12 +159,9 @@ public class CustomInventory implements Listener{
       }
       // if yes, delete the card
       if (temp.equals("Serial number:")){
-        //TODO: Change to SQL
-        //economy.depositPlayer(player, 5d+Double.parseDouble(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1)));
-        //new code
         String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1).substring(0,2);
         int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1).substring(3));
-        economy.depositPlayer(player, 5d + app.getCardValue(serial_prefix, serial));
+        economy.depositPlayer(player, 5d+app.getCardValue(serial_prefix, serial));
         app.delCard(serial_prefix, serial);
         // ==
         player.getInventory().remove(item);
@@ -182,16 +170,19 @@ public class CustomInventory implements Listener{
 
 
     // === newKeypad/New ICIWI Card ===
-    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New ICIWI Card")){
+    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New ICIWI Card")) {
       event.setCancelled(true);
-      if (item == null || !item.hasItemMeta()){
+      if (item == null || !item.hasItemMeta()) {
         return;
       }
       String temp = "";
-      try{ temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName(); } catch (Exception ignored){}
-
+      try {
+        temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
+      } catch (Exception ignored) {
+      }
+  
       // Reset value
-      if (temp.equals("CLEAR")){
+      if (temp.equals("CLEAR")) {
         newKeypad(player, 2, 0.00, ChatColor.BLUE+"ICIWI Card");
         val = 0.0d;
       }
@@ -203,24 +194,15 @@ public class CustomInventory implements Listener{
         ItemMeta cardMeta = card.getItemMeta();
         assert cardMeta != null;
         cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-
-        //TODO: Change to SQL
-//        ArrayList<String> lore = new ArrayList<>();
-//        lore.add("Remaining value:");
-//        lore.add(String.format("%.2f", val));
-//        cardMeta.setLore(lore);
-
-        //New code here
         int serial = (int) (Math.floor(Instant.now().getEpochSecond())%100000 + (int) (Math.random())*110000 );
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[String.valueOf(serial).chars().map(Character::getNumericValue).sum()%19];
         app.newCard("I"+sum, serial, val);
-        //
+    
+    
         ArrayList<String> lore = new ArrayList<>();
         lore.add("Serial number:");
         lore.add("I"+sum+"-"+serial);
         cardMeta.setLore(lore);
-
-
         card.setItemMeta(cardMeta);
         player.getInventory().addItem(card);
         player.closeInventory();
@@ -232,23 +214,26 @@ public class CustomInventory implements Listener{
           float value = Float.parseFloat(temp)/100.0f;
           val = Math.round((val*10.0+value)*100.0)/100.0;
           newKeypad(player, 2, val, ChatColor.BLUE+"ICIWI Card - £"+val);
-        } catch (NumberFormatException ignored){
+        } catch (NumberFormatException ignored) {
         }
       }
     }
 
 
     // === newKeypad/New paper ticket ===
-    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New Single Journey Ticket")){
+    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Single Journey Ticket")) {
       event.setCancelled(true);
-      if (item == null || !item.hasItemMeta()){
+      if (item == null || !item.hasItemMeta()) {
         return;
       }
       String temp = "";
-      try{ temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName(); } catch (Exception ignored){}
-
+      try {
+        temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
+      } catch (Exception ignored) {
+      }
+  
       // Reset value
-      if (temp.equals("CLEAR")){
+      if (temp.equals("CLEAR")) {
         newKeypad(player, 1, 0.00, station);
         val = 0.0d;
       }
@@ -277,51 +262,38 @@ public class CustomInventory implements Listener{
           float value = Float.parseFloat(temp)/100.0f;
           val = Math.round((val*10.0+value)*100.0)/100.0;
           newKeypad(player, 1, val, station);
-        } catch (NumberFormatException ignored){
+        } catch (NumberFormatException ignored) {
         }
       }
     }
 
 
     // === newKeypad/Top up ICIWI ===
-    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Top Up ICIWI Card")){
+    else if (event.getView().getTitle().contains(ChatColor.DARK_AQUA+"Balance: ")) {
       event.setCancelled(true);
-      if (item == null || !item.hasItemMeta()){
+      if (item == null || !item.hasItemMeta()) {
         return;
       }
       String temp = "";
-      try{ temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName(); } catch (Exception ignored){}
-
+      try {
+        temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
+      } catch (Exception ignored) {
+      }
+  
       // Reset value
-      if (temp.equals("CLEAR")){
+      if (temp.equals("CLEAR")) {
         newKeypad(player, 3, 0.00, ChatColor.BLUE+"ICIWI Card");
         val = 0.0d;
       }
       // Done with keying in values
       else if (temp.equals("ENTER")){
-//        cardToCharge.setAmount(0);
         economy.withdrawPlayer(player, val);
         player.sendMessage(ChatColor.GREEN+"Topped up "+ChatColor.YELLOW+"£"+val+".");
-        // ItemStack card = new ItemStack(Material.NAME_TAG, 1);
-        // ItemMeta cardMeta = card.getItemMeta();
-        // assert cardMeta != null;
-        // cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-
-        //TODO: Change to SQL
-//        double cval = Double.parseDouble(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1));
-//        ArrayList<String> lore = new ArrayList<>();
-//        lore.add("Remaining value:");
-//        lore.add(String.format("%.2f", cval+val));
-//        cardMeta.setLore(lore);
-        //New code
+        // Get card number
         String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(0,2);
         int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(3));
         double cval = app.getCardValue(serial_prefix, serial);
         app.updateCard(serial_prefix,serial,cval+val);
-        // ==
-
-        // card.setItemMeta(cardMeta);
-        // player.getInventory().addItem(card);
         player.closeInventory();
         val = 0.0d;
       }
@@ -347,9 +319,9 @@ public class CustomInventory implements Listener{
     // New Iciwi card
     if (action == 2){
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New ICIWI Card - Enter Value");
+        keypad = plugin.getServer().createInventory(null, 36, ChatColor.BLUE+"New ICIWI Card - Enter Value");
       else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New ICIWI Card - £%.2f", current));
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.BLUE+"New ICIWI Card - £%.2f", current));
 
       amount = new ItemStack(Material.NAME_TAG, 1);
       newTicketMeta = amount.getItemMeta();
@@ -358,12 +330,14 @@ public class CustomInventory implements Listener{
     }
 
     // Top up iciwi card
-    else if (action == 3){
+    else if (action == 3) {
+      String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(0, 2);
+      int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(3));
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"Top Up ICIWI Card - Enter Value");
+        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_AQUA+"Balance: "+new CardSql().getCardValue(serial_prefix, serial)+ChatColor.BLUE+" Top Up: £0.00");
       else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"Top Up ICIWI Card - £%.2f", current));
-
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.BLUE+"Top Up: £%.2f", current));
+  
       amount = new ItemStack(Material.NAME_TAG, 1);
       newTicketMeta = amount.getItemMeta();
       assert newTicketMeta != null;
@@ -376,9 +350,9 @@ public class CustomInventory implements Listener{
     // New paper ticket
     else {
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New Single Journey Ticket - Enter Value");
+        keypad = plugin.getServer().createInventory(null, 36, ChatColor.BLUE+"New Ticket - Enter Value");
       else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New Single Journey Ticket - £%.2f", current));
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.BLUE+"New Ticket - £%.2f", current));
 
       amount = new ItemStack(Material.PAPER, 1);
       newTicketMeta = amount.getItemMeta();
