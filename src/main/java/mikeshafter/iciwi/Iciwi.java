@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Sound;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,10 +21,10 @@ import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor{
-  
+
   public static Economy economy = null;
   public boolean destroy = true;
-  
+
   @Override
   public void onDisable(){
     saveConfig();
@@ -32,29 +33,42 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
 
   @Override
   public void onEnable(){ // Use config to store station names and fares
-    
+
     // === Economy ===
     boolean eco = setupEconomy();
-    
+
     // === Config ===
     getConfig().options().copyDefaults(true);
     saveConfig();
-    
+
     // === Register events ===
     getServer().getPluginManager().registerEvents(new EventSigns(), this);
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    
+
     // === Destroy minecarts ===
     Bukkit.dispatchCommand(console, "train destroyall");
     Bukkit.dispatchCommand(console, "ekillall minecarts world");
-  
+
     // === Periodic train destroyer ===
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fIf you are currently riding a train, please get off at the next stop.");
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+        }
       }
     }, 72000, 216000);
+    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+        public void run(){
+          for (Player player : Bukkit.getOnlinePlayers())
+          {
+          	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+          }
+        }
+      }, 72001, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         if (destroy){
@@ -73,8 +87,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
 
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
-  
-  
+
+
   private boolean setupEconomy(){
     RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null){
@@ -82,8 +96,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     }
     return (economy != null);
   }
-  
-  
+
+
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {

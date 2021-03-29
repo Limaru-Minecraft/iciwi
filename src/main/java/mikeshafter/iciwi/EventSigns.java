@@ -43,7 +43,7 @@ public class EventSigns implements Listener{
   
   // Charge maximum fare
   public void maxfare(double fare, Player player, String message){
-    player.sendMessage(message+" "+ChatColor.GOLD+"Fare: "+fare);
+    player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
     economy.withdrawPlayer(player, fare);
   }
   
@@ -132,7 +132,7 @@ public class EventSigns implements Listener{
           }
           // Wrong ticket
           else if (inSystem != null && !inSystem.isEmpty() && Double.parseDouble(paid) < fare)
-            player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is "+ChatColor.GOLD+fare+ChatColor.RED+".");
+            player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is £"+ChatColor.GOLD+fare+ChatColor.RED+".");
           else if (inSystem != null && !inSystem.isEmpty())
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
   
@@ -187,7 +187,8 @@ public class EventSigns implements Listener{
       plugin.getConfig().set(playerName, station);
       player.sendMessage(ChatColor.GREEN+"Entered "+station);
       if (lore.get(0).equals("Serial number:")) {
-        player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3))));
+    	  player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))));
+        //player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3))));
       }
     }
   }
@@ -238,7 +239,8 @@ public class EventSigns implements Listener{
   public void exit(String inSystem, String station, Player player, String ticketType, double fare) {
     String playerName = player.getName();
     if (fare > 0)
-      player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+". Fare: "+ChatColor.YELLOW+fare);
+    	player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
+      //player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+". Fare: "+ChatColor.YELLOW+fare);
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
     
