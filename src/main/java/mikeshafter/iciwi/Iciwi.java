@@ -3,15 +3,20 @@ package mikeshafter.iciwi;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor{
@@ -110,6 +115,30 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       long expiry = Long.parseLong(args[3])*86400+Instant.now().getEpochSecond();
       new CardSql().setDiscount(args[0], Integer.parseInt(args[1]), args[2], expiry);
       return true;
+    } else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
+      if (sender instanceof Player && !args[0].isEmpty()) {
+        Player player = (Player) sender;
+        String serial_prefix = args[0].substring(0,2);
+        int serial = Integer.parseInt(args[0].substring(3));
+        // Check the checksum
+        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[(serial%10 + serial/10%10 + serial/100%10 + serial/1000%10 + serial/10000) % 19];
+        if (args[0].toCharArray()[1] == sum) {
+          // Generate and place card into player's inventory
+          ItemStack card = new ItemStack(Material.NAME_TAG, 1);
+          ItemMeta cardMeta = card.getItemMeta();
+          assert cardMeta != null;
+          cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
+          new CardSql().newCard("I"+sum, serial, 0.0);
+          ArrayList<String> lore = new ArrayList<>();
+          lore.add("Serial number:");
+          lore.add("I"+args[0]);
+          cardMeta.setLore(lore);
+          card.setItemMeta(cardMeta);
+          player.getInventory().addItem(card);
+          player.closeInventory();
+          return true;
+        }
+      }
     }
     return false;
   }

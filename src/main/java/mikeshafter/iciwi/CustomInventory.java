@@ -195,7 +195,7 @@ public class CustomInventory implements Listener{
         assert cardMeta != null;
         cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
         int serial = (int) (Math.floor(Instant.now().getEpochSecond())%100000 + (int) (Math.random())*110000 );
-        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[String.valueOf(serial).chars().map(Character::getNumericValue).sum()%19];
+        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[(serial%10 + serial/10%10 + serial/100%10 + serial/1000%10 + serial/10000) % 19];
         app.newCard("I"+sum, serial, val);
     
     
