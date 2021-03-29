@@ -3,6 +3,7 @@ package mikeshafter.iciwi;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,8 +49,21 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
+        Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fIf you are currently riding a train, please get off at the next stop.");
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+        }
       }
     }, 72000, 216000);
+    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+        public void run(){
+          for (Player player : Bukkit.getOnlinePlayers())
+          {
+          	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+          }
+        }
+      }, 72001, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         if (destroy){
