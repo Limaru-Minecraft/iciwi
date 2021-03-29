@@ -20,16 +20,16 @@ public class CardSql{
   public void initTables(String[] discounts) {
     // SQLite connection string
     String url = "jdbc:sqlite:plugins/Iciwi/IciwiCards.db";
-  
+
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial_prefix text, serial integer unique, value real, PRIMARY KEY (serial_prefix, serial)); ");
     sql.add("CREATE TABLE IF NOT EXISTS log (serial_prefix text, serial integer, start_station text, end_station text, price real, FOREIGN KEY (serial_prefix) references cards(serial_prefix) FOREIGN KEY (serial) references cards(serial), PRIMARY KEY (serial_prefix, serial); ");
-  
+
     for (String operator : discounts) {
       sql.add("CREATE TABLE IF NOT EXISTS "+operator+" (serial_prefix text, serial integer, expiry integer, FOREIGN KEY (serial_prefix) references cards(serial_prefix), FOREIGN KEY (serial) references cards(serial), PRIMARY KEY (serial_prefix, serial)); ");
     }
-  
+
     try (Connection conn = DriverManager.getConnection(url); Statement statement = conn.createStatement()) {
       for (String s : sql) {
         statement.execute(s);
@@ -45,7 +45,7 @@ public class CardSql{
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial_prefix);
       statement.setInt(2, serial);
-      statement.setDouble(3, value);
+      statement.setDouble(3, Math.round(value*100.0)/100.0);
       statement.executeUpdate();
     } catch (SQLException e) {
       System.out.println(e.getMessage());
@@ -96,7 +96,7 @@ public class CardSql{
     double returnValue = 0;
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)){
       statement.setString(1, serial_prefix);
-      statement.setDouble(2, serial);
+      statement.setInt(2, serial);
       ResultSet rs = statement.executeQuery();
       returnValue = rs.getDouble("value");
 
@@ -113,7 +113,7 @@ public class CardSql{
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(2, serial_prefix);
       statement.setInt(3, serial);
-      statement.setDouble(1, value);
+      statement.setDouble(1, Math.round(value*100.0)/100.0);
       statement.executeUpdate();
     } catch (SQLException e) {
       System.out.println(e.getMessage());

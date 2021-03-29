@@ -26,13 +26,13 @@ import static org.bukkit.Bukkit.getServer;
 
 public class EventSigns implements Listener{
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  
+
   int x;
   int y;
   int z;
   Material gateMaterial;
   BlockData gateData;
-  
+
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event){  // Create InStation for new player
     Player player = event.getPlayer();
@@ -40,28 +40,34 @@ public class EventSigns implements Listener{
       plugin.getConfig().set(player.getName(), "");
     }
   }
-  
+
   // Charge maximum fare
   public void maxfare(double fare, Player player, String message){
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
     economy.withdrawPlayer(player, fare);
   }
-  
+
   @EventHandler  // If player walked through fare gate, close it
   public void CheckPlayerMove(PlayerMoveEvent event){
     if (event.getFrom().getBlockX() == x && event.getFrom().getBlockY() == y && event.getFrom().getBlockZ() == z){
       Location location = new Location(event.getPlayer().getWorld(), x, y, z);
       Block block = location.getBlock();
-      block.setType(gateMaterial);
-      block.setBlockData(gateData);
-      x = 0;
-      y = 0;
-      z = 0;
-      gateMaterial = null;
-      gateData = null;
+      // Wait 0.5s
+      BukkitRunnable task = new BukkitRunnable() {
+        @Override
+        public void run() {
+          block.setBlockData(gateData);
+          x = 0;
+          y = 0;
+          z = 0;
+          gateMaterial = null;
+          gateData = null;
+        }
+      };
+      task.runTaskLater(this, 10);
     }
   }
-  
+
   @EventHandler
   public void signClick(PlayerInteractEvent event){
     if (event.getClickedBlock() != null){
@@ -70,7 +76,7 @@ public class EventSigns implements Listener{
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
       BlockData blockData = block.getBlockData();
-  
+
       if (action == Action.RIGHT_CLICK_BLOCK && state instanceof Sign && blockData instanceof WallSign){
         Sign sign = (Sign) state;
         WallSign wallSign = (WallSign) blockData;
@@ -79,7 +85,7 @@ public class EventSigns implements Listener{
         String signLine0 = ChatColor.stripColor(sign.getLine(0));
         String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
         // Including a left click is problematic when editing signs, so we'll not do that
-    
+
         // === Entry ===
         if (signLine0.equalsIgnoreCase("[Entry]") && (player.getInventory().getItemInMainHand().getType() == Material.PAPER || player.getInventory().getItemInMainHand().getType() == Material.NAME_TAG) ) {
           // Check if the player tapped out
@@ -96,7 +102,7 @@ public class EventSigns implements Listener{
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
             assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
             List<String> lore = player.getInventory().getItemInMainHand().getItemMeta().getLore();
-        
+
             // Ticket || Iciwi Card
             if (lore.get(0).equals(station) || ChatColor.stripColor(lore.get(0)).equals("Serial number:")) {
               decideGate(signDirection, location); // open fare gates
@@ -115,16 +121,16 @@ public class EventSigns implements Listener{
             fare = JsonManager.getJson(station, inSystem);
           } catch (NullPointerException ignored) {
           }
-  
+
           // Get ticket type
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(1) != null;
           List<String> lore = player.getInventory().getItemInMainHand().getItemMeta().getLore();
           String ticketType = lore.get(0);
-  
+
           // Temp is the price/destination
           String paid = ticketType.equals("Serial number:") ? String.valueOf(new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))) : player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
-  
+
           // Check if the second line is the name of the station || Check if the fare paid ≥ real fare
           if (paid.equals(station) || Double.parseDouble(paid) >= fare) {
             decideGate(signDirection, location); // open fare gates
@@ -135,7 +141,7 @@ public class EventSigns implements Listener{
             player.sendMessage(ChatColor.RED+"Wrong ticket! The fare for your journey is £"+ChatColor.GOLD+fare+ChatColor.RED+".");
           else if (inSystem != null && !inSystem.isEmpty())
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
-  
+
           else { // Max fare
             maxfare(8.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
             decideGate(signDirection, location);
@@ -149,14 +155,14 @@ public class EventSigns implements Listener{
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta().getLore()).get(0) != null;
           List<String> lore = player.getInventory().getItemInMainHand().getItemMeta().getLore();
-  
+
           // Ticket || Iciwi Card
           if (lore.get(0).equals(station) || ChatColor.stripColor(lore.get(0)).equals("Serial number:")) {
             decideGate(signDirection, location); // open fare gates
             entry(station, player, lore);
           } else player.sendMessage(ChatColor.RED+"Wrong ticket!");
         }
-  
+
         // === TICKET MACHINE ===
         else if (signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")){
           new CustomInventory().newTM(player, station);
@@ -178,7 +184,7 @@ public class EventSigns implements Listener{
       } // === END OF SIGN CLICK ===
     }
   }
-  
+
   // Entry sequence method
   public void entry(String station, Player player, List<String> lore) {
     if (!station.isEmpty()) {
@@ -192,14 +198,14 @@ public class EventSigns implements Listener{
       }
     }
   }
-  
+
   // Decide gate to open
   public void decideGate(BlockFace face, Location signLocation) {
     World world = signLocation.getWorld();
     x = signLocation.getBlockX();
     y = signLocation.getBlockY();
     z = signLocation.getBlockZ();
-    
+
     if (face == BlockFace.SOUTH) {
       Location location = new Location(world, x-1, y, z-1);
       Block gate = location.getBlock();
@@ -234,20 +240,19 @@ public class EventSigns implements Listener{
       z++;
     }
   }
-  
+
   // Exit sequence method
   public void exit(String inSystem, String station, Player player, String ticketType, double fare) {
     String playerName = player.getName();
     if (fare > 0)
     	player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
-      //player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+". Fare: "+ChatColor.YELLOW+fare);
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-    
+
     // Paper ticket
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
-      
+
       // Iciwi card
     else if (ticketType.equals("Serial number:")) {
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
