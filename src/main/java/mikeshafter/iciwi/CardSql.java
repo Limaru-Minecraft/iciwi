@@ -104,7 +104,7 @@ public class CardSql{
       System.out.println(e.getMessage());
     }
 
-    return returnValue;
+    return Math.round(returnValue * 100.0) / 100.0;
   }
 
   public void updateCard(String serial_prefix, int serial, double value) {
