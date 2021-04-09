@@ -221,7 +221,7 @@ public class CustomInventory implements Listener{
 
 
     // === newKeypad/New paper ticket ===
-    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Single Journey Ticket")) {
+    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - Enter Value") || event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - ")) {
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()) {
         return;
@@ -269,7 +269,7 @@ public class CustomInventory implements Listener{
 
 
     // === newKeypad/Top up ICIWI ===
-    else if (event.getView().getTitle().contains(ChatColor.DARK_AQUA+"Balance: ")) {
+    else if (event.getView().getTitle().contains(ChatColor.DARK_AQUA+"Balance: ") || event.getView().getTitle().contains(ChatColor.BLUE+"Top Up: ")) {
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()) {
         return;
@@ -334,7 +334,7 @@ public class CustomInventory implements Listener{
       String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(0, 2);
       int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(3));
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_AQUA+"Balance: "+new CardSql().getCardValue(serial_prefix, serial)+ChatColor.BLUE+" Top Up: £0.00");
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_AQUA+"Balance: £%.2f"+ChatColor.BLUE+" Top Up: £0.00", new CardSql().getCardValue(serial_prefix, serial)));
       else
         keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.BLUE+"Top Up: £%.2f", current));
   

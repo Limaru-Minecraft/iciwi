@@ -266,7 +266,7 @@ public class EventSigns implements Listener{
       app.updateCard(serial_prefix, serial, app.getCardValue(serial_prefix, serial)-fare);
       // Log
       app.log(serial_prefix, serial, inSystem, station, fare);
-      player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+app.getCardValue(serial_prefix, serial));
+      player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", app.getCardValue(serial_prefix, serial)));
     }
     // remove player from insystem
     plugin.getConfig().set(playerName, "");

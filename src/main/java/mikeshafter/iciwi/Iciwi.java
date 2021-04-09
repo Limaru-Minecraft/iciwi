@@ -65,10 +65,10 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
         public void run(){
           for (Player player : Bukkit.getOnlinePlayers())
           {
-          	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+          	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.2f);
           }
         }
-      }, 72001, 216000);
+      }, 72004, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
       public void run(){
         if (destroy){
