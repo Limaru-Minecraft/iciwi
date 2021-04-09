@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 import java.util.Objects;
@@ -64,7 +65,7 @@ public class EventSigns implements Listener{
           gateData = null;
         }
       };
-      task.runTaskLater(this, 10);
+      task.runTaskLater(plugin, 10);
     }
   }
 
