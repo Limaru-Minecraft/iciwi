@@ -311,13 +311,13 @@ public class CustomInventory implements Listener{
   }
 
 
-  public void newKeypad(Player player, int action, double current, String lore1){
+  private void newKeypad(Player player, int action, double current, String lore1) {
     Inventory keypad;
     ItemStack amount;
     ItemMeta newTicketMeta;
-
+  
     // New Iciwi card
-    if (action == 2){
+    if (action == 2) {
       if (current == 0.0)
         keypad = plugin.getServer().createInventory(null, 36, ChatColor.BLUE+"New ICIWI Card - Enter Value");
       else

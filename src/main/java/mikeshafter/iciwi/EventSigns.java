@@ -43,7 +43,7 @@ public class EventSigns implements Listener{
   }
 
   // Charge maximum fare
-  public void maxfare(double fare, Player player, String message){
+  private void maxfare(double fare, Player player, String message) {
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
     economy.withdrawPlayer(player, fare);
   }
@@ -185,28 +185,28 @@ public class EventSigns implements Listener{
       } // === END OF SIGN CLICK ===
     }
   }
-
+  
   // Entry sequence method
-  public void entry(String station, Player player, List<String> lore) {
+  private void entry(String station, Player player, List<String> lore) {
     if (!station.isEmpty()) {
       player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
       String playerName = player.getName();
       plugin.getConfig().set(playerName, station);
       player.sendMessage(ChatColor.GREEN+"Entered "+station);
       if (lore.get(0).equals("Serial number:")) {
-    	  player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))));
+        player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))));
         //player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3))));
       }
     }
   }
-
+  
   // Decide gate to open
-  public void decideGate(BlockFace face, Location signLocation) {
+  private void decideGate(BlockFace face, Location signLocation) {
     World world = signLocation.getWorld();
     x = signLocation.getBlockX();
     y = signLocation.getBlockY();
     z = signLocation.getBlockZ();
-
+    
     if (face == BlockFace.SOUTH) {
       Location location = new Location(world, x-1, y, z-1);
       Block gate = location.getBlock();
@@ -241,15 +241,15 @@ public class EventSigns implements Listener{
       z++;
     }
   }
-
+  
   // Exit sequence method
-  public void exit(String inSystem, String station, Player player, String ticketType, double fare) {
+  private void exit(String inSystem, String station, Player player, String ticketType, double fare) {
     String playerName = player.getName();
     if (fare > 0)
-    	player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
+      player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-
+    
     // Paper ticket
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
