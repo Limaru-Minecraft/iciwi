@@ -57,7 +57,7 @@ public class EventSigns implements Listener{
       BukkitRunnable task = new BukkitRunnable() {
         @Override
         public void run() {
-          block.setBlockData(gateData);
+          if (gateData != null) block.setBlockData(gateData);
           x = 0;
           y = 0;
           z = 0;
@@ -93,7 +93,7 @@ public class EventSigns implements Listener{
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.7f);
-            maxfare(8.0, player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
+            maxfare(plugin.getConfig().getDouble("penalty"), player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
             plugin.getConfig().set(player.getName(), "");
           }
 
@@ -144,7 +144,7 @@ public class EventSigns implements Listener{
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
 
           else { // Max fare
-            maxfare(8.0, player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
+            maxfare(plugin.getConfig().getDouble("penalt¥"), player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
             decideGate(signDirection, location);
             plugin.getConfig().set(player.getName(), "");
           }
