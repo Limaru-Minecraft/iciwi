@@ -42,3 +42,8 @@ One time payment, only accepts ICIWI cards, no paper tickets allowed
 <player made payable to>
 <anything>
 ```
+# Commands
+`/checkfare <from> <to>` Checks the fare from one station to another. The fares are taken from fares.json.
+`/traindestroydelay` Reschedules the periodic train destroy.
+`/ticketmachine <station>` Opens up a ticket machine for the specified station.
+`/newdiscount <card serial number>` Redeems an existing card with the stated serial number.
