@@ -24,7 +24,7 @@ public class CardSql{
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial_prefix text, serial integer unique, value real, PRIMARY KEY (serial_prefix, serial)); ");
-    sql.add("CREATE TABLE IF NOT EXISTS log (serial_prefix text, serial integer, start_station text, end_station text, price real, FOREIGN KEY (serial_prefix) references cards(serial_prefix) FOREIGN KEY (serial) references cards(serial), PRIMARY KEY (serial_prefix, serial); ");
+    sql.add("CREATE TABLE IF NOT EXISTS \"log\" (serial_prefix TEXT, serial INTEGER, start_station TEXT, end_station\tTEXT, price NUMERIC, FOREIGN KEY(serial) REFERENCES cards(serial), PRIMARY KEY(serial_prefix, serial), FOREIGN KEY(serial_prefix) REFERENCES cards(serial_prefix) )");
 
     for (String operator : discounts) {
       sql.add("CREATE TABLE IF NOT EXISTS "+operator+" (serial_prefix text, serial integer, expiry integer, FOREIGN KEY (serial_prefix) references cards(serial_prefix), FOREIGN KEY (serial) references cards(serial), PRIMARY KEY (serial_prefix, serial)); ");

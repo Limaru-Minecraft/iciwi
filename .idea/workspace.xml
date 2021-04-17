@@ -11,11 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/EventSigns.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/EventSigns.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/plugin.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +84,6 @@
     <hideBySeverity>
       <option value="15" />
     </hideBySeverity>
-    <option name="selectedIndex" value="1" />
   </component>
   <component name="ProjectId" id="1ezVmyBkz6A4wHiBIGmryM9yGD7" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -279,7 +274,14 @@
       <option name="project" value="LOCAL" />
       <updated>1618373113959</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Now you can set maxfare easily">
+      <created>1618376092376</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1618376092376</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -305,7 +307,8 @@
     <MESSAGE value="Cleaned up code" />
     <MESSAGE value="1.16.5a4" />
     <MESSAGE value="Changed access methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed access methods" />
+    <MESSAGE value="Now you can set maxfare easily" />
+    <option name="LAST_COMMIT_MESSAGE" value="Now you can set maxfare easily" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
