@@ -1,6 +1,8 @@
 # iciwi
 Iciwi Card Plugin for Limaru
 
+[![Latest Build](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiUniversal.yml/badge.svg)](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiUniversal.yml)
+
 # Usage
 ## Entry
 Normal entry sign for entering paid zone
