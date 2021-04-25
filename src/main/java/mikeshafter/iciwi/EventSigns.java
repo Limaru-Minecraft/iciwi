@@ -25,19 +25,19 @@ import java.util.UUID;
 import static mikeshafter.iciwi.Iciwi.economy;
 import static org.bukkit.Bukkit.getServer;
 
-public class EventSigns implements Listener{
+public class EventSigns implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-
-  int x;
-  int y;
-  int z;
+  
+  private int x = 0;
+  private int y = 2147483647;
+  private int z = 0;
   Material gateMaterial;
   BlockData gateData;
-
+  
   @EventHandler
-  public void onPlayerJoin(PlayerJoinEvent event){  // Create InStation for new player
+  public void onPlayerJoin(PlayerJoinEvent event) {  // Create InStation for new player
     Player player = event.getPlayer();
-    if (!player.hasPlayedBefore()){
+    if (!player.hasPlayedBefore()) {
       plugin.getConfig().set(player.getName(), "");
     }
   }
@@ -59,7 +59,7 @@ public class EventSigns implements Listener{
         public void run() {
           if (gateData != null) block.setBlockData(gateData);
           x = 0;
-          y = 0;
+          y = 2147483647;
           z = 0;
           gateMaterial = null;
           gateData = null;
@@ -117,11 +117,7 @@ public class EventSigns implements Listener{
           // Get the player's entry station (nullable)
           String inSystem = plugin.getConfig().getString(player.getName());
           // Get the fare
-          double fare = 0d;
-          try {
-            fare = JsonManager.getJson(station, inSystem);
-          } catch (NullPointerException ignored) {
-          }
+          double fare = JsonManager.getJson(station, inSystem);
 
           // Get ticket type
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;
@@ -206,7 +202,7 @@ public class EventSigns implements Listener{
     x = signLocation.getBlockX();
     y = signLocation.getBlockY();
     z = signLocation.getBlockZ();
-    
+  
     if (face == BlockFace.SOUTH) {
       Location location = new Location(world, x-1, y, z-1);
       Block gate = location.getBlock();
@@ -249,7 +245,7 @@ public class EventSigns implements Listener{
       player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-    
+  
     // Paper ticket
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);

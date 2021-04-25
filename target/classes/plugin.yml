@@ -1,5 +1,5 @@
 name: Iciwi
-version: 1.16.5a6
+version: 1.16.5b7
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
 description: Iciwi plugin for Limaru
@@ -22,6 +22,10 @@ commands:
     usage: /<command> <serial prefix> <serial> <operator> <days before expiry>
     description: Adds a rail pass ("discounts") onto existing cards
     permission: iciwi.newdiscount
+  redeemcard:
+    usage: /<command> <serial prefix+serial>
+    description: Redeems an existing card with the stated serial number.
+    permission: iciwi.redeemcard
 
 permissions:
   iciwi.*:

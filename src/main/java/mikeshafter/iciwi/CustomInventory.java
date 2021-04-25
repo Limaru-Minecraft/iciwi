@@ -31,7 +31,7 @@ public class CustomInventory implements Listener{
   public void newTM(Player player, String sta) {
     station = sta;
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
-    
+
     // Single Journey Ticket
     ItemStack item = new ItemStack(Material.PAPER, 1);
     ItemMeta itemMeta = item.getItemMeta();
@@ -187,18 +187,20 @@ public class CustomInventory implements Listener{
         val = 0.0d;
       }
       // Done with keying in values
-      else if (temp.equals("ENTER")){
+      else if (temp.equals("ENTER")) {
         economy.withdrawPlayer(player, 5.0+val);
         player.sendMessage(ChatColor.GREEN+"Fare of card: "+ChatColor.YELLOW+"£5.00"+ChatColor.GREEN+". Current card value: "+ChatColor.YELLOW+"£"+val);
         ItemStack card = new ItemStack(Material.NAME_TAG, 1);
         ItemMeta cardMeta = card.getItemMeta();
         assert cardMeta != null;
         cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-        int serial = (int) (Math.floor(Instant.now().getEpochSecond())%100000 + (int) (Math.random())*110000 );
-        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[(serial%10 + serial/10%10 + serial/100%10 + serial/1000%10 + serial/10000) % 19];
+        int serial = (int) (Math.floor(Instant.now().getEpochSecond())%100000+(int) (Math.random())*110000);
+        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
+                       ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
+                       ];
         app.newCard("I"+sum, serial, val);
-    
-    
+  
+  
         ArrayList<String> lore = new ArrayList<>();
         lore.add("Serial number:");
         lore.add("I"+sum+"-"+serial);

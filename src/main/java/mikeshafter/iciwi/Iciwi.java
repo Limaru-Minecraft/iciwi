@@ -4,6 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -13,11 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.Sound;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor{
@@ -32,27 +31,28 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
   }
 
   @Override
-  public void onEnable(){ // Use config to store station names and fares
-
+  public void onEnable() { // Use config to store station names and fares
+  
     // === Economy ===
     boolean eco = setupEconomy();
-
+  
     // === Config ===
     getConfig().options().copyDefaults(true);
     saveConfig();
-
+  
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new EventSigns(), this);
-    getServer().getPluginManager().registerEvents(new CustomInventory(), this);
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-
+    getServer().getPluginManager().registerEvents(new CustomInventory(), this);
+    getServer().getPluginManager().registerEvents(new EventSigns(), this);
+  
+  
     // === Destroy minecarts ===
     Bukkit.dispatchCommand(console, "train destroyall");
     Bukkit.dispatchCommand(console, "ekillall minecarts world");
-
+  
     // === Periodic train destroyer ===
-    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-      public void run(){
+    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+      public void run() {
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fIf you are currently riding a train, please get off at the next stop.");
         for (Player player : Bukkit.getOnlinePlayers())
