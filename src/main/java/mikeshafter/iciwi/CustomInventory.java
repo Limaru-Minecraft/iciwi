@@ -159,10 +159,9 @@ public class CustomInventory implements Listener{
       }
       // if yes, delete the card
       if (temp.equals("Serial number:")){
-        String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1).substring(0,2);
-        int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1).substring(3));
-        economy.depositPlayer(player, 5d+app.getCardValue(serial_prefix, serial));
-        app.delCard(serial_prefix, serial);
+        String serial = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1);
+        economy.depositPlayer(player, 5d+app.getCardValue(serial));
+        app.delCard(serial);
         // ==
         player.getInventory().remove(item);
       }
@@ -198,7 +197,7 @@ public class CustomInventory implements Listener{
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                        ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                        ];
-        app.newCard("I"+sum, serial, val);
+        app.newCard("I"+sum+serial, val);
   
   
         ArrayList<String> lore = new ArrayList<>();
@@ -288,14 +287,13 @@ public class CustomInventory implements Listener{
         val = 0.0d;
       }
       // Done with keying in values
-      else if (temp.equals("ENTER")){
+      else if (temp.equals("ENTER")) {
         economy.withdrawPlayer(player, val);
         player.sendMessage(ChatColor.GREEN+"Topped up "+ChatColor.YELLOW+"£"+val+".");
         // Get card number
-        String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(0,2);
-        int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(3));
-        double cval = app.getCardValue(serial_prefix, serial);
-        app.updateCard(serial_prefix,serial,cval+val);
+        String serial = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1);
+        double cval = app.getCardValue(serial);
+        app.updateCard(serial, cval+val);
         player.closeInventory();
         val = 0.0d;
       }
@@ -333,10 +331,9 @@ public class CustomInventory implements Listener{
 
     // Top up iciwi card
     else if (action == 3) {
-      String serial_prefix = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(0, 2);
-      int serial = Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1).substring(3));
+      String serial = Objects.requireNonNull(Objects.requireNonNull(cardToCharge.getItemMeta()).getLore()).get(1);
       if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_AQUA+"Balance: £%.2f"+ChatColor.BLUE+" Top Up: £0.00", new CardSql().getCardValue(serial_prefix, serial)));
+        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_AQUA+"Balance: £%.2f"+ChatColor.BLUE+" Top Up: £0.00", new CardSql().getCardValue(serial)));
       else
         keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.BLUE+"Top Up: £%.2f", current));
   

@@ -42,33 +42,6 @@ public class EventSigns implements Listener {
     }
   }
 
-  // Charge maximum fare
-  private void maxfare(double fare, Player player, String message) {
-    player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
-    economy.withdrawPlayer(player, fare);
-  }
-
-  @EventHandler  // If player walked through fare gate, close it
-  public void CheckPlayerMove(PlayerMoveEvent event){
-    if (event.getFrom().getBlockX() == x && event.getFrom().getBlockY() == y && event.getFrom().getBlockZ() == z){
-      Location location = new Location(event.getPlayer().getWorld(), x, y, z);
-      Block block = location.getBlock();
-      // Wait 0.5s
-      BukkitRunnable task = new BukkitRunnable() {
-        @Override
-        public void run() {
-          if (gateData != null) block.setBlockData(gateData);
-          x = 0;
-          y = 2147483647;
-          z = 0;
-          gateMaterial = null;
-          gateData = null;
-        }
-      };
-      task.runTaskLater(plugin, 10);
-    }
-  }
-
   @EventHandler
   public void signClick(PlayerInteractEvent event){
     if (event.getClickedBlock() != null){
@@ -93,7 +66,7 @@ public class EventSigns implements Listener {
           String inSystem = plugin.getConfig().getString(player.getName());
           if (inSystem != null && !inSystem.isEmpty()){ // Max fare
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 0.7f);
-            maxfare(plugin.getConfig().getDouble("penalty"), player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
+            maxfare(player, ChatColor.RED+"You did not tap out of your previous journey! Maximum fare charged.");
             plugin.getConfig().set(player.getName(), "");
           }
 
@@ -126,7 +99,7 @@ public class EventSigns implements Listener {
           String ticketType = lore.get(0);
 
           // Temp is the price/destination
-          String paid = ticketType.equals("Serial number:") ? String.valueOf(new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))) : player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
+          String paid = ticketType.equals("Serial number:") ? String.valueOf(new CardSql().getCardValue(lore.get(1))) : player.getInventory().getItemInMainHand().getItemMeta().getLore().get(1);
 
           // Check if the second line is the name of the station || Check if the fare paid ≥ real fare
           if (paid.equals(station) || Double.parseDouble(paid) >= fare) {
@@ -140,7 +113,7 @@ public class EventSigns implements Listener {
             player.sendMessage(ChatColor.RED+"Wrong ticket!");
 
           else { // Max fare
-            maxfare(plugin.getConfig().getDouble("penalt¥"), player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
+            maxfare(player, ChatColor.RED+"You did not tap in! Maximum fare charged.");
             decideGate(signDirection, location);
             plugin.getConfig().set(player.getName(), "");
           }
@@ -182,18 +155,11 @@ public class EventSigns implements Listener {
     }
   }
   
-  // Entry sequence method
-  private void entry(String station, Player player, List<String> lore) {
-    if (!station.isEmpty()) {
-      player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-      String playerName = player.getName();
-      plugin.getConfig().set(playerName, station);
-      player.sendMessage(ChatColor.GREEN+"Entered "+station);
-      if (lore.get(0).equals("Serial number:")) {
-        player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3)))));
-        //player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3))));
-      }
-    }
+  // Charge maximum fare
+  private void maxfare(Player player, String message) {
+    double fare = plugin.getConfig().getDouble("penalty");
+    player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
+    economy.withdrawPlayer(player, fare);
   }
   
   // Decide gate to open
@@ -202,7 +168,7 @@ public class EventSigns implements Listener {
     x = signLocation.getBlockX();
     y = signLocation.getBlockY();
     z = signLocation.getBlockZ();
-  
+    
     if (face == BlockFace.SOUTH) {
       Location location = new Location(world, x-1, y, z-1);
       Block gate = location.getBlock();
@@ -238,6 +204,20 @@ public class EventSigns implements Listener {
     }
   }
   
+  // Entry sequence method
+  private void entry(String station, Player player, List<String> lore) {
+    if (!station.isEmpty()) {
+      player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
+      String playerName = player.getName();
+      plugin.getConfig().set(playerName, station);
+      player.sendMessage(ChatColor.GREEN+"Entered "+station);
+      if (lore.get(0).equals("Serial number:")) {
+        player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", new CardSql().getCardValue(lore.get(1))));
+        //player.sendMessage(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+new CardSql().getCardValue(lore.get(1).substring(0, 2), Integer.parseInt(lore.get(1).substring(3))));
+      }
+    }
+  }
+  
   // Exit sequence method
   private void exit(String inSystem, String station, Player player, String ticketType, double fare) {
     String playerName = player.getName();
@@ -245,26 +225,45 @@ public class EventSigns implements Listener {
       player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-  
+    
     // Paper ticket
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
-
+      
       // Iciwi card
     else if (ticketType.equals("Serial number:")) {
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
       assert ticketMeta != null;
-      String lore = Objects.requireNonNull(ticketMeta.getLore()).get(1);
       // Deduct from SQL
-      String serial_prefix = lore.substring(0, 2);
-      int serial = Integer.parseInt(lore.substring(3));
+      String serial = Objects.requireNonNull(ticketMeta.getLore()).get(1);
       CardSql app = new CardSql();
-      app.updateCard(serial_prefix, serial, app.getCardValue(serial_prefix, serial)-fare);
+      app.updateCard(serial, app.getCardValue(serial)-fare);
       // Log
-      app.log(serial_prefix, serial, inSystem, station, fare);
-      player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", app.getCardValue(serial_prefix, serial)));
+      app.log(serial, inSystem, station, fare);
+      player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", app.getCardValue(serial)));
     }
     // remove player from insystem
     plugin.getConfig().set(playerName, "");
+  }
+  
+  @EventHandler  // If player walked through fare gate, close it
+  public void CheckPlayerMove(PlayerMoveEvent event) {
+    if (event.getFrom().getBlockX() == x && event.getFrom().getBlockY() == y && event.getFrom().getBlockZ() == z) {
+      Location location = new Location(event.getPlayer().getWorld(), x, y, z);
+      Block block = location.getBlock();
+      // Wait 0.5s
+      BukkitRunnable task = new BukkitRunnable() {
+        @Override
+        public void run() {
+          if (gateData != null) block.setBlockData(gateData);
+          x = 0;
+          y = 2147483647;
+          z = 0;
+          gateMaterial = null;
+          gateData = null;
+        }
+      };
+      task.runTaskLater(plugin, 10);
+    }
   }
 }

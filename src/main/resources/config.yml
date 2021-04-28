@@ -1,3 +1,2 @@
 # This sets the penalty amount when someone forgets to tap in/out
-# The ¥ at the end is to ensure that this will not be set to null when a player joins the server.
-penalt¥: 8.0
+penalty: 8.0
