@@ -135,7 +135,9 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
         String serial_prefix = args[0].substring(0,2);
         int serial = Integer.parseInt(args[0].substring(3));
         // Check the checksum
-        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[(serial%10 + serial/10%10 + serial/100%10 + serial/1000%10 + serial/10000) % 19];
+        char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
+                       ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
+                       ];
         if (args[0].toCharArray()[1] == sum) {
           // Generate and place card into player's inventory
           ItemStack card = new ItemStack(Material.NAME_TAG, 1);
