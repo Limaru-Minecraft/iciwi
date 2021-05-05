@@ -104,7 +104,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       try {
         String from = args[0];
         String to = args[1];
-        double fare = JsonManager.getJson(to, from);
+        double fare = JsonManager.getFare(to, from);
         sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
         return true;
       } catch (Exception e) {

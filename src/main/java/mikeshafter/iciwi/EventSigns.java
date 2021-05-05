@@ -90,7 +90,7 @@ public class EventSigns implements Listener {
           // Get the player's entry station (nullable)
           String inSystem = plugin.getConfig().getString(player.getName());
           // Get the fare
-          double fare = JsonManager.getJson(station, inSystem);
+          double fare = JsonManager.getFare(station, inSystem);
 
           // Get ticket type
           assert Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getLore() != null;

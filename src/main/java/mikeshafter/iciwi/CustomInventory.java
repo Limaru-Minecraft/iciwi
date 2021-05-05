@@ -222,11 +222,12 @@ public class CustomInventory implements Listener{
 
 
     // === newKeypad/New paper ticket ===
-    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - Enter Value") || event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - ")) {
-      event.setCancelled(true);
+    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - ")) {
+      // if there is no item clicked
       if (item == null || !item.hasItemMeta()) {
         return;
       }
+      // get the name of the item
       String temp = "";
       try {
         temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
@@ -237,6 +238,7 @@ public class CustomInventory implements Listener{
       if (temp.equals("CLEAR")) {
         newKeypad(player, 1, 0.00, station);
         val = 0.0d;
+        event.setCancelled(true);
       }
       // Done with keying in values
       else if (temp.equals("ENTER")){
@@ -254,6 +256,7 @@ public class CustomInventory implements Listener{
           card.setItemMeta(cardMeta);
           player.getInventory().addItem(card);
           player.closeInventory();
+          event.setCancelled(true);
           val = 0.0d;
         } else player.sendMessage(ChatColor.RED+"You do not have enough money in your bank account!");
       }
@@ -263,6 +266,7 @@ public class CustomInventory implements Listener{
           float value = Float.parseFloat(temp)/100.0f;
           val = Math.round((val*10.0+value)*100.0)/100.0;
           newKeypad(player, 1, val, station);
+          event.setCancelled(true);
         } catch (NumberFormatException ignored) {
         }
       }

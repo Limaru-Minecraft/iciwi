@@ -27,9 +27,13 @@ public class StationOwners {
     }
   }
   
+<<<<<<< Updated upstream
   public String getStationOwner(String station) {
     return owners.getString(station);
   }
+=======
+  public String getStationOwner(String station) { return owners.getString(station); }
+>>>>>>> Stashed changes
   
   public void setStationOwner(String station, String owner) {
     owners.set(station, owner);

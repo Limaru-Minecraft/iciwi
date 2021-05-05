@@ -16,34 +16,50 @@ public class JsonManager{
   
   private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   
-  public static double getJson(String station, String inSystem){
-    
+  public static JSONObject getJsonFromFile(File file) {
     JSONParser parser = new JSONParser();
-    
-    try{
+  
+    try {
       // Get file
-      File file = new File(plugin.getDataFolder(), "fares.json");
+      //File file = new File(plugin.getDataFolder(), "fares.json");
       Scanner scanner = new Scanner(file);
       LinkedList<String> jsonList = new LinkedList<>();
-      while (scanner.hasNextLine()){
+      while (scanner.hasNextLine()) {
         jsonList.add(scanner.nextLine());
       }
-      String jsonString = jsonList.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
-      
+    
       // Parse json
+      String jsonString = jsonList.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
       Object obj = parser.parse(jsonString);
-      JSONObject dict = (JSONObject) obj;
-      
-      // From var inSystem to var station
-      // Return fare
-      // {"inSystem":{"station":fare,"station":fare},"inSystem":{"station":fare,"station":fare}}
-      JSONObject from = (JSONObject) dict.get(inSystem);
-      return (double) from.get(station);
-      
-    } catch (FileNotFoundException | ParseException e){
+      return (JSONObject) obj;
+    } catch (FileNotFoundException|ParseException e) {
       Logger log = Bukkit.getLogger();
-      log.info(ChatColor.RED+"Fare "+inSystem+"->"+station+" is not set up!");
-      return 0;
+      log.info(ChatColor.RED+"Exception in fares.json! Check that you have it linted!");
+      return new JSONObject();
     }
   }
+  
+  public static double getFare(String station, String inSystem) {
+    JSONObject fareDict = getJsonFromFile(new File(plugin.getDataFolder(), "fares.json"));
+    if (fareDict.get(inSystem) != null) {
+      JSONObject from = (JSONObject) fareDict.get(inSystem);
+      if (from.get(station) != null) {
+        return (double) from.get(station);
+      } else {
+        Logger log = Bukkit.getLogger();
+        log.info(ChatColor.RED+"Fare "+inSystem+"->"+station+" is not set up correctly!");
+        return -1d;
+      }
+    } else {
+      Logger log = Bukkit.getLogger();
+      log.info(ChatColor.RED+"Station "+inSystem+" is not set up correctly!");
+      return 0d;
+    }
+  }
+  
+  public static void setFare(String station, String inSystem, double fare) {
+    JSONObject fareDict = getJsonFromFile(new File(plugin.getDataFolder(), "fares.json"));
+
+  }
+  
 }
