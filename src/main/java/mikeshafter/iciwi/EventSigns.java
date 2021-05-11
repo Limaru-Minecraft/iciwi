@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.iciwiTM.CustomInventory;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

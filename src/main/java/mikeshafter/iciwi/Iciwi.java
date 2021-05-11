@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.iciwiTM.CustomInventory;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
