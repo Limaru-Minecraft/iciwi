@@ -234,9 +234,25 @@ public class EventSigns implements Listener {
     else if (ticketType.equals("Serial number:")) {
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
       assert ticketMeta != null;
-      // Deduct from SQL
       String serial = Objects.requireNonNull(ticketMeta.getLore()).get(1);
+      
+      // Get SQL
       CardSql app = new CardSql();
+      
+      // Check for discounts
+      StationOwners stationOwners = new StationOwners();
+      boolean entryDiscount = stationOwners.getStationOwner(inSystem).equals(inSystem);
+      boolean exitDiscount  = stationOwners.getStationOwner(inSystem).equals(station);
+      if (entryDiscount ^ exitDiscount) {
+        fare /= 2;
+        player.sendMessage(ChatColor.GREEN+"Rail pass approved. Fare halved.");
+      }
+      else if (entryDiscount & exitDiscount) {
+        fare = 0;
+        player.sendMessage(ChatColor.GREEN+"Rail pass approved. Paid £0.");
+      }
+      
+      // Update card value
       app.updateCard(serial, app.getCardValue(serial)-fare);
       // Log
       app.log(serial, inSystem, station, fare);

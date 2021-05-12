@@ -74,23 +74,23 @@ public class CustomInventory implements Listener{
 
 
   @EventHandler
-  public void TMClick(InventoryClickEvent event){
+  public void TMClick(InventoryClickEvent event) {
     Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
     if (inventory == null) return;
     CardSql app = new CardSql();
-
+  
     // === newTM method ===
-    if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Ticket Machine")){
+    if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Ticket Machine")) {
       val = 0;
-      if (item == null || !item.hasItemMeta()){
+      if (item == null || !item.hasItemMeta()) {
         return;
       }
       String temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
-
+  
       // Buy a single journey ticket
-      if (temp.equals(ChatColor.GREEN+"Buy a single journey ticket")){
+      if (temp.equals(ChatColor.GREEN+"Buy a single journey ticket")) {
         player.closeInventory();
         station = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getCurrentItem()).getItemMeta()).getLore()).get(0);
         newKeypad(player, 1, 0.00, station);
@@ -145,20 +145,20 @@ public class CustomInventory implements Listener{
 
 
     // === refund card ===
-    else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...")){
+    else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select ICIWI Card(s) to refund...")) {
       event.setCancelled(true);
-
-      if (item == null || !item.hasItemMeta()){
+  
+      if (item == null || !item.hasItemMeta()) {
         return;
       }
       String temp = "";
       // Check if it's really an ICIWI card
-      try{
+      try {
         temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
-      } catch (Exception ignored){
+      } catch (Exception ignored) {
       }
       // if yes, delete the card
-      if (temp.equals("Serial number:")){
+      if (temp.equals("Serial number:")) {
         String serial = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1);
         economy.depositPlayer(player, 5d+app.getCardValue(serial));
         app.delCard(serial);
@@ -166,10 +166,19 @@ public class CustomInventory implements Listener{
         player.getInventory().remove(item);
       }
     } // end of select card
-
-
+  }
+  
+  
+  @EventHandler
+  public void KeypadClick(InventoryClickEvent event){
+    Player player = (Player) event.getWhoClicked();
+    ItemStack item = event.getCurrentItem();
+    Inventory inventory = event.getClickedInventory();
+    if (inventory == null) return;
+    CardSql app = new CardSql();
+    
     // === newKeypad/New ICIWI Card ===
-    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New ICIWI Card")) {
+    if (event.getView().getTitle().contains(ChatColor.BLUE+"New ICIWI Card")) {
       event.setCancelled(true);
       if (item == null || !item.hasItemMeta()) {
         return;
@@ -187,8 +196,11 @@ public class CustomInventory implements Listener{
       }
       // Done with keying in values
       else if (temp.equals("ENTER")) {
+        if (economy.getBalance(player) >= 5.0+val) {
+        // Take money from player and send message
         economy.withdrawPlayer(player, 5.0+val);
         player.sendMessage(ChatColor.GREEN+"Fare of card: "+ChatColor.YELLOW+"£5.00"+ChatColor.GREEN+". Current card value: "+ChatColor.YELLOW+"£"+val);
+        // Prepare card
         ItemStack card = new ItemStack(Material.NAME_TAG, 1);
         ItemMeta cardMeta = card.getItemMeta();
         assert cardMeta != null;
@@ -198,8 +210,7 @@ public class CustomInventory implements Listener{
                        ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                        ];
         app.newCard("I"+sum+serial, val);
-  
-  
+        
         ArrayList<String> lore = new ArrayList<>();
         lore.add("Serial number:");
         lore.add("I"+sum+"-"+serial);
@@ -208,6 +219,10 @@ public class CustomInventory implements Listener{
         player.getInventory().addItem(card);
         player.closeInventory();
         val = 0.0d;
+        }
+        else {
+          player.sendMessage("You do not have enough money!");
+        }
       }
       // Pressed a number
       else {
@@ -222,7 +237,8 @@ public class CustomInventory implements Listener{
 
 
     // === newKeypad/New paper ticket ===
-    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket - ")) {
+    else if (event.getView().getTitle().contains(ChatColor.BLUE+"New Ticket")) {
+      event.setCancelled(true);
       // if there is no item clicked
       if (item == null || !item.hasItemMeta()) {
         return;
@@ -234,31 +250,36 @@ public class CustomInventory implements Listener{
       } catch (Exception ignored) {
       }
   
+      player.sendMessage(temp);
+      
       // Reset value
       if (temp.equals("CLEAR")) {
         newKeypad(player, 1, 0.00, station);
         val = 0.0d;
-        event.setCancelled(true);
       }
       // Done with keying in values
-      else if (temp.equals("ENTER")){
-        if (economy.getBalance(player) >= val){
+      else if (temp.equals("ENTER")) {
+        if (economy.getBalance(player) >= val) {
+          // Take money from player and send message
           economy.withdrawPlayer(player, val);
-          player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+val);
+          player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+"£"+val);
+          // Prepare card
           ItemStack card = new ItemStack(Material.PAPER, 1);
           ItemMeta cardMeta = card.getItemMeta();
           assert cardMeta != null;
           cardMeta.setDisplayName(ChatColor.AQUA+"Train Ticket");
           ArrayList<String> lore = new ArrayList<>();
           lore.add(station);
-          lore.add(String.format("%.2f", val));
+          lore.add(String.valueOf(val));
           cardMeta.setLore(lore);
           card.setItemMeta(cardMeta);
           player.getInventory().addItem(card);
           player.closeInventory();
-          event.setCancelled(true);
           val = 0.0d;
-        } else player.sendMessage(ChatColor.RED+"You do not have enough money in your bank account!");
+        }
+        else {
+          player.sendMessage("You do not have enough money!");
+        }
       }
       // Pressed a number
       else {

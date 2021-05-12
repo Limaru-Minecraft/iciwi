@@ -32,24 +32,26 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
 
   @Override
   public void onEnable() { // Use config to store station names and fares
-  
+
     // === Economy ===
     boolean eco = setupEconomy();
-  
+
     // === Config ===
+    StationOwners stationOwners = new StationOwners();
+    stationOwners.saveConfig();
     getConfig().options().copyDefaults(true);
     saveConfig();
-  
+
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
     getServer().getPluginManager().registerEvents(new EventSigns(), this);
-  
-  
+
+
     // === Destroy minecarts ===
     Bukkit.dispatchCommand(console, "train destroyall");
     Bukkit.dispatchCommand(console, "ekillall minecarts world");
-  
+
     // === Periodic train destroyer ===
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
       public void run() {
@@ -132,13 +134,12 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     } else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
-        String serial_prefix = args[0].substring(0, 2);
         int serial = Integer.parseInt(args[0].substring(3));
         // Check the checksum
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                        ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                        ];
-        if (args[0].toCharArray()[1] == sum) {
+        if (args[0].charAt(1) == sum) {
           // Generate and place card into player's inventory
           ItemStack card = new ItemStack(Material.NAME_TAG, 1);
           ItemMeta cardMeta = card.getItemMeta();
@@ -147,11 +148,15 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
           new CardSql().newCard("I"+sum+serial, 0.0);
           ArrayList<String> lore = new ArrayList<>();
           lore.add("Serial number:");
-          lore.add("I"+args[0]);
+          lore.add(args[0]);
           cardMeta.setLore(lore);
           card.setItemMeta(cardMeta);
           player.getInventory().addItem(card);
           player.closeInventory();
+          player.sendMessage(ChatColor.GREEN+"Card redeemed.");
+          return true;
+        } else {
+          player.sendMessage(ChatColor.RED+"Wrong checksum!");
           return true;
         }
       }
