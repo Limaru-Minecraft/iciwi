@@ -27,13 +27,13 @@ import static org.bukkit.Bukkit.getServer;
 
 public class EventSigns implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  
+
   private int x = 0;
   private int y = 2147483647;
   private int z = 0;
   Material gateMaterial;
   BlockData gateData;
-  
+
   @EventHandler
   public void onPlayerJoin(PlayerJoinEvent event) {  // Create InStation for new player
     Player player = event.getPlayer();
@@ -154,21 +154,21 @@ public class EventSigns implements Listener {
       } // === END OF SIGN CLICK ===
     }
   }
-  
+
   // Charge maximum fare
   private void maxfare(Player player, String message) {
-    double fare = plugin.getConfig().getDouble("penalty");
+    double fare = Double.parseDouble(plugin.getConfig().get("penalty"));
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
     economy.withdrawPlayer(player, fare);
   }
-  
+
   // Decide gate to open
   private void decideGate(BlockFace face, Location signLocation) {
     World world = signLocation.getWorld();
     x = signLocation.getBlockX();
     y = signLocation.getBlockY();
     z = signLocation.getBlockZ();
-    
+
     if (face == BlockFace.SOUTH) {
       Location location = new Location(world, x-1, y, z-1);
       Block gate = location.getBlock();
@@ -203,7 +203,7 @@ public class EventSigns implements Listener {
       z++;
     }
   }
-  
+
   // Entry sequence method
   private void entry(String station, Player player, List<String> lore) {
     if (!station.isEmpty()) {
@@ -217,7 +217,7 @@ public class EventSigns implements Listener {
       }
     }
   }
-  
+
   // Exit sequence method
   private void exit(String inSystem, String station, Player player, String ticketType, double fare) {
     String playerName = player.getName();
@@ -225,20 +225,20 @@ public class EventSigns implements Listener {
       player.sendMessage(String.format(ChatColor.GREEN+"Entered %s, Exited %s. Fare: "+ChatColor.YELLOW+"£%.2f", inSystem, station, fare));
     else player.sendMessage(ChatColor.GREEN+"Entered "+inSystem+". Exited "+station+".");
     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.4f);
-    
+
     // Paper ticket
     if (ticketType.equals(inSystem))
       player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
-      
+
       // Iciwi card
     else if (ticketType.equals("Serial number:")) {
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
       assert ticketMeta != null;
       String serial = Objects.requireNonNull(ticketMeta.getLore()).get(1);
-      
+
       // Get SQL
       CardSql app = new CardSql();
-      
+
       // Check for discounts
       StationOwners stationOwners = new StationOwners();
       boolean entryDiscount = stationOwners.getStationOwner(inSystem).equals(inSystem);
@@ -251,7 +251,7 @@ public class EventSigns implements Listener {
         fare = 0;
         player.sendMessage(ChatColor.GREEN+"Rail pass approved. Paid £0.");
       }
-      
+
       // Update card value
       app.updateCard(serial, app.getCardValue(serial)-fare);
       // Log
@@ -261,13 +261,13 @@ public class EventSigns implements Listener {
     // remove player from insystem
     plugin.getConfig().set(playerName, "");
   }
-  
+
   @EventHandler  // If player walked through fare gate, close it
   public void CheckPlayerMove(PlayerMoveEvent event) {
     if (event.getFrom().getBlockX() == x && event.getFrom().getBlockY() == y && event.getFrom().getBlockZ() == z) {
       Location location = new Location(event.getPlayer().getWorld(), x, y, z);
       Block block = location.getBlock();
-      // Wait 0.5s
+      // Wait 0.4s
       BukkitRunnable task = new BukkitRunnable() {
         @Override
         public void run() {
@@ -279,7 +279,7 @@ public class EventSigns implements Listener {
           gateData = null;
         }
       };
-      task.runTaskLater(plugin, 10);
+      task.runTaskLater(plugin, 8);
     }
   }
 }

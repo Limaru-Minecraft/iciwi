@@ -24,6 +24,9 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
   public static Economy economy = null;
   public boolean destroy = true;
 
+  private File ownersFile;
+  private FileConfiguration owners;
+
   @Override
   public void onDisable(){
     saveConfig();
@@ -37,10 +40,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     boolean eco = setupEconomy();
 
     // === Config ===
-    StationOwners stationOwners = new StationOwners();
-    stationOwners.saveConfig();
-    getConfig().options().copyDefaults(true);
-    saveConfig();
+    createStationOwners();
 
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
@@ -57,17 +57,15 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       public void run() {
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
         Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fIf you are currently riding a train, please get off at the next stop.");
-        for (Player player : Bukkit.getOnlinePlayers())
-        {
-        	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+          player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
         }
       }
     }, 72000, 216000);
     Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
         public void run(){
-          for (Player player : Bukkit.getOnlinePlayers())
-          {
-          	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.2f);
+          for (Player player : Bukkit.getOnlinePlayers()) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.2f);
           }
         }
       }, 72004, 216000);
@@ -88,6 +86,26 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     app.initTables(new String[] {"Entetsu", "Lipan"});
 
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
+  }
+
+  // === Config ===
+  public FileConfiguration getOwners() {
+    return this.owners;
+  }
+
+  private void createStationOwners() {
+      ownersFile = new File(getDataFolder(), "owners.yml");
+      if (!ownersFile.exists()) {
+          ownersFile.getParentFile().mkdirs();
+          saveResource("owners.yml", false);
+       }
+
+      owners= new YamlConfiguration();
+      try {
+          owners.load(ownersFile);
+      } catch (IOException | InvalidConfigurationException e) {
+          e.printStackTrace();
+      }
   }
 
 
