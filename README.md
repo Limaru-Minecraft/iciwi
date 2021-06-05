@@ -20,14 +20,6 @@ Normal exit sign for exiting paid zone
 <anything>
 <anything>
 ```
-## Transfer
-Entry sign for entering paid zone used at out-of-station interchanges (OSIs)
-```
-[Transfer]
-<station name>
-<anything>
-<anything>
-```
 ## Ticket Machine
 A ticket machine
 ```
@@ -49,3 +41,6 @@ One time payment, only accepts ICIWI cards, no paper tickets allowed
 `/traindestroydelay` Reschedules the periodic train destroy.
 `/ticketmachine <station>` Opens up a ticket machine for the specified station.
 `/newdiscount <card serial number>` Redeems an existing card with the stated serial number.
+
+# Transferring
+Exiting one station and entering another within 5 min counts as a transfer.
