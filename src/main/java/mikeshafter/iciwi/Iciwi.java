@@ -4,7 +4,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -23,9 +23,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
 
   public static Economy economy = null;
   public boolean destroy = true;
-
-  private File ownersFile;
-  private FileConfiguration owners;
 
   @Override
   public void onDisable(){
@@ -40,8 +37,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     boolean eco = setupEconomy();
 
     // === Config ===
-    createStationOwners();
-
+    
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new CustomInventory(), this);
@@ -53,60 +49,16 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     Bukkit.dispatchCommand(console, "ekillall minecarts world");
 
     // === Periodic train destroyer ===
-    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-      public void run() {
-        Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains will be destroyed in 1 minute!");
-        Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fIf you are currently riding a train, please get off at the next stop.");
-        for (Player player : Bukkit.getOnlinePlayers()) {
-          player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.5f);
-        }
-      }
-    }, 72000, 216000);
-    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-        public void run(){
-          for (Player player : Bukkit.getOnlinePlayers()) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1.0f, 1.2f);
-          }
-        }
-      }, 72004, 216000);
-    Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-      public void run(){
-        if (destroy){
-          ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-          Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrains have been destroyed!");
-          Bukkit.dispatchCommand(console, "train destroyall");
-          Bukkit.dispatchCommand(console, "ekillall minecarts world");
-        } else {
-          destroy = true;
-          Bukkit.broadcastMessage(ChatColor.GREEN+"§b[§aICIWI§b] §fTrainDestroy rescheduled, trains will be destroyed in the next cycle.");
-        }}}, 73200, 216000);
+
 
     // === SQL ===
     CardSql app = new CardSql();
-    app.initTables(new String[] {"Entetsu", "Lipan"});
+    app.initTables();
 
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
 
   // === Config ===
-  public FileConfiguration getOwners() {
-    return this.owners;
-  }
-
-  private void createStationOwners() {
-      ownersFile = new File(getDataFolder(), "owners.yml");
-      if (!ownersFile.exists()) {
-          ownersFile.getParentFile().mkdirs();
-          saveResource("owners.yml", false);
-       }
-
-      owners= new YamlConfiguration();
-      try {
-          owners.load(ownersFile);
-      } catch (IOException | InvalidConfigurationException e) {
-          e.printStackTrace();
-      }
-  }
 
 
   private boolean setupEconomy(){
@@ -118,8 +70,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
   }
 
 
-  @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
+  @Override public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args){
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
       try {
         String from = args[0];

@@ -155,7 +155,8 @@ public class CustomInventory implements Listener{
       // Check if it's really an ICIWI card
       try {
         temp = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(0);
-      } catch (Exception ignored) {
+      } catch (Exception e) {
+        player.sendMessage(ChatColor.RED+"That is not a valid card!");
       }
       // if yes, delete the card
       if (temp.equals("Serial number:")) {
@@ -164,6 +165,7 @@ public class CustomInventory implements Listener{
         app.delCard(serial);
         // ==
         player.getInventory().remove(item);
+        player.sendMessage(ChatColor.GREEN+"Refunded card "+ChatColor.YELLOW+serial+ChatColor.GREEN+". Received £"+ChatColor.YELLOW+(5d+app.getCardValue(serial))+ChatColor.GREEN+".");
       }
     } // end of select card
   }
@@ -209,7 +211,7 @@ public class CustomInventory implements Listener{
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                        ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                        ];
-        app.newCard("I"+sum+serial, val);
+        app.newCard("I"+sum+"-"+serial, val);
         
         ArrayList<String> lore = new ArrayList<>();
         lore.add("Serial number:");

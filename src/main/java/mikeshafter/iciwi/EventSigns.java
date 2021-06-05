@@ -18,12 +18,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 import static mikeshafter.iciwi.Iciwi.economy;
 import static org.bukkit.Bukkit.getServer;
+
 
 public class EventSigns implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
@@ -134,7 +136,7 @@ public class EventSigns implements Listener {
         }
 
         // === TICKET MACHINE ===
-        else if (signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")){
+        else if ((signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")){
           new CustomInventory().newTM(player, station);
         }
 
@@ -157,7 +159,9 @@ public class EventSigns implements Listener {
 
   // Charge maximum fare
   private void maxfare(Player player, String message) {
-    double fare = Double.parseDouble(plugin.getConfig().get("penalty"));
+    double fare;
+    if (plugin.getConfig().get("penalty") != null) fare = Double.parseDouble((String) Objects.requireNonNull(plugin.getConfig().get("penalty")));
+    else fare = 0d;
     player.sendMessage(message+" "+ChatColor.GOLD+"Fare: £"+fare);
     economy.withdrawPlayer(player, fare);
   }
@@ -235,21 +239,27 @@ public class EventSigns implements Listener {
       ItemMeta ticketMeta = player.getInventory().getItemInMainHand().getItemMeta();
       assert ticketMeta != null;
       String serial = Objects.requireNonNull(ticketMeta.getLore()).get(1);
+      // Serial is in the format "I"+sum+"-"+serial
+      
 
       // Get SQL
       CardSql app = new CardSql();
 
-      // Check for discounts
-      StationOwners stationOwners = new StationOwners();
-      boolean entryDiscount = stationOwners.getStationOwner(inSystem).equals(inSystem);
-      boolean exitDiscount  = stationOwners.getStationOwner(inSystem).equals(station);
-      if (entryDiscount ^ exitDiscount) {
-        fare /= 2;
-        player.sendMessage(ChatColor.GREEN+"Rail pass approved. Fare halved.");
-      }
-      else if (entryDiscount & exitDiscount) {
-        fare = 0;
-        player.sendMessage(ChatColor.GREEN+"Rail pass approved. Paid £0.");
+      // TODO: Check for discounts
+      HashSet<String> operatorSet = app.getOperatorsFromSerial(serial);
+      for (String operator: operatorSet) {
+        HashSet<String> operatorStationSet = app.getOperatorStations(operator);
+    
+        double discountPercentage = 1d; // TODO: different discount types
+        double halfFare = fare * 0.5 * discountPercentage;
+    
+        if (operatorStationSet.contains(inSystem)) {
+          fare -= halfFare;
+        }
+        if (operatorStationSet.contains(station)) {
+          fare -= halfFare;
+        }
+        if (fare == 0) break;
       }
 
       // Update card value
