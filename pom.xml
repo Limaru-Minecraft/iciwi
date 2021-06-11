@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.16.5d2-Discounts</version>
+  <version>1.17.0d1</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -39,6 +39,10 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <minimizeJar>true</minimizeJar>
+              <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
+              <outputFile>../../M. Shaftere/servers/testserver/plugins/Iciwi.jar</outputFile>
+
             </configuration>
           </execution>
         </executions>
@@ -89,13 +93,6 @@
       <artifactId>Vault</artifactId>
       <version>1.7.3</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>20.1.0</version>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

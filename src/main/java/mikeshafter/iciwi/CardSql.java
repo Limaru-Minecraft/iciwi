@@ -21,7 +21,7 @@ public class CardSql{
   public void initTables() {
     // SQLite connection string
     String url = "jdbc:sqlite:IciwiCards.db";
-
+  
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
@@ -49,7 +49,7 @@ public class CardSql{
       System.out.println(e.getMessage());
     }
   }
-
+  
   public void delCard(String serial) {
     String sql = "DELETE FROM cards WHERE serial = ?";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -97,32 +97,21 @@ public class CardSql{
         assert false;
         returnValue.add(rs.getString(1));
       }
-
+  
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
-
+  
     return returnValue;
   }
-
-  public double getCardValue(String serial) {
-    String sql = "SELECT value FROM cards WHERE serial = ?";
-    double returnValue = 0;
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, serial);
-      ResultSet rs = statement.executeQuery();
-      returnValue = rs.getDouble("value");
-
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
-
-    return Math.round(returnValue*100.0)/100.0;
+  
+  public void addValueToCard(String serial, double value) {
+    updateCard(serial, getCardValue(serial)+value);
   }
-
+  
   public void updateCard(String serial, double value) {
     String sql = "UPDATE cards SET value=? WHERE serial=?";
-
+    
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(2, serial);
       statement.setDouble(1, Math.round(value*100.0)/100.0);
@@ -130,6 +119,21 @@ public class CardSql{
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }
+  }
+  
+  public double getCardValue(String serial) {
+    String sql = "SELECT value FROM cards WHERE serial = ?";
+    double returnValue = 0;
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, serial);
+      ResultSet rs = statement.executeQuery();
+      returnValue = rs.getDouble("value");
+      
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
+    }
+    
+    return Math.round(returnValue*100.0)/100.0;
   }
   
   public void setStationOperator(String operator, String station) {
@@ -150,12 +154,12 @@ public class CardSql{
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, operator);
       ResultSet rs = statement.executeQuery();
-    
+  
       while (rs.next()) {
         assert false;
         returnValue.add(rs.getString(1));
       }
-    
+  
     } catch (SQLException e) {
       System.out.println(e.getMessage());
     }

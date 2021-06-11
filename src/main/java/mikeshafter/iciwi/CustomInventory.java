@@ -3,10 +3,13 @@ package mikeshafter.iciwi;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,24 +22,38 @@ import java.util.Objects;
 import static mikeshafter.iciwi.Iciwi.economy;
 
 
-public class CustomInventory implements Listener{
+public class CustomInventory implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-
-
+  
+  
   String station;
   double val;
   ItemStack cardToCharge;
   
   
+  @EventHandler
+  public void TMSignClick(PlayerInteractEvent event) {
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign) {
+      Sign sign = (Sign) event.getClickedBlock().getState();
+      String signLine0 = ChatColor.stripColor(sign.getLine(0));
+      String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+      
+      if ((signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
+        this.newTM(event.getPlayer(), station);
+      }
+    }
+  }
+  
+  
   public void newTM(Player player, String sta) {
     station = sta;
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
-
+    
     // Single Journey Ticket
     ItemStack item = new ItemStack(Material.PAPER, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
-    itemMeta.setDisplayName(ChatColor.GREEN+"Buy a single journey ticket");
+    itemMeta.setDisplayName(ChatColor.GREEN+"New single journey ticket");
     ArrayList<String> lore = new ArrayList<>();
     lore.add(station);
     itemMeta.setLore(lore);
@@ -90,12 +107,12 @@ public class CustomInventory implements Listener{
       String temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
   
       // Buy a single journey ticket
-      if (temp.equals(ChatColor.GREEN+"Buy a single journey ticket")) {
+      if (temp.equals(ChatColor.GREEN+"New single journey ticket")) {
         player.closeInventory();
         station = Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(event.getCurrentItem()).getItemMeta()).getLore()).get(0);
         newKeypad(player, 1, 0.00, station);
       }
-
+  
       // Buy New ICIWI Card
       else if (temp.equals(ChatColor.LIGHT_PURPLE+"Buy New ICIWI Card")) {
         player.closeInventory();
@@ -231,7 +248,7 @@ public class CustomInventory implements Listener{
         try{
           float value = Float.parseFloat(temp)/100.0f;
           val = Math.round((val*10.0+value)*100.0)/100.0;
-          newKeypad(player, 2, val, ChatColor.BLUE+"ICIWI Card - £"+val);
+          newKeypad(player, 2, val, String.format(ChatColor.BLUE+"ICIWI Card - £%.2f", val));
         } catch (NumberFormatException ignored) {
         }
       }
@@ -251,8 +268,6 @@ public class CustomInventory implements Listener{
         temp = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
       } catch (Exception ignored) {
       }
-  
-      player.sendMessage(temp);
       
       // Reset value
       if (temp.equals("CLEAR")) {

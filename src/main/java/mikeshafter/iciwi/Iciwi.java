@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import mikeshafter.iciwi.iciwiTM.CustomInventory;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,7 +13,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,46 +30,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
   }
 
   @Override
-  public void onEnable() { // Use config to store station names and fares
-
-    // === Economy ===
-    boolean eco = setupEconomy();
-
-    // === Config ===
-
-    // === Register events ===
-    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new CustomInventory(), this);
-    getServer().getPluginManager().registerEvents(new EventSigns(), this);
-
-
-    // === Destroy minecarts ===
-    Bukkit.dispatchCommand(console, "train destroyall");
-    Bukkit.dispatchCommand(console, "ekillall minecarts world");
-
-    // === Periodic train destroyer ===
-
-
-    // === SQL ===
-    CardSql app = new CardSql();
-    app.initTables();
-
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
-  }
-
-  // === Config ===
-
-
-  private boolean setupEconomy(){
-    RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-    if (economyProvider != null){
-      economy = economyProvider.getProvider();
-    }
-    return (economy != null);
-  }
-
-
-  @Override public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args){
+  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
       try {
         String from = args[0];
@@ -132,5 +91,43 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       }
     }
     return false;
+  }
+  
+  // === Config ===
+  
+  @Override
+  public void onEnable() { // Use config to store station names and fares
+    
+    // === Economy ===
+    boolean eco = setupEconomy();
+    
+    // === Config ===
+    
+    // === Register events ===
+    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    getServer().getPluginManager().registerEvents(new CustomInventory(), this);
+    getServer().getPluginManager().registerEvents(new TBarrier(), this);
+    
+    
+    // === Destroy minecarts ===
+    Bukkit.dispatchCommand(console, "train destroyall");
+    Bukkit.dispatchCommand(console, "ekillall minecarts world");
+    
+    // === Periodic train destroyer ===
+    
+    
+    // === SQL ===
+    CardSql app = new CardSql();
+    app.initTables();
+    
+    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
+  }
+  
+  private boolean setupEconomy() {
+    RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+    if (economyProvider != null) {
+      economy = economyProvider.getProvider();
+    }
+    return (economy != null);
   }
 }
