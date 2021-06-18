@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.17.0d1</version>
+  <version>1.17.0d2</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -30,7 +30,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.2.4</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -42,7 +42,6 @@
               <minimizeJar>true</minimizeJar>
               <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
               <outputFile>../../M. Shaftere/servers/testserver/plugins/Iciwi.jar</outputFile>
-
             </configuration>
           </execution>
         </executions>

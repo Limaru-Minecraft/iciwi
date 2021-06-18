@@ -1,5 +1,5 @@
 name: Iciwi
-version: 1.17.0d1
+version: 1.17.0d2
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.16
 description: Iciwi plugin for Limaru
@@ -19,13 +19,19 @@ commands:
     description: Turns off automatic train destroy, resets after 1h automatically.
     permission: iciwi.traindestroydelay
   newdiscount:
-    usage: /<command> <serial prefix> <serial> <operator> <days before expiry>
+    usage: /<command> <serial> <operator> <days before expiry>
     description: Adds a rail pass ("discounts") onto existing cards
     permission: iciwi.newdiscount
   redeemcard:
     usage: /<command> <number>. E.g. /redeemcard IA-12345
     description: Redeems an existing card with the stated serial number.
     permission: iciwi.redeemcard
+
+  reloadowners:
+    usage: /<command>
+    description: Reloads owners.yml
+    permission: iciwi.reload
+
 
 permissions:
   iciwi.*:
@@ -35,6 +41,7 @@ permissions:
       iciwi.ticketmachine: true
       iciwi.traindestorydelay: true
       iciwi.newdiscount: true
+      iciwi.reload: true
     default: op
   iciwi.checkfare:
     description: Allows the use of /checkfare
@@ -50,4 +57,7 @@ permissions:
     default: op
   iciwi.redeemcard:
     description: Allows the use of /redeemcard
+    default: op
+  iciwi.reload:
+    description: Allows the use of all reload commands
     default: op

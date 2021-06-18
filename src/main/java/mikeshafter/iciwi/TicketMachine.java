@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -22,7 +23,7 @@ import java.util.Objects;
 import static mikeshafter.iciwi.Iciwi.economy;
 
 
-public class CustomInventory implements Listener {
+public class TicketMachine implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   
   
@@ -179,10 +180,10 @@ public class CustomInventory implements Listener {
       if (temp.equals("Serial number:")) {
         String serial = Objects.requireNonNull(Objects.requireNonNull(item.getItemMeta()).getLore()).get(1);
         economy.depositPlayer(player, 5d+app.getCardValue(serial));
-        app.delCard(serial);
         // ==
+        player.sendMessage(String.format(ChatColor.GREEN+"Refunded card "+ChatColor.YELLOW+serial+ChatColor.GREEN+". Received "+ChatColor.YELLOW+"£%.2f"+ChatColor.GREEN+".", 5d+app.getCardValue(serial)));
         player.getInventory().remove(item);
-        player.sendMessage(ChatColor.GREEN+"Refunded card "+ChatColor.YELLOW+serial+ChatColor.GREEN+". Received £"+ChatColor.YELLOW+(5d+app.getCardValue(serial))+ChatColor.GREEN+".");
+        app.delCard(serial);
       }
     } // end of select card
   }
@@ -224,7 +225,7 @@ public class CustomInventory implements Listener {
         ItemMeta cardMeta = card.getItemMeta();
         assert cardMeta != null;
         cardMeta.setDisplayName(ChatColor.GREEN+"ICIWI Card");
-        int serial = (int) (Math.floor(Instant.now().getEpochSecond())%100000+(int) (Math.random())*110000);
+        int serial = new SecureRandom().nextInt(100000);
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                        ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                        ];
@@ -277,8 +278,12 @@ public class CustomInventory implements Listener {
       // Done with keying in values
       else if (temp.equals("ENTER")) {
         if (economy.getBalance(player) >= val) {
-          // Take money from player and send message
+          // Take money from player
           economy.withdrawPlayer(player, val);
+          // Place the money inside the coffers
+          String stationOwner = StationOwners.getOwner(station);
+          StationOwners.deposit(stationOwner, val);
+          // Send message
           player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+"£"+val);
           // Prepare card
           ItemStack card = new ItemStack(Material.PAPER, 1);

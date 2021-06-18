@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -87,7 +88,7 @@ public class TBarrier implements Listener {
             }
           }
 
-// Common code
+// == Common code
 // Do not run if player is still a key in the HashMaps
           if (flag && gateLocationMap.get(player) == null && gateTypeMap.get(player) == null) {
             plugin.getConfig().set(player.getName(), eStation);
@@ -123,10 +124,12 @@ public class TBarrier implements Listener {
               BukkitRunnable closeGates = new BukkitRunnable() {
                 @Override
                 public void run() {
-                  location.getBlock().setType(gateTypeMap.get(player));
-                  location.getBlock().setBlockData(gateDataMap.get(player));
-                  gateLocationMap.remove(player);
-                  gateTypeMap.remove(player);
+                  if (gateLocationMap.containsKey(player) && gateTypeMap.containsKey(player)) {
+                    gate.setType(gateTypeMap.get(player));
+                    gate.setBlockData(gateDataMap.get(player));
+                    gateLocationMap.remove(player);
+                    gateTypeMap.remove(player);
+                  }
                 }
               };
               closeGates.runTaskLater(plugin, 100);
@@ -155,6 +158,8 @@ public class TBarrier implements Listener {
             if (allowedFare.equals(eStation) || fare >= Double.parseDouble(allowedFare)) {
 // remove ticket from player inventory
               player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
+              
+// Money has already been put in the operator's account so we don't do that again
 
 // Exit allowed
               flag = true;
@@ -176,11 +181,24 @@ public class TBarrier implements Listener {
 // Get serial number
               String serial = lore.get(1);
               
+// Get discounts associated with the card and deduct fare accordingly
+              HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
+              String entryStationOwner = StationOwners.getOwner(entryStation);
+              String exitStationOwner  = StationOwners.getOwner(eStation);
+              double half = fare/2;
+              if (discounts.contains(entryStationOwner)) fare -= half;
+              if (discounts.contains(exitStationOwner))  fare -= half;
+              
               if (cardSql.getCardValue(serial) >= fare) {
 // deduct fare
                 cardSql.addValueToCard(serial, -1*fare);
                 player.sendMessage(String.format(ChatColor.GREEN+"Fare: "+ChatColor.YELLOW+"£%.2f"+ChatColor.GREEN+". Remaining value: "+ChatColor.YELLOW+"£%.2f", fare, cardSql.getCardValue(serial)));
-// Exit allowed
+// give the money to the station operators
+                StationOwners.deposit(entryStationOwner, fare/2);
+                StationOwners.deposit(exitStationOwner, fare/2);
+                
+// Log and Exit allowed
+                cardSql.log(serial, entryStation, eStation, fare);
                 flag = true;
               } else {
 // Exit not allowed
@@ -189,7 +207,7 @@ public class TBarrier implements Listener {
             }
           }
 
-// Common code
+// == Common code
 // Do not run if player is still a key in the HashMaps
           if (flag && gateLocationMap.get(player) == null && gateTypeMap.get(player) == null) {
             plugin.getConfig().set(player.getName(), "");
@@ -225,10 +243,12 @@ public class TBarrier implements Listener {
               BukkitRunnable closeGates = new BukkitRunnable() {
                 @Override
                 public void run() {
-                  location.getBlock().setType(gateTypeMap.get(player));
-                  location.getBlock().setBlockData(gateDataMap.get(player));
-                  gateLocationMap.remove(player);
-                  gateTypeMap.remove(player);
+                  if (gateLocationMap.containsKey(player) && gateTypeMap.containsKey(player)) {
+                    gate.setType(gateTypeMap.get(player));
+                    gate.setBlockData(gateDataMap.get(player));
+                    gateLocationMap.remove(player);
+                    gateTypeMap.remove(player);
+                  }
                 }
               };
               closeGates.runTaskLater(plugin, 100);
@@ -245,14 +265,16 @@ public class TBarrier implements Listener {
 
 // Wait 0.4s
     if (gateLocationMap.containsKey(player) && sameBlockLocation(event.getFrom(), gateLocationMap.get(player))) {
-      Location location = gateLocationMap.get(player);
       BukkitRunnable closeGates = new BukkitRunnable() {
         @Override
         public void run() {
-          location.getBlock().setType(gateTypeMap.get(player));
-          location.getBlock().setBlockData(gateDataMap.get(player));
-          gateLocationMap.remove(player);
-          gateTypeMap.remove(player);
+          if (gateLocationMap.containsKey(player) && gateTypeMap.containsKey(player)) {
+            Location location = gateLocationMap.get(player);
+            location.getBlock().setType(gateTypeMap.get(player));
+            location.getBlock().setBlockData(gateDataMap.get(player));
+            gateLocationMap.remove(player);
+            gateTypeMap.remove(player);
+          }
         }
       };
       closeGates.runTaskLater(plugin, 8);

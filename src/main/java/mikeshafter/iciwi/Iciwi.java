@@ -41,26 +41,34 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
       }
-    } else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
+      
+    }
+    
+    else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         String station = args[0];
-        CustomInventory inventory = new CustomInventory();
+        TicketMachine inventory = new TicketMachine();
         inventory.newTM(player, station);
         return true;
       } else {
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-    } else if (command.getName().equalsIgnoreCase("traindestroydelay") && sender.hasPermission("iciwi.traindestroydelay")) {
-      destroy = false;
-      Bukkit.broadcastMessage("§b[§aICIWI§b] §fTrainDestroy rescheduled.");
-      return true;
-    } else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
-      long expiry = Long.parseLong(args[2])*86400+Instant.now().getEpochSecond();
-      new CardSql().setDiscount(args[0], args[1], expiry);
-      return true;
-    } else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
+      
+    }
+    
+    else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
+      // newdiscount <serial> <operator> <days before expiry>
+      if (args.length == 3) {
+        long expiry = Long.parseLong(args[2])*86400+Instant.now().getEpochSecond();
+        new CardSql().setDiscount(args[0], args[1], expiry);
+        return true;
+      }
+      
+    }
+    
+    else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         int serial = Integer.parseInt(args[0].substring(3));
@@ -90,6 +98,11 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
         }
       }
     }
+    
+    else if (command.getName().equalsIgnoreCase("reloadowners") && sender.hasPermission("iciwi.reload")) {
+      StationOwners.reload();
+    }
+    
     return false;
   }
   
@@ -105,20 +118,17 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new CustomInventory(), this);
+    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    
-    
-    // === Destroy minecarts ===
-    Bukkit.dispatchCommand(console, "train destroyall");
-    Bukkit.dispatchCommand(console, "ekillall minecarts world");
-    
-    // === Periodic train destroyer ===
-    
     
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
+    
+    // === Load station operator list ===
+    StationOwners.setup();
+    getConfig().options().copyDefaults(true);
+    StationOwners.get().options().copyDefaults(true);
     
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
