@@ -11,7 +11,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="116" target="1.8" />
-      <module name="iciwi" target="8" />
+      <module name="iciwi" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

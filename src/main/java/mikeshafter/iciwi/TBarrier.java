@@ -142,7 +142,7 @@ public class TBarrier implements Listener {
           boolean flag = false;
 // Get fare from entryStation to eStation
           String entryStation = plugin.getConfig().getString(player.getName());
-          double fare = JsonManager.getFare(eStation, entryStation);
+          double fare = JsonManager.getFare(entryStation, eStation);
 
 
 // Paper ticket

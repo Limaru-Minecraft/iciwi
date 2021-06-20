@@ -26,11 +26,14 @@ commands:
     usage: /<command> <number>. E.g. /redeemcard IA-12345
     description: Redeems an existing card with the stated serial number.
     permission: iciwi.redeemcard
-
-  reloadowners:
+  reloadconfig:
     usage: /<command>
     description: Reloads owners.yml
     permission: iciwi.reload
+  coffers:
+    usage: /<command> <empty|view> [(if "empty") company name]
+    description: Withdraws/view coffers
+    permission: iciwi.coffers
 
 
 permissions:
@@ -42,6 +45,7 @@ permissions:
       iciwi.traindestorydelay: true
       iciwi.newdiscount: true
       iciwi.reload: true
+      iciwi.coffers: true
     default: op
   iciwi.checkfare:
     description: Allows the use of /checkfare
@@ -61,3 +65,9 @@ permissions:
   iciwi.reload:
     description: Allows the use of all reload commands
     default: op
+  iciwi.coffers:
+    description: Allows the use of /coffers
+    default: op
+  iciwi.coffers.viewall:
+    description: Makes /coffers view show all companies
+    default: false

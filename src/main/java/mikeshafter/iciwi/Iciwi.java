@@ -4,10 +4,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,13 +15,13 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 
-public final class Iciwi extends JavaPlugin implements CommandExecutor{
-
+public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
+  
   public static Economy economy = null;
   public boolean destroy = true;
-
+  
   @Override
-  public void onDisable(){
+  public void onDisable() {
     saveConfig();
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
@@ -35,7 +32,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
       try {
         String from = args[0];
         String to = args[1];
-        double fare = JsonManager.getFare(to, from);
+        double fare = JsonManager.getFare(from, to);
         sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
         return true;
       } catch (Exception e) {
@@ -97,10 +94,44 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
           return true;
         }
       }
-    }
-    
-    else if (command.getName().equalsIgnoreCase("reloadowners") && sender.hasPermission("iciwi.reload")) {
+    } else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
       StationOwners.reload();
+      return true;
+    } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
+      if (args.length == 2 && args[0].equals("empty") && sender instanceof Player) {
+        Player player = (Player) sender;
+        // Check if the player owns the company
+        String ownerName = StationOwners.get().getString("Aliases."+args[1]);
+        if (player.getName().equalsIgnoreCase(ownerName)) {
+          // Empty coffers and deposit in player's wallet
+          economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+args[1]));
+          StationOwners.get().set("Coffers."+args[1], 0.0);
+        }
+      } else if (args.length == 1 && args[0].equals("empty") && sender instanceof Player) {
+        Player player = (Player) sender;
+        // Check if the player owns the company
+        for (String company : StationOwners.get().getConfigurationSection("Aliases").getKeys(false)) {
+          if (StationOwners.get().getString("Aliases."+company).equalsIgnoreCase(player.getName())) {
+            economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+company));
+            StationOwners.get().set("Coffers."+company, 0.0);
+          }
+        }
+      } else if (args.length == 1 && args[0].equals("view")) {
+        if (sender.hasPermission("iciwi.coffers.viewall")) {
+          sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
+          for (String company : StationOwners.get().getConfigurationSection("Coffers").getKeys(false)) {
+            sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
+          }
+        } else {
+          Player player = (Player) sender;
+          sender.sendMessage("=== COFFERS OF YOUR COMPANIES ===");
+          for (String company : StationOwners.get().getConfigurationSection("Aliases").getKeys(false)) {
+            if (StationOwners.get().getString("Aliases."+company).equalsIgnoreCase(player.getName())) {
+              sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
+            }
+          }
+        }
+      }
     }
     
     return false;
@@ -114,22 +145,28 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor{
     // === Economy ===
     boolean eco = setupEconomy();
     
-    // === Config ===
-    
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new TicketMachine(), this);
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    
+  
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-    
+  
     // === Load station operator list ===
     StationOwners.setup();
     getConfig().options().copyDefaults(true);
     StationOwners.get().options().copyDefaults(true);
-    
+  
+    // owners.yml teacher
+    StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
+    StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
+    StationOwners.get().addDefault("Coffers.ExampleOperator", 0.0);
+  
+    saveConfig();
+    StationOwners.save();
+  
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
   
