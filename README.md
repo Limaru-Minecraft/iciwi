@@ -28,19 +28,13 @@ A ticket machine
 <anything>
 <anything>
 ```
-## Payment
-One time payment, only accepts ICIWI cards, no paper tickets allowed
-```
-[Payment]
-<payment made>
-<player made payable to>
-<anything>
-```
 # Commands
 `/checkfare <from> <to>` Checks the fare from one station to another. The fares are taken from fares.json.
-`/traindestroydelay` Reschedules the periodic train destroy.
 `/ticketmachine <station>` Opens up a ticket machine for the specified station.
-`/newdiscount <card serial number>` Redeems an existing card with the stated serial number.
+`/newdiscount <card serial number> <company name> <days till expiry>` Gives the card a rail pass (free journey from/to one company's stations)
+`/redeemcard <card serial number>` Redeems a card
+`/coffers empty <company name>` Withdraws the money stored in your company's coffers.
+`/coffers view [company name]` View the money stored in your company's coffers.
 
 # Transferring
-Exiting one station and entering another within 5 min counts as a transfer.
+Exiting one station and entering another within 5 min counts as a transfer. (not implemented yet)
