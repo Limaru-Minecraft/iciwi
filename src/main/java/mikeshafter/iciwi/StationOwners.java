@@ -4,7 +4,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,18 +37,21 @@ public class StationOwners {
     }
   }
   
-  public static void reload() { configFile = YamlConfiguration.loadConfiguration(file); }
+  public static void reload() {
+    configFile = YamlConfiguration.loadConfiguration(file);
+  }
   
-//  public static void loadIntoSql() {
-//    CardSql cardSql = new CardSql();
-//    for (String key: Objects.requireNonNull(configFile.getConfigurationSection("Operators")).getKeys(true)) {
-//      // setStationOperator(operator, station)
-//      cardSql.setStationOperator(configFile.getString(key), key);
-//    }
-//  }
+  public static String getOwner(String station) {
+    return configFile.getString("Operators."+station);
+  }
   
-  public static String getOwner(String station) { return configFile.getString("Operators."+station); }
+  public static void deposit(String operator, double amt) {
+    configFile.set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
+    save();
+  }
   
-  public static void deposit(String operator, double amt) { configFile.set("Coffers."+operator, configFile.getDouble("Coffers."+operator) + amt); save(); }
+  public static double getRailPassPrice(String operator) {
+    return configFile.getDouble("RailPassPrices."+operator);
+  }
   
 }

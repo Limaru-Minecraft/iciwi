@@ -163,6 +163,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
     StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
     StationOwners.get().addDefault("Coffers.ExampleOperator", 0.0);
+    StationOwners.get().addDefault("RailPassPrices.ExampleOperator", 100.0);
   
     saveConfig();
     StationOwners.save();

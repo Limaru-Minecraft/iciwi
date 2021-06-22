@@ -69,6 +69,13 @@
       <id>vault-repo</id>
       <url>http://nexus.hc.to/content/repositories/pub_releases</url>
     </repository>
+
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+
+
   </repositories>
 
   <dependencies>
@@ -77,6 +84,12 @@
       <artifactId>spigot-api</artifactId>
       <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.stack9</groupId>
+      <artifactId>MenuAPI</artifactId>
+      <version>v1.4.1</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/net.milkbowl.vault/Vault -->
