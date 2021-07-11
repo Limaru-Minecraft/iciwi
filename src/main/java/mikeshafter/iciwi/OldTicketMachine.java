@@ -22,7 +22,7 @@ import java.util.Objects;
 import static mikeshafter.iciwi.Iciwi.economy;
 
 
-public class TicketMachine implements Listener {
+public class OldTicketMachine implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   
   

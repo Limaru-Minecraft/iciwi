@@ -2,29 +2,38 @@ package mikeshafter.iciwi;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Scanner;
 
 
 public class JsonManager {
-  
-  private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  
+
   public static double getFare(String entryStation, String exitStation) {
-    String path = plugin.getDataFolder()+"/fares.json";
-    try (Stream<String> lines = Files.lines(Paths.get(path))) {
-      
-      String content = lines.collect(Collectors.joining(System.lineSeparator()));
+    Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  
+    File file = new File(plugin.getDataFolder(), "fares.json");
+  
+    try {
+      Scanner scanner = new Scanner(file);
+      StringBuilder contentBuilder = new StringBuilder();
+      while (scanner.hasNextLine()) {
+        contentBuilder.append(scanner.nextLine());
+      }
+    
+      //String content = nextLine.toString();
+      String content = contentBuilder.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
+      plugin.getServer().getConsoleSender().sendMessage(content); //TODO: Debug
+    
       JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
-      
+    
       JsonObject entryStationJson = fares.getAsJsonObject(entryStation);
       return entryStationJson.get(exitStation).getAsDouble();
-      
-    } catch (IOException e) {
+    
+    } catch (IOException|JsonSyntaxException e) {
       e.printStackTrace();
       return 0d;
     }

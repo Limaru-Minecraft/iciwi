@@ -28,7 +28,6 @@ public class CardSql{
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
     sql.add("CREATE TABLE IF NOT EXISTS log (serial text, start_station TEXT, end_station TEXT, price NUMERIC )");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text, operator text, expiry integer, FOREIGN KEY(serial) REFERENCES cards(serial), PRIMARY KEY(serial) )");
-    sql.add("CREATE TABLE IF NOT EXISTS station_operators (operator text, station text, PRIMARY KEY(operator) )");
 
     try (Connection conn = DriverManager.getConnection(url); Statement statement = conn.createStatement()) {
       for (String s : sql) {
@@ -52,7 +51,7 @@ public class CardSql{
   }
   
   public void delCard(String serial) {
-    String sql = "DELETE FROM cards WHERE serial = ?";
+    String sql = "DELETE cards, discounts FROM cards INNER JOIN discounts WHERE cards.serial = discounts.serial and cards.serial = ?";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
       statement.executeUpdate();
@@ -143,23 +142,4 @@ public class CardSql{
     return Math.round(returnValue*100.0)/100.0;
   }
   
-  public HashSet<String> getOperatorStations(String operator) {
-    String sql = "SELECT station FROM station_operators WHERE operator = ?";
-    HashSet<String> returnValue = new HashSet<>();
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, operator);
-      ResultSet rs = statement.executeQuery();
-  
-      while (rs.next()) {
-        assert false;
-        returnValue.add(rs.getString(1));
-      }
-  
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    }
-  
-    return returnValue;
-  }
-
 }

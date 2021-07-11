@@ -50,8 +50,8 @@ public class StationOwners {
     save();
   }
   
-  public static double getRailPassPrice(String operator) {
-    return configFile.getDouble("RailPassPrices."+operator);
+  public static double getRailPassPrice(String operator, int days) {
+    return configFile.getDouble("RailPassPrices."+operator+"."+days);
   }
   
 }

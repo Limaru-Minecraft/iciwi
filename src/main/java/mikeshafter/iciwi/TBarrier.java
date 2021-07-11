@@ -155,10 +155,10 @@ public class TBarrier implements Listener {
 // Get value of ticket
             String allowedFare = lore.get(1);  // this can be name of the station as well
             
-            if (allowedFare.equals(eStation) || fare >= Double.parseDouble(allowedFare)) {
+            if (allowedFare.equals(eStation) || (fare <= Double.parseDouble(allowedFare))) {
 // remove ticket from player inventory
               player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
-              
+
 // Money has already been put in the operator's account so we don't do that again
 
 // Exit allowed

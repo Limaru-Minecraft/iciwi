@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.tm.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
   
   public static Economy economy = null;
-  public boolean destroy = true;
   
   @Override
   public void onDisable() {
@@ -45,8 +45,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         String station = args[0];
-        TicketMachine inventory = new TicketMachine();
-        inventory.newTM(player, station);
+        TicketMachine ticketMachine = new TicketMachine();
+        ticketMachine.newTM(player, station);
         return true;
       } else {
         sender.sendMessage("Usage: /ticketmachine <station>");
@@ -141,14 +141,20 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   
   @Override
   public void onEnable() { // Use config to store station names and fares
-    
+  
     // === Economy ===
     boolean eco = setupEconomy();
-    
+  
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
+  
+    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
+    getServer().getPluginManager().registerEvents(new RailPassSelector(), this);
+    getServer().getPluginManager().registerEvents(new Keypad(), this);
+    getServer().getPluginManager().registerEvents(new CardPriceSelector(), this);
+    getServer().getPluginManager().registerEvents(new CardOperations(), this);
+  
   
     // === SQL ===
     CardSql app = new CardSql();
@@ -163,7 +169,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
     StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
     StationOwners.get().addDefault("Coffers.ExampleOperator", 0.0);
-    StationOwners.get().addDefault("RailPassPrices.ExampleOperator", 100.0);
+    StationOwners.get().addDefault("RailPassPrices.ExampleOperator.7", 25.0);
+    StationOwners.get().addDefault("RailPassPrices.ExampleOperator.30", 100.0);
   
     saveConfig();
     StationOwners.save();

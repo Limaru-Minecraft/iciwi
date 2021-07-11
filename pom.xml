@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.17.0d2</version>
+  <version>1.17.0d3</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -38,7 +38,8 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>false</shadedArtifactAttached>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
               <minimizeJar>true</minimizeJar>
               <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
               <outputFile>../../M. Shaftere/servers/testserver/plugins/Iciwi.jar</outputFile>
@@ -60,6 +61,7 @@
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+
     <repository>
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -68,11 +70,6 @@
     <repository>
       <id>vault-repo</id>
       <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-    </repository>
-
-    <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
     </repository>
 
 
@@ -84,12 +81,6 @@
       <artifactId>spigot-api</artifactId>
       <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.stack9</groupId>
-      <artifactId>MenuAPI</artifactId>
-      <version>v1.4.1</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/net.milkbowl.vault/Vault -->
