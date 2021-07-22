@@ -6,7 +6,7 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.17.0d3</version>
+  <version>1.17.0a5</version>
   <packaging>jar</packaging>
 
   <name>Iciwi</name>
@@ -42,7 +42,8 @@
               <createDependencyReducedPom>true</createDependencyReducedPom>
               <minimizeJar>true</minimizeJar>
               <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
-              <outputFile>../../M. Shaftere/servers/testserver/plugins/Iciwi.jar</outputFile>
+              <outputFile>../../M. Shaftere/servers/testserver/plugins/${project.name}-${project.version}.jar
+              </outputFile>
             </configuration>
           </execution>
         </executions>

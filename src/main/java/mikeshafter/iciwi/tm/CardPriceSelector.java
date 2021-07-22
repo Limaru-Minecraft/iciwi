@@ -10,14 +10,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.List;
 
 import static mikeshafter.iciwi.Iciwi.economy;
+import static mikeshafter.iciwi.tm.MakeButton.makeButton;
 
 
 public class CardPriceSelector implements Listener {
@@ -39,14 +37,6 @@ public class CardPriceSelector implements Listener {
     player.openInventory(cardPrice);
   }
   
-  private ItemStack makeButton(final Material material, final String displayName) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
   
   @EventHandler
   public void cardPriceClick(InventoryClickEvent event) {
@@ -84,7 +74,7 @@ public class CardPriceSelector implements Listener {
                          ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                          ];
           app.newCard("I"+sum+"-"+serial, val);
-          player.getInventory().addItem(makeButton(Material.NAME_TAG, ChatColor.GREEN+"ICIWI Card", "Serial number:", "I"+sum+"-"+serial));
+          player.getInventory().addItem(MakeButton.makeButton(Material.NAME_TAG, ChatColor.GREEN+"ICIWI Card", "Serial number:", "I"+sum+"-"+serial));
           player.closeInventory();
         } else player.sendMessage(ChatColor.RED+"You do not have enough money!");
       }
@@ -92,23 +82,4 @@ public class CardPriceSelector implements Listener {
     player.closeInventory();
   }
   
-  private ItemStack makeButton(final Material material, final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
-  }
-  
-  private ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(lore);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
 }

@@ -11,4 +11,6 @@ mikeshafter/iciwi/TBarrier.class
 mikeshafter/iciwi/tm/Keypad.class
 mikeshafter/iciwi/tm/RailPassSelector.class
 mikeshafter/iciwi/Iciwi.class
+mikeshafter/iciwi/tm/DefectiveTicketMachine.class
 mikeshafter/iciwi/TBarrier$3.class
+mikeshafter/iciwi/tm/MakeButton.class

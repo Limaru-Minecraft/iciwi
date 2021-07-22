@@ -11,16 +11,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
+import static mikeshafter.iciwi.tm.MakeButton.makeButton;
 
 
 public class RailPassSelector implements Listener {
@@ -47,16 +45,6 @@ public class RailPassSelector implements Listener {
     player.openInventory(railPass);
   }
   
-  private ItemStack makeButton(final Material material, final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
-  }
-  
   @EventHandler
   public void railPassClick(InventoryClickEvent event) {
     Player player = (Player) event.getWhoClicked();
@@ -79,25 +67,6 @@ public class RailPassSelector implements Listener {
       player.sendMessage(String.format("§aPaid §e£%.2f§a for a %s §e%s-day§a rail pass.", price, operator, days));
       app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
     }
-    player.closeInventory();
   }
   
-  private ItemStack makeButton(final Material material, final String displayName) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
-  
-  private ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(lore);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
 }

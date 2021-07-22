@@ -45,7 +45,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         String station = args[0];
-        TicketMachine ticketMachine = new TicketMachine();
+        DefectiveTicketMachine ticketMachine = new DefectiveTicketMachine();
         ticketMachine.newTM(player, station);
         return true;
       } else {
@@ -149,7 +149,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
   
-    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
+    getServer().getPluginManager().registerEvents(new DefectiveTicketMachine(), this);
     getServer().getPluginManager().registerEvents(new RailPassSelector(), this);
     getServer().getPluginManager().registerEvents(new Keypad(), this);
     getServer().getPluginManager().registerEvents(new CardPriceSelector(), this);

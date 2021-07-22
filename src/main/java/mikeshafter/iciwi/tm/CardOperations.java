@@ -10,21 +10,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
 import static mikeshafter.iciwi.StationOwners.getOwner;
+import static mikeshafter.iciwi.tm.MakeButton.makeButton;
 
 
 public class CardOperations implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final CardSql app = new CardSql();
-  
   private String serial, station;
   
   
@@ -47,25 +45,6 @@ public class CardOperations implements Listener {
       cardOps.setItem(i, buttons[i]);
     }
     player.openInventory(cardOps);
-  }
-  
-  private ItemStack makeButton(final Material material, final String displayName) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
-  
-  private ItemStack makeButton(final Material material, final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
   }
   
   @EventHandler
@@ -115,13 +94,4 @@ public class CardOperations implements Listener {
     }
   }
   
-  private ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(lore);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
 }
