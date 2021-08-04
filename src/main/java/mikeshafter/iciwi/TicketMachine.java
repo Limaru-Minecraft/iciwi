@@ -1,9 +1,6 @@
-package mikeshafter.iciwi.tm;
+package mikeshafter.iciwi;
 
 
-import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.StationOwners;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,12 +24,11 @@ import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
 import static mikeshafter.iciwi.StationOwners.getOwner;
-import static mikeshafter.iciwi.tm.MakeButton.makeButton;
+import static mikeshafter.iciwi.MakeButton.makeButton;
 
 
 public class TicketMachine implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  
   private final CardSql app = new CardSql();
   private final double[] priceArray = {10, 20, 30, 50, 70, 100};
   double val;
@@ -44,7 +40,7 @@ public class TicketMachine implements Listener {
   @EventHandler
   public void TMSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign) {
-      Sign sign = (Sign) event.getClickedBlock().getState();
+      Sign sign = (Sign) event.getClickedBlock();
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
       String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
       
@@ -55,7 +51,7 @@ public class TicketMachine implements Listener {
   }
   
   
-  public void newTM(Player player, String station) {
+  protected void newTM(Player player, String station) {
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
     
     // Single Journey Ticket
@@ -67,7 +63,7 @@ public class TicketMachine implements Listener {
     player.openInventory(tm);
   }
   
-  public void cardOps(Player player, String serial, String station) {
+  protected void cardOps(Player player, String serial, String station) {
     this.serial = serial;
     this.station = station;
     
@@ -87,6 +83,60 @@ public class TicketMachine implements Listener {
     }
     player.openInventory(cardOps);
   }
+  
+  protected void keypad(Player player, String station, double current, double former) {
+    Inventory keypad;
+    
+    // New paper ticket
+    if (current == former) {
+      if (current == 0.0) keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New Ticket - Enter Value");
+      else keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New Ticket - £%.2f", current));
+    } else {
+      if (current == 0.0) keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"Adjust Ticket - Enter New Value");
+      else keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"Adjust Ticket - £%.2f", current));
+    }
+    
+    // === Items ===
+    keypad.setItem(0, makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.format("£%.2f", former)));
+    for (int[] i : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
+      keypad.setItem(i[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(i[1])));
+    }
+    keypad.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
+    keypad.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
+  
+    player.sendMessage(player.getName()+" DEBUG 2b");  // TODO: DEBUG
+    player.openInventory(keypad);
+  }
+  
+  protected void cardPrice(Player player, String serial) {
+    // Serial can be null. If serial is null, create new card.
+    this.serial = serial;
+    
+    Inventory cardPrice = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select value...");
+    
+    for (int i=0; i<priceArray.length; i++) {
+      cardPrice.setItem(i, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", priceArray[i])));
+    }
+    
+    player.sendMessage(player.getName()+" DEBUG 2a");  // TODO: DEBUG
+    player.openInventory(cardPrice);
+  }
+  
+  protected void railPass(Player player, String serial, String station) {
+    this.serial = serial;
+    this.operator = StationOwners.getOwner(station);
+    this.daysList = new ArrayList<>();
+    
+    Inventory railPass = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"New Rail Pass");
+    
+    for (String days : Objects.requireNonNull(StationOwners.get().getConfigurationSection("RailPassPrices."+operator)).getKeys(false)) {
+      double price = StationOwners.getRailPassPrice(operator, Integer.parseInt(days));
+      this.daysList.add(new String[] {days, String.valueOf(price)});
+      railPass.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
+    }
+    player.openInventory(railPass);
+  }
+  
   
   @EventHandler
   public void TMClick(InventoryClickEvent event) {
@@ -123,6 +173,7 @@ public class TicketMachine implements Listener {
       
       // Check Value and Top Up
       else if (name.equals(ChatColor.LIGHT_PURPLE+"ICIWI Card Operations")) {
+        event.setCancelled(true);
         player.closeInventory();
         
         boolean skipSelectCard = true;
@@ -146,7 +197,7 @@ public class TicketMachine implements Listener {
         }
         // Else, proceed straight to buying a new card
       }
-
+      
       // Check fares
       else if (name.equals(ChatColor.AQUA+"Check Fares")) {
         player.closeInventory();
@@ -154,8 +205,8 @@ public class TicketMachine implements Listener {
         Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "tellraw "+player.getName()+" {\"text\":\">> Fare chart <<\",\"color\":\"gold\",\"clickEvent\":{\"action\":\"open_url\",\"value\":\"https://mineshafter61.github.io/LimaruSite/farecharts/"+station+".png\"},\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\"Click to view the fare chart.\"}}");
       }
     }
-
-
+    
+    
     // === SELECT METHODS === - Ticket
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Select Ticket...")) {
       event.setCancelled(true);
@@ -168,8 +219,8 @@ public class TicketMachine implements Listener {
         else player.sendMessage(ChatColor.RED+"Invalid ticket! Direct tickets cannot be adjusted!");
       }
     }
-
-
+    
+    
     // === SELECT METHODS === - Card
     else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select ICIWI Card...")) {
       event.setCancelled(true);
@@ -180,47 +231,50 @@ public class TicketMachine implements Listener {
         cardOps(player, serial, station);
       }
     }
-
-
+    
+    
     // === CARD OPS ===
     else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"Remaining value: ")) {
+      event.setCancelled(true);
       String name = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
-  
+      
       if (name.equals(ChatColor.LIGHT_PURPLE+"New ICIWI Card")) {
         player.closeInventory();
         cardPrice(player, null);
-    
+        
       } else if (name.equals(ChatColor.AQUA+"Top Up ICIWI Card")) {
         // Use private variables this.serial and this.station
         player.closeInventory();
         cardPrice(player, this.serial);
-    
+        
       } else if (name.equals(ChatColor.GREEN+"New Rail Pass")) {
         // Use private variables this.serial and this.station
         player.closeInventory();
         railPass(player, this.serial, this.station);
-    
+        
       } else if (name.equals(ChatColor.GOLD+"Refund")) {
         // Use private variables this.serial and this.station
-    
+        
         economy.depositPlayer(player, 5d+app.getCardValue(this.serial));
         player.sendMessage(String.format(ChatColor.GREEN+"Refunded card "+ChatColor.YELLOW+serial+ChatColor.GREEN+". Received "+ChatColor.YELLOW+"£%.2f"+ChatColor.GREEN+".", 5d+app.getCardValue(serial)));
-    
+        
         app.delCard(this.serial);
-        for (ItemStack card : player.getInventory().getContents())
+        for (ItemStack card : player.getInventory().getContents()) {
+          assert card != null;
           if (card.hasItemMeta() && card.getItemMeta() != null && card.getItemMeta().hasLore() && card.getItemMeta().getLore() != null && card.getItemMeta().getLore() == Arrays.asList("Serial number:", this.serial))
             player.getInventory().remove(card);
+        }
         player.closeInventory();
       }
     }
-
-
+    
+    
     // === CARD PRICE SELECTOR ===
     else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"Select value...") && event.getRawSlot() < priceArray.length) {
       event.setCancelled(true);
       int i = event.getRawSlot();
       double val = priceArray[i];
-  
+      
       if (serial != null) {
         // Top up existing card
         if (economy.getBalance(player) >= val) {
@@ -246,43 +300,47 @@ public class TicketMachine implements Listener {
       }
       player.closeInventory();
     }
-  
-  
+    
+    
     // === RAIL PASS SELECTOR ===
-    if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"New Rail Pass") && event.getRawSlot() < daysList.size()) {
+    else if (event.getView().getTitle().equals(ChatColor.DARK_BLUE+"New Rail Pass") && event.getRawSlot() < daysList.size()) {
       event.setCancelled(true);
       long days = Long.parseLong(daysList.get(event.getRawSlot())[0]);
       double price = Double.parseDouble(daysList.get(event.getRawSlot())[1]);
-    
+      
       player.closeInventory();
       economy.withdrawPlayer(player, price);
       player.sendMessage(String.format("§aPaid §e£%.2f§a for a %s §e%s-day§a rail pass.", price, operator, days));
       app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
     }
-  
-  
+    
+    
     // === KEYPAD ===
-    if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New Ticket")) {
-    
+    else if (event.getView().getTitle().contains(ChatColor.DARK_BLUE+"New Ticket")) {
+      event.setCancelled(true);
+      
+      String station = null; double former = 0d;
       ItemStack dummyItem = inventory.getItem(0);
-      assert dummyItem != null;
-      String station = Objects.requireNonNull(Objects.requireNonNull(dummyItem.getItemMeta()).getLore()).get(0);
-      double former = Double.parseDouble(Objects.requireNonNull(dummyItem.getItemMeta().getLore()).get(1));
-    
+      
+      if (dummyItem != null && dummyItem.hasItemMeta() && dummyItem.getItemMeta() != null && dummyItem.getItemMeta().hasLore() && dummyItem.getItemMeta().getLore() != null) {
+        station = dummyItem.getItemMeta().getLore().get(0);
+        former = Double.parseDouble(dummyItem.getItemMeta().getLore().get(1));
+      }
+      
       double current = Double.parseDouble(event.getView().getTitle().split("£")[1]);
-    
+      
       // get the name of the item
       String name = "";
       try {
         name = Objects.requireNonNull(item.getItemMeta()).getDisplayName();
       } catch (Exception ignored) {
       }
-    
+      
       // Reset value
       if (name.equals("CLEAR")) {
         keypad(player, station, 0, former);
       }
-
+      
       // Done with keying in values
       else if (name.equals("ENTER")) {
         if (economy.getBalance(player) >= (current-former) && current >= former) {
@@ -305,7 +363,7 @@ public class TicketMachine implements Listener {
         } else
           player.sendMessage(ChatColor.RED+"You do not have enough money, or the value you have entered is less than the previous value!");
       }
-
+      
       // Pressed a number
       else {
         try {
@@ -317,63 +375,6 @@ public class TicketMachine implements Listener {
         }
       }
     }
-  }
-  
-  // === KEYPAD ===
-  public void keypad(Player player, String station, double current, double former) {
-    Inventory keypad;
-    player.sendMessage(player.getName()+" DEBUG 2b");  // TODO: DEBUG
-    
-    // New paper ticket
-    if (current == former) {
-      if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"New Ticket - Enter Value");
-      else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New Ticket - £%.2f", current));
-    } else {
-      if (current == 0.0)
-        keypad = plugin.getServer().createInventory(null, 36, ChatColor.DARK_BLUE+"Adjust Ticket - Enter New Value");
-      else
-        keypad = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"Adjust Ticket - £%.2f", current));
-    }
-    
-    // === Items ===
-    keypad.setItem(0, makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.format("£%.2f", former)));
-    for (int[] i : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
-      keypad.setItem(i[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(i[1])));
-    }
-    keypad.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
-    keypad.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
-    
-    player.openInventory(keypad);
-  }
-  
-  public void cardPrice(Player player, String serial) {
-    // Serial can be null. If serial is null, create new card.
-    this.serial = serial;
-    
-    Inventory cardPrice = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select value...");
-    player.sendMessage(player.getName()+" DEBUG 2a");  // TODO: DEBUG
-    
-    for (double v : priceArray)
-      cardPrice.addItem(makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", v)));
-    
-    player.openInventory(cardPrice);
-  }
-  
-  public void railPass(Player player, String serial, String station) {
-    this.serial = serial;
-    this.operator = StationOwners.getOwner(station);
-    this.daysList = new ArrayList<>();
-    
-    Inventory railPass = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"New Rail Pass");
-    
-    for (String days : Objects.requireNonNull(StationOwners.get().getConfigurationSection("RailPassPrices."+operator)).getKeys(false)) {
-      double price = StationOwners.getRailPassPrice(operator, Integer.parseInt(days));
-      this.daysList.add(new String[] {days, String.valueOf(price)});
-      railPass.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
-    }
-    player.openInventory(railPass);
   }
   
 }

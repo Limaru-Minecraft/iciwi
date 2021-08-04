@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import mikeshafter.iciwi.tm.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -45,7 +44,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       if (sender instanceof Player && !args[0].isEmpty()) {
         Player player = (Player) sender;
         String station = args[0];
-        DefectiveTicketMachine ticketMachine = new DefectiveTicketMachine();
+        TicketMachine ticketMachine = new TicketMachine();
         ticketMachine.newTM(player, station);
         return true;
       } else {
@@ -148,12 +147,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
-  
-    getServer().getPluginManager().registerEvents(new DefectiveTicketMachine(), this);
-    getServer().getPluginManager().registerEvents(new RailPassSelector(), this);
-    getServer().getPluginManager().registerEvents(new Keypad(), this);
-    getServer().getPluginManager().registerEvents(new CardPriceSelector(), this);
-    getServer().getPluginManager().registerEvents(new CardOperations(), this);
+    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
   
   
     // === SQL ===
