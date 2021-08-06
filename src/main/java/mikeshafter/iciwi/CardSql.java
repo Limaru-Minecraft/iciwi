@@ -51,9 +51,10 @@ public class CardSql{
   }
   
   public void delCard(String serial) {
-    String sql = "DELETE cards, discounts FROM cards INNER JOIN discounts WHERE cards.serial = discounts.serial and cards.serial = ?";
+    String sql = "DELETE FROM discounts WHERE serial = ?; DELETE FROM cards WHERE serial = ?;";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
+      statement.setString(2, serial);
       statement.executeUpdate();
     } catch (SQLException e) {
       System.out.println(e.getMessage());

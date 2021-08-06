@@ -1,7 +1,7 @@
 name: Iciwi
 version: ${project.version}
 main: mikeshafter.iciwi.Iciwi
-api-version: 1.17
+api-version: 1.16
 description: Iciwi plugin for Limaru
 depend: [ Vault ]
 

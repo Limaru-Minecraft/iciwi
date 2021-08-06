@@ -6,10 +6,10 @@
 
   <groupId>mikeshafter</groupId>
   <artifactId>Iciwi</artifactId>
-  <version>1.17.1b1</version>
+  <version>1.17.1b2</version>
   <packaging>jar</packaging>
 
-  <name>OldThrottle</name>
+  <name>Iciwi</name>
 
   <properties>
     <java.version>1.8</java.version>
@@ -38,8 +38,7 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <shadedArtifactAttached>false</shadedArtifactAttached>
-              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
               <minimizeJar>true</minimizeJar>
               <outputDirectory>../../M. Shaftere/servers/testserver/plugins</outputDirectory>
               <outputFile>../../M. Shaftere/servers/testserver/plugins/${project.name}-${project.version}.jar
@@ -51,7 +50,7 @@
     </plugins>
     <resources>
       <resource>
-        <directory>src/t/resources</directory>
+        <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
@@ -77,18 +76,18 @@
   </repositories>
 
   <dependencies>
-    <dependency>
-      <groupId>org.spigotmc</groupId>
-      <artifactId>spigot-api</artifactId>
-      <version>1.17.1-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- https://mvnrepository.com/artifact/net.milkbowl.vault/Vault -->
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>Vault</artifactId>
       <version>1.7.3</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.16.5-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
