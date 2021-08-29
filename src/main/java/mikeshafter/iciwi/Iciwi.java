@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
@@ -41,8 +42,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     }
     
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
-      if (sender instanceof Player && !args[0].isEmpty()) {
-        Player player = (Player) sender;
+      if (sender instanceof Player player && !args[0].isEmpty()) {
         String station = args[0];
         TicketMachine ticketMachine = new TicketMachine();
         ticketMachine.newTM(player, station);
@@ -65,8 +65,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     }
     
     else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
-      if (sender instanceof Player && !args[0].isEmpty()) {
-        Player player = (Player) sender;
+      if (sender instanceof Player player && !args[0].isEmpty()) {
         int serial = Integer.parseInt(args[0].substring(3));
         // Check the checksum
         char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
@@ -97,8 +96,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       StationOwners.reload();
       return true;
     } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
-      if (args.length == 2 && args[0].equals("empty") && sender instanceof Player) {
-        Player player = (Player) sender;
+      if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
         String ownerName = StationOwners.get().getString("Aliases."+args[1]);
         if (player.getName().equalsIgnoreCase(ownerName)) {
@@ -106,11 +104,10 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+args[1]));
           StationOwners.get().set("Coffers."+args[1], 0.0);
         }
-      } else if (args.length == 1 && args[0].equals("empty") && sender instanceof Player) {
-        Player player = (Player) sender;
+      } else if (args.length == 1 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
-        for (String company : StationOwners.get().getConfigurationSection("Aliases").getKeys(false)) {
-          if (StationOwners.get().getString("Aliases."+company).equalsIgnoreCase(player.getName())) {
+        for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Aliases")).getKeys(false)) {
+          if (Objects.requireNonNull(StationOwners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
             economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+company));
             StationOwners.get().set("Coffers."+company, 0.0);
           }
@@ -118,14 +115,14 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       } else if (args.length == 1 && args[0].equals("view")) {
         if (sender.hasPermission("iciwi.coffers.viewall")) {
           sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
-          for (String company : StationOwners.get().getConfigurationSection("Coffers").getKeys(false)) {
+          for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Coffers")).getKeys(false)) {
             sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
           }
         } else {
           Player player = (Player) sender;
           sender.sendMessage("=== COFFERS OF YOUR COMPANIES ===");
-          for (String company : StationOwners.get().getConfigurationSection("Aliases").getKeys(false)) {
-            if (StationOwners.get().getString("Aliases."+company).equalsIgnoreCase(player.getName())) {
+          for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Aliases")).getKeys(false)) {
+            if (Objects.requireNonNull(StationOwners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
               sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
             }
           }

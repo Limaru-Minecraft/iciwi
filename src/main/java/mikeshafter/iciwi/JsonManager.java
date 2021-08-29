@@ -26,7 +26,7 @@ public class JsonManager {
     
       //String content = nextLine.toString();
       String content = contentBuilder.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
-      plugin.getServer().getConsoleSender().sendMessage(content); //TODO: Debug
+      //plugin.getServer().getConsoleSender().sendMessage(content); //TODO: Debug
     
       JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
     

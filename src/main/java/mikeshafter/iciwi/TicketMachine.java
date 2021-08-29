@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.Iciwi.economy;
@@ -37,8 +38,7 @@ public class TicketMachine implements Listener {
   
   @EventHandler
   public void TMSignClick(PlayerInteractEvent event) {
-    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign) {
-      Sign sign = (Sign) event.getClickedBlock().getState();
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
       String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
       
@@ -203,7 +203,13 @@ public class TicketMachine implements Listener {
   
         app.delCard(this.serial);
         // TODO: make this check lore only
-        player.getInventory().remove(makeButton(Material.NAME_TAG, ChatColor.GREEN+"ICIWI Card", "Serial number:", this.serial));
+  
+        for (ItemStack itemStack : player.getInventory()) {
+          if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().equals(new ArrayList<>(Arrays.asList("Serial number:", this.serial)))) {
+            itemStack.setAmount(itemStack.getAmount()-1);
+          }
+        }
+        
         player.closeInventory();
       }
     }

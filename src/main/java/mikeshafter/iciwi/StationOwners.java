@@ -19,7 +19,7 @@ public class StationOwners {
     
     if (!file.exists()) {
       try {
-        boolean fileStatus = file.createNewFile();
+        boolean f = file.createNewFile();
       } catch (IOException e) {
         e.printStackTrace();
       }

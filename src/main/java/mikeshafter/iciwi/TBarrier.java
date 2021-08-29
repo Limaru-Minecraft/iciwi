@@ -42,11 +42,9 @@ public class TBarrier implements Listener {
       BlockState state = block.getState();
       BlockData data = block.getBlockData();
       
-      if (state instanceof Sign && data instanceof WallSign && action == Action.RIGHT_CLICK_BLOCK) {
+      if (state instanceof Sign sign && data instanceof WallSign wallSign && action == Action.RIGHT_CLICK_BLOCK) {
 
 // Get variables
-        Sign sign = (Sign) state;
-        WallSign wallSign = (WallSign) data;
         Location location = sign.getLocation();
         String signLine0 = ChatColor.stripColor(sign.getLine(0));
         String eStation = ChatColor.stripColor(sign.getLine(1));
@@ -95,21 +93,10 @@ public class TBarrier implements Listener {
             player.sendMessage(String.format(ChatColor.GREEN+"Entry point: %s. Welcome aboard!", eStation));
 // Check which direction the gate is facing
             switch (face) {
-              case "SOUTH":
-                location.add(-1, 0, -1);
-                break;
-              
-              case "NORTH":
-                location.add(1, 0, 1);
-                break;
-              
-              case "WEST":
-                location.add(1, 0, -1);
-                break;
-              
-              case "EAST":
-                location.add(-1, 0, 1);
-                break;
+              case "SOUTH" -> location.add(-1, 0, -1);
+              case "NORTH" -> location.add(1, 0, 1);
+              case "WEST" -> location.add(1, 0, -1);
+              case "EAST" -> location.add(-1, 0, 1);
             }
             Block gate = location.getBlock();
             gateTypeMap.put(player, gate.getType());
@@ -214,21 +201,10 @@ public class TBarrier implements Listener {
             player.sendMessage(String.format(ChatColor.GREEN+"Travelled from %s to %s. Thank you for travelling!", entryStation, eStation));
 // Check which direction the gate is facing
             switch (face) {
-              case "SOUTH":
-                location.add(-1, 0, -1);
-                break;
-              
-              case "NORTH":
-                location.add(1, 0, 1);
-                break;
-              
-              case "WEST":
-                location.add(1, 0, -1);
-                break;
-              
-              case "EAST":
-                location.add(-1, 0, 1);
-                break;
+              case "SOUTH" -> location.add(-1, 0, -1);
+              case "NORTH" -> location.add(1, 0, 1);
+              case "WEST" -> location.add(1, 0, -1);
+              case "EAST" -> location.add(-1, 0, 1);
             }
             Block gate = location.getBlock();
             
