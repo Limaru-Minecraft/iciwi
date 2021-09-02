@@ -23,9 +23,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
+
 
 public class TBarrier implements Listener {
-  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
   
   HashMap<Player, Location> gateLocationMap = new HashMap<>();

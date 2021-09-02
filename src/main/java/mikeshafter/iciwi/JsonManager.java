@@ -9,11 +9,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
+
 
 public class JsonManager {
 
   public static double getFare(String entryStation, String exitStation) {
-    Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+    Plugin plugin = getPlugin(Iciwi.class);
   
     File file = new File(plugin.getDataFolder(), "fares.json");
   
@@ -25,7 +27,7 @@ public class JsonManager {
       }
     
       //String content = nextLine.toString();
-      String content = contentBuilder.toString().replaceAll(", ", "").replaceAll("[\\[\\]]", "");
+      String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
       //plugin.getServer().getConsoleSender().sendMessage(content); //TODO: Debug
     
       JsonObject fares = new JsonParser().parse(content).getAsJsonObject();

@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static mikeshafter.iciwi.Iciwi.economy;
-import static mikeshafter.iciwi.MakeButton.makeButton;
-import static mikeshafter.iciwi.StationOwners.getOwner;
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
 public class TicketMachine implements Listener {
-  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql app = new CardSql();
   private final double[] priceArray = {10, 20, 30, 50, 70, 100};
   double val;
@@ -53,10 +51,10 @@ public class TicketMachine implements Listener {
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
     
     // Single Journey Ticket
-    tm.setItem(1, makeButton(Material.PAPER, ChatColor.GREEN+"New Single Journey Ticket", station));
-    tm.setItem(3, makeButton(Material.MAP, ChatColor.YELLOW+"Adjust Fares"));
-    tm.setItem(5, makeButton(Material.NAME_TAG, ChatColor.LIGHT_PURPLE+"ICIWI Card Operations", station));
-    tm.setItem(7, makeButton(Material.BOOK, ChatColor.AQUA+"Check Fares", station));
+    tm.setItem(1, MakeButton.makeButton(Material.PAPER, ChatColor.GREEN+"New Single Journey Ticket", station));
+    tm.setItem(3, MakeButton.makeButton(Material.MAP, ChatColor.YELLOW+"Adjust Fares"));
+    tm.setItem(5, MakeButton.makeButton(Material.NAME_TAG, ChatColor.LIGHT_PURPLE+"ICIWI Card Operations", station));
+    tm.setItem(7, MakeButton.makeButton(Material.BOOK, ChatColor.AQUA+"Check Fares", station));
     
     player.openInventory(tm);
   }
@@ -71,10 +69,10 @@ public class TicketMachine implements Listener {
     
     // Buttons
     ItemStack[] buttons = {
-        makeButton(Material.MAGENTA_WOOL, ChatColor.LIGHT_PURPLE+"New ICIWI Card"),
-        makeButton(Material.CYAN_WOOL, ChatColor.AQUA+"Top Up ICIWI Card"),
-        makeButton(Material.LIME_WOOL, ChatColor.GREEN+"New Rail Pass", getOwner(station)),
-        makeButton(Material.ORANGE_WOOL, ChatColor.GOLD+"Refund"),
+        MakeButton.makeButton(Material.MAGENTA_WOOL, ChatColor.LIGHT_PURPLE+"New ICIWI Card"),
+        MakeButton.makeButton(Material.CYAN_WOOL, ChatColor.AQUA+"Top Up ICIWI Card"),
+        MakeButton.makeButton(Material.LIME_WOOL, ChatColor.GREEN+"New Rail Pass", StationOwners.getOwner(station)),
+        MakeButton.makeButton(Material.ORANGE_WOOL, ChatColor.GOLD+"Refund"),
     };
     for (int i = 0; i < buttons.length; i++) {
       cardOps.setItem(i, buttons[i]);
@@ -170,7 +168,6 @@ public class TicketMachine implements Listener {
       if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals("Serial number:")) {
         player.closeInventory();
         String serial = item.getItemMeta().getLore().get(1);
-        player.sendMessage(this.station);
         cardOps(player, serial, this.station);
       }
     }
@@ -198,14 +195,14 @@ public class TicketMachine implements Listener {
       } else if (name.equals(ChatColor.GOLD+"Refund")) {
         // Use private variables this.serial and this.station
   
-        economy.depositPlayer(player, 5d+app.getCardValue(this.serial));
+        Iciwi.economy.depositPlayer(player, 5d+app.getCardValue(this.serial));
         player.sendMessage(String.format(ChatColor.GREEN+"Refunded card "+ChatColor.YELLOW+serial+ChatColor.GREEN+". Received "+ChatColor.YELLOW+"£%.2f"+ChatColor.GREEN+".", 5d+app.getCardValue(serial)));
   
         app.delCard(this.serial);
         // TODO: make this check lore only
   
         for (ItemStack itemStack : player.getInventory()) {
-          if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().equals(new ArrayList<>(Arrays.asList("Serial number:", this.serial)))) {
+          if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().equals(new ArrayList<>(Arrays.asList("Serial number:", this.serial)))) {
             itemStack.setAmount(itemStack.getAmount()-1);
           }
         }
@@ -223,16 +220,16 @@ public class TicketMachine implements Listener {
       
       if (serial != null) {
         // Top up existing card
-        if (economy.getBalance(player) >= val) {
-          economy.withdrawPlayer(player, val);
+        if (Iciwi.economy.getBalance(player) >= val) {
+          Iciwi.economy.withdrawPlayer(player, val);
           player.sendMessage(ChatColor.GREEN+"Topped up "+ChatColor.YELLOW+"£"+val+".");
           app.addValueToCard(serial, val);
         } else player.sendMessage(ChatColor.RED+"You do not have enough money!");
       } else {
         // generate a new card
-        if (economy.getBalance(player) >= 5.0+val) {
+        if (Iciwi.economy.getBalance(player) >= 5.0+val) {
           // Take money from player and send message
-          economy.withdrawPlayer(player, 5.0+val);
+          Iciwi.economy.withdrawPlayer(player, 5.0+val);
           player.sendMessage(ChatColor.GREEN+"Deposit: "+ChatColor.YELLOW+"£5.00"+ChatColor.GREEN+". Current card value: "+ChatColor.YELLOW+"£"+val);
           // Prepare card
           int serial = new SecureRandom().nextInt(100000);
@@ -255,7 +252,7 @@ public class TicketMachine implements Listener {
       double price = Double.parseDouble(daysList.get(event.getRawSlot())[1]);
   
       player.closeInventory();
-      economy.withdrawPlayer(player, price);
+      Iciwi.economy.withdrawPlayer(player, price);
       player.sendMessage(String.format("§aPaid §e£%.2f§a for a %s §e%s-day§a rail pass.", price, operator, days));
       app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
     }
@@ -290,9 +287,9 @@ public class TicketMachine implements Listener {
       
       // Done with keying in values
       else if (name.equals("ENTER")) {
-        if (economy.getBalance(player) >= (current-former) && current >= former) {
+        if (Iciwi.economy.getBalance(player) >= (current-former) && current >= former) {
           // Take money from player
-          economy.withdrawPlayer(player, (current-former));
+          Iciwi.economy.withdrawPlayer(player, (current-former));
           // Place the money inside the coffers
           String stationOwner = StationOwners.getOwner(station);
           StationOwners.deposit(stationOwner, (current-former));
@@ -300,9 +297,9 @@ public class TicketMachine implements Listener {
           player.sendMessage(ChatColor.GREEN+"Paid the following amount for the train ticket: "+ChatColor.YELLOW+"£"+(current-former));
           // Remove player's former ticket, if present
           // TODO: make this check lore only
-          player.getInventory().remove(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(former)));
+          player.getInventory().remove(MakeButton.makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(former)));
           // Add ticket to player's inventory
-          player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(current)));
+          player.getInventory().addItem(MakeButton.makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(current)));
           player.closeInventory();
         } else
           player.sendMessage(ChatColor.RED+"You do not have enough money, or the value you have entered is less than the previous value!");
@@ -328,7 +325,7 @@ public class TicketMachine implements Listener {
     Inventory cardPrice = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select value...");
     
     for (int i = 0; i < priceArray.length; i++) {
-      cardPrice.setItem(i, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", priceArray[i])));
+      cardPrice.setItem(i, MakeButton.makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", priceArray[i])));
     }
     
     player.openInventory(cardPrice);
@@ -344,7 +341,7 @@ public class TicketMachine implements Listener {
     for (String days : Objects.requireNonNull(StationOwners.get().getConfigurationSection("RailPassPrices."+operator)).getKeys(false)) {
       double price = StationOwners.getRailPassPrice(operator, Integer.parseInt(days));
       this.daysList.add(new String[] {days, String.valueOf(price)});
-      railPass.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
+      railPass.addItem(MakeButton.makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
     }
     player.openInventory(railPass);
   }
@@ -366,12 +363,12 @@ public class TicketMachine implements Listener {
     }
     
     // === Items ===
-    keypad.setItem(0, makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.format("£%.2f", former)));
+    keypad.setItem(0, MakeButton.makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.format("£%.2f", former)));
     for (int[] i : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
-      keypad.setItem(i[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(i[1])));
+      keypad.setItem(i[0], MakeButton.makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(i[1])));
     }
-    keypad.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
-    keypad.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
+    keypad.setItem(30, MakeButton.makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
+    keypad.setItem(32, MakeButton.makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
     
     player.openInventory(keypad);
   }

@@ -1,12 +1,19 @@
 package mikeshafter.iciwi;
 
+import org.bukkit.plugin.Plugin;
+
 import java.sql.*;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
+
 
 public class CardSql{
+  
+  Plugin plugin = getPlugin(Iciwi.class);
+  
   private Connection connect() {
     // SQLite connection string
     String url = "jdbc:sqlite:IciwiCards.db";
@@ -14,7 +21,7 @@ public class CardSql{
     try {
       conn = DriverManager.getConnection(url);
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
     return conn;
   }
@@ -34,7 +41,7 @@ public class CardSql{
         statement.execute(s);
       }
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
 
@@ -46,18 +53,23 @@ public class CardSql{
       statement.setDouble(2, Math.round(value*100.0)/100.0);
       statement.executeUpdate();
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
   
   public void delCard(String serial) {
-    String sql = "DELETE FROM discounts WHERE serial = ?; DELETE FROM cards WHERE serial = ?;";
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+    try (Connection conn = this.connect()) {
+      PreparedStatement statement = conn.prepareStatement("DELETE FROM discounts WHERE serial = ?;");
       statement.setString(1, serial);
-      statement.setString(2, serial);
       statement.executeUpdate();
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement("DELETE FROM cards WHERE serial = ?;")) {
+      statement.setString(1, serial);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
 
@@ -71,7 +83,7 @@ public class CardSql{
       statement.setDouble(4, price);
       statement.executeUpdate();
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
 
@@ -83,7 +95,7 @@ public class CardSql{
       statement.setLong(3, expiry);
       statement.executeUpdate();
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
 
@@ -106,7 +118,7 @@ public class CardSql{
       }
   
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   
     return returnValue;
@@ -124,7 +136,7 @@ public class CardSql{
       statement.setDouble(1, Math.round(value*100.0)/100.0);
       statement.executeUpdate();
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
   
@@ -137,7 +149,7 @@ public class CardSql{
       returnValue = rs.getDouble("value");
       
     } catch (SQLException e) {
-      System.out.println(e.getMessage());
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
     
     return Math.round(returnValue*100.0)/100.0;
