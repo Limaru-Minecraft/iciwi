@@ -1,5 +1,5 @@
 name: Iciwi
-version: ${project.version}
+version: 1.17.1b3
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.17
 description: Iciwi plugin for Limaru
