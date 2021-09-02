@@ -70,7 +70,7 @@ This file determines where money goes to when someone taps in/out.
 `RailPassPrices` Prices for rail passes. This list in the form `Operator: Days: Price`, where Days refers to the number of days of free travel until expiry.
 
 Sample `owners.yml`:
-```json
+```yml
 Aliases:
   ExampleOperator: ExampleUsername
 Operators:
