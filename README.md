@@ -3,23 +3,48 @@ Universal transportation ticket plugin.
 
 [![Java CI with Maven](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiBuild.yml/badge.svg)](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiBuild.yml)
 
+# Development
+1. Use JDK 16 & Maven
+2. Download and run [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar)
+3. Fork or clone this project locally
+4. Start developing!
+
+Note: Iciwi is NOT open source. It might be in the future though.
+
 # Usage
-## Entry
+## Entry and Exit
 Normal entry sign for entering paid zone
 ```
-[Entry]
+[<Entry:Exit><V:S:L:D:R:E>]
 <station name>
 <anything>
 <anything>
 ```
-## Exit
-Normal exit sign for exiting paid zone
+### First line parameters
+1. Entry/Exit: Determines the action of the sign.
+2. V: Validator. Makes the sign into a validator. (This mode makes the sign not cause blocks to update)
+3. S: Sideways sign. Place this sign on the right-hand side block before the fare gate.
+4. L: Lefty sign. Place this sign on the LEFT of the fare gate.
+5. D: Double fare gate. Use 2 blocks for the fare gate.
+6. R: Redstone activator. Activates the lever placed below the block that the sign is attached to.
+7. E: Eye-level sign. Place this sign 1 block above where you would normally place it.
+
+## Harlon-style fare gate
+A Harlon-style fare gate. Used for BOTH entry and exit. Right click on the trapdoor to open.
+### Placement
 ```
-[Exit]
-<station name>
-<anything>
-<anything>
+(Iron trapdoor)
+(Block: Double slab for entry, full block for exit)
+(Sign: explained below)
 ```
+### Sign
+```
+[Faregate]
+<station name...>
+<...station name...>
+<...station name>
+```
+
 ## Ticket Machine
 A ticket machine
 ```
