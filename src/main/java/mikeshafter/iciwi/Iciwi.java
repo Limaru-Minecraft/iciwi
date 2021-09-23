@@ -33,7 +33,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         String from = args[0];
         String to = args[1];
         double fare = JsonManager.getFare(from, to);
-        sender.sendMessage("Train fare from "+from+" to "+to+": "+fare);
+        sender.sendMessage(String.format("Train fare from %s to %s: £%.2f", from, to, fare));
         return true;
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
@@ -61,7 +61,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         new CardSql().setDiscount(args[0], args[1], expiry);
         return true;
       }
-      
     }
     
     else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
@@ -92,9 +91,12 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           return true;
         }
       }
+      
     } else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
+      reloadConfig();
       StationOwners.reload();
       return true;
+      
     } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
@@ -103,15 +105,19 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           // Empty coffers and deposit in player's wallet
           economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+args[1]));
           StationOwners.get().set("Coffers."+args[1], 0.0);
+          return true;
         }
       } else if (args.length == 1 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
         for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Aliases")).getKeys(false)) {
           if (Objects.requireNonNull(StationOwners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
-            economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+company));
+            double coffer = StationOwners.get().getDouble("Coffers."+company);
+            sender.sendMessage(String.format("Received £%.2f from %s", coffer, company));
+            economy.depositPlayer(player, coffer);
             StationOwners.get().set("Coffers."+company, 0.0);
           }
         }
+        return true;
       } else if (args.length == 1 && args[0].equals("view")) {
         if (sender.hasPermission("iciwi.coffers.viewall")) {
           sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
@@ -127,6 +133,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
             }
           }
         }
+        return true;
       }
     }
     
