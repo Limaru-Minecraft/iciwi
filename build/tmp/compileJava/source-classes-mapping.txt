@@ -1,3 +1,7 @@
+mikeshafter/iciwi/FareGates/GlassFareGate.java
+ mikeshafter.iciwi.FareGates.GlassFareGate
+mikeshafter/iciwi/FareGates/FareGate.java
+ mikeshafter.iciwi.FareGates.FareGate
 mikeshafter/iciwi/MakeButton.java
  mikeshafter.iciwi.MakeButton
 mikeshafter/iciwi/JsonManager.java

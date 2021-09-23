@@ -80,8 +80,20 @@ public class TBarrier implements Listener {
             ItemMeta meta = heldItem.getItemMeta();
             String lore0 = meta.getLore().get(0);
             if (lore0.equals("Serial number:")) {
+              String serial = meta.getLore().get(1);
+              
+              // Get timestamp
+              /*code to get timestamp from the config file */
+              long timestamp = 0L;
+              long maxTransferTime = plugin.getConfig().getLong("max-transfer-time"); // TODO: change this to a config value
+              if (System.currentTimeMillis() - timestamp < maxTransferTime) {
+                plugin.getConfig().set("transfer."+serial, true);
+                plugin.saveConfig();
+              }
+              
+              
 // Give confirmation to player
-              double cardVal = cardSql.getCardValue(meta.getLore().get(1));
+              double cardVal = cardSql.getCardValue(serial);
               player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", cardVal));
 // Let player enter
               flag = true;
@@ -106,7 +118,7 @@ public class TBarrier implements Listener {
             gateLocationMap.put(player, location);
             
             
-            if (signLine0.equals("[Entry]")) {
+            if (signLine0.equals("[Entry]")) {  // if the sign is not a validator
               gate.setType(Material.AIR);
 
 // Close gate
@@ -175,6 +187,11 @@ public class TBarrier implements Listener {
               String entryStationOwner = StationOwners.getOwner(entryStation);
               String exitStationOwner  = StationOwners.getOwner(eStation);
               double half = fare/2;
+              
+              // Check for transfer
+              if (plugin.getConfig().getBoolean("transfer."+serial)) { // true in config
+                fare -= plugin.getConfig().getDouble("transfer-discount"); // config value;
+              }
               if (discounts.contains(entryStationOwner)) fare -= half;
               if (discounts.contains(exitStationOwner))  fare -= half;
               
@@ -185,6 +202,12 @@ public class TBarrier implements Listener {
 // give the money to the station operators
                 StationOwners.deposit(entryStationOwner, fare/2);
                 StationOwners.deposit(exitStationOwner, fare/2);
+                
+                // TRANSFER: Set the time of exit
+                long timestamp = System.currentTimeMillis();
+                
+                // Log timestamp to some config file
+                /* code */
                 
 // Log and Exit allowed
                 cardSql.log(serial, entryStation, eStation, fare);

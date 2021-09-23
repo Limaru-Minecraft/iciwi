@@ -6,8 +6,9 @@ plugins {
 group 'org.mikeshafter'
 version '1.17.1b3'
 
+//buildDir = "./../../M. Shaftere/servers/testserver/plugins"
+
 repositories {
-    mavenCentral()
     maven {
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 
@@ -30,12 +31,11 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
     maven { url 'https://jitpack.io' }
-    // mavenLocal() // This is needed for CraftBukkit and Spigot.
+    mavenLocal() // This is needed for CraftBukkit and Spigot.
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+    // Pick only one of these and read the comment in the repositories block.
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
     // https://mvnrepository.com/artifact/net.milkbowl.vault/Vault
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"

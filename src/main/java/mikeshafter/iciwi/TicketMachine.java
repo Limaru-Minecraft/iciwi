@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,7 +21,6 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
 
 public class TicketMachine implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
