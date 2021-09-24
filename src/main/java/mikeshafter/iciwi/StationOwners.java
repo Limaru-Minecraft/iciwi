@@ -9,7 +9,7 @@ import java.io.IOException;
 
 
 public class StationOwners {
-  
+
   private static final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private static File file;
   private static FileConfiguration configFile;
@@ -33,7 +33,7 @@ public class StationOwners {
     try {
       configFile.save(file);
     } catch (IOException e) {
-      System.out.println("Couldn't save file");
+      e.printStackTrace();
     }
   }
   

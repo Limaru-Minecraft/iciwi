@@ -22,7 +22,8 @@ import java.util.Objects;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
-public class TicketMachine implements Listener {
+public class TicketM implements Listener {
+  
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql app = new CardSql();
   private final double[] priceArray = {10, 20, 30, 50, 70, 100};
@@ -224,8 +225,10 @@ public class TicketMachine implements Listener {
           app.addValueToCard(serial, val);
         } else player.sendMessage(ChatColor.RED+"You do not have enough money!");
       } else {
+  
         // generate a new card
         if (Iciwi.economy.getBalance(player) >= 5.0+val) {
+  
           // Take money from player and send message
           Iciwi.economy.withdrawPlayer(player, 5.0+val);
           player.sendMessage(ChatColor.GREEN+"Deposit: "+ChatColor.YELLOW+"£5.00"+ChatColor.GREEN+". Current card value: "+ChatColor.YELLOW+"£"+val);

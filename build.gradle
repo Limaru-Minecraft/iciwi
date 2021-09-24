@@ -35,7 +35,9 @@ repositories {
 }
 
 dependencies {
-    // Pick only one of these and read the comment in the repositories block.
+  implementation 'org.jetbrains:annotations:20.1.0'
+
+  // Pick only one of these and read the comment in the repositories block.
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
     // https://mvnrepository.com/artifact/net.milkbowl.vault/Vault
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"

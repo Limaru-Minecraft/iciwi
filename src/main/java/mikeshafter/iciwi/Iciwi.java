@@ -17,9 +17,9 @@ import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
-  
+
   public static Economy economy = null;
-  
+
   @Override
   public void onDisable() {
     saveConfig();
@@ -38,32 +38,26 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
       }
-      
-    }
-    
-    else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
+
+    } else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
         String station = args[0];
-        TicketMachine ticketMachine = new TicketMachine();
+        TicketM ticketMachine = new TicketM();
         ticketMachine.newTM(player, station);
         return true;
       } else {
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-      
-    }
-    
-    else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
+  
+    } else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
       if (args.length == 3) {
         long expiry = Long.parseLong(args[2])*86400+Instant.now().getEpochSecond();
         new CardSql().setDiscount(args[0], args[1], expiry);
         return true;
       }
-    }
-    
-    else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
+    } else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
         int serial = Integer.parseInt(args[0].substring(3));
         // Check the checksum
@@ -91,12 +85,13 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           return true;
         }
       }
-      
+  
     } else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
       reloadConfig();
       StationOwners.reload();
+      new Lang().reload();
       return true;
-      
+  
     } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
@@ -136,7 +131,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return true;
       }
     }
-    
+  
     return false;
   }
   
@@ -144,35 +139,35 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   
   @Override
   public void onEnable() { // Use config to store station names and fares
-  
+    
     // === Economy ===
     boolean eco = setupEconomy();
-  
+    
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
-  
-  
+    getServer().getPluginManager().registerEvents(new TicketM(), this);
+    
+    
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-  
+    
     // === Load station operator list ===
     StationOwners.setup();
     getConfig().options().copyDefaults(true);
     StationOwners.get().options().copyDefaults(true);
-  
+
     // owners.yml teacher
     StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
     StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
     StationOwners.get().addDefault("Coffers.ExampleOperator", 0.0);
     StationOwners.get().addDefault("RailPassPrices.ExampleOperator.7", 25.0);
     StationOwners.get().addDefault("RailPassPrices.ExampleOperator.30", 100.0);
-  
+    
     saveConfig();
     StationOwners.save();
-  
+    
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
   

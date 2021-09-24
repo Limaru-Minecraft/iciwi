@@ -1,6 +1,0 @@
-# This sets the penalty amount when someone forgets to tap in/out
-penalty: 8.0
-# Discount for transferring
-transfer-discount: 0.6
-# max time allowed for transfer
-max-transfer-time: 300000

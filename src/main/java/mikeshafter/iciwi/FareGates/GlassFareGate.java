@@ -1,21 +1,16 @@
 package mikeshafter.iciwi.FareGates;
 
-import org.bukkit.Material;
-import org.bukkit.block.BlockState;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 
 public class GlassFareGate extends FareGate {
   
-  public GlassFareGate(BlockState fareGate) {
-    super(fareGate);
+  public GlassFareGate(Player player) {
+    super(player);
   }
   
-  public void open() {
-    super.getBlock().setType(Material.AIR);
-  }
-  
-  public void close() {
-    super.getBlock().setType(super.getMaterial());
-    super.getBlock().setBlockData(super.getBlockData());
+  public GlassFareGate(Player player, String signText, Location signLoc) {
+    super(player, signText, signLoc);
   }
 }
