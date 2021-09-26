@@ -1,0 +1,27 @@
+# ====================================
+# These options control the fare gates.
+# ====================================
+# Signs
+entry: Entry
+exit: Exit
+validator: Validator
+faregate: Faregate
+
+# Messages
+remaining:
+  Remaining value: %s%
+
+# =====================================
+# These options control the ticket machines.
+# =====================================
+# Global variables
+ticketMachine: Ticket Machine  # main menu text
+tickets: Tickets  # ticket machine sign text
+pluginName: Iciwi  # Default card name
+currency: £
+cardLore0:
+  Serial number:  # First line of the lore on a card
+serialPrefix: "I"  # 1 char only!
+
+# Messages
+notEnoughMoney: Nu! You dont have enuf monies!

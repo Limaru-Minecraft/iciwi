@@ -18,18 +18,28 @@ public class Lang {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private File file;
   private FileConfiguration config;
-  // All string variables
+  
+  // Fare gate strings
+  // // Signs
   public String ENTRY = config.getString("entry");
   public String EXIT = config.getString("exit");
   public String VALIDATOR = config.getString("validator");
   public String FAREGATE = config.getString("faregate");
+  //--- Messages
+  public String REMAINING = config.getString("remaining");
+  
+  
+  // Ticket Machine Strings
+  //--- Global variables
   public String TICKET_MACHINE = config.getString("ticketMachine");
   public String TICKETS = config.getString("tickets");
   public String PLUGIN_NAME = config.getString("pluginName");
   public String CURRENCY = config.getString("currency");
-  public String SERIAL_NUMBER = config.getString("serialNumber");
+  public String CARD_LORE_0 = config.getString("cardLore0");
   public String SERIAL_PREFIX = config.getString("serialPrefix");
-  public String REMAINING = config.getString("remaining");
+  
+  //--- Messages
+  public String NOT_ENOUGH_MONEY = config.getString("notEnoughMoney");
   
   public void save() {
     if (config == null || file == null) {
