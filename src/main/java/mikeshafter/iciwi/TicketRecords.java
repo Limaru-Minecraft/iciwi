@@ -13,35 +13,10 @@ import java.util.Objects;
 import java.util.logging.Level;
 
 
-public class Lang {
-
+public class TicketRecords {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private File file;
   private FileConfiguration config;
-  
-  // Fare gate strings
-  // // Signs
-  public String ENTRY = config.getString("entry");
-  public String EXIT = config.getString("exit");
-  public String VALIDATOR = config.getString("validator");
-  public String FAREGATE = config.getString("faregate");
-  //--- Messages
-  public String REMAINING = config.getString("remaining");
-  public String FARE_EVADE = config.getString("fareEvade");
-  
-  
-  // Ticket Machine Strings
-  //--- Global variables
-  public String TICKET_MACHINE = config.getString("ticketMachine");
-  public String TICKETS = config.getString("tickets");
-  public String PLUGIN_NAME = config.getString("pluginName");
-  public String CURRENCY = config.getString("currency");
-  public String SERIAL_NUMBER = config.getString("serialNumber");
-  public String SERIAL_PREFIX = config.getString("serialPrefix");
-  
-  
-  //--- Messages
-  public String NOT_ENOUGH_MONEY = config.getString("notEnoughMoney");
   
   public void save() {
     if (config == null || file == null) {
@@ -56,6 +31,22 @@ public class Lang {
   
   public FileConfiguration get() {
     return config;
+  }
+  
+  public String getString(String path) {
+    return config.getString(path);
+  }
+  
+  public boolean getBoolean(String path) {
+    return config.getBoolean(path);
+  }
+  
+  public long getLong(String path) {
+    return config.getLong(path);
+  }
+  
+  public void set(String path, Object value) {
+    config.set(path, value);
   }
   
   public void reload() {

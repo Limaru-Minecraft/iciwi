@@ -8,8 +8,8 @@ validator: Validator
 faregate: Faregate
 
 # Messages
-remaining:
-  Remaining value: %s%
+remaining: "§aRemaining value: §£%.2f"
+fareEvade: "§cYou have been caught fare evading! Fine: §e£75.00"
 
 # =====================================
 # These options control the ticket machines.
@@ -19,8 +19,7 @@ ticketMachine: Ticket Machine  # main menu text
 tickets: Tickets  # ticket machine sign text
 pluginName: Iciwi  # Default card name
 currency: £
-cardLore0:
-  Serial number:  # First line of the lore on a card
+serialNumber: "Serial number:"  # First line of the lore on a card
 serialPrefix: "I"  # 1 char only!
 
 # Messages

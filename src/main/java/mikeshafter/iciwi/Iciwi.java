@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.FareGates.FareGateListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -139,25 +140,28 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   
   @Override
   public void onEnable() { // Use config to store station names and fares
-    
+  
     // === Economy ===
     boolean eco = setupEconomy();
-    
+  
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new TBarrier(), this);
+    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
+//    getServer().getPluginManager().registerEvents(new TBarrier(), this);
     getServer().getPluginManager().registerEvents(new TicketM(), this);
-    
-    
+  
+  
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-    
+  
     // === Load station operator list ===
     StationOwners.setup();
+    Lang lang = new Lang();
+    lang.reload();
     getConfig().options().copyDefaults(true);
     StationOwners.get().options().copyDefaults(true);
-
+  
     // owners.yml teacher
     StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
     StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
@@ -167,6 +171,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     
     saveConfig();
     StationOwners.save();
+    lang.save();
     
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }

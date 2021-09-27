@@ -1,19 +1,23 @@
 package mikeshafter.iciwi.FareGates;
 
+import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.Lang;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 
 public class FareGate {
   
   private final Player player;
-  Lang lang = new Lang();
+  private final Lang lang = new Lang();
+  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   public FareGate[] fareGate;
+  private GateType gateType;
   
   public FareGate(Player player) {
     this.player = player;
@@ -21,7 +25,7 @@ public class FareGate {
   
   public FareGate(Player player, String signText, @Nullable Location signLoc) {
     this.player = player;
-    GateType gateType = getGateType(signText);
+    this.gateType = getGateType(signText);
     this.fareGate = null;
     
     if (gateType != null) {
@@ -41,10 +45,9 @@ public class FareGate {
       if (args.contains("D")) flags += 8;  // Double fare gate
       if (args.contains("R")) flags += 16; // Redstone activator
       if (args.contains("E")) flags += 32; // Eye-level sign.
-      
-      if ((flags&1) == 1) {
+  
+      if ((flags&1) == 1 || this.gateType == GateType.VALIDATOR) {
         // validator, location does not matter
-        this.fareGate = null;
         return;
       }
       
@@ -102,11 +105,19 @@ public class FareGate {
           byte[] locVector = openLoc[i];
           this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
         }
-        
+  
       }
     }
   }
   
+  
+  public GateType getGateType() {
+    return this.gateType;
+  }
+  
+  public Player getPlayer() {
+    return player;
+  }
   
   private GateType getGateType(String text) {
     if (text.contains(lang.ENTRY)) {
@@ -172,6 +183,10 @@ public class FareGate {
       for (FareGate gate : fareGate) a &= gate.open();
       return a;
     }
+  }
+  
+  public void hold() {
+    plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, this::close, plugin.getConfig().getLong("gate-close-delay"));
   }
   
   
