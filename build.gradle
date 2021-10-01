@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.mikeshafter'
-version '1.17.1b3'
+version '1.17.1a4'
 
 //buildDir = "./../../M. Shaftere/servers/testserver/plugins"
 
@@ -31,11 +31,12 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
     maven { url = 'https://oss.sonatype.org/content/repositories/central' }
     maven { url 'https://jitpack.io' }
-    mavenLocal() // This is needed for CraftBukkit and Spigot.
+    mavenLocal()
+    mavenCentral() // This is needed for CraftBukkit and Spigot.
 }
 
 dependencies {
-  implementation 'org.jetbrains:annotations:20.1.0'
+  implementation 'org.jetbrains:annotations:22.0.0'
 
   // Pick only one of these and read the comment in the repositories block.
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.

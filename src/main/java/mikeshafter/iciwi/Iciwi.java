@@ -18,15 +18,18 @@ import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
-
+  
   public static Economy economy = null;
-
+  public Lang lang;
+  public Config owners;
+  public Config records;
+  
   @Override
   public void onDisable() {
     saveConfig();
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
-
+  
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
@@ -50,7 +53,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-  
+
     } else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
       if (args.length == 3) {
@@ -86,53 +89,54 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           return true;
         }
       }
-  
+
     } else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
       reloadConfig();
-      StationOwners.reload();
-      new Lang().reload();
+      owners.reload();
+      lang.reload();
+      records.reload();
       return true;
-  
+      
     } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
-        String ownerName = StationOwners.get().getString("Aliases."+args[1]);
+        String ownerName = owners.get().getString("Aliases."+args[1]);
         if (player.getName().equalsIgnoreCase(ownerName)) {
           // Empty coffers and deposit in player's wallet
-          economy.depositPlayer(player, StationOwners.get().getDouble("Coffers."+args[1]));
-          StationOwners.get().set("Coffers."+args[1], 0.0);
+          economy.depositPlayer(player, owners.get().getDouble("Coffers."+args[1]));
+          owners.get().set("Coffers."+args[1], 0.0);
           return true;
         }
       } else if (args.length == 1 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
-        for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Aliases")).getKeys(false)) {
-          if (Objects.requireNonNull(StationOwners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
-            double coffer = StationOwners.get().getDouble("Coffers."+company);
+        for (String company : Objects.requireNonNull(owners.get().getConfigurationSection("Aliases")).getKeys(false)) {
+          if (Objects.requireNonNull(owners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
+            double coffer = owners.get().getDouble("Coffers."+company);
             sender.sendMessage(String.format("Received £%.2f from %s", coffer, company));
             economy.depositPlayer(player, coffer);
-            StationOwners.get().set("Coffers."+company, 0.0);
+            owners.get().set("Coffers."+company, 0.0);
           }
         }
         return true;
       } else if (args.length == 1 && args[0].equals("view")) {
         if (sender.hasPermission("iciwi.coffers.viewall")) {
           sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
-          for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Coffers")).getKeys(false)) {
-            sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
+          for (String company : Objects.requireNonNull(owners.get().getConfigurationSection("Coffers")).getKeys(false)) {
+            sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
           }
         } else {
           Player player = (Player) sender;
           sender.sendMessage("=== COFFERS OF YOUR COMPANIES ===");
-          for (String company : Objects.requireNonNull(StationOwners.get().getConfigurationSection("Aliases")).getKeys(false)) {
-            if (Objects.requireNonNull(StationOwners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
-              sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+StationOwners.get().getDouble("Coffers."+company));
+          for (String company : Objects.requireNonNull(owners.get().getConfigurationSection("Aliases")).getKeys(false)) {
+            if (Objects.requireNonNull(owners.get().getString("Aliases."+company)).equalsIgnoreCase(player.getName())) {
+              sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
             }
           }
         }
         return true;
       }
     }
-  
+    
     return false;
   }
   
@@ -144,35 +148,31 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     // === Economy ===
     boolean eco = setupEconomy();
   
-    // === Register events ===
-    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
-//    getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    getServer().getPluginManager().registerEvents(new TicketM(), this);
-  
   
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
   
     // === Load station operator list ===
-    StationOwners.setup();
-    Lang lang = new Lang();
-    lang.reload();
-    getConfig().options().copyDefaults(true);
-    StationOwners.get().options().copyDefaults(true);
+    lang = new Config("lang.yml", this);
+    owners = new Config("owners.yml", this);
+    records = new Config("records.yml", this);
   
-    // owners.yml teacher
-    StationOwners.get().addDefault("Aliases.ExampleOperator", "ExampleUsername");
-    StationOwners.get().addDefault("Operators.ExampleStation", "ExampleOperator");
-    StationOwners.get().addDefault("Coffers.ExampleOperator", 0.0);
-    StationOwners.get().addDefault("RailPassPrices.ExampleOperator.7", 25.0);
-    StationOwners.get().addDefault("RailPassPrices.ExampleOperator.30", 100.0);
-    
+  
+    // this.lang = new Lang(this);
+    // this.owners = new owners(this);
+    // this.records = new TicketRecords(this);
+  
+    getConfig().options().copyDefaults(true);
+  
     saveConfig();
-    StationOwners.save();
-    lang.save();
-    
+  
+    // === Register events ===
+    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
+//    getServer().getPluginManager().registerEvents(new TBarrier(), this);
+    getServer().getPluginManager().registerEvents(new TicketM(), this);
+  
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
   

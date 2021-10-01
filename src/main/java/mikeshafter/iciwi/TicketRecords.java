@@ -2,62 +2,75 @@ package mikeshafter.iciwi;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.logging.Level;
 
 
 public class TicketRecords {
-  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  private File file;
-  private FileConfiguration config;
+  private final Iciwi plugin;
+  private File file = null;
+  private FileConfiguration configFile = null;
   
-  public void save() {
-    if (config == null || file == null) {
-      return;
-    }
-    try {
-      get().save(file);
-    } catch (IOException ex) {
-      plugin.getLogger().log(Level.SEVERE, "Could not save config to "+file, ex);
+  
+  public TicketRecords(Iciwi plugin) {
+    this.plugin = plugin;
+    saveDefaults();
+  }
+  
+  public void reload() {
+    if (this.file == null)
+      this.file = new File(this.plugin.getDataFolder(), "records.yml");
+    
+    this.configFile = YamlConfiguration.loadConfiguration(this.file);
+    
+    InputStream defaultStream = this.plugin.getResource("records.yml");
+    if (defaultStream != null) {
+      YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+      this.configFile.setDefaults(defaultConfig);
     }
   }
   
   public FileConfiguration get() {
-    return config;
+    if (this.configFile == null) reload();
+    return this.configFile;
+  }
+  
+  public void save() {
+    if (this.configFile == null || this.file == null) return;
+    try {
+      this.get().save(this.file);
+    } catch (IOException e) {
+      plugin.getLogger().log(Level.SEVERE, "Could not save records file: ", e);
+    }
+  }
+  
+  public void saveDefaults() {
+    if (this.file == null)
+      this.file = new File(this.plugin.getDataFolder(), "records.yml");
+    
+    if (this.file.exists()) {
+      this.plugin.saveResource("records.yml", false);
+    }
   }
   
   public String getString(String path) {
-    return config.getString(path);
+    return this.configFile.getString(path);
   }
   
   public boolean getBoolean(String path) {
-    return config.getBoolean(path);
+    return this.configFile.getBoolean(path);
   }
   
   public long getLong(String path) {
-    return config.getLong(path);
+    return this.configFile.getLong(path);
   }
   
   public void set(String path, Object value) {
-    config.set(path, value);
+    this.configFile.set(path, value);
   }
   
-  public void reload() {
-    if (file == null) {
-      file = new File(plugin.getDataFolder(), "lang.yml");
-    }
-    config = YamlConfiguration.loadConfiguration(file);
-    
-    // Look for defaults in the jar
-    Reader defaultLang = new InputStreamReader(Objects.requireNonNull(plugin.getResource("lang.yml")), StandardCharsets.UTF_8);
-    YamlConfiguration def = YamlConfiguration.loadConfiguration(defaultLang);
-    config.setDefaults(def);
-  }
 }

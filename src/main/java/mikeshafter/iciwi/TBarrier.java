@@ -30,6 +30,9 @@ public class TBarrier implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
   
+  private final Iciwi iciwi = new Iciwi();
+  private final Config owners = iciwi.owners;
+  
   HashMap<Player, Location> gateLocationMap = new HashMap<>();
   HashMap<Player, Material> gateTypeMap = new HashMap<>();
   HashMap<Player, BlockData> gateDataMap = new HashMap<>();
@@ -43,7 +46,7 @@ public class TBarrier implements Listener {
       Action action = event.getAction();
       BlockState state = block.getState();
       BlockData data = block.getBlockData();
-      
+
       if (state instanceof Sign sign && data instanceof WallSign wallSign && action == Action.RIGHT_CLICK_BLOCK) {
 
 // Get variables
@@ -81,7 +84,7 @@ public class TBarrier implements Listener {
             String lore0 = meta.getLore().get(0);
             if (lore0.equals("Serial number:")) {
               String serial = meta.getLore().get(1);
-              
+
               // Get timestamp
               /*code to get timestamp from the config file */
               long timestamp = 0L;
@@ -90,8 +93,8 @@ public class TBarrier implements Listener {
                 plugin.getConfig().set("transfer."+serial, true);
                 plugin.saveConfig();
               }
-              
-              
+
+
 // Give confirmation to player
               double cardVal = cardSql.getCardValue(serial);
               player.sendMessage(String.format(ChatColor.GREEN+"Remaining value: "+ChatColor.YELLOW+"£%.2f", cardVal));
@@ -116,8 +119,8 @@ public class TBarrier implements Listener {
             gateTypeMap.put(player, gate.getType());
             gateDataMap.put(player, gate.getBlockData());
             gateLocationMap.put(player, location);
-            
-            
+  
+  
             if (signLine0.equals("[Entry]")) {  // if the sign is not a validator
               gate.setType(Material.AIR);
 
@@ -155,7 +158,7 @@ public class TBarrier implements Listener {
 
 // Get value of ticket
             String allowedFare = lore.get(1);  // this can be name of the station as well
-            
+  
             if (allowedFare.equals(eStation) || (fare <= Double.parseDouble(allowedFare))) {
 // remove ticket from player inventory
               player.getInventory().getItemInMainHand().setAmount(player.getInventory().getItemInMainHand().getAmount()-1);
@@ -181,34 +184,34 @@ public class TBarrier implements Listener {
             if (lore.get(0).equals("Serial number:")) {
 // Get serial number
               String serial = lore.get(1);
-              
+
 // Get discounts associated with the card and deduct fare accordingly
               HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
-              String entryStationOwner = StationOwners.getOwner(entryStation);
-              String exitStationOwner  = StationOwners.getOwner(eStation);
+              String entryStationOwner = owners.getOwner(entryStation);
+              String exitStationOwner = owners.getOwner(eStation);
               double half = fare/2;
-              
+  
               // Check for transfer
               if (plugin.getConfig().getBoolean("transfer."+serial)) { // true in config
                 fare -= plugin.getConfig().getDouble("transfer-discount"); // config value;
               }
               if (discounts.contains(entryStationOwner)) fare -= half;
-              if (discounts.contains(exitStationOwner))  fare -= half;
-              
+              if (discounts.contains(exitStationOwner)) fare -= half;
+  
               if (cardSql.getCardValue(serial) >= fare) {
 // deduct fare
                 cardSql.addValueToCard(serial, -1*fare);
                 player.sendMessage(String.format(ChatColor.GREEN+"Fare: "+ChatColor.YELLOW+"£%.2f"+ChatColor.GREEN+". Remaining value: "+ChatColor.YELLOW+"£%.2f", fare, cardSql.getCardValue(serial)));
 // give the money to the station operators
-                StationOwners.deposit(entryStationOwner, fare/2);
-                StationOwners.deposit(exitStationOwner, fare/2);
-                
+                owners.deposit(entryStationOwner, fare/2);
+                owners.deposit(exitStationOwner, fare/2);
+    
                 // TRANSFER: Set the time of exit
                 long timestamp = System.currentTimeMillis();
-                
+    
                 // Log timestamp to some config file
                 /* code */
-                
+
 // Log and Exit allowed
                 cardSql.log(serial, entryStation, eStation, fare);
                 flag = true;
@@ -232,11 +235,11 @@ public class TBarrier implements Listener {
               case "EAST" -> location.add(-1, 0, 1);
             }
             Block gate = location.getBlock();
-            
+  
             gateTypeMap.put(player, gate.getType());
             gateDataMap.put(player, gate.getBlockData());
             gateLocationMap.put(player, location);
-            
+  
             if (signLine0.equals("[Exit]")) {
               gate.setType(Material.AIR);
 

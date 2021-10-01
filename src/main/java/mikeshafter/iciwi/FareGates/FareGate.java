@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 public class FareGate {
   
   private final Player player;
-  private final Lang lang = new Lang();
+  private final Iciwi iciwi = new Iciwi();
+  private final Lang lang = iciwi.lang;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   public FareGate[] fareGate;
   private GateType gateType;
@@ -27,7 +28,7 @@ public class FareGate {
     this.player = player;
     this.gateType = getGateType(signText);
     this.fareGate = null;
-    
+
     if (gateType != null) {
       String args = switch (gateType) {
         case ENTRY -> signText.substring(lang.ENTRY.length()+1, signText.length()-1);
@@ -35,7 +36,7 @@ public class FareGate {
         case VALIDATOR -> signText.substring(lang.VALIDATOR.length()+1, signText.length()-1);
         case FAREGATE -> signText.substring(lang.FAREGATE.length()+1, signText.length()-1);
       };
-      
+
       // todo: args
       // Convert args into a binary
       int flags = 0;
@@ -50,43 +51,48 @@ public class FareGate {
         // validator, location does not matter
         return;
       }
-      
+      player.sendMessage("FAREGATE DEBUG 1 - FLAGS "+flags);  // TODO: DEBUG
+  
       flags >>= 1;
-      
+  
       // LM-style fare gates
       // location matters
       if ((gateType == GateType.ENTRY || gateType == GateType.EXIT) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-        
+    
         BlockFace direction = sign.getFacing();
-        
+    
         if (direction == BlockFace.SOUTH) {
+          player.sendMessage("DEBUG SOUTH");  // TODO: DEBUG
           this.fareGate = new OpenFareGate[parseArgs(flags).length];
           for (int i = 0; i < parseArgs(flags).length; i++) {
             byte[] locVector = parseArgs(flags)[i];
             this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], -locVector[2]));
           }
         } else if (direction == BlockFace.EAST) {
+          player.sendMessage("DEBUG EAST");  // TODO: DEBUG
           this.fareGate = new OpenFareGate[parseArgs(flags).length];
           for (int i = 0; i < parseArgs(flags).length; i++) {
             byte[] locVector = parseArgs(flags)[i];
             this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
           }
         } else if (direction == BlockFace.NORTH) {
+          player.sendMessage("DEBUG NORTH");  // TODO: DEBUG
           this.fareGate = new OpenFareGate[parseArgs(flags).length];
           for (int i = 0; i < parseArgs(flags).length; i++) {
             byte[] locVector = parseArgs(flags)[i];
             this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], locVector[2]));
           }
         } else if (direction == BlockFace.WEST) {
+          player.sendMessage("DEBUG WEST");  // TODO: DEBUG
           this.fareGate = new OpenFareGate[parseArgs(flags).length];
           for (int i = 0; i < parseArgs(flags).length; i++) {
             byte[] locVector = parseArgs(flags)[i];
             this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
           }
         }
-        
+    
       }
-      
+  
       // HL-style fare gates
       else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign sign) {
         flags &= 14;
@@ -105,7 +111,7 @@ public class FareGate {
           byte[] locVector = openLoc[i];
           this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
         }
-  
+    
       }
     }
   }
@@ -181,6 +187,7 @@ public class FareGate {
     else {
       boolean a = true;
       for (FareGate gate : fareGate) a &= gate.open();
+      player.sendMessage("DEBUG 2 OPEN");  // TODO: DEBUG
       return a;
     }
   }
@@ -195,6 +202,7 @@ public class FareGate {
     else {
       boolean a = true;
       for (FareGate gate : fareGate) a &= gate.close();
+      player.sendMessage("DEBUG 3 CLOSE");  // TODO: DEBUG
       return a;
     }
   }

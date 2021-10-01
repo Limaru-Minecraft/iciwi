@@ -2,56 +2,73 @@ package mikeshafter.iciwi;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
 
 
 public class StationOwners {
-
-  private static final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  private static File file;
-  private static FileConfiguration configFile;
   
-  public static void setup() {
-    file = new File(plugin.getDataFolder(), "owners.yml");
+  private final Iciwi plugin;
+  private File file = null;
+  private FileConfiguration configFile = null;
+  
+  
+  public StationOwners(Iciwi plugin) {
+    this.plugin = plugin;
+    saveDefaults();
+  }
+  
+  public void reload() {
+    if (this.file == null)
+      this.file = new File(this.plugin.getDataFolder(), "owners.yml");
     
-    if (!file.exists()) {
-      try {
-        boolean f = file.createNewFile();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    this.configFile = YamlConfiguration.loadConfiguration(this.file);
+    
+    InputStream defaultStream = this.plugin.getResource("owners.yml");
+    if (defaultStream != null) {
+      YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
+      this.configFile.setDefaults(defaultConfig);
     }
-    configFile = YamlConfiguration.loadConfiguration(file);
   }
   
-  public static FileConfiguration get() { return configFile; }
+  public FileConfiguration get() {
+    if (this.configFile == null) reload();
+    return this.configFile;
+  }
   
-  public static void save() {
+  public void save() {
+    if (this.configFile == null || this.file == null) return;
     try {
-      configFile.save(file);
+      this.get().save(this.file);
     } catch (IOException e) {
-      e.printStackTrace();
+      plugin.getLogger().log(Level.SEVERE, "Could not save owners file: ", e);
     }
   }
   
-  public static void reload() {
-    configFile = YamlConfiguration.loadConfiguration(file);
+  public void saveDefaults() {
+    if (this.file == null)
+      this.file = new File(this.plugin.getDataFolder(), "owners.yml");
+    
+    if (this.file.exists()) {
+      this.plugin.saveResource("owners.yml", false);
+    }
   }
   
-  public static String getOwner(String station) {
-    return configFile.getString("Operators."+station);
+  public String getOwner(String station) {
+    return get().getString("Operators."+station);
   }
   
-  public static void deposit(String operator, double amt) {
-    configFile.set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
+  public void deposit(String operator, double amt) {
+    get().set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
     save();
   }
   
-  public static double getRailPassPrice(String operator, int days) {
-    return configFile.getDouble("RailPassPrices."+operator+"."+days);
+  public double getRailPassPrice(String operator, int days) {
+    return get().getDouble("RailPassPrices."+operator+"."+days);
   }
   
 }
