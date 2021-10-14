@@ -1,7 +1,7 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,66 +9,30 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.logging.Level;
 
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
-public class StationOwners {
-  
-  private final Iciwi plugin;
-  private File file = null;
-  private FileConfiguration configFile = null;
-  
-  
-  public StationOwners(Iciwi plugin) {
-    this.plugin = plugin;
-    saveDefaults();
+
+public class StationOwners extends Config {
+  private File file;
+  private final YamlConfiguration config;
+  private final Plugin plugin = getPlugin(Iciwi.class);
+  private final String name;
+
+  public StationOwners(Plugin plugin) {
+    super("owners.yml", plugin);
   }
-  
-  public void reload() {
-    if (this.file == null)
-      this.file = new File(this.plugin.getDataFolder(), "owners.yml");
-    
-    this.configFile = YamlConfiguration.loadConfiguration(this.file);
-    
-    InputStream defaultStream = this.plugin.getResource("owners.yml");
-    if (defaultStream != null) {
-      YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defaultStream));
-      this.configFile.setDefaults(defaultConfig);
-    }
-  }
-  
-  public FileConfiguration get() {
-    if (this.configFile == null) reload();
-    return this.configFile;
-  }
-  
-  public void save() {
-    if (this.configFile == null || this.file == null) return;
-    try {
-      this.get().save(this.file);
-    } catch (IOException e) {
-      plugin.getLogger().log(Level.SEVERE, "Could not save owners file: ", e);
-    }
-  }
-  
-  public void saveDefaults() {
-    if (this.file == null)
-      this.file = new File(this.plugin.getDataFolder(), "owners.yml");
-    
-    if (this.file.exists()) {
-      this.plugin.saveResource("owners.yml", false);
-    }
-  }
-  
+
   public String getOwner(String station) {
-    return get().getString("Operators."+station);
+    return super.getString("Operators."+station);
   }
-  
+
   public void deposit(String operator, double amt) {
-    get().set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
-    save();
+    super.set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
+    super.save();
   }
-  
+
   public double getRailPassPrice(String operator, int days) {
-    return get().getDouble("RailPassPrices."+operator+"."+days);
+    return super.getDouble("RailPassPrices."+operator+"."+days);
   }
-  
+
 }
