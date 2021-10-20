@@ -4,10 +4,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -23,7 +21,8 @@ public class Config {
     file = new File(plugin.getDataFolder(), name);
 
     if (!file.exists()) {
-      file.getParentFile().mkdir();
+      Logger logger = plugin.getLogger();
+      logger.log(Level.INFO, file.getParentFile().mkdir() ? "[Iciwi] New config file created" : "[Iciwi] Config file already exists, initialising files...");
       plugin.saveResource(name, true);
     }
 
@@ -42,36 +41,40 @@ public class Config {
       e.printStackTrace();
     }
   }
-
+  
   public File getFile() {
     return file;
   }
-
+  
   public YamlConfiguration get() {
     if (config == null) reload();
     return config;
   }
-
+  
   public String getString(String path) {
-    this.config.getString(path);
+    return this.config.getString(path);
   }
-
-  public String getInt(String path) {
-    this.config.getInt(path);
+  
+  public boolean getBoolean(String path) {
+    return this.config.getBoolean(path);
   }
-
-  public String getDouble(String path) {
-    this.config.getDouble(path);
+  
+  public int getInt(String path) {
+    return this.config.getInt(path);
   }
-
-  public String getLong(String path) {
-    this.config.getLong(path);
+  
+  public double getDouble(String path) {
+    return this.config.getDouble(path);
   }
-
+  
+  public long getLong(String path) {
+    return this.config.getLong(path);
+  }
+  
   public void set(String path, Object value) {
-    this.config.set(path, value)
+    this.config.set(path, value);
   }
-
+  
   public void reload() {
     file = new File(plugin.getDataFolder(), name);
     try {

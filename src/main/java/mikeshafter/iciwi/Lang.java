@@ -1,52 +1,46 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
 public class Lang extends Config {
   private File file;
-  private final YamlConfiguration config;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;
-
+  
   public Lang(Plugin plugin) {
-    super("lang.yml", plugin)
+    super("lang.yml", plugin);
     this.name = "lang.yml";
   }
-
-
+  
+  
   // Fare gate strings
   // // Signs
-  public String ENTRY = this.config.getString("entry");
-  public String EXIT = this.config.getString("exit");
-  public String VALIDATOR = this.config.getString("validator");
-  public String FAREGATE = this.config.getString("faregate");
+  public String ENTRY = super.getString("entry");
+  public String EXIT = super.getString("exit");
+  public String VALIDATOR = super.getString("validator");
+  public String FAREGATE = super.getString("faregate");
   //--- Messages
-  public String REMAINING = this.config.getString("remaining");
-  public String FARE_EVADE = this.config.getString("fareEvade");
-
-
+  public String REMAINING = super.getString("remaining");
+  public String FARE_EVADE = super.getString("fareEvade");
+  
+  
   // Ticket Machine Strings
   //--- Global variables
-  public String TICKET_MACHINE = this.config.getString("ticketMachine");
-  public String TICKETS = this.config.getString("tickets");
-  public String PLUGIN_NAME = this.config.getString("pluginName");
-  public String CURRENCY = this.config.getString("currency");
-  public String SERIAL_NUMBER = this.config.getString("serialNumber");
-  public String SERIAL_PREFIX = this.config.getString("serialPrefix");
-
-
+  public String TICKET_MACHINE = super.getString("ticketMachine");
+  public String TICKETS = super.getString("tickets");
+  public String PLUGIN_NAME = super.getString("pluginName");
+  public String CURRENCY = super.getString("currency");
+  public String SERIAL_NUMBER = super.getString("serialNumber");
+  public String SERIAL_PREFIX = super.getString("serialPrefix");
+  
+  
   //--- Messages
-  public String NOT_ENOUGH_MONEY = this.config.getString("notEnoughMoney");
-
-
+  public String NOT_ENOUGH_MONEY = super.getString("notEnoughMoney");
+  
+  
 }

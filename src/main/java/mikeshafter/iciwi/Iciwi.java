@@ -21,8 +21,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   
   public static Economy economy = null;
   public Lang lang;
-  public Config owners;
-  public Config records;
+  public Owners owners;
+  public Records records;
   
   @Override
   public void onDisable() {
@@ -154,9 +154,9 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     app.initTables();
   
     // === Load station operator list ===
-    lang = new Config("lang.yml", this);
-    owners = new Config("owners.yml", this);
-    records = new Config("records.yml", this);
+    lang = new Lang(this);
+    owners = new Owners(this);
+    records = new Records(this);
   
   
     // this.lang = new Lang(this);

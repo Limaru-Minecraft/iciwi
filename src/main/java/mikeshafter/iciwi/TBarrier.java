@@ -31,7 +31,7 @@ public class TBarrier implements Listener {
   private final CardSql cardSql = new CardSql();
   
   private final Iciwi iciwi = new Iciwi();
-  private final Config owners = iciwi.owners;
+  private final Owners owners = iciwi.owners;
   
   HashMap<Player, Location> gateLocationMap = new HashMap<>();
   HashMap<Player, Material> gateTypeMap = new HashMap<>();

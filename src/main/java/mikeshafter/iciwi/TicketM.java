@@ -27,7 +27,7 @@ public class TicketM implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql app = new CardSql();
   private final Iciwi iciwi = new Iciwi();
-  private final Config owners = iciwi.owners;
+  private final Owners owners = iciwi.owners;
   private final double[] priceArray = {10, 20, 30, 50, 70, 100};
   double val;
   private String serial, station;

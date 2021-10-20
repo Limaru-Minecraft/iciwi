@@ -31,8 +31,8 @@ public class FareGateListener implements Listener {
   private final CardSql cardSql = new CardSql();
   private final Iciwi iciwi = new Iciwi();
   private final Lang lang = iciwi.lang;
-  private final Config records = iciwi.records;
-  private final Config owners = iciwi.owners;
+  private final Records records = iciwi.records;
+  private final Owners owners = iciwi.owners;
   private LinkedList<FareGate> gates;
   
   
@@ -110,35 +110,35 @@ public class FareGateListener implements Listener {
               gate.open();
               gate.hold();
             } else if (gateType == GateType.EXIT) {
-      
+  
               // get entry station and fare.
               String entryStation = records.getString("station."+serial);
               double fare = JsonManager.getFare(entryStation, station);
-      
+  
               // get rail pass discounts
               HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
-              String entryStationOwner = stationOwners.getOwner(entryStation);
-              String exitStationOwner = stationOwners.getOwner(station);
+              String entryStationOwner = owners.getOwner(entryStation);
+              String exitStationOwner = owners.getOwner(station);
               double half = fare/2;
-      
+  
               // get transfer discount
               if (records.getBoolean("transfer."+serial)) {
                 fare -= plugin.getConfig().getDouble("transfer-discount");
               }
-      
+  
               // remove fare from discounts
               if (discounts.contains(entryStationOwner)) fare -= half;
               if (discounts.contains(exitStationOwner)) fare -= half;
-              stationOwners.deposit(entryStationOwner, fare/2);
-              stationOwners.deposit(exitStationOwner, fare/2);
-      
+              owners.deposit(entryStationOwner, fare/2);
+              owners.deposit(exitStationOwner, fare/2);
+  
               // set remaining value and config
               cardSql.addValueToCard(serial, -1*fare);
               records.set("timestamp."+serial, System.currentTimeMillis());
               records.set("station."+serial, null);
-      
+  
               player.sendMessage("DEBUG 4 EXIT");  // TODO: DEBUG
-      
+  
               gates.add(gate);
               gate.open();
               gate.hold();

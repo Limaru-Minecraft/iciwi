@@ -1,33 +1,28 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
-public class StationOwners extends Config {
+public class Owners extends Config {
   private File file;
-  private final YamlConfiguration config;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;
-
-  public StationOwners(Plugin plugin) {
+  
+  public Owners(Plugin plugin) {
     super("owners.yml", plugin);
+    this.name = "owners.yml";
   }
-
+  
   public String getOwner(String station) {
     return super.getString("Operators."+station);
   }
-
+  
   public void deposit(String operator, double amt) {
-    super.set("Coffers."+operator, configFile.getDouble("Coffers."+operator)+amt);
+    super.set("Coffers."+operator, super.getDouble("Coffers."+operator)+amt);
     super.save();
   }
 
