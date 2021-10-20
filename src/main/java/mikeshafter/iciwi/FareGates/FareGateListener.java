@@ -157,47 +157,48 @@ public class FareGateListener implements Listener {
     
             // set gateType to gateAction for easier manipulation since they are ambiguous.
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
-    
-            if (gateType == GateType.ENTRY) {
-      
+
+            if (gateType == GateType.ENTRY && !itemLore0.contains("•")) {
+
               // check if the ticket is valid for that station
               if (itemLore0.equals(station)) {
                 // punch hole
                 meta.getLore().set(0, itemLore0+" •");
                 item.setItemMeta(meta);
-        
+
                 player.sendMessage("DEBUG 6 ENTRY");  // TODO: DEBUG
-        
+
                 gates.add(gate);
                 gate.open();
                 gate.hold();
               }
-            } else if (gateType == GateType.EXIT) {
+            } else if (gateType == GateType.EXIT && itemLore0.contains("•")) {
               // check fare
-              double fare = JsonManager.getFare(itemLore0, station);
+              String exitStation = itemLore0.substring(0, itemLore0.length() - 2);
+              double fare = JsonManager.getFare(exitStation, station);
               String itemLore1 = meta.getLore().get(1);
               if (Objects.equals(itemLore1, station) || Double.parseDouble(itemLore1) >= fare) {
                 meta.getLore().set(1, itemLore1+" •");
                 item.setItemMeta(meta);
-  
+
                 player.sendMessage("DEBUG 6 EXIT");  // TODO: DEBUG
-  
+
                 gates.add(gate);
                 gate.open();
                 gate.hold();
               }
-      
+
             }
-    
+
           } else gateAction = null;
-  
+
           // Check for fare evasion
           if (!(gateType == gateAction) && (item.getType() == Material.NAME_TAG || item.getType() == Material.PAPER)) {
             player.sendMessage(lang.FARE_EVADE);
             Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
             player.sendMessage("DEBUG 8");  // TODO: DEBUG
           }
-  
+
         }
       }
     }
