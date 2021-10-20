@@ -49,10 +49,12 @@ public class FareGateListener implements Listener {
       player.sendMessage("DEBUG 0");  // TODO: DEBUG
       
       if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Sign sign && data instanceof WallSign) {
+        // Initialise fare gate; all signs point to this
         if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
           player.sendMessage("DEBUG 1a");  // TODO: DEBUG
         }
+        // same thing, but for HL-style fare gates
       } else if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Openable) {
         if (location.add(0, -2, 0).getBlock() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
           gate = new FareGate(player, sign.getLine(0), sign.getLocation());
@@ -99,6 +101,7 @@ public class FareGateListener implements Listener {
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
     
             if (gateType == GateType.ENTRY) {
+
               records.set("station."+serial, station);
               // check whether the player tapped out and in within the time limit
               if (System.currentTimeMillis()-records.getLong("timestamp."+serial) < plugin.getConfig().getLong("max-transfer-time")) {
@@ -109,6 +112,8 @@ public class FareGateListener implements Listener {
               gates.add(gate);
               gate.open();
               gate.hold();
+
+
             } else if (gateType == GateType.EXIT) {
   
               // get entry station and fare.
@@ -119,7 +124,6 @@ public class FareGateListener implements Listener {
               HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
               String entryStationOwner = owners.getOwner(entryStation);
               String exitStationOwner = owners.getOwner(station);
-              double half = fare/2;
   
               // get transfer discount
               if (records.getBoolean("transfer."+serial)) {
@@ -127,13 +131,14 @@ public class FareGateListener implements Listener {
               }
   
               // remove fare from discounts
+              double half = fare/2;
               if (discounts.contains(entryStationOwner)) fare -= half;
               if (discounts.contains(exitStationOwner)) fare -= half;
               owners.deposit(entryStationOwner, fare/2);
               owners.deposit(exitStationOwner, fare/2);
   
               // set remaining value and config
-              cardSql.addValueToCard(serial, -1*fare);
+              cardSql.subtractValueFromCard(serial, fare);
               records.set("timestamp."+serial, System.currentTimeMillis());
               records.set("station."+serial, null);
   
@@ -148,7 +153,7 @@ public class FareGateListener implements Listener {
     
             player.sendMessage("DEBUG 5");  // TODO: DEBUG
             // Ticket
-            gateAction = !itemLore0.contains("•") ? GateType.ENTRY : GateType.EXIT;
+            gateAction = itemLore0.contains("•") ? GateType.EXIT : GateType.ENTRY;
     
             // set gateType to gateAction for easier manipulation since they are ambiguous.
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;

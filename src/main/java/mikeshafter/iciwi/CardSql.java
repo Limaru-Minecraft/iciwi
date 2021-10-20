@@ -127,6 +127,10 @@ public class CardSql{
   public void addValueToCard(String serial, double value) {
     updateCard(serial, getCardValue(serial)+value);
   }
+
+  public void subtractValueFromCard(String serial, double value) {
+    updateCard(serial, getCardValue(serial)-value);
+  }
   
   public void updateCard(String serial, double value) {
     String sql = "UPDATE cards SET value=? WHERE serial=?";
