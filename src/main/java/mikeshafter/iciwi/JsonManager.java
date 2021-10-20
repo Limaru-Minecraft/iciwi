@@ -25,6 +25,7 @@ public class JsonManager {
       while (scanner.hasNextLine()) {
         contentBuilder.append(scanner.nextLine());
       }
+      scanner.close();
     
       //String content = nextLine.toString();
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");

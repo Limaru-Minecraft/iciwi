@@ -6,3 +6,7 @@ transfer-discount: 0.6
 max-transfer-time: 300000
 # time to wait until a fare gate closes, in ticks
 gate-close-delay: 100
+# ticket machine type (STATION, COMPANY, GLOBAL)
+ticket-machine-type: STATION
+#ticket-machine-type: COMPANY
+#ticket-machine-type: GLOBAL
