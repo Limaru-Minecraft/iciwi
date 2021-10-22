@@ -14,7 +14,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -43,15 +42,15 @@ public class TicketMachine {
   }
   
   public void newTM_0() {
-    Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
-    
+    Inventory i = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
+  
     // Single Journey Ticket
-    tm.setItem(1, makeButton(Material.PAPER, ChatColor.GREEN+"New Single Journey Ticket"));
-    tm.setItem(3, makeButton(Material.MAP, ChatColor.YELLOW+"Adjust Fares"));
-    tm.setItem(5, makeButton(Material.NAME_TAG, ChatColor.LIGHT_PURPLE+"ICIWI Card Operations"));
-    tm.setItem(7, makeButton(Material.BOOK, ChatColor.AQUA+"Check Fares"));
-    
-    player.openInventory(tm);
+    i.setItem(1, makeButton(Material.PAPER, ChatColor.GREEN+"New Single Journey Ticket"));
+    i.setItem(3, makeButton(Material.MAP, ChatColor.YELLOW+"Adjust Fares"));
+    i.setItem(5, makeButton(Material.NAME_TAG, ChatColor.LIGHT_PURPLE+"ICIWI Card Operations"));
+    i.setItem(7, makeButton(Material.BOOK, ChatColor.AQUA+"Check Fares"));
+  
+    player.openInventory(i);
   }
   
   protected ItemStack makeButton(final Material material, final String displayName) {
@@ -63,20 +62,60 @@ public class TicketMachine {
     return item;
   }
   
-  public void newSingleJourneyTicket_1() {
-    this.player.sendMessage("new ticket under test");
+  public void newTicket_1(double value) {
+    Inventory i = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"New Ticket - £%.2f", value));
+    for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
+      i.setItem(ints[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(ints[1])));
+    }
+    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
+    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
   }
   
   public void adjustFares_1() {
-    this.player.sendMessage("adjust fares under test");
+    // Ticket selection
+    Inventory i = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select Ticket...");
+    player.openInventory(i);
   }
   
-  public void iciwiCardOperations_1() {
-    this.player.sendMessage("iciwi card ops under test");
+  public void adjustFares_2(double value, ItemStack item) {
+    Inventory i = plugin.getServer().createInventory(null, 36, String.format(ChatColor.DARK_BLUE+"Adjust Fare - £%.2f", value));
+    for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
+      i.setItem(ints[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(ints[1])));
+    }
+    i.setItem(0, item);
+    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
+    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
+  }
+  
+  public void CardOperations_1() {
+    // check if player has a card
+    for (ItemStack i : player.getInventory().getContents()) {
+      if (i != null && i.hasItemMeta() && i.getItemMeta() != null && i.getItemMeta().hasLore() && i.getItemMeta().getLore() != null && i.getItemMeta().getLore().get(0).equals("Serial number:")) {
+        Inventory j = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select Card...");
+        player.openInventory(j);
+        return;
+      }
+    }
+    //this.newCard_3();
+  }
+  
+  public void cardOperations_2(String serial) {
+    this.serial = serial;
   }
   
   public void checkFares_1() {
     this.player.sendMessage("fare checking under test");
+  }
+  
+  public void generateTicket(ItemStack item) {
+    // TODO: do the money stuff
+    player.getInventory().remove(item);
+    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
+  }
+  
+  public void generateTicket() {
+    // TODO: do the money stuff
+    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
   }
   
   public String getStation() {
@@ -139,11 +178,4 @@ public class TicketMachine {
     return item;
   }
   
-  protected boolean isDouble(String s) {
-    final String Digits = "(\\p{Digit}+)";
-    final String HexDigits = "(\\p{XDigit}+)";
-    final String Exp = "[eE][+-]?"+Digits;
-    final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
-    return Pattern.matches(fpRegex, s);
-  }
 }

@@ -18,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -27,7 +28,7 @@ public class TicketMachineListener implements Listener {
   private final CardSql app = new CardSql();
   private final Owners owners = new Owners(plugin);
   private final Lang lang = new Lang(plugin);
-  double val;
+  private double value = 0.0;
   private String serial, station;
   private String operator;
   private ArrayList<String[]> daysList; // {{days, price}, ...}
@@ -61,24 +62,98 @@ public class TicketMachineListener implements Listener {
   
   @EventHandler
   public void TMClick(InventoryClickEvent event) {
+    // Lang Constants
+    String __TICKET_MACHINE = ChatColor.DARK_BLUE+"Ticket Machine";
+    String NEW_TICKET = ChatColor.GREEN+"New Single Journey Ticket";
+    String ADJUST_FARES = ChatColor.YELLOW+"Adjust Fares";
+    String CARD_OPERATIONS = ChatColor.LIGHT_PURPLE+"ICIWI Card Operations";
+    String CHECK_FARES = ChatColor.AQUA+"Check Fares";
+  
+    String __NEW_TICKET = ChatColor.DARK_BLUE+"New Ticket - ";
+    String CLEAR = "CLEAR";
+    String ENTER = "ENTER";
+  
+    String __SELECT_TICKET = ChatColor.DARK_BLUE+"Select Ticket...";
+    String __ADJUST_FARES = ChatColor.DARK_BLUE+"Adjust Fare - ";
+  
+  
     Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
     if (inventory == null) return;
-    
+    event.setCancelled(true);
+  
     if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
       String itemName = item.getItemMeta().getDisplayName();
       String inventoryName = event.getView().getTitle();
-      
+      player.closeInventory();
+    
       // == Page 0 ==
-      if (inventoryName.equals(ChatColor.DARK_BLUE+"Ticket Machine")) {
-        
-        if (itemName.equals(ChatColor.GREEN+"New Single Journey Ticket")) machine.newSingleJourneyTicket_1();
-        else if (itemName.equals(ChatColor.YELLOW+"Adjust Fares")) machine.adjustFares_1();
-        else if (itemName.equals(ChatColor.LIGHT_PURPLE+"ICIWI Card Operations")) machine.iciwiCardOperations_1();
-        else if (itemName.equals(ChatColor.AQUA+"Check Fares")) machine.checkFares_1();
-        
+      if (inventoryName.equals(__TICKET_MACHINE)) {
+      
+        if (itemName.equals(NEW_TICKET)) machine.newTicket_1(0.0);
+        else if (itemName.equals(ADJUST_FARES)) machine.adjustFares_1();
+        else if (itemName.equals(CARD_OPERATIONS)) machine.CardOperations_1();
+        else if (itemName.equals(CHECK_FARES)) machine.checkFares_1();
+      
       }
+    
+      // == Page 1: New Ticket ==
+      else if (inventoryName.contains(__NEW_TICKET)) {
+        value = Double.parseDouble(inventoryName.substring(__NEW_TICKET.length()));
+        player.closeInventory();
+      
+        if (itemName.equals(CLEAR)) machine.newTicket_1(0.0);
+      
+        else if (itemName.equals(ENTER)) machine.generateTicket();
+      
+        else {
+          double numberPressed = Integer.parseInt(itemName);
+          value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
+          machine.newTicket_1(value);
+        }
+      
+      }
+    
+      // == Page 1: Adjust Fares ==
+      else if (inventoryName.equals(__SELECT_TICKET)) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
+          player.closeInventory();
+          String station = item.getItemMeta().getLore().get(0);
+          String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
+          if (isDouble(ticketPrice)) machine.adjustFares_2(0.0, item);
+          else player.sendMessage(ChatColor.RED+"Invalid ticket! Direct tickets cannot be adjusted!");
+        }
+      }
+    
+      // == Page 2: Adjust Fares ==
+      else if (inventoryName.contains(__ADJUST_FARES)) {
+        value = Double.parseDouble(inventoryName.substring(__ADJUST_FARES.length()));
+        ItemStack item0 = inventory.getItem(0);
+        player.closeInventory();
+      
+        if (itemName.equals(CLEAR)) machine.adjustFares_2(0.0, item0);
+      
+        else if (itemName.equals(ENTER)) {
+          machine.generateTicket(item0);
+        } else {
+          double numberPressed = Integer.parseInt(itemName);
+          value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
+          machine.adjustFares_2(value, item0);
+        }
+      
+      }
+    
+      // == Page 1: Card Operations ==
+    
     }
+  }
+  
+  private boolean isDouble(String s) {
+    final String Digits = "(\\p{Digit}+)";
+    final String HexDigits = "(\\p{XDigit}+)";
+    final String Exp = "[eE][+-]?"+Digits;
+    final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
+    return Pattern.matches(fpRegex, s);
   }
 }
