@@ -1,6 +1,7 @@
 package mikeshafter.iciwi;
 
 import mikeshafter.iciwi.FareGates.FareGateListener;
+import mikeshafter.iciwi.Tickets.TicketMachineListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -46,8 +47,8 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     } else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
         String station = args[0];
-        TicketM ticketMachine = new TicketM();
-        ticketMachine.newTM(player, station);
+//        TicketM ticketMachine = new TicketM();
+//        ticketMachine.newTM(player, station);
         return true;
       } else {
         sender.sendMessage("Usage: /ticketmachine <station>");
@@ -171,7 +172,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new FareGateListener(), this);
 //    getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    getServer().getPluginManager().registerEvents(new TicketM(), this);
+    getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
   
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
