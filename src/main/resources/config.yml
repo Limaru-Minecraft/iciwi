@@ -1,5 +1,7 @@
 # This sets the penalty amount when someone forgets to tap in/out
 penalty: 8.0
+# This sets the deposit that a player pays when they buy a new card
+deposit: 5.0
 # Discount for transferring
 transfer-discount: 0.6
 # max time allowed for transfer

@@ -14,6 +14,7 @@ import org.bukkit.plugin.Plugin;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -124,10 +125,24 @@ public class TicketMachine {
   }
   
   public void topUp_3(String serial) {
-    // TODO
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Top Up - %s", serial));
+    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
+    if (priceArray.size() == 0) {
+      plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
+    }
+    for (int j = 0; j < priceArray.size(); j++) {
+      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", priceArray.get(j))));
+    }
+    player.openInventory(i);
   }
   
   public void railPass_3(String serial, String operator) {
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Add rail pass - %s", serial));
+    Set<String> daysSet = owners.getRailPassDays(operator);
+    for (String days : daysSet) {
+      double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
+      i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
+    }
   }
   
   public void checkFares_1() {
