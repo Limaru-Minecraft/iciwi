@@ -87,7 +87,7 @@ public class TicketMachine {
     i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
   }
   
-  public void CardOperations_1() {
+  public void cardOperations_1() {
     // check if player has a card
     for (ItemStack i : player.getInventory().getContents()) {
       if (i != null && i.hasItemMeta() && i.getItemMeta() != null && i.getItemMeta().hasLore() && i.getItemMeta().getLore() != null && i.getItemMeta().getLore().get(0).equals("Serial number:")) {
@@ -96,11 +96,38 @@ public class TicketMachine {
         return;
       }
     }
-    //this.newCard_3();
+    this.newCard_3();
+  }
+  
+  public void newCard_3() {
+    Inventory i = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Select value...");
+    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
+    if (priceArray.size() == 0) {
+      plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
+    }
+    for (int j = 0; j < priceArray.size(); j++) {
+      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(ChatColor.GREEN+"£%.2f", priceArray.get(j))));
+    }
+    player.openInventory(i);
   }
   
   public void cardOperations_2(String serial) {
     this.serial = serial;
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Select Option - %s", serial));
+    double cardValue = app.getCardValue(serial);
+    i.setItem(0, makeButton(Material.NAME_TAG, ChatColor.YELLOW+"Card Details", String.format("Serial number: %s", serial), String.format("Remaining value: £%.2f", cardValue)));
+    i.setItem(1, makeButton(Material.MAGENTA_WOOL, ChatColor.LIGHT_PURPLE+"New ICIWI Card"));
+    i.setItem(2, makeButton(Material.CYAN_WOOL, ChatColor.AQUA+"Top Up ICIWI Card"));
+    i.setItem(3, makeButton(Material.LIME_WOOL, ChatColor.GREEN+"New Rail Pass", owners.getOwner(station)));
+    i.setItem(4, makeButton(Material.ORANGE_WOOL, ChatColor.GOLD+"Refund Card"));
+    player.openInventory(i);
+  }
+  
+  public void topUp_3(String serial) {
+    // TODO
+  }
+  
+  public void railPass_3(String serial, String operator) {
   }
   
   public void checkFares_1() {

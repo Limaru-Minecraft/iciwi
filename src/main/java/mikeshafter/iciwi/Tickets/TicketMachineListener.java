@@ -28,8 +28,6 @@ public class TicketMachineListener implements Listener {
   private final CardSql app = new CardSql();
   private final Owners owners = new Owners(plugin);
   private final Lang lang = new Lang(plugin);
-  private double value = 0.0;
-  private String serial, station;
   private String operator;
   private ArrayList<String[]> daysList; // {{days, price}, ...}
   private TicketMachine machine;
@@ -40,9 +38,10 @@ public class TicketMachineListener implements Listener {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
       String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+      this.operator = owners.getOwner(station);
       Player player = event.getPlayer();
-      
-      if ((signLine0.equalsIgnoreCase("[Tickets]") || signLine0.equalsIgnoreCase("-Tickets-") || signLine0.equalsIgnoreCase("[Ticket Machine]")) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
+  
+      if ((signLine0.equalsIgnoreCase(lang.TICKETS)) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
         if (Objects.equals(machineType, "COMPANY")) {
@@ -76,6 +75,10 @@ public class TicketMachineListener implements Listener {
     String __SELECT_TICKET = ChatColor.DARK_BLUE+"Select Ticket...";
     String __ADJUST_FARES = ChatColor.DARK_BLUE+"Adjust Fare - ";
   
+    String __SELECT_CARD = ChatColor.DARK_BLUE+"Select Card...";
+    String SERIAL_NUMBER = "Serial number:";
+    String __CARD_OPERATION = ChatColor.DARK_BLUE+"Select Option";
+  
   
     Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
@@ -89,11 +92,12 @@ public class TicketMachineListener implements Listener {
       player.closeInventory();
     
       // == Page 0 ==
+      double value = 0.0;
       if (inventoryName.equals(__TICKET_MACHINE)) {
       
         if (itemName.equals(NEW_TICKET)) machine.newTicket_1(0.0);
         else if (itemName.equals(ADJUST_FARES)) machine.adjustFares_1();
-        else if (itemName.equals(CARD_OPERATIONS)) machine.CardOperations_1();
+        else if (itemName.equals(CARD_OPERATIONS)) machine.cardOperations_1();
         else if (itemName.equals(CHECK_FARES)) machine.checkFares_1();
       
       }
@@ -141,11 +145,34 @@ public class TicketMachineListener implements Listener {
           value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
           machine.adjustFares_2(value, item0);
         }
-      
+  
       }
-    
+
       // == Page 1: Card Operations ==
-    
+      else if (inventoryName.equals(__SELECT_CARD)) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(SERIAL_NUMBER)) {
+          player.closeInventory();
+          String serial = item.getItemMeta().getLore().get(1);
+          machine.cardOperations_2(serial);
+        }
+      }
+
+      // == Page 2: Card Operations ==
+      else if (inventoryName.contains(__CARD_OPERATION)) {
+        String serial = inventoryName.substring(__CARD_OPERATION.length());
+        if (!itemName.equals(ChatColor.YELLOW+"Card Details")) {
+          player.closeInventory();
+          if (itemName.equals(ChatColor.LIGHT_PURPLE+"New ICIWI Card")) {
+            machine.newCard_3();
+          } else if (itemName.equals(ChatColor.AQUA+"Top Up ICIWI Card")) {
+            machine.topUp_3(serial);
+          } else if (itemName.equals(ChatColor.GREEN+"New Rail Pass")) {
+            machine.railPass_3(serial, this.operator);
+          } else if (itemName.equals(ChatColor.GOLD+"Refund Card")) {
+            //TODO: refund
+          }
+        }
+      }
     }
   }
   

@@ -6,6 +6,7 @@ import java.sql.*;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -16,10 +17,11 @@ public class CardSql{
   
   private Connection connect() {
     // SQLite connection string
-    String url = "jdbc:sqlite:IciwiCards.db";
+    // "jdbc:sqlite:IciwiCards.db"
+    String url = plugin.getConfig().getString("database");
     Connection conn = null;
     try {
-      conn = DriverManager.getConnection(url);
+      conn = DriverManager.getConnection(Objects.requireNonNull(url));
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
@@ -28,15 +30,16 @@ public class CardSql{
 
   public void initTables() {
     // SQLite connection string
-    String url = "jdbc:sqlite:IciwiCards.db";
+    // "jdbc:sqlite:IciwiCards.db"
+    String url = plugin.getConfig().getString("database");
   
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
     sql.add("CREATE TABLE IF NOT EXISTS log (serial text, start_station TEXT, end_station TEXT, price NUMERIC )");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text, operator text, expiry integer, FOREIGN KEY(serial) REFERENCES cards(serial), PRIMARY KEY(serial) )");
-
-    try (Connection conn = DriverManager.getConnection(url); Statement statement = conn.createStatement()) {
+  
+    try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
         statement.execute(s);
       }

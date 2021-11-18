@@ -11,7 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/MakeButton.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" afterDir="false" />
     </list>
@@ -410,7 +410,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634881968738</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="did more work on the ticket machine">
+      <created>1634900543982</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1634900543982</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -422,7 +429,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <MESSAGE value="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" />
     <MESSAGE value="Updated stuff" />
     <MESSAGE value="1.16.4a2" />
     <MESSAGE value="Bug fixes" />
@@ -447,7 +453,8 @@
     <MESSAGE value="Last commit before I will have to take a break from this as national exams are arriving and my grades are less than satisfactory." />
     <MESSAGE value="Alterations to fix errors, should compile without problems now" />
     <MESSAGE value="Update ticket machine" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update ticket machine" />
+    <MESSAGE value="did more work on the ticket machine" />
+    <option name="LAST_COMMIT_MESSAGE" value="did more work on the ticket machine" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
