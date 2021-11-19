@@ -20,7 +20,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -34,7 +33,6 @@ public class TicketMachineListener implements Listener {
   private final Owners owners = new Owners(plugin);
   private final Lang lang = new Lang(plugin);
   private String operator;
-  private ArrayList<String[]> daysList; // {{days, price}, ...}
   private TicketMachine machine;
   
   
@@ -108,7 +106,7 @@ public class TicketMachineListener implements Listener {
       player.closeInventory();
     
       // == Page 0 ==
-      double value = 0.0;
+      double value;
       if (inventoryName.equals(__TICKET_MACHINE)) {
       
         if (itemName.equals(NEW_TICKET)) machine.newTicket_1(0.0);
@@ -139,7 +137,7 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.equals(__SELECT_TICKET)) {
         if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
           player.closeInventory();
-          String station = item.getItemMeta().getLore().get(0);
+          // String station = item.getItemMeta().getLore().get(0);
           String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
           if (isDouble(ticketPrice)) machine.adjustFares_2(0.0, item);
           else player.sendMessage(ChatColor.RED+"Invalid ticket! Direct tickets cannot be adjusted!");
@@ -151,10 +149,10 @@ public class TicketMachineListener implements Listener {
         value = Double.parseDouble(inventoryName.substring(__ADJUST_FARES.length()));
         ItemStack item0 = inventory.getItem(0);
         player.closeInventory();
-      
+  
         if (itemName.equals(CLEAR)) machine.adjustFares_2(0.0, item0);
-      
-        else if (itemName.equals(ENTER)) {
+  
+        else if (itemName.equals(ENTER) && item0 != null) {
           machine.generateTicket(item0);
         } else {
           double numberPressed = Integer.parseInt(itemName);
@@ -215,7 +213,7 @@ public class TicketMachineListener implements Listener {
                            ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                            ];
             app.newCard(SERIAL_PREFIX+sum+"-"+serial, val);
-            player.getInventory().addItem(makeButton(Material.NAME_TAG, ICIWI_CARD, SERIAL_NUMBER, SERIAL_PREFIX+sum+"-"+serial));
+            player.getInventory().addItem(makeButton(ICIWI_CARD, SERIAL_NUMBER, SERIAL_PREFIX+sum+"-"+serial));
           } else player.sendMessage(NOT_ENOUGH_MONEY);
         }
       }
@@ -259,8 +257,8 @@ public class TicketMachineListener implements Listener {
     return Pattern.matches(fpRegex, s);
   }
   
-  protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(material, 1);
+  protected ItemStack makeButton(final String displayName, final String... lore) {
+    ItemStack item = new ItemStack(Material.NAME_TAG, 1);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
     itemMeta.setDisplayName(displayName);

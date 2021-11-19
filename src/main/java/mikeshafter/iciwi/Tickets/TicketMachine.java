@@ -12,7 +12,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -27,9 +26,8 @@ public class TicketMachine {
   private final Player player;
   private final CardSql app = new CardSql();
   private final Owners owners = new Owners(plugin);
-  private String serial;
+  // private String serial;
   private double value;
-  private Hashtable<Integer, Double> daysList; // [{days, price}, ...]
   
   public TicketMachine(Player player, String station) {
     this.player = player;
@@ -114,7 +112,7 @@ public class TicketMachine {
   }
   
   public void cardOperations_2(String serial) {
-    this.serial = serial;
+    // this.serial = serial;
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Select Option - %s", serial));
     double cardValue = app.getCardValue(serial);
     i.setItem(0, makeButton(Material.NAME_TAG, ChatColor.YELLOW+"Card Details", String.format("Serial number: %s", serial), String.format("Remaining value: £%.2f", cardValue)));
@@ -140,6 +138,7 @@ public class TicketMachine {
   public void railPass_3(String serial, String operator) {
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Add rail pass - %s", serial));
     Set<String> daysSet = owners.getRailPassDays(operator);
+    // Set<String> daysSet = owners.getRailPassDays(this.operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
       i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
@@ -177,42 +176,42 @@ public class TicketMachine {
   public String getStation() {
     return station;
   }
-  
-  public String getOperator() {
-    return operator;
-  }
-  
-  public String getSerial() {
-    return serial;
-  }
-  
-  public void setSerial(String serial) {
-    this.serial = serial;
-  }
-  
-  public double getValue() {
-    return value;
-  }
-  
-  public void setValue(double value) {
-    this.value = value;
-  }
-  
-  public Hashtable<Integer, Double> getDaysList() {
-    return daysList;
-  }
-  
-  public void setDaysList(Hashtable<Integer, Double> daysList) {
-    this.daysList = daysList;
-  }
-  
-  public CardSql getApp() {
-    return app;
-  }
-  
-  public Owners getOwners() {
-    return owners;
-  }
+
+//  public String getOperator() {
+//    return operator;
+//  }
+//
+//  public String getSerial() {
+//    return serial;
+//  }
+//
+//  public void setSerial(String serial) {
+//    this.serial = serial;
+//  }
+//
+//  public double getValue() {
+//    return value;
+//  }
+//
+//  public void setValue(double value) {
+//    this.value = value;
+//  }
+//
+//  public Hashtable<Integer, Double> getDaysList() {
+//    return daysList;
+//  }
+//
+//  public void setDaysList(Hashtable<Integer, Double> daysList) {
+//    this.daysList = daysList;
+//  }
+//
+//  public CardSql getApp() {
+//    return app;
+//  }
+//
+//  public Owners getOwners() {
+//    return owners;
+//  }
   
   public void generateTicket() {
     if (Iciwi.economy.getBalance(player) >= value) {
@@ -231,15 +230,15 @@ public class TicketMachine {
     item.setItemMeta(itemMeta);
     return item;
   }
-  
-  protected ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(lore);
-    item.setItemMeta(itemMeta);
-    return item;
-  }
+
+//  protected ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
+//    ItemStack item = new ItemStack(material, 1);
+//    ItemMeta itemMeta = item.getItemMeta();
+//    assert itemMeta != null;
+//    itemMeta.setDisplayName(displayName);
+//    itemMeta.setLore(lore);
+//    item.setItemMeta(itemMeta);
+//    return item;
+//  }
   
 }
