@@ -185,7 +185,14 @@ public class TicketMachineListener implements Listener {
           } else if (itemName.equals(ChatColor.GREEN+"New Rail Pass")) {
             machine.railPass_3(serial, this.operator);
           } else if (itemName.equals(ChatColor.GOLD+"Refund Card")) {
-            //TODO: refund
+            // search for player's card
+            for (ItemStack itemStack : player.getInventory().getContents()) {
+              // get loreStack
+              if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(1), SERIAL_NUMBER)) {
+                player.getInventory().remove(itemStack);
+              }
+            }
+  
           }
         }
       }

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -150,14 +151,27 @@ public class TicketMachine {
   }
   
   public void generateTicket(ItemStack item) {
-    // TODO: do the money stuff
-    player.getInventory().remove(item);
-    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
+    // get current fare on the ticket
+    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
+      String lore1 = item.getItemMeta().getLore().get(1);
+      double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
+      double parsedValue = value-val;
+    
+      if (Iciwi.economy.getBalance(player) >= parsedValue) {
+        Iciwi.economy.withdrawPlayer(player, parsedValue);
+        // TODO: send message
+      }
+      player.getInventory().remove(item);
+      player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
+    }
   }
   
-  public void generateTicket() {
-    // TODO: do the money stuff
-    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
+  private boolean isDouble(String s) {
+    final String Digits = "(\\p{Digit}+)";
+    final String HexDigits = "(\\p{XDigit}+)";
+    final String Exp = "[eE][+-]?"+Digits;
+    final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
+    return Pattern.matches(fpRegex, s);
   }
   
   public String getStation() {
@@ -198,6 +212,14 @@ public class TicketMachine {
   
   public Owners getOwners() {
     return owners;
+  }
+  
+  public void generateTicket() {
+    if (Iciwi.economy.getBalance(player) >= value) {
+      Iciwi.economy.withdrawPlayer(player, value);
+      // TODO: send message
+    }
+    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
   }
   
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {
