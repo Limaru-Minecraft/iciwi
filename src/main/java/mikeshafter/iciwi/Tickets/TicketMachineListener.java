@@ -34,8 +34,8 @@ public class TicketMachineListener implements Listener {
   private final Lang lang = new Lang(plugin);
   private String operator;
   private TicketMachine machine;
-  
-  
+
+
   @EventHandler
   public void TMSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
@@ -43,6 +43,7 @@ public class TicketMachineListener implements Listener {
       String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
       this.operator = owners.getOwner(station);
       Player player = event.getPlayer();
+      player.sendMessage("debug 0");  // TODO: DEBUG
   
       if ((signLine0.equalsIgnoreCase(lang.TICKETS)) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
         // Figure out which ticket machine is to be used
@@ -61,7 +62,7 @@ public class TicketMachineListener implements Listener {
       }
     }
   }
-  
+
   @EventHandler
   public void TMClick(InventoryClickEvent event) {
     // Lang Constants
@@ -69,68 +70,68 @@ public class TicketMachineListener implements Listener {
     String ICIWI_CARD = ChatColor.GREEN+"ICIWI Card";
     String SERIAL_PREFIX = "A";
     String NOT_ENOUGH_MONEY = ChatColor.RED+"You do not have enough money!";
-  
+
     String __TICKET_MACHINE = ChatColor.DARK_BLUE+"Ticket Machine";
     String NEW_TICKET = ChatColor.GREEN+"New Single Journey Ticket";
     String ADJUST_FARES = ChatColor.YELLOW+"Adjust Fares";
     String CARD_OPERATIONS = ChatColor.LIGHT_PURPLE+"ICIWI Card Operations";
     String CHECK_FARES = ChatColor.AQUA+"Check Fares";
-  
+
     String __NEW_TICKET = ChatColor.DARK_BLUE+"New Ticket - ";
     String CLEAR = "CLEAR";
     String ENTER = "ENTER";
-  
+
     String __SELECT_TICKET = ChatColor.DARK_BLUE+"Select Ticket...";
     String __ADJUST_FARES = ChatColor.DARK_BLUE+"Adjust Fare - ";
-  
+
     String __SELECT_CARD = ChatColor.DARK_BLUE+"Select Card...";
     String SERIAL_NUMBER = "Serial number:";
     String __CARD_OPERATION = ChatColor.DARK_BLUE+"Select Option";
-  
+
     String __SELECT_VALUE = ChatColor.DARK_BLUE+"Select value...";
-  
+
     String __TOP_UP = ChatColor.DARK_BLUE+"Top Up - ";
-  
+
     String __ADD_RAIL_PASS = ChatColor.DARK_BLUE+"Add rail pass - ";
-  
-  
+
+
     Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
     if (inventory == null) return;
     event.setCancelled(true);
-  
+
     if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
       String itemName = item.getItemMeta().getDisplayName();
       String inventoryName = event.getView().getTitle();
       player.closeInventory();
-    
+
       // == Page 0 ==
       double value;
       if (inventoryName.equals(__TICKET_MACHINE)) {
-      
+
         if (itemName.equals(NEW_TICKET)) machine.newTicket_1(0.0);
         else if (itemName.equals(ADJUST_FARES)) machine.adjustFares_1();
         else if (itemName.equals(CARD_OPERATIONS)) machine.cardOperations_1();
         else if (itemName.equals(CHECK_FARES)) machine.checkFares_1();
-      
+
       }
 
       // == New Ticket : Page 1 ==
       else if (inventoryName.contains(__NEW_TICKET)) {
         value = Double.parseDouble(inventoryName.substring(__NEW_TICKET.length()));
         player.closeInventory();
-      
+
         if (itemName.equals(CLEAR)) machine.newTicket_1(0.0);
-      
+
         else if (itemName.equals(ENTER)) machine.generateTicket();
-      
+
         else {
           double numberPressed = Integer.parseInt(itemName);
           value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
           machine.newTicket_1(value);
         }
-      
+
       }
 
       // == Adjust Fares : Page 1 ==
@@ -149,9 +150,9 @@ public class TicketMachineListener implements Listener {
         value = Double.parseDouble(inventoryName.substring(__ADJUST_FARES.length()));
         ItemStack item0 = inventory.getItem(0);
         player.closeInventory();
-  
+
         if (itemName.equals(CLEAR)) machine.adjustFares_2(0.0, item0);
-  
+
         else if (itemName.equals(ENTER) && item0 != null) {
           machine.generateTicket(item0);
         } else {
@@ -159,7 +160,7 @@ public class TicketMachineListener implements Listener {
           value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
           machine.adjustFares_2(value, item0);
         }
-  
+
       }
 
       // == Card Operations : Page 1 ==
@@ -190,7 +191,7 @@ public class TicketMachineListener implements Listener {
                 player.getInventory().remove(itemStack);
               }
             }
-  
+
           }
         }
       }
@@ -200,9 +201,9 @@ public class TicketMachineListener implements Listener {
         if (itemName.contains(CURRENCY_SYMBOL)) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
           double deposit = plugin.getConfig().getDouble("deposit");
-    
+
           player.closeInventory();
-    
+
           if (Iciwi.economy.getBalance(player) >= deposit+val) {
             // Take money from player and send message
             Iciwi.economy.withdrawPlayer(player, deposit+val);
@@ -222,15 +223,15 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.contains(__TOP_UP)) {
         String serial = inventoryName.substring(__TOP_UP.length());
         double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-  
+
         player.closeInventory();
-  
+
         // Top up existing card
         if (Iciwi.economy.getBalance(player) >= val) {
           Iciwi.economy.withdrawPlayer(player, val);
           // TODO: send message
           app.addValueToCard(serial, val);
-    
+
         } else player.sendMessage(NOT_ENOUGH_MONEY);
       }
 
@@ -239,16 +240,16 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__ADD_RAIL_PASS.length());
         long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
         double price = owners.getRailPassPrice(this.operator, days);
-  
+
         player.closeInventory();
-  
+
         Iciwi.economy.withdrawPlayer(player, price);
         // TODO: send message
         app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
       }
     }
   }
-  
+
   private boolean isDouble(String s) {
     final String Digits = "(\\p{Digit}+)";
     final String HexDigits = "(\\p{XDigit}+)";
@@ -256,7 +257,7 @@ public class TicketMachineListener implements Listener {
     final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
     return Pattern.matches(fpRegex, s);
   }
-  
+
   protected ItemStack makeButton(final String displayName, final String... lore) {
     ItemStack item = new ItemStack(Material.NAME_TAG, 1);
     ItemMeta itemMeta = item.getItemMeta();

@@ -37,7 +37,7 @@ public class FareGateListener implements Listener {
 
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
-    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock() instanceof Sign || event.getClickedBlock instanceof Openable) {
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock() instanceof Sign || event.getClickedBlock() instanceof Openable)) {
 
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
