@@ -94,14 +94,13 @@ public class FareGate {
       }
   
       // HL-style fare gates
-      else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign sign) {
+      else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign) {
         flags &= 14;
         flags >>= 1;
         byte[][] openLoc = switch (flags) { // LDR
           case 2 -> new byte[][] {{0, 2, 0}, {1, 2, 0}};
           case 3 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}};
-          case 4 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};
-          case 5 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};
+          case 4, 5 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};
           case 6 -> new byte[][] {{0, 2, 0}, {1, 2, 0}, {0, -2, 0}};
           case 7 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}, {0, -2, 0}};
           default -> new byte[][] {{0, 2, 0}};

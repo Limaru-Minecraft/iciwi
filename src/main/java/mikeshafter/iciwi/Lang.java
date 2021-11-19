@@ -7,7 +7,7 @@ import java.io.File;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
-public class Lang extends Config {
+public class Lang extends CustomConfig {
   private File file;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;

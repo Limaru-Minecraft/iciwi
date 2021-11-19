@@ -9,7 +9,7 @@ import java.util.Set;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
-public class Owners extends Config {
+public class Owners extends CustomConfig {
   private File file;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;

@@ -10,13 +10,13 @@ import java.util.logging.Logger;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
-public class Config {
+public class CustomConfig {
   private File file;
   private final YamlConfiguration config;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;
 
-  public Config(String name, Plugin plugin) {
+  public CustomConfig(String name, Plugin plugin) {
     this.name = name;
     file = new File(plugin.getDataFolder(), name);
 

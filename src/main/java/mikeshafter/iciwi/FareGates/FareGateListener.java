@@ -29,17 +29,16 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 public class FareGateListener implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
-  private final Iciwi iciwi = new Iciwi();
-  private final Lang lang = iciwi.lang;
-  private final Records records = iciwi.records;
-  private final Owners owners = iciwi.owners;
+  private final Lang lang = new Lang(plugin);
+  private final Records records = new Records(plugin);
+  private final Owners owners = new Owners(plugin);
   private LinkedList<FareGate> gates;
-  
-  
+
+
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
-    if (event.getClickedBlock() != null) {
-      
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock() instanceof Sign || event.getClickedBlock instanceof Openable) {
+
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       Location location = block.getLocation();
@@ -47,7 +46,7 @@ public class FareGateListener implements Listener {
       BlockData data = block.getBlockData();
       FareGate gate = null;
       player.sendMessage("DEBUG 0");  // TODO: DEBUG
-      
+
       if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Sign sign && data instanceof WallSign) {
         // Initialise fare gate; all signs point to this
         if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
@@ -58,13 +57,13 @@ public class FareGateListener implements Listener {
       } else if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Openable) {
         if (location.add(0, -2, 0).getBlock() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
           gate = new FareGate(player, sign.getLine(0), sign.getLocation());
-          event.setCancelled(true);
           player.sendMessage("DEBUG 1b");  // TODO: DEBUG
         }
       } else return;
 
       // figuring out entry/exit
       if (gate != null) {
+        player.sendMessage("DEBUG 0a");  // TODO: DEBUG
         GateType gateType = gate.getGateType();
         /*
         Paper ticket    | Y Y
@@ -80,15 +79,15 @@ public class FareGateListener implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
         if (meta != null && meta.hasLore() && meta.getLore() != null) {
-  
+
           String itemLore0 = meta.getLore().get(0);
           GateType gateAction;  // reusing GateType to save on enums. This value can only be ENTRY or EXIT.
           // station
           Sign sign = (Sign) block;
           String station = (gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3);
           player.sendMessage("DEBUG 2");  // TODO: DEBUG
-  
-  
+
+
           if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER)) {
             // Card
             String serial = meta.getLore().get(1);
@@ -96,10 +95,10 @@ public class FareGateListener implements Listener {
             double value = cardSql.getCardValue(serial);
             player.sendMessage(String.format(lang.REMAINING, value));
             player.sendMessage("DEBUG 3a"+serial);  // TODO: DEBUG
-    
+
             // set gateType to gateAction for easier manipulation since they are ambiguous.
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
-    
+
             if (gateType == GateType.ENTRY) {
 
               records.set("station."+serial, station);
@@ -108,53 +107,53 @@ public class FareGateListener implements Listener {
                 records.set("transfer."+serial, true);
                 player.sendMessage("DEBUG 4 ENTRY");  // TODO: DEBUG
               }
-      
+
               gates.add(gate);
               gate.open();
               gate.hold();
 
 
             } else if (gateType == GateType.EXIT) {
-  
+
               // get entry station and fare.
               String entryStation = records.getString("station."+serial);
               double fare = JsonManager.getFare(entryStation, station);
-  
+
               // get rail pass discounts
               HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
               String entryStationOwner = owners.getOwner(entryStation);
               String exitStationOwner = owners.getOwner(station);
-  
+
               // get transfer discount
               if (records.getBoolean("transfer."+serial)) {
                 fare -= plugin.getConfig().getDouble("transfer-discount");
               }
-  
+
               // remove fare from discounts
               double half = fare/2;
               if (discounts.contains(entryStationOwner)) fare -= half;
               if (discounts.contains(exitStationOwner)) fare -= half;
               owners.deposit(entryStationOwner, fare/2);
               owners.deposit(exitStationOwner, fare/2);
-  
+
               // set remaining value and config
               cardSql.subtractValueFromCard(serial, fare);
               records.set("timestamp."+serial, System.currentTimeMillis());
               records.set("station."+serial, null);
-  
+
               player.sendMessage("DEBUG 4 EXIT");  // TODO: DEBUG
-  
+
               gates.add(gate);
               gate.open();
               gate.hold();
             }
 
           } else if (item.getType() == Material.PAPER) {
-    
+
             player.sendMessage("DEBUG 5");  // TODO: DEBUG
             // Ticket
             gateAction = itemLore0.contains("•") ? GateType.EXIT : GateType.ENTRY;
-    
+
             // set gateType to gateAction for easier manipulation since they are ambiguous.
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
 
@@ -200,10 +199,10 @@ public class FareGateListener implements Listener {
           }
 
         }
-      }
+      } else return;
     }
   }
-  
+
   @EventHandler
   public void CheckPlayerMove(PlayerMoveEvent event) {
     Player player = event.getPlayer();
