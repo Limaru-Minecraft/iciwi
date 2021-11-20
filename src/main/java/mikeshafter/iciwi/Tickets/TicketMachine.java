@@ -27,7 +27,7 @@ public class TicketMachine {
   private final CardSql app = new CardSql();
   private final Owners owners = new Owners(plugin);
   // private String serial;
-  private double value;
+  // private double value;
   
   public TicketMachine(Player player, String station) {
     this.player = player;
@@ -69,6 +69,8 @@ public class TicketMachine {
     }
     i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
     i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
+  
+    player.openInventory(i);
   }
   
   public void adjustFares_1() {
@@ -85,6 +87,8 @@ public class TicketMachine {
     i.setItem(0, item);
     i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, "CLEAR"));
     i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, "ENTER"));
+  
+    player.openInventory(i);
   }
   
   public void cardOperations_1() {
@@ -149,13 +153,13 @@ public class TicketMachine {
     this.player.sendMessage("fare checking under test");
   }
   
-  public void generateTicket(ItemStack item) {
+  public void generateTicket(ItemStack item, double value) {
     // get current fare on the ticket
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
       String lore1 = item.getItemMeta().getLore().get(1);
       double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
       double parsedValue = value-val;
-    
+      
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
         // TODO: send message
@@ -213,12 +217,12 @@ public class TicketMachine {
 //    return owners;
 //  }
   
-  public void generateTicket() {
+  public void generateTicket(double value) {
     if (Iciwi.economy.getBalance(player) >= value) {
       Iciwi.economy.withdrawPlayer(player, value);
       // TODO: send message
     }
-    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.valueOf(value)));
+    player.getInventory().addItem(makeButton(Material.PAPER, ChatColor.GREEN+"Train Ticket", station, String.format("%.2f", value)));
   }
   
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {

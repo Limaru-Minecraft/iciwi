@@ -45,7 +45,7 @@ public class TicketMachineListener implements Listener {
       Player player = event.getPlayer();
       player.sendMessage("debug 0");  // TODO: DEBUG
   
-      if ((signLine0.equalsIgnoreCase(lang.TICKETS)) && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
+      if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]") && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
         if (Objects.equals(machineType, "COMPANY")) {
@@ -58,6 +58,7 @@ public class TicketMachineListener implements Listener {
         } else {
           machine = new TicketMachine(player, station);
           machine.newTM_0();
+          player.sendMessage("debug 1");  // TODO: DEBUG
         }
       }
     }
@@ -99,7 +100,7 @@ public class TicketMachineListener implements Listener {
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
     if (inventory == null) return;
-    event.setCancelled(true);
+    player.sendMessage("Debug 0"); // TODO: Debug
 
     if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
       String itemName = item.getItemMeta().getDisplayName();
@@ -109,6 +110,7 @@ public class TicketMachineListener implements Listener {
       // == Page 0 ==
       double value;
       if (inventoryName.equals(__TICKET_MACHINE)) {
+        player.sendMessage("Debug 0a");  // TODO: DEBUG
 
         if (itemName.equals(NEW_TICKET)) machine.newTicket_1(0.0);
         else if (itemName.equals(ADJUST_FARES)) machine.adjustFares_1();
@@ -119,16 +121,21 @@ public class TicketMachineListener implements Listener {
 
       // == New Ticket : Page 1 ==
       else if (inventoryName.contains(__NEW_TICKET)) {
-        value = Double.parseDouble(inventoryName.substring(__NEW_TICKET.length()));
+        value = Double.parseDouble(inventoryName.substring(__NEW_TICKET.length()+lang.CURRENCY.length()));
+  
         player.closeInventory();
-
+  
         if (itemName.equals(CLEAR)) machine.newTicket_1(0.0);
-
-        else if (itemName.equals(ENTER)) machine.generateTicket();
-
+  
+        else if (itemName.equals(ENTER)) machine.generateTicket(value);
+  
         else {
-          double numberPressed = Integer.parseInt(itemName);
-          value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
+          player.sendMessage("Debug 1 New Ticket");  // TODO: DEBUG
+          double numberPressed = Double.parseDouble(itemName);
+          player.sendMessage(String.valueOf(numberPressed));
+          player.sendMessage(String.valueOf(value));
+          value = (Math.round(value*1000)+numberPressed)/100;
+          player.sendMessage(String.valueOf(value));
           machine.newTicket_1(value);
         }
 
@@ -137,6 +144,7 @@ public class TicketMachineListener implements Listener {
       // == Adjust Fares : Page 1 ==
       else if (inventoryName.equals(__SELECT_TICKET)) {
         if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
+          player.sendMessage("Debug 1 Adjust Fares");  // TODO: DEBUG
           player.closeInventory();
           // String station = item.getItemMeta().getLore().get(0);
           String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
@@ -154,8 +162,9 @@ public class TicketMachineListener implements Listener {
         if (itemName.equals(CLEAR)) machine.adjustFares_2(0.0, item0);
 
         else if (itemName.equals(ENTER) && item0 != null) {
-          machine.generateTicket(item0);
+          machine.generateTicket(item0, value);
         } else {
+          player.sendMessage("Debug 2 Adjust Fares");  // TODO: DEBUG
           double numberPressed = Integer.parseInt(itemName);
           value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
           machine.adjustFares_2(value, item0);
@@ -166,6 +175,7 @@ public class TicketMachineListener implements Listener {
       // == Card Operations : Page 1 ==
       else if (inventoryName.equals(__SELECT_CARD)) {
         if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(SERIAL_NUMBER)) {
+          player.sendMessage("Debug 1 Card Operations");  // TODO: DEBUG
           player.closeInventory();
           String serial = item.getItemMeta().getLore().get(1);
           machine.cardOperations_2(serial);
@@ -177,6 +187,7 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__CARD_OPERATION.length());
         if (!itemName.equals(ChatColor.YELLOW+"Card Details")) {
           player.closeInventory();
+          player.sendMessage("Debug 2 Card Operations");  // TODO: DEBUG
           if (itemName.equals(ChatColor.LIGHT_PURPLE+"New ICIWI Card")) {
             machine.newCard_3();
           } else if (itemName.equals(ChatColor.AQUA+"Top Up ICIWI Card")) {
@@ -187,8 +198,13 @@ public class TicketMachineListener implements Listener {
             // search for player's card
             for (ItemStack itemStack : player.getInventory().getContents()) {
               // get loreStack
-              if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(1), SERIAL_NUMBER)) {
+              if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), SERIAL_NUMBER)) {
+                // get serialNumber
+                String serialNumber = itemStack.getItemMeta().getLore().get(1);
+                double remainingValue = app.getCardValue(serialNumber);
+                Iciwi.economy.depositPlayer(player, remainingValue);
                 player.getInventory().remove(itemStack);
+                player.sendMessage("Debug 2a refund card");  // TODO: DEBUG
               }
             }
 
@@ -205,6 +221,7 @@ public class TicketMachineListener implements Listener {
           player.closeInventory();
 
           if (Iciwi.economy.getBalance(player) >= deposit+val) {
+            player.sendMessage("Debug 3 new card");  // TODO: DEBUG
             // Take money from player and send message
             Iciwi.economy.withdrawPlayer(player, deposit+val);
             // TODO: send message
@@ -223,8 +240,9 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.contains(__TOP_UP)) {
         String serial = inventoryName.substring(__TOP_UP.length());
         double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-
+  
         player.closeInventory();
+        player.sendMessage("Debug 3 top up card");  // TODO: DEBUG
 
         // Top up existing card
         if (Iciwi.economy.getBalance(player) >= val) {
@@ -240,8 +258,9 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__ADD_RAIL_PASS.length());
         long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
         double price = owners.getRailPassPrice(this.operator, days);
-
+  
         player.closeInventory();
+        player.sendMessage("Debug 3 rail pass");  // TODO: DEBUG
 
         Iciwi.economy.withdrawPlayer(player, price);
         // TODO: send message
