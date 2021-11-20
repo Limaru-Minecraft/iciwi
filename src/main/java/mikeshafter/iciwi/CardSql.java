@@ -12,13 +12,14 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
 public class CardSql{
-  
+
   Plugin plugin = getPlugin(Iciwi.class);
-  
+
   private Connection connect() {
     // SQLite connection string
     // "jdbc:sqlite:IciwiCards.db"
     String url = plugin.getConfig().getString("database");
+    Bukkit.getServer().getLogger().info("DB Path: "+url);
     Connection conn = null;
     try {
       conn = DriverManager.getConnection(Objects.requireNonNull(url));
@@ -32,13 +33,13 @@ public class CardSql{
     // SQLite connection string
     // "jdbc:sqlite:IciwiCards.db"
     String url = plugin.getConfig().getString("database");
-  
+
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
     sql.add("CREATE TABLE IF NOT EXISTS log (serial text, start_station TEXT, end_station TEXT, price NUMERIC )");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text, operator text, expiry integer, FOREIGN KEY(serial) REFERENCES cards(serial), PRIMARY KEY(serial) )");
-  
+
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
         statement.execute(s);
@@ -59,7 +60,7 @@ public class CardSql{
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
-  
+
   public void delCard(String serial) {
     try (Connection conn = this.connect()) {
       PreparedStatement statement = conn.prepareStatement("DELETE FROM discounts WHERE serial = ?;");
@@ -114,19 +115,19 @@ public class CardSql{
         String operator = rs.getString(1);
         // Check if expired
         long expiry = rs.getLong(2);
-        
+
         if (expiry > Instant.now().getEpochSecond())
           returnValue.add(operator);
-        
+
       }
-  
+
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
-  
+
     return returnValue;
   }
-  
+
   public void addValueToCard(String serial, double value) {
     updateCard(serial, getCardValue(serial)+value);
   }
@@ -134,10 +135,10 @@ public class CardSql{
   public void subtractValueFromCard(String serial, double value) {
     updateCard(serial, getCardValue(serial)-value);
   }
-  
+
   public void updateCard(String serial, double value) {
     String sql = "UPDATE cards SET value=? WHERE serial=?";
-    
+
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(2, serial);
       statement.setDouble(1, Math.round(value*100.0)/100.0);
@@ -146,7 +147,7 @@ public class CardSql{
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
-  
+
   public double getCardValue(String serial) {
     String sql = "SELECT value FROM cards WHERE serial = ?";
     double returnValue = 0;
@@ -154,12 +155,12 @@ public class CardSql{
       statement.setString(1, serial);
       ResultSet rs = statement.executeQuery();
       returnValue = rs.getDouble("value");
-      
+
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
-    
+
     return Math.round(returnValue*100.0)/100.0;
   }
-  
+
 }

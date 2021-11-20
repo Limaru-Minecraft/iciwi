@@ -44,7 +44,7 @@ public class TicketMachineListener implements Listener {
       this.operator = owners.getOwner(station);
       Player player = event.getPlayer();
       player.sendMessage("debug 0");  // TODO: DEBUG
-  
+
       if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]") && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
@@ -122,13 +122,13 @@ public class TicketMachineListener implements Listener {
       // == New Ticket : Page 1 ==
       else if (inventoryName.contains(__NEW_TICKET)) {
         value = Double.parseDouble(inventoryName.substring(__NEW_TICKET.length()+lang.CURRENCY.length()));
-  
+
         player.closeInventory();
-  
+
         if (itemName.equals(CLEAR)) machine.newTicket_1(0.0);
-  
+
         else if (itemName.equals(ENTER)) machine.generateTicket(value);
-  
+
         else {
           player.sendMessage("Debug 1 New Ticket");  // TODO: DEBUG
           double numberPressed = Double.parseDouble(itemName);
@@ -155,7 +155,7 @@ public class TicketMachineListener implements Listener {
 
       // == Adjust Fares : Page 2 ==
       else if (inventoryName.contains(__ADJUST_FARES)) {
-        value = Double.parseDouble(inventoryName.substring(__ADJUST_FARES.length()));
+        value = Double.parseDouble(inventoryName.substring(__ADJUST_FARES.length()+lang.CURRENCY.length()));
         ItemStack item0 = inventory.getItem(0);
         player.closeInventory();
 
@@ -166,7 +166,7 @@ public class TicketMachineListener implements Listener {
         } else {
           player.sendMessage("Debug 2 Adjust Fares");  // TODO: DEBUG
           double numberPressed = Integer.parseInt(itemName);
-          value = Math.round((value*10.0+numberPressed)*100.0)/100.0;
+          value = (Math.round(value*1000)+numberPressed)/100;
           machine.adjustFares_2(value, item0);
         }
 
@@ -240,7 +240,7 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.contains(__TOP_UP)) {
         String serial = inventoryName.substring(__TOP_UP.length());
         double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-  
+
         player.closeInventory();
         player.sendMessage("Debug 3 top up card");  // TODO: DEBUG
 
@@ -258,7 +258,7 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__ADD_RAIL_PASS.length());
         long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
         double price = owners.getRailPassPrice(this.operator, days);
-  
+
         player.closeInventory();
         player.sendMessage("Debug 3 rail pass");  // TODO: DEBUG
 

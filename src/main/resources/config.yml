@@ -5,7 +5,7 @@ penalty: 8.0
 deposit: 5.0
 
 # Database file
-database: IciwiCards.db
+database: jdbc:sqlite:IciwiCards.db
 
 # Discount for transferring
 transfer-discount: 0.6
