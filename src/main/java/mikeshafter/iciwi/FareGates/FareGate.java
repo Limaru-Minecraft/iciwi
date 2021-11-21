@@ -14,9 +14,8 @@ import org.jetbrains.annotations.Nullable;
 public class FareGate {
   
   private final Player player;
-  private final Iciwi iciwi = new Iciwi();
-  private final Lang lang = iciwi.lang;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Lang lang = new Lang(plugin);
   public FareGate[] fareGate;
   private GateType gateType;
   

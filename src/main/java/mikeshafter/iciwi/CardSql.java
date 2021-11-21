@@ -1,7 +1,7 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.plugin.Plugin;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
 import java.time.Instant;
@@ -39,7 +39,7 @@ public class CardSql{
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
     sql.add("CREATE TABLE IF NOT EXISTS log (serial text, start_station TEXT, end_station TEXT, price NUMERIC )");
-    sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text, operator text, expiry integer, FOREIGN KEY(serial) REFERENCES cards(serial), PRIMARY KEY(serial) )");
+    sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text primary key references cards(serial) ON UPDATE CASCADE, operator text, expiry integer)");
 
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
@@ -63,14 +63,9 @@ public class CardSql{
   }
 
   public void delCard(String serial) {
-    try (Connection conn = this.connect()) {
-      PreparedStatement statement = conn.prepareStatement("DELETE FROM discounts WHERE serial = ?;");
-      statement.setString(1, serial);
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-    }
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement("DELETE FROM cards WHERE serial = ?;")) {
+    String sql = "DELETE FROM cards WHERE serial = ? ;";
+  
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
       statement.executeUpdate();
     } catch (SQLException e) {
@@ -79,7 +74,7 @@ public class CardSql{
   }
 
   public void log(String serial, String start_station, String end_station, double price) {
-    String sql = "INSERT INTO log (serial, start_station, end_station, price) VALUES (?, ?, ?, ?)";
+    String sql = "INSERT INTO log (serial, start_station, end_station, price) VALUES ('?', '?', '?', '?')";
 
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
@@ -130,6 +125,7 @@ public class CardSql{
   }
 
   public void addValueToCard(String serial, double value) {
+    plugin.getServer().getLogger().info(serial+" "+value);
     updateCard(serial, getCardValue(serial)+value);
   }
 
@@ -138,11 +134,12 @@ public class CardSql{
   }
 
   public void updateCard(String serial, double value) {
-    String sql = "UPDATE cards SET value=? WHERE serial=?";
-
+  
+    String sql = "UPDATE cards SET value = ? WHERE serial = ?";
+  
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(2, serial);
       statement.setDouble(1, Math.round(value*100.0)/100.0);
+      statement.setString(2, serial);
       statement.executeUpdate();
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());

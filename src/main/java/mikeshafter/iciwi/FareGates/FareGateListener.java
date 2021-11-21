@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Openable;
@@ -32,30 +33,32 @@ public class FareGateListener implements Listener {
   private final Lang lang = new Lang(plugin);
   private final Records records = new Records(plugin);
   private final Owners owners = new Owners(plugin);
-  private LinkedList<FareGate> gates;
+  private final LinkedList<FareGate> gates = new LinkedList<>();
 
 
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
-    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && (event.getClickedBlock() instanceof Sign || event.getClickedBlock() instanceof Openable)) {
-
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+    
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
+      BlockState state = block.getState();
       Location location = block.getLocation();
       Action action = event.getAction();
       BlockData data = block.getBlockData();
       FareGate gate = null;
-      player.sendMessage("DEBUG 0");  // TODO: DEBUG
-
-      if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Sign sign && data instanceof WallSign) {
+      if (action == Action.RIGHT_CLICK_BLOCK && state instanceof Sign sign && data instanceof WallSign) {
         // Initialise fare gate; all signs point to this
+        player.sendMessage(ChatColor.stripColor(sign.getLine(0)));  // TODO: DEBUG
+        player.sendMessage(lang.ENTRY);  // TODO: DEBUG
         if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
           player.sendMessage("DEBUG 1a");  // TODO: DEBUG
         }
         // same thing, but for HL-style fare gates
-      } else if (action == Action.RIGHT_CLICK_BLOCK && block instanceof Openable) {
-        if (location.add(0, -2, 0).getBlock() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
+      } else if (action == Action.RIGHT_CLICK_BLOCK && state instanceof Openable) {
+        if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
+          player.sendMessage(lang.FAREGATE);  // TODO: DEBUG
           gate = new FareGate(player, sign.getLine(0), sign.getLocation());
           player.sendMessage("DEBUG 1b");  // TODO: DEBUG
         }
@@ -74,20 +77,19 @@ public class FareGateListener implements Listener {
         Entry           |   x   x
         Exit            | x   x
          */
-
+  
         // get ticket/card type
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
-        if (meta != null && meta.hasLore() && meta.getLore() != null) {
-
+        if (meta != null && meta.hasLore() && meta.getLore() != null && state instanceof Sign sign) {
+    
           String itemLore0 = meta.getLore().get(0);
           GateType gateAction;  // reusing GateType to save on enums. This value can only be ENTRY or EXIT.
           // station
-          Sign sign = (Sign) block;
           String station = (gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3);
           player.sendMessage("DEBUG 2");  // TODO: DEBUG
-
-
+    
+    
           if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER)) {
             // Card
             String serial = meta.getLore().get(1);
@@ -199,20 +201,18 @@ public class FareGateListener implements Listener {
           }
 
         }
-      } else return;
+      }
     }
   }
 
   @EventHandler
   public void CheckPlayerMove(PlayerMoveEvent event) {
     Player player = event.getPlayer();
-    if (gates != null) {
-      for (FareGate g : gates) {
-        if (g.getPlayer() == player) {
-          g.close();
-          gates.remove(g);
-          player.sendMessage("DEBUG 9");  // TODO: DEBUG
-        }
+    for (FareGate g : gates) {
+      if (g.getPlayer() == player) {
+        g.close();
+        gates.remove(g);
+        player.sendMessage("DEBUG 9");  // TODO: DEBUG
       }
     }
   }

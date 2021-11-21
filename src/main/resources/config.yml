@@ -4,7 +4,7 @@ penalty: 8.0
 # This sets the deposit that a player pays when they buy a new card
 deposit: 5.0
 
-# Database file
+# Database
 database: jdbc:sqlite:IciwiCards.db
 
 # Discount for transferring

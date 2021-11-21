@@ -87,7 +87,7 @@ public class TicketMachineListener implements Listener {
 
     String __SELECT_CARD = ChatColor.DARK_BLUE+"Select Card...";
     String SERIAL_NUMBER = "Serial number:";
-    String __CARD_OPERATION = ChatColor.DARK_BLUE+"Select Option";
+    String __CARD_OPERATION = ChatColor.DARK_BLUE+"Select Option - ";
 
     String __SELECT_VALUE = ChatColor.DARK_BLUE+"Select value...";
 
@@ -204,7 +204,9 @@ public class TicketMachineListener implements Listener {
                 double remainingValue = app.getCardValue(serialNumber);
                 Iciwi.economy.depositPlayer(player, remainingValue);
                 player.getInventory().remove(itemStack);
+                app.delCard(serialNumber);
                 player.sendMessage("Debug 2a refund card");  // TODO: DEBUG
+                break;
               }
             }
 
@@ -239,18 +241,20 @@ public class TicketMachineListener implements Listener {
       // == Top Up : Page 3 ==
       else if (inventoryName.contains(__TOP_UP)) {
         String serial = inventoryName.substring(__TOP_UP.length());
-        double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-
-        player.closeInventory();
-        player.sendMessage("Debug 3 top up card");  // TODO: DEBUG
-
-        // Top up existing card
-        if (Iciwi.economy.getBalance(player) >= val) {
-          Iciwi.economy.withdrawPlayer(player, val);
-          // TODO: send message
-          app.addValueToCard(serial, val);
-
-        } else player.sendMessage(NOT_ENOUGH_MONEY);
+        if (isDouble(itemName.replaceAll("[^\\d.]", ""))) {
+          double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
+    
+          player.closeInventory();
+          player.sendMessage("Debug 3 top up card");  // TODO: DEBUG
+    
+          // Top up existing card
+          if (Iciwi.economy.getBalance(player) >= val) {
+            Iciwi.economy.withdrawPlayer(player, val);
+            // TODO: send message
+            app.addValueToCard(serial, val);
+      
+          } else player.sendMessage(NOT_ENOUGH_MONEY);
+        }
       }
 
       // == Rail Pass : Page 3 ==

@@ -19,20 +19,26 @@ import java.util.Objects;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
-
+  
   public static Economy economy = null;
   public Lang lang;
   public Owners owners;
   public Records records;
-
-
+  
+  
+  @Override
+  public void onDisable() {
+    saveConfig();
+    getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
+  }
+  
   @Override
   public void onEnable() { // Use config to store station names and fares
-
+    
     // === Economy ===
     boolean eco = setupEconomy();
-
-
+    
+    
     // === Load config files ===
     lang = new Lang(this);
     owners = new Owners(this);
@@ -47,27 +53,20 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     lang.save();
     owners.save();
     records.save();
-
-
+    
+    
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-
-
+    
+    
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new FareGateListener(), this);
 //    getServer().getPluginManager().registerEvents(new TBarrier(), this);
     getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
-
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
-  }
-
-
-  @Override
-  public void onDisable() {
-    saveConfig();
-    getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
+    
+    getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
 
 
