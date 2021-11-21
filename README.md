@@ -1,7 +1,7 @@
 # iciwi
 Universal transportation ticket plugin.
 
-[![Java CI with Maven](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiBuild.yml/badge.svg)](https://github.com/Mineshafter61/iciwi/actions/workflows/IciwiBuild.yml)
+[![Java CI with Gradle](https://github.com/Mineshafter61/iciwi/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/Mineshafter61/iciwi/actions/workflows/gradle-publish.yml)
 
 # Development
 1. Use JDK 16 & Maven
