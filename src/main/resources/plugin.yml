@@ -14,10 +14,6 @@ commands:
     usage: /<command> <station>
     description: Ticket machine.
     permission: iciwi.ticketmachine
-  traindestroydelay:
-    usage: /<command>
-    description: Turns off automatic train destroy, resets after 1h automatically.
-    permission: iciwi.traindestroydelay
   newdiscount:
     usage: /<command> <serial> <operator> <days before expiry>
     description: Adds a rail pass ("discounts") onto existing cards
@@ -34,6 +30,10 @@ commands:
     usage: /<command> <empty|view> [(if "empty") company name]
     description: Withdraws/view coffers
     permission: iciwi.coffers
+  odometer:
+    usage: /<command> <start|stop|record>
+    description: Measures distances on tracks
+    permission: iciwi.odometer
 
 
 permissions:
@@ -42,19 +42,16 @@ permissions:
     children:
       iciwi.checkfare: true
       iciwi.ticketmachine: true
-      iciwi.traindestorydelay: true
       iciwi.newdiscount: true
       iciwi.reload: true
       iciwi.coffers: true
+      iciwi.odometer: true
     default: op
   iciwi.checkfare:
     description: Allows the use of /checkfare
     default: true
   iciwi.ticketmachine:
     description: Allows the use of /ticketmachine
-    default: op
-  iciwi.traindestroydelay:
-    description: Allows the use of /traindestroydelay
     default: op
   iciwi.newdiscount:
     description: Allows the use of /newdiscount
@@ -71,3 +68,5 @@ permissions:
   iciwi.coffers.viewall:
     description: Makes /coffers view show all companies
     default: false
+  iciwi.odometer:
+    description: Allows the use of /odometer

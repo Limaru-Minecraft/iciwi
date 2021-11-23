@@ -6,6 +6,7 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
@@ -24,6 +28,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   public Lang lang;
   public Owners owners;
   public Records records;
+  private HashMap<Player, Queue<Integer>> statMap = new HashMap<>();
   
   
   @Override
@@ -82,7 +87,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
       }
-
     } else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
         String station = args[0];
@@ -93,7 +97,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         sender.sendMessage("Usage: /ticketmachine <station>");
         return false;
       }
-
     } else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
       if (args.length == 3) {
@@ -129,14 +132,12 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
           return true;
         }
       }
-
     } else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
       reloadConfig();
       owners.reload();
       lang.reload();
       records.reload();
       return true;
-
     } else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
         // Check if the player owns the company
@@ -172,6 +173,30 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
               sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
             }
           }
+        }
+        return true;
+      }
+    } else if (command.getName().equalsIgnoreCase("odometer") && args.length == 1 && sender instanceof Player && sender.hasPermission("iciwi.odometer")) {
+      Player player = (Player) sender;
+      if (args[0].equalsIgnoreCase("start")) {
+        // start recording
+        statMap.put(player, new LinkedBlockingQueue<Integer>());
+        statMap.get(player).add(player.getStatistic(Statistic.MINECART_ONE_CM));
+        player.sendMessage(ChatColor.GREEN+""+player.getStatistic(Statistic.MINECART_ONE_CM));
+        return true;
+      } else if (args[0].equalsIgnoreCase("record")) {
+        statMap.get(player).add(player.getStatistic(Statistic.MINECART_ONE_CM));
+        player.sendMessage(ChatColor.GREEN+""+player.getStatistic(Statistic.MINECART_ONE_CM));
+        return true;
+      } else if (args[0].equalsIgnoreCase("stop")) {
+        int first = statMap.get(player).remove();
+        int i = 0;
+        player.sendMessage(ChatColor.GREEN+"=== Results ===");
+        player.sendMessage(ChatColor.YELLOW+""+i+" "+ChatColor.GREEN+"0");
+        while (statMap.get(player).size() > 0) {
+          ++i;
+          int peeking = statMap.get(player).remove();
+          player.sendMessage(ChatColor.YELLOW+""+i+" "+ChatColor.GREEN+(peeking-first)/100);
         }
         return true;
       }

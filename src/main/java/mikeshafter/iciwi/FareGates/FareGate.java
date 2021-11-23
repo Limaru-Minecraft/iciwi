@@ -12,17 +12,17 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class FareGate {
-  
+
   private final Player player;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang(plugin);
   public FareGate[] fareGate;
   private GateType gateType;
-  
+
   public FareGate(Player player) {
     this.player = player;
   }
-  
+
   public FareGate(Player player, String signText, @Nullable Location signLoc) {
     this.player = player;
     this.gateType = getGateType(signText);
@@ -45,21 +45,21 @@ public class FareGate {
       if (args.contains("D")) flags += 8;  // Double fare gate
       if (args.contains("R")) flags += 16; // Redstone activator
       if (args.contains("E")) flags += 32; // Eye-level sign.
-  
+
       if ((flags&1) == 1 || this.gateType == GateType.VALIDATOR) {
         // validator, location does not matter
         return;
       }
       player.sendMessage("FAREGATE DEBUG 1 - FLAGS "+flags);  // TODO: DEBUG
-  
+
       flags >>= 1;
-  
+
       // LM-style fare gates
       // location matters
       if ((gateType == GateType.ENTRY || gateType == GateType.EXIT) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-    
+  
         BlockFace direction = sign.getFacing();
-    
+  
         if (direction == BlockFace.SOUTH) {
           player.sendMessage("DEBUG SOUTH");  // TODO: DEBUG
           this.fareGate = new OpenFareGate[parseArgs(flags).length];
@@ -89,9 +89,9 @@ public class FareGate {
             this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
           }
         }
-    
-      }
   
+      }
+
       // HL-style fare gates
       else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign) {
         flags &= 14;
@@ -109,7 +109,7 @@ public class FareGate {
           byte[] locVector = openLoc[i];
           this.fareGate[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
         }
-    
+  
       }
     }
   }
@@ -139,42 +139,42 @@ public class FareGate {
   private byte[][] parseArgs(int args) {
     /*
          +k
-      +i [] -i
+      -i [] +i
          -k
     */
     return switch (args) {
-      case 0 -> new byte[][] {{1, 0, 1}};  //
-      case 1 -> new byte[][] {{1, 0, 0}};  // S
-      case 2 -> new byte[][] {{-1, 0, 1}};  //  L
-      case 3 -> new byte[][] {{-1, 0, 0}};  // SL
-      case 4 -> new byte[][] {{1, 0, 1}, {2, 0, 1}};  //   D
-      case 5 -> new byte[][] {{1, 0, 0}, {1, 0, -1}};  // S D
-      case 6 -> new byte[][] {{-1, 0, 1}, {-2, 0, 1}};  //  LD
-      case 7 -> new byte[][] {{-1, 0, 0}, {-1, 0, -1}};  // SLD
+      case 0 -> new byte[][] {{-1, 0, 1}};  //
+      case 1 -> new byte[][] {{-1, 0, 0}};  // S
+      case 2 -> new byte[][] {{1, 0, 1}};  //  L
+      case 3 -> new byte[][] {{1, 0, 0}};  // SL
+      case 4 -> new byte[][] {{-1, 0, 1}, {-2, 0, 1}};  //   D
+      case 5 -> new byte[][] {{-1, 0, 0}, {-1, 0, -1}};  // S D
+      case 6 -> new byte[][] {{1, 0, 1}, {2, 0, 1}};  //  LD
+      case 7 -> new byte[][] {{1, 0, 0}, {1, 0, -1}};  // SLD
       case 8 -> new byte[][] {{0, -1, 1}};  //    R
       case 9 -> new byte[][] {{0, -1, 1}};  // S  R
       case 10 -> new byte[][] {{0, -1, 1}}; //  L R
       case 11 -> new byte[][] {{0, -1, 1}}; // SL R
-      case 12 -> new byte[][] {{0, -1, 1}, {1, -1, 1}}; //   DR
-      case 13 -> new byte[][] {{0, -1, 1}, {1, -1, 1}}; // S DR
-      case 14 -> new byte[][] {{0, -1, 1}, {-1, -1, 1}}; //  LDR
-      case 15 -> new byte[][] {{0, -1, 1}, {-1, -1, 1}}; // SLDR
-      case 16 -> new byte[][] {{1, -1, 1}}; //     E
-      case 17 -> new byte[][] {{1, -1, 0}}; // S   E
-      case 18 -> new byte[][] {{-1, -1, 1}}; //  L  E
-      case 19 -> new byte[][] {{-1, -1, 0}}; // SL  E
-      case 20 -> new byte[][] {{1, -1, 1}, {2, -1, 1}}; //   D E
-      case 21 -> new byte[][] {{1, -1, 0}, {1, -1, -1}}; // S D E
-      case 22 -> new byte[][] {{-1, -1, 1}, {-2, -1, 1}}; //  LD E
-      case 23 -> new byte[][] {{-1, -1, 0}, {-1, -1, -1}}; // SLD E
+      case 12 -> new byte[][] {{0, -1, 1}, {-1, -1, 1}}; //   DR
+      case 13 -> new byte[][] {{0, -1, 1}, {-1, -1, 1}}; // S DR
+      case 14 -> new byte[][] {{0, -1, 1}, {1, -1, 1}}; //  LDR
+      case 15 -> new byte[][] {{0, -1, 1}, {1, -1, 1}}; // SLDR
+      case 16 -> new byte[][] {{-1, -1, 1}}; //     E
+      case 17 -> new byte[][] {{-1, -1, 0}}; // S   E
+      case 18 -> new byte[][] {{1, -1, 1}}; //  L  E
+      case 19 -> new byte[][] {{1, -1, 0}}; // SL  E
+      case 20 -> new byte[][] {{-1, -1, 1}, {-2, -1, 1}}; //   D E
+      case 21 -> new byte[][] {{-1, -1, 0}, {-1, -1, -1}}; // S D E
+      case 22 -> new byte[][] {{1, -1, 1}, {2, -1, 1}}; //  LD E
+      case 23 -> new byte[][] {{1, -1, 0}, {1, -1, -1}}; // SLD E
       case 24 -> new byte[][] {{0, -2, 1}}; //    RE
       case 25 -> new byte[][] {{0, -2, 1}}; // S  RE
       case 26 -> new byte[][] {{0, -2, 1}}; //  L RE
       case 27 -> new byte[][] {{0, -2, 1}}; // SL RE
-      case 28 -> new byte[][] {{0, -2, 1}, {1, -2, 1}}; //   DRE
-      case 29 -> new byte[][] {{0, -2, 1}, {1, -2, 1}}; // S DRE
-      case 30 -> new byte[][] {{0, -2, 1}, {-1, -2, 1}}; //  LDRE
-      case 31 -> new byte[][] {{0, -2, 1}, {-1, -2, 1}}; // SLDRE
+      case 28 -> new byte[][] {{0, -2, 1}, {-1, -2, 1}}; //   DRE
+      case 29 -> new byte[][] {{0, -2, 1}, {-1, -2, 1}}; // S DRE
+      case 30 -> new byte[][] {{0, -2, 1}, {1, -2, 1}}; //  LDRE
+      case 31 -> new byte[][] {{0, -2, 1}, {1, -2, 1}}; // SLDRE
       default -> null;
     };
   }
