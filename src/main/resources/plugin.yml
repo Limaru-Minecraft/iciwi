@@ -70,3 +70,4 @@ permissions:
     default: false
   iciwi.odometer:
     description: Allows the use of /odometer
+    default: op
