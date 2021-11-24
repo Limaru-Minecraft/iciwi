@@ -105,7 +105,6 @@ public class TicketMachineListener implements Listener {
     if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
       String itemName = item.getItemMeta().getDisplayName();
       String inventoryName = event.getView().getTitle();
-      player.closeInventory();
 
       // == Page 0 ==
       double value;
@@ -243,16 +242,16 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__TOP_UP.length());
         if (isDouble(itemName.replaceAll("[^\\d.]", ""))) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-    
+  
           player.closeInventory();
           player.sendMessage("Debug 3 top up card");  // TODO: DEBUG
-    
+  
           // Top up existing card
           if (Iciwi.economy.getBalance(player) >= val) {
             Iciwi.economy.withdrawPlayer(player, val);
             // TODO: send message
             app.addValueToCard(serial, val);
-      
+  
           } else player.sendMessage(NOT_ENOUGH_MONEY);
         }
       }

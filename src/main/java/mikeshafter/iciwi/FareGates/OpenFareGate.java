@@ -9,13 +9,16 @@ import org.bukkit.block.data.Powerable;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collections;
+import java.util.List;
+
 
 public class OpenFareGate extends FareGate {
   
   private final Location blockLocation;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);  // TODO: DEBUG
   private BlockState state;
-
+  
   public OpenFareGate(Player player, Location blockLocation) {
     super(player);
     this.blockLocation = blockLocation;
@@ -25,19 +28,21 @@ public class OpenFareGate extends FareGate {
   public boolean open() {
     state = blockLocation.getBlock().getState();
     // HL trapdoors
-    if (this.blockLocation.getBlock().getBlockData() instanceof Openable openable) {
+    if (state.getBlockData() instanceof Openable openable) {
       openable.setOpen(true);
-      this.blockLocation.getBlock().setBlockData(openable);
+      state.setBlockData(openable);
+      state.update();
       plugin.getServer().getLogger().info("OpenFareGate Open Debug 1 HL");  // TODO: DEBUG
     }
-
+  
     // Lever
-    else if (this.blockLocation.getBlock().getBlockData() instanceof Powerable powerable) {
+    else if (state.getBlockData() instanceof Powerable powerable) {
       powerable.setPowered(true);
-      this.blockLocation.getBlock().setBlockData(powerable);
+      state.setBlockData(powerable);
+      state.update();
       plugin.getServer().getLogger().info("OpenFareGate Open Debug 1 Lever");  // TODO: DEBUG
     }
-
+  
     // LM glass
     else {
       blockLocation.getBlock().setType(Material.AIR);
@@ -47,27 +52,38 @@ public class OpenFareGate extends FareGate {
   }
   
   @Override
+  public List<int[]> getGateLocations() {
+    int x = this.blockLocation.getBlockX();
+    int y = this.blockLocation.getBlockY();
+    int z = this.blockLocation.getBlockZ();
+    return Collections.singletonList(new int[] {x, y, z});
+  }
+  
+  @Override
   public boolean close() {
     plugin.getServer().getLogger().info("OpenFareGate Close Debug 0");  // TODO: DEBUG
-    state = blockLocation.getBlock().getState();
+    plugin.getServer().getLogger().info("OpenFareGate"+this.blockLocation.getBlockX()+" "+this.blockLocation.getBlockY()+" "+this.blockLocation.getBlockZ());
     // HL trapdoors
-    if (this.blockLocation.getBlock().getBlockData() instanceof Openable openable) {
+    if (state.getBlockData() instanceof Openable openable) {
       openable.setOpen(false);
-      this.blockLocation.getBlock().setBlockData(openable);
+      this.state.setBlockData(openable);
+      this.state.update();
       plugin.getServer().getLogger().info("OpenFareGate Close Debug 1 HL");  // TODO: DEBUG
     }
-
+    
     // Lever
-    else if (this.blockLocation.getBlock().getBlockData() instanceof Powerable powerable) {
+    else if (state.getBlockData() instanceof Powerable powerable) {
       powerable.setPowered(false);
-      this.blockLocation.getBlock().setBlockData(powerable);
+      this.state.setBlockData(powerable);
+      this.state.update();
       plugin.getServer().getLogger().info("OpenFareGate Close Debug 1 Lever");  // TODO: DEBUG
     }
-
+    
     // LM glass
     else {
-      blockLocation.getBlock().setType(state.getType());
-      blockLocation.getBlock().setBlockData(state.getBlockData());
+      this.state.update();
+      this.blockLocation.getBlock().setType(this.state.getType());
+      this.blockLocation.getBlock().setBlockData(this.state.getBlockData());
       plugin.getServer().getLogger().info("OpenFareGate Close Debug 1 LM");  // TODO: DEBUG
     }
     return true;
