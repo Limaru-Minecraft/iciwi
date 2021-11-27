@@ -41,7 +41,7 @@ public class FareGateListener implements Listener {
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-  
+
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
@@ -49,7 +49,7 @@ public class FareGateListener implements Listener {
       Action action = event.getAction();
       BlockData data = block.getBlockData();
       FareGate gate = null;
-  
+
       if (state instanceof Sign sign && data instanceof WallSign) {
         // Initialise fare gate; all signs point to this
         player.sendMessage(ChatColor.stripColor(sign.getLine(0)));  // TODO: DEBUG
@@ -58,7 +58,7 @@ public class FareGateListener implements Listener {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
           player.sendMessage("DEBUG 1a");  // TODO: DEBUG
         }
-    
+
         // same thing, but for HL-style fare gates
       } else if (data instanceof Openable) {
         if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
@@ -81,20 +81,20 @@ public class FareGateListener implements Listener {
         Entry           |   x   x
         Exit            | x   x
          */
-  
+
         // get ticket/card type
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
         Sign sign = state instanceof Sign ? (Sign) state : data instanceof Openable && location.getBlock().getState() instanceof Sign ? (Sign) location.getBlock().getState() : null;
         if (meta != null && meta.hasLore() && meta.getLore() != null && sign != null) {
-    
+
           String itemLore0 = meta.getLore().get(0);
           GateType gateAction;  // reusing GateType to save on enums. This value can only be ENTRY or EXIT.
           // station
           String station = (gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3);
           player.sendMessage("DEBUG 2");  // TODO: DEBUG
-    
-    
+
+
           if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER)) {
             // Card
             String serial = meta.getLore().get(1);
@@ -133,23 +133,23 @@ public class FareGateListener implements Listener {
               if (records.getBoolean("transfer."+serial)) {
                 fare -= plugin.getConfig().getDouble("transfer-discount");
               }
-  
+
               // remove fare from discounts
               double half = fare/2;
               if (discounts.contains(entryStationOwner)) fare -= half;
               if (discounts.contains(exitStationOwner)) fare -= half;
               owners.deposit(entryStationOwner, fare/2);
               owners.deposit(exitStationOwner, fare/2);
-  
+
               // set remaining value and config
               cardSql.subtractValueFromCard(serial, fare);
               double value = cardSql.getCardValue(serial);
               player.sendMessage(String.format(lang.REMAINING, value));
               records.set("timestamp."+serial, System.currentTimeMillis());
               records.set("station."+serial, null);
-  
+
               player.sendMessage("DEBUG 4 EXIT");  // TODO: DEBUG
-  
+
               gates.add(gate);
               gate.open();
               gate.hold();
@@ -173,9 +173,9 @@ public class FareGateListener implements Listener {
                 lore.set(0, itemLore0+" •");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-  
+
                 player.sendMessage("DEBUG 6 ENTRY");  // TODO: DEBUG
-  
+
                 gates.add(gate);
                 gate.open();
                 gate.hold();
@@ -190,14 +190,14 @@ public class FareGateListener implements Listener {
                 lore.set(1, itemLore1+" •");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-    
+
                 player.sendMessage("DEBUG 6 EXIT");  // TODO: DEBUG
-    
+
                 gates.add(gate);
                 gate.open();
                 gate.hold();
               }
-  
+
             }
 
           } else gateAction = null;
@@ -222,14 +222,13 @@ public class FareGateListener implements Listener {
       int y = player.getLocation().getBlockY();
       int z = player.getLocation().getBlockZ();
       for (int[] gateLocation : g.getGateLocations()) {
-        plugin.getServer().getLogger().info(gateLocation.toString());
         if (g.getPlayer() == player && gateLocation[0] == x && gateLocation[1] == y && gateLocation[2] == z) {
           Bukkit.getScheduler().runTaskLater(plugin, () -> {
             g.close();
             gates.remove(g);
             player.sendMessage("DEBUG 9");  // TODO: DEBUG
           }, 10L);
-      
+
         }
       }
     }
