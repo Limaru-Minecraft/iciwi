@@ -197,7 +197,7 @@ public class TicketMachineListener implements Listener {
             // search for player's card
             for (ItemStack itemStack : player.getInventory().getContents()) {
               // get loreStack
-              if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), SERIAL_NUMBER)) {
+              if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), SERIAL_NUMBER)) {
                 // get serialNumber
                 String serialNumber = itemStack.getItemMeta().getLore().get(1);
                 double remainingValue = app.getCardValue(serialNumber);
@@ -261,6 +261,7 @@ public class TicketMachineListener implements Listener {
         String serial = inventoryName.substring(__ADD_RAIL_PASS.length());
         long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
         double price = owners.getRailPassPrice(this.operator, days);
+        app.setDiscount(serial, this.operator, System.currentTimeMillis()+days*86400000);
 
         player.closeInventory();
         player.sendMessage("Debug 3 rail pass");  // TODO: DEBUG

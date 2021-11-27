@@ -51,6 +51,7 @@ public class FareGate {
 
       if ((flags&1) == 1 || this.gateType == GateType.VALIDATOR) {
         // validator, location does not matter
+        this.gateType = GateType.VALIDATOR;
         return;
       }
       player.sendMessage("FAREGATE DEBUG 1 - FLAGS "+flags);  // TODO: DEBUG
@@ -60,76 +61,46 @@ public class FareGate {
       // LM-style fare gates
       // location matters
       if ((gateType == GateType.ENTRY || gateType == GateType.EXIT) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-
+  
         BlockFace direction = sign.getFacing();
-
-        if (direction == BlockFace.SOUTH) {
-          this.fareGates = new OpenFareGate[parseArgs(flags).length];
-          for (int i = 0; i < parseArgs(flags).length; i++) {
-            byte[] locVector = parseArgs(flags)[i];
-            this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
+        byte[][] locations = parseArgsLM(flags);
+        this.fareGates = new OpenFareGate[locations.length];
+  
+        for (int i = 0; i < locations.length; i++) {
+          byte[] locVector = locations[i];
+          switch (direction) {
+            case SOUTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
+            case NORTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
+            case EAST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
+            case WEST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
+            default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-        } else if (direction == BlockFace.NORTH) {
-          this.fareGates = new OpenFareGate[parseArgs(flags).length];
-          for (int i = 0; i < parseArgs(flags).length; i++) {
-            byte[] locVector = parseArgs(flags)[i];
-            this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
-          }
-        } else if (direction == BlockFace.EAST) {
-          this.fareGates = new OpenFareGate[parseArgs(flags).length];
-          for (int i = 0; i < parseArgs(flags).length; i++) {
-            byte[] locVector = parseArgs(flags)[i];
-            this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
-          }
-        } else if (direction == BlockFace.WEST) {
-          this.fareGates = new OpenFareGate[parseArgs(flags).length];
-          for (int i = 0; i < parseArgs(flags).length; i++) {
-            byte[] locVector = parseArgs(flags)[i];
-            this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
-          }
-
+  
       }
 
       // HL-style fare gates
-      else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getBlockData() instanceof Sign sign) {
+      else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getBlockData() instanceof org.bukkit.block.data.type.Sign sign) {
+  
         BlockFace direction = sign.getRotation();
-        flags &= 14;
-        flags >>= 1;
-        byte[][] openLoc = switch (flags) { // LDR
-          case 2 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}};  //  D
-          case 3 -> new byte[][] {{0, 2, 0}, {1, 2, 0}};  // LD
-          case 4 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};  //   R
-          case 5 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};  // L R
-          case 6 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}, {0, -2, 0}};  //  DR
-          case 7 -> new byte[][] {{0, 2, 0}, {1, 2, 0}, {0, -2, 0}};  // LDR
-          default -> new byte[][] {{0, 2, 0}};  // no flag, L
-        };
-        this.fareGates = new OpenFareGate[openLoc.length];
-        for (int i = 0; i < openLoc.length; i++) {
-          byte[] locVector = openLoc[i];
+        byte[][] locations = parseArgsHL(flags);
+        this.fareGates = new OpenFareGate[locations.length];
+  
+        for (int i = 0; i < locations.length; i++) {
+          byte[] locVector = locations[i];
           switch (direction) {
-            case BlockFace.SOUTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
-            case BlockFace.NORTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
-            case BlockFace.EAST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
-            case BlockFace.WEST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
-            default -> plugin.getServer().getLogger().warn("Fare gate not set up correctly!");
+            case SOUTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
+            case NORTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
+            case EAST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
+            case WEST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
+            default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-
+  
       }
     }
   }
-
-
-  public GateType getGateType() {
-    return this.gateType;
-  }
-
-  public Player getPlayer() {
-    return player;
-  }
-
+  
   private GateType getGateType(String text) {
     if (text.contains(lang.ENTRY)) {
       return GateType.ENTRY;
@@ -141,19 +112,19 @@ public class FareGate {
       return GateType.FAREGATE;
     } else return null;
   }
-
-
-  private byte[][] parseArgs(int args) {
+  
+  // LM gates
+  private byte[][] parseArgsLM(int args) {
     /*
          -k
       -i [] +i
          +k
     */
     return switch (args) {
-      case 0  -> new byte[][] {{-1, 0, -1}};  //
-      case 1  -> new byte[][] {{-1, 0, 0}};  // S
-      case 2  -> new byte[][] {{1, 0, -1}};  //  L
-      case 3  -> new byte[][] {{1, 0, 0}};  // SL
+      case 0 -> new byte[][] {{-1, 0, -1}};  //
+      case 1 -> new byte[][] {{-1, 0, 0}};  // S
+      case 2 -> new byte[][] {{1, 0, -1}};  //  L
+      case 3 -> new byte[][] {{1, 0, 0}};  // SL
       case 4  -> new byte[][] {{-1, 0, -1}, {-2, 0, -1}};  //   D
       case 5  -> new byte[][] {{-1, 0, 0}, {-1, 0, 1}};  // S D
       case 6  -> new byte[][] {{1, 0, -1}, {2, 0, -1}};  //  LD
@@ -185,7 +156,30 @@ public class FareGate {
       default -> null;
     };
   }
-
+  
+  // HL gates
+  private byte[][] parseArgsHL(int args) {
+    args &= 14;
+    args >>= 1;
+    return switch (args) { // LDR
+      case 2 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}};  //  D
+      case 3 -> new byte[][] {{0, 2, 0}, {1, 2, 0}};  // LD
+      case 4 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};  //   R
+      case 5 -> new byte[][] {{0, 2, 0}, {0, -2, 0}};  // L R
+      case 6 -> new byte[][] {{0, 2, 0}, {-1, 2, 0}, {0, -2, 0}};  //  DR
+      case 7 -> new byte[][] {{0, 2, 0}, {1, 2, 0}, {0, -2, 0}};  // LDR
+      default -> new byte[][] {{0, 2, 0}};  // no flag, L
+    };
+  }
+  
+  public GateType getGateType() {
+    return this.gateType;
+  }
+  
+  public Player getPlayer() {
+    return player;
+  }
+  
   public boolean open() {
     if (this.fareGates == null) return true;
     else {
@@ -213,7 +207,6 @@ public class FareGate {
     else {
       boolean closed = true;
       for (FareGate gate : this.fareGates) closed &= gate.close();
-      player.sendMessage("DEBUG 3 CLOSE");  // TODO: DEBUG
       return closed;
     }
   }

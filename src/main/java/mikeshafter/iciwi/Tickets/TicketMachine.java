@@ -142,11 +142,11 @@ public class TicketMachine {
   public void railPass_3(String serial, String operator) {
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(ChatColor.DARK_BLUE+"Add rail pass - %s", serial));
     Set<String> daysSet = owners.getRailPassDays(operator);
-    // Set<String> daysSet = owners.getRailPassDays(this.operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
       i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+" Day(s)", String.valueOf(price)));
     }
+    player.openInventory(i);
   }
   
   public void checkFares_1() {
