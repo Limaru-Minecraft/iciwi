@@ -54,18 +54,17 @@ public class FareGate {
         this.gateType = GateType.VALIDATOR;
         return;
       }
-      player.sendMessage("FAREGATE DEBUG 1 - FLAGS "+flags);  // TODO: DEBUG
 
       flags >>= 1;
 
       // LM-style fare gates
       // location matters
       if ((gateType == GateType.ENTRY || gateType == GateType.EXIT) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-  
+
         BlockFace direction = sign.getFacing();
         byte[][] locations = parseArgsLM(flags);
         this.fareGates = new OpenFareGate[locations.length];
-  
+
         for (int i = 0; i < locations.length; i++) {
           byte[] locVector = locations[i];
           switch (direction) {
@@ -76,16 +75,16 @@ public class FareGate {
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-  
+
       }
 
       // HL-style fare gates
       else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getBlockData() instanceof org.bukkit.block.data.type.Sign sign) {
-  
+
         BlockFace direction = sign.getRotation();
         byte[][] locations = parseArgsHL(flags);
         this.fareGates = new OpenFareGate[locations.length];
-  
+
         for (int i = 0; i < locations.length; i++) {
           byte[] locVector = locations[i];
           switch (direction) {
@@ -96,11 +95,11 @@ public class FareGate {
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-  
+
       }
     }
   }
-  
+
   private GateType getGateType(String text) {
     if (text.contains(lang.ENTRY)) {
       return GateType.ENTRY;
@@ -112,7 +111,7 @@ public class FareGate {
       return GateType.FAREGATE;
     } else return null;
   }
-  
+
   // LM gates
   private byte[][] parseArgsLM(int args) {
     /*
@@ -156,7 +155,7 @@ public class FareGate {
       default -> null;
     };
   }
-  
+
   // HL gates
   private byte[][] parseArgsHL(int args) {
     args &= 14;
@@ -171,21 +170,20 @@ public class FareGate {
       default -> new byte[][] {{0, 2, 0}};  // no flag, L
     };
   }
-  
+
   public GateType getGateType() {
     return this.gateType;
   }
-  
+
   public Player getPlayer() {
     return player;
   }
-  
+
   public boolean open() {
     if (this.fareGates == null) return true;
     else {
       boolean a = true;
       for (FareGate gate : fareGates) a &= gate.open();
-      player.sendMessage("DEBUG 2 OPEN");  // TODO: DEBUG
       return a;
     }
   }

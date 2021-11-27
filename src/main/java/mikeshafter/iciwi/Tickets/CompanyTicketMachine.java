@@ -10,20 +10,20 @@ public class CompanyTicketMachine extends TicketMachine {
   public CompanyTicketMachine(Player player, String company) {
     super(player, company);
   }
-  
+
   public void newTM_0() {
     Inventory tm = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
-    
+
     // Single Journey Ticket
     tm.setItem(1, makeButton(Material.PAPER, ChatColor.GREEN+"New Single Journey Ticket"));
     tm.setItem(4, makeButton(Material.NAME_TAG, ChatColor.LIGHT_PURPLE+"ICIWI Card Operations"));
     tm.setItem(7, makeButton(Material.BOOK, ChatColor.AQUA+"Check Fares"));
-    
+
     getPlayer().openInventory(tm);
   }
-  
+
   public void newSingleJourneyTicket_1() {
-    getPlayer().sendMessage("change this");
+    getPlayer().sendMessage("not implemented yet");
   }
-  
+
 }
