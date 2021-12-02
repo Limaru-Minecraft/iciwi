@@ -71,10 +71,10 @@ A ticket machine
 
 `Iciwi Card Operations` Buy, top up, add a rail pass to, and refund cards. If you do not have a card in your inventory, this button automatically redirects you to the new card page.
 
-`Check Fares` FOR LIMARU ONLY: View the auto-generated farecharts. (Auto-generated links may be implemented later.)
+`Check Fares` View the auto-generated farecharts.
 
 ## Transferring
-Exiting one station and entering another within 5 min counts as a transfer. (not implemented yet)
+Exiting one station and entering another within a certain time counts as a transfer.
 
 # Admin usage
 
