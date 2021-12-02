@@ -97,10 +97,7 @@ public class TicketMachineListener implements Listener {
 
         else {
           double numberPressed = Double.parseDouble(itemName);
-          player.sendMessage(String.valueOf(numberPressed));
-          player.sendMessage(String.valueOf(value));
           value = (Math.round(value*1000)+numberPressed)/100;
-          player.sendMessage(String.valueOf(value));
           machine.newTicket_1(value);
         }
 
@@ -113,7 +110,7 @@ public class TicketMachineListener implements Listener {
           // String station = item.getItemMeta().getLore().get(0);
           String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
           if (isDouble(ticketPrice)) machine.adjustFares_2(0.0, item);
-          else player.sendMessage(ChatColor.RED+"Invalid ticket! Direct tickets cannot be adjusted!");
+          else player.sendMessage(lang.DIRECT_TICKET_INVALID);
         }
       }
 

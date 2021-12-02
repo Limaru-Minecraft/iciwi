@@ -2,8 +2,8 @@ package mikeshafter.iciwi.Tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Owners;
 import mikeshafter.iciwi.Lang;
+import mikeshafter.iciwi.Owners;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -44,7 +44,7 @@ public class TicketMachine {
   }
 
   public void newTM_0() {
-    Inventory i = plugin.getServer().createInventory(null, 9, ChatColor.DARK_BLUE+"Ticket Machine");
+    Inventory i = plugin.getServer().createInventory(null, 9, lang.__TICKET_MACHINE);
 
     // Single Journey Ticket
     i.setItem(1, makeButton(Material.PAPER, lang.NEW_TICKET));
@@ -165,6 +165,7 @@ public class TicketMachine {
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
       }
+      player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
       player.getInventory().remove(item);
       player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, station, String.valueOf(value)));
     }
@@ -222,7 +223,8 @@ public class TicketMachine {
     if (Iciwi.economy.getBalance(player) >= value) {
       Iciwi.economy.withdrawPlayer(player, value);
     }
-    player.getInventory().addItem(makeButton(Material.PAPER,lang.TRAIN_TICKET, station, String.format("%.2f", value)));
+    player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
+    player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, station, String.format("%.2f", value)));
   }
 
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {

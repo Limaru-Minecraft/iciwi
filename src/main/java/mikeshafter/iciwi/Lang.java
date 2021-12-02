@@ -37,25 +37,27 @@ public class Lang extends CustomConfig {
   public String CURRENCY = super.getString("currency");
   public String SERIAL_NUMBER = super.getString("serialNumber");
   public String SERIAL_PREFIX = super.getString("serialPrefix");
-
-
+  
+  
   //--- Messages
   public String NOT_ENOUGH_MONEY = super.getString("notEnoughMoney");
-
+  
   public String __TICKET_MACHINE = super.getString("TicketMachine");
-  public String NEW_TICKET = super.getString("NewTicket");
-  public String ADJUST_FARES = super.getString("AdjustFares");
+  public String NEW_TICKET = super.getString("menuNewTicket");
+  public String ADJUST_FARES = super.getString("menuAdjustFares");
   public String CARD_OPERATIONS = super.getString("CardOperations");
   public String CHECK_FARES = super.getString("CheckFares");
-
+  
   public String __NEW_TICKET = super.getString("NewTicket");
   public String CLEAR = super.getString("Clear");
   public String ENTER = super.getString("Enter");
   public String TRAIN_TICKET = super.getString("TrainTicket");
-
+  public String GENERATE_TICKET = super.getString("generateTicket");
+  
   public String __SELECT_TICKET = super.getString("SelectTicket");
-
+  
   public String __ADJUST_FARES = super.getString("AdjustFares");
+  public String DIRECT_TICKET_INVALID = super.getString("directTicketInvalid");
 
   public String __SELECT_CARD = super.getString("SelectCard");
 
@@ -82,5 +84,6 @@ public class Lang extends CustomConfig {
   public String TAPPED_OUT = super.getString("TappedOut");
   public String TICKET_IN = super.getString("TicketIn");
   public String TICKET_OUT = super.getString("TicketOut");
-
+  
+  
 }

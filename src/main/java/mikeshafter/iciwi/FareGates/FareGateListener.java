@@ -36,25 +36,28 @@ public class FareGateListener implements Listener {
   private final Records records = new Records(plugin);
   private final Owners owners = new Owners(plugin);
   private final LinkedList<FareGate> gates = new LinkedList<>();
+  boolean canClick = true;
 
 
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
-    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
+    if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && canClick) {
+    
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
       Location location = block.getLocation();
       BlockData data = block.getBlockData();
       FareGate gate = null;
-
+      canClick = false;
+      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> canClick = true, 10);
+    
       if (state instanceof Sign sign && data instanceof WallSign) {
         // Initialise fare gate; all signs point to this
         if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
         }
-
+      
         // same thing, but for HL-style fare gates
       } else if (data instanceof Openable) {
         if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {

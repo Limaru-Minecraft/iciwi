@@ -17,33 +17,36 @@ fareEvade: "§cYou have been caught fare evading! Fine: §e£75.00"
 # Global variables
 ticketMachine: Ticket Machine  # main menu text
 tickets: Tickets  # ticket machine sign text
-pluginName: Iciwi  # Default card name
+pluginName: "§aICIWI Card"  # Default card name
 currency: £
-serialNumber: "Serial number:"  # First line of the lore on a card
+serialNumber: "Serial number: "  # First line of the lore on a card
 serialPrefix: "A"  # 1 char only!
 
 # Messages
 notEnoughMoney: §cNu! You dont have enuf monies!
 
-TicketMachine : "§1Ticket Machine"
+TicketMachine: "§1Ticket Machine"
 
-NewTicket : "§aNew Single Journey Ticket"
-AdjustFares : "§eAdjust Fares"
-CardOperations : "§dICIWI Card Operations"
-CheckFares : "§bCheck Fares"
+NewTicket: "§aNew Single Journey Ticket"
+AdjustFares: "§eAdjust Fares"
+CardOperations: "§dICIWI Card Operations"
+CheckFares: "§bCheck Fares"
 
-NewTicket : "§1New Ticket - "
-Clear : "CLEAR"
-Enter : "ENTER"
-TrainTicket : "§aTrain Ticket"
-SelectTicket : "§1Select Ticket..."
+NewTicket: "§1New Ticket - "
+Clear: "CLEAR"
+Enter: "ENTER"
+TrainTicket: "§aTrain Ticket"
+generateTicket: "§aNew ticket for journeys costing up to £%2$.2f from %1$s generated."
 
-AdjustFares : "§1Adjust Fare - "
+SelectTicket: "§1Select Ticket..."
 
-SelectCard : "§1Select Card..."
+AdjustFares: "§1Adjust Fare - "
+directTicketInvalid: "§cInvalid ticket! Direct tickets cannot be adjusted!"
 
-CardOperation : "§1Select Option - "
-CardDetails : "§eCard Details"
+SelectCard: "§1Select Card..."
+
+CardOperation: "§1Select Option - "
+CardDetails: "§eCard Details"
 NewCard : "§dNew ICIWI Card"
 TopUpCard : "§bTop Up ICIWI Card"
 AddRailPass : "§aNew Rail Pass"
@@ -54,10 +57,10 @@ SelectValue : "§1Select value..."
 NewCardCreated : "§aNew Card Created! Deposit: £%1$.2f, Card Value: £%2$.2f"
 
 TopUp : "§1Top Up - "
-CardToppedUp : "§aTopped up £%2$.2f."
+CardToppedUp: "§aTopped up £%1$.2f."
 
 AddRailPass : "§1Add rail pass - "
-Days : "Day(s)"
+Days: " Day(s)"
 AddedRailPass : "§aAdded a rail pass giving free access to all stations owned by %1$s for %2$d days. Price: £%3$.2f"
 
 TappedIn : "§aTapped in at %1$s. Remaining value: £%2$.2f. Welcome aboard!"
