@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.Level;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -33,6 +34,7 @@ public class Owners extends CustomConfig {
   }
   
   public Set<String> getRailPassDays(String operator) {
+    plugin.getServer().getLogger().log(Level.WARNING, operator); // TODO: Debug
     return Objects.requireNonNull(super.get().getConfigurationSection("RailPassPrices."+operator)).getKeys(false);
   }
   

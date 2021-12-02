@@ -27,8 +27,8 @@ notEnoughMoney: §cNu! You dont have enuf monies!
 
 TicketMachine: "§1Ticket Machine"
 
-NewTicket: "§aNew Single Journey Ticket"
-AdjustFares: "§eAdjust Fares"
+menuNewTicket: "§aNew Single Journey Ticket"
+menuAdjustFares: "§eAdjust Fares"
 CardOperations: "§dICIWI Card Operations"
 CheckFares: "§bCheck Fares"
 
@@ -49,9 +49,10 @@ CardOperation: "§1Select Option - "
 CardDetails: "§eCard Details"
 NewCard : "§dNew ICIWI Card"
 TopUpCard : "§bTop Up ICIWI Card"
-AddRailPass : "§aNew Rail Pass"
+menuAddRailPass: "§aNew Rail Pass"
 RefundCard : "§6Refund Card"
 RemainingValue : "Remaining value: "
+cardRefunded: "§aRefunded card %1$s. Received £%2$.2f."
 
 SelectValue : "§1Select value..."
 NewCardCreated : "§aNew Card Created! Deposit: £%1$.2f, Card Value: £%2$.2f"

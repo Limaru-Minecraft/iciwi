@@ -163,6 +163,7 @@ public class TicketMachineListener implements Listener {
                 Iciwi.economy.depositPlayer(player, remainingValue);
                 player.getInventory().remove(itemStack);
                 app.delCard(serialNumber);
+                player.sendMessage(String.format(lang.CARD_REFUNDED, serialNumber, remainingValue));
                 break;
               }
             }

@@ -65,9 +65,10 @@ public class Lang extends CustomConfig {
   public String CARD_DETAILS = super.getString("CardDetails");
   public String NEW_CARD = super.getString("NewCard");
   public String TOP_UP_CARD = super.getString("TopUpCard");
-  public String ADD_RAIL_PASS = super.getString("AddRailPass");
+  public String ADD_RAIL_PASS = super.getString("menuAddRailPass");
   public String REFUND_CARD = super.getString("RefundCard");
   public String REMAINING_VALUE = super.getString("RemainingValue");
+  public String CARD_REFUNDED = super.getString("cardRefunded");
 
   public String __SELECT_VALUE = super.getString("SelectValue");
   public String NEW_CARD_CREATED = super.getString("NewCardCreated");

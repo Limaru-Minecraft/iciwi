@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
@@ -20,7 +19,6 @@ public class CardSql{
     // SQLite connection string
     // "jdbc:sqlite:IciwiCards.db"
     String url = plugin.getConfig().getString("database");
-    Bukkit.getServer().getLogger().info("DB Path: "+url);
     Connection conn = null;
     try {
       conn = DriverManager.getConnection(Objects.requireNonNull(url));
