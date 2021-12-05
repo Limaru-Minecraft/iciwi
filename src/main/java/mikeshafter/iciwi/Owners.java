@@ -24,6 +24,10 @@ public class Owners extends CustomConfig {
     return super.getString("Operators."+station);
   }
   
+  public void setOwner(String station, String operator) {
+    super.set("Operators."+station, operator);
+  }
+  
   public void deposit(String operator, double amt) {
     super.set("Coffers."+operator, super.getDouble("Coffers."+operator)+amt);
     super.save();

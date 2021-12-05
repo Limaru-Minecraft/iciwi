@@ -41,7 +41,7 @@ public class Lang extends CustomConfig {
   
   //--- Messages
   public String NOT_ENOUGH_MONEY = super.getString("notEnoughMoney");
-  
+
   public String __TICKET_MACHINE = super.getString("TicketMachine");
   public String NEW_TICKET = super.getString("menuNewTicket");
   public String ADJUST_FARES = super.getString("menuAdjustFares");
@@ -53,14 +53,16 @@ public class Lang extends CustomConfig {
   public String ENTER = super.getString("Enter");
   public String TRAIN_TICKET = super.getString("TrainTicket");
   public String GENERATE_TICKET = super.getString("generateTicket");
+  public String GENERATE_TICKET_GLOBAL = super.getString("generateTicketGlobal");
+  public String GLOBAL_TICKET = super.getString("globalTicket");
   
   public String __SELECT_TICKET = super.getString("SelectTicket");
   
   public String __ADJUST_FARES = super.getString("AdjustFares");
   public String DIRECT_TICKET_INVALID = super.getString("directTicketInvalid");
-
+  
   public String __SELECT_CARD = super.getString("SelectCard");
-
+  
   public String __CARD_OPERATION = super.getString("CardOperation");
   public String CARD_DETAILS = super.getString("CardDetails");
   public String NEW_CARD = super.getString("NewCard");

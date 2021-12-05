@@ -26,7 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
-  
+
   public static Economy economy = null;
   public Lang lang;
   public Owners owners;
@@ -39,48 +39,10 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     saveConfig();
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
-  
-  @Override
-  public void onEnable() { // Use config to store station names and fares
-    
-    // === Economy ===
-    boolean eco = setupEconomy();
-    
-    
-    // === Load config files ===
-    lang = new Lang(this);
-    owners = new Owners(this);
-    records = new Records(this);
-
-    this.getConfig().options().copyDefaults(true);
-    lang.get().options().copyDefaults(true);
-    owners.get().options().copyDefaults(true);
-    records.get().options().copyDefaults(true);
-
-    saveConfig();
-    lang.save();
-    owners.save();
-    records.save();
-    
-    
-    // === SQL ===
-    CardSql app = new CardSql();
-    app.initTables();
-    
-    
-    // === Register events ===
-    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
-//    getServer().getPluginManager().registerEvents(new TBarrier(), this);
-    getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
-    
-    getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
-  }
-
 
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-  
+
     // Check Fare
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
       try {
@@ -93,7 +55,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         sender.sendMessage("Error while checking fare.");
       }
     }
-  
+
     // Ticket Machine
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (getConfig().getString("ticket-machine-type").equals("STATION") && sender instanceof Player player && !args[0].isEmpty()) {
@@ -110,7 +72,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return false;
       }
     }
-  
+
     // Add Discount
     else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
@@ -120,7 +82,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return true;
       }
     }
-  
+
     // Redeem Card
     else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
@@ -151,16 +113,16 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         }
       }
     }
-  
+
     // Reload Config
-    else if (command.getName().equalsIgnoreCase("reloadconfig") && sender.hasPermission("iciwi.reload")) {
+    else if (command.getName().equalsIgnoreCase("reloadiciwi") && sender.hasPermission("iciwi.reload")) {
       reloadConfig();
       owners.reload();
       lang.reload();
       records.reload();
       return true;
     }
-  
+
     // Coffers
     else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
@@ -201,7 +163,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return true;
       }
     }
-  
+
     // Odometer
     else if (command.getName().equalsIgnoreCase("odometer") && args.length == 1 && sender instanceof Player && sender.hasPermission("iciwi.odometer")) {
       Player player = (Player) sender;
@@ -228,11 +190,57 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return true;
       }
     }
-
+  
     return false;
   }
-
-
+  
+  @Override
+  public void onEnable() { // Use config to store station names and fares
+    
+    // === Economy ===
+    boolean eco = setupEconomy();
+    
+    
+    // === Load config files ===
+    lang = new Lang(this);
+    owners = new Owners(this);
+    records = new Records(this);
+    
+    this.saveDefaultConfig();
+    
+    this.getConfig().options().copyDefaults(true);
+    lang.get().options().copyDefaults(true);
+    owners.get().options().copyDefaults(true);
+    records.get().options().copyDefaults(true);
+    
+    saveConfig();
+    lang.save();
+    owners.save();
+    records.save();
+    
+    
+    // === SQL ===
+    CardSql app = new CardSql();
+    app.initTables();
+    
+    
+    // === Register events ===
+    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
+    getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
+    
+    // === Register all stations in fares.json to owners.yml ===
+    ArrayList<String> stations = JsonManager.getAllStations();
+    for (String station : stations) {
+      if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
+    }
+    
+    owners.save();
+    
+    getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
+  }
+  
+  
   private boolean setupEconomy() {
     RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {

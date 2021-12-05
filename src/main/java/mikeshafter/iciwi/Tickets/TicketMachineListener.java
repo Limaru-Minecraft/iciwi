@@ -40,21 +40,23 @@ public class TicketMachineListener implements Listener {
   public void TMSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
-      String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
-      this.operator = owners.getOwner(station);
       Player player = event.getPlayer();
 
       if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]") && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
         if (Objects.equals(machineType, "COMPANY")) {
-          String company = owners.getOwner(station);
-          machine = new CompanyTicketMachine(player, company);
+          String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+          this.operator = owners.getOwner(station);
+          machine = new CompanyTicketMachine(player, this.operator);
           machine.newTM_0();
         } else if (Objects.equals(machineType, "GLOBAL")) {
+          String station = lang.GLOBAL_TICKET;
           machine = new GlobalTicketMachine(player);
           machine.newTM_0();
         } else {
+          String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+          this.operator = owners.getOwner(station);
           machine = new TicketMachine(player, station);
           machine.newTM_0();
         }
@@ -77,12 +79,16 @@ public class TicketMachineListener implements Listener {
       // == Page 0 ==
       double value;
       if (inventoryName.equals(lang.__TICKET_MACHINE)) {
-
-        if (itemName.equals(lang.NEW_TICKET)) machine.newTicket_1(0.0);
-        else if (itemName.equals(lang.ADJUST_FARES)) machine.adjustFares_1();
+  
+        if (itemName.equals(lang.NEW_TICKET)) {
+          if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
+            machine.generateTicket(plugin.getConfig().getDouble("global-ticket-price"));
+            player.closeInventory();
+          } else machine.newTicket_1(0.0);
+        } else if (itemName.equals(lang.ADJUST_FARES)) machine.adjustFares_1();
         else if (itemName.equals(lang.CARD_OPERATIONS)) machine.cardOperations_1();
         else if (itemName.equals(lang.CHECK_FARES)) machine.checkFares_1();
-
+  
       }
 
       // == New Ticket : Page 1 ==

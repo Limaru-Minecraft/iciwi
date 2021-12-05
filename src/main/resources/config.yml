@@ -20,3 +20,9 @@ gate-close-delay: 100
 ticket-machine-type: STATION
 #ticket-machine-type: COMPANY
 #ticket-machine-type: GLOBAL
+
+# global operator name (if GLOBAL is selected above)
+global-operator: HT
+
+# global ticket price
+global-ticket-price: 5.0

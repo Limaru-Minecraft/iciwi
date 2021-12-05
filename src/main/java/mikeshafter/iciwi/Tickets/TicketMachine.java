@@ -158,16 +158,18 @@ public class TicketMachine {
   public void generateTicket(ItemStack item, double value) {
     // get current fare on the ticket
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
+      String lore0 = item.getItemMeta().getLore().get(0);
+      boolean validated = lore0.contains("•");
       String lore1 = item.getItemMeta().getLore().get(1);
       double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
       double parsedValue = value-val;
-
+  
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
       }
       player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
       player.getInventory().remove(item);
-      player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, station, String.valueOf(value)));
+      player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, lore0, String.valueOf(value)));
     }
   }
 
@@ -211,14 +213,18 @@ public class TicketMachine {
 //    this.daysList = daysList;
 //  }
 //
-//  public CardSql getApp() {
-//    return app;
-//  }
-//
-//  public Owners getOwners() {
-//    return owners;
-//  }
-
+public CardSql getApp() {
+  return app;
+}
+  
+  public Owners getOwners() {
+    return owners;
+  }
+  
+  public Lang getLang() {
+    return lang;
+  }
+  
   public void generateTicket(double value) {
     if (Iciwi.economy.getBalance(player) >= value) {
       Iciwi.economy.withdrawPlayer(player, value);
@@ -226,7 +232,7 @@ public class TicketMachine {
     player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
     player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, station, String.format("%.2f", value)));
   }
-
+  
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {
     ItemStack item = new ItemStack(material, 1);
     ItemMeta itemMeta = item.getItemMeta();

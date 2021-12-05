@@ -42,24 +42,26 @@ public class FareGateListener implements Listener {
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && canClick) {
-    
+
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
       Location location = block.getLocation();
       BlockData data = block.getBlockData();
       FareGate gate = null;
+      GateType gateAction = null;  // reusing GateType to save on enums. This value can only be ENTRY or EXIT.
       canClick = false;
       plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> canClick = true, 10);
-    
+  
       if (state instanceof Sign sign && data instanceof WallSign) {
         // Initialise fare gate; all signs point to this
         if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
         }
-      
-        // same thing, but for HL-style fare gates
-      } else if (data instanceof Openable) {
+      }
+  
+      // same thing, but for HL-style fare gates
+      else if (data instanceof Openable) {
         if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
           gate = new FareGate(player, sign.getLine(0), sign.getLocation());
         }
@@ -85,10 +87,9 @@ public class FareGateListener implements Listener {
         if (meta != null && meta.hasLore() && meta.getLore() != null && sign != null) {
 
           String itemLore0 = meta.getLore().get(0);
-          GateType gateAction;  // reusing GateType to save on enums. This value can only be ENTRY or EXIT.
 
           // station. if the gatetype is a faregate, use all 3 lines, else, use the first line only.
-          String station = (gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3);
+          String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3));
 
 
           // === Card ===
@@ -168,52 +169,57 @@ public class FareGateListener implements Listener {
             if (gateType == GateType.ENTRY && !itemLore0.contains("•")) {
 
               // check if the ticket is valid for that station
-              if (itemLore0.equals(station)) {
+              if (itemLore0.equals(station) || itemLore0.equals(lang.GLOBAL_TICKET)) {
                 // punch hole
                 List<String> lore = meta.getLore();
                 lore.set(0, itemLore0+" •");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-
+    
                 player.sendMessage(String.format(lang.TICKET_IN, station));
-
+    
                 gates.add(gate);
                 gate.open();
                 gate.hold();
               }
             } else if (gateType == GateType.EXIT && itemLore0.contains("•")) {
               // check fare
-              String exitStation = itemLore0.substring(0, itemLore0.length()-2);
-              double fare = JsonManager.getFare(exitStation, station);
-              String itemLore1 = meta.getLore().get(1);
-              if (!itemLore1.contains("•") && (Objects.equals(itemLore1, station) || Double.parseDouble(itemLore1) >= fare)) {
+              String entryStation = itemLore0.substring(0, itemLore0.length()-2);
+              if (!entryStation.equals(lang.GLOBAL_TICKET)) {
+                double fare = JsonManager.getFare(entryStation, station);
+                String itemLore1 = meta.getLore().get(1);
+                if (!itemLore1.contains("•") && (Objects.equals(itemLore1, station) || Double.parseDouble(itemLore1) >= fare)) {
+                  List<String> lore = meta.getLore();
+                  lore.set(1, itemLore1+" •");
+                  meta.setLore(lore);
+                  item.setItemMeta(meta);
+                }
+              } else {
                 List<String> lore = meta.getLore();
-                lore.set(1, itemLore1+" •");
+                lore.set(1, meta.getLore().get(1)+" •");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-
-                player.sendMessage(String.format(lang.TICKET_OUT, station));
-
-                gates.add(gate);
-                gate.open();
-                gate.hold();
               }
-
+              player.sendMessage(String.format(lang.TICKET_OUT, station));
+  
+              gates.add(gate);
+              gate.open();
+              gate.hold();
             }
-
-          } else gateAction = null;
-
-          // Check for fare evasion
-          if (gateType != gateAction && (item.getType() == Material.NAME_TAG || item.getType() == Material.PAPER)) {
-            player.sendMessage(lang.FARE_EVADE);
-            Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
           }
-
         }
+  
+        // Check for fare evasion
+        if (gateType != gateAction && (item.getType() == Material.NAME_TAG || item.getType() == Material.PAPER)) {
+          player.sendMessage(lang.FARE_EVADE);
+          Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+        }
+  
+      }
       }
     }
-  }
-
+  
+  
   @EventHandler
   public void CheckPlayerMove(PlayerMoveEvent event) {
     Player player = event.getPlayer();

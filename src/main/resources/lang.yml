@@ -8,8 +8,8 @@ validator: Validator
 faregate: Faregate
 
 # Messages
-remaining: "§aRemaining value: §£%.2f"
-fareEvade: "§cYou have been caught fare evading! Fine: §e£75.00"
+remaining: '§aRemaining value: §£%.2f'
+fareEvade: '§cYou have been caught fare evading! Fine: §e£8.00'
 
 # =====================================
 # These options control the ticket machines.
@@ -17,55 +17,57 @@ fareEvade: "§cYou have been caught fare evading! Fine: §e£75.00"
 # Global variables
 ticketMachine: Ticket Machine  # main menu text
 tickets: Tickets  # ticket machine sign text
-pluginName: "§aICIWI Card"  # Default card name
+pluginName: '§aICIWI Card'  # Default card name
 currency: £
-serialNumber: "Serial number: "  # First line of the lore on a card
-serialPrefix: "A"  # 1 char only!
+serialNumber: 'Serial number: '  # First line of the lore on a card
+serialPrefix: 'A'  # 1 char only!
 
 # Messages
 notEnoughMoney: §cNu! You dont have enuf monies!
 
-TicketMachine: "§1Ticket Machine"
+TicketMachine: '§1Ticket Machine'
 
-menuNewTicket: "§aNew Single Journey Ticket"
-menuAdjustFares: "§eAdjust Fares"
-CardOperations: "§dICIWI Card Operations"
-CheckFares: "§bCheck Fares"
+menuNewTicket: '§aNew Single Journey Ticket'
+menuAdjustFares: '§eAdjust Fares'
+CardOperations: '§dICIWI Card Operations'
+CheckFares: '§bCheck Fares'
 
-NewTicket: "§1New Ticket - "
-Clear: "CLEAR"
-Enter: "ENTER"
-TrainTicket: "§aTrain Ticket"
-generateTicket: "§aNew ticket for journeys costing up to £%2$.2f from %1$s generated."
+NewTicket: '§1New Ticket - '
+Clear: 'CLEAR'
+Enter: 'ENTER'
+TrainTicket: '§aTrain Ticket'
+generateTicket: '§aNew ticket for journeys costing up to £%2$.2f from %1$s generated.'
+generateTicketGlobal: '§aNew ticket for journeys costing up to £%1$.2f generated.'
+globalTicket: 'AllStations'  # must be CamelCase
 
-SelectTicket: "§1Select Ticket..."
+SelectTicket: '§1Select Ticket...'
 
-AdjustFares: "§1Adjust Fare - "
-directTicketInvalid: "§cInvalid ticket! Direct tickets cannot be adjusted!"
+AdjustFares: '§1Adjust Fare - '
+directTicketInvalid: '§cInvalid ticket! Direct tickets cannot be adjusted!'
 
-SelectCard: "§1Select Card..."
+SelectCard: '§1Select Card...'
 
-CardOperation: "§1Select Option - "
-CardDetails: "§eCard Details"
-NewCard : "§dNew ICIWI Card"
-TopUpCard : "§bTop Up ICIWI Card"
-menuAddRailPass: "§aNew Rail Pass"
-RefundCard : "§6Refund Card"
-RemainingValue : "Remaining value: "
-cardRefunded: "§aRefunded card %1$s. Received £%2$.2f."
+CardOperation: '§1Select Option - '
+CardDetails: '§eCard Details'
+NewCard: '§dNew ICIWI Card'
+TopUpCard: '§bTop Up ICIWI Card'
+menuAddRailPass: '§aNew Rail Pass'
+RefundCard: '§6Refund Card'
+RemainingValue: 'Remaining value: '
+cardRefunded: '§aRefunded card %1$s. Received £%2$.2f.'
 
-SelectValue : "§1Select value..."
-NewCardCreated : "§aNew Card Created! Deposit: £%1$.2f, Card Value: £%2$.2f"
+SelectValue: '§1Select value...'
+NewCardCreated: '§aNew Card Created! Deposit: £%1$.2f, Card Value: £%2$.2f'
 
-TopUp : "§1Top Up - "
-CardToppedUp: "§aTopped up £%1$.2f."
+TopUp: '§1Top Up - '
+CardToppedUp: '§aTopped up £%1$.2f.'
 
-AddRailPass : "§1Add rail pass - "
-Days: " Day(s)"
-AddedRailPass : "§aAdded a rail pass giving free access to all stations owned by %1$s for %2$d days. Price: £%3$.2f"
+AddRailPass: '§1Add rail pass - '
+Days: ' Day(s)'
+AddedRailPass: '§aAdded a rail pass giving free access to all stations owned by %1$s for %2$d days. Price: £%3$.2f'
 
-TappedIn : "§aTapped in at %1$s. Remaining value: £%2$.2f. Welcome aboard!"
-Transfer : "§aOut-of-station interchange recorded."
-TappedOut : "§aTapped out at %1$s. Fare: £%2$.2f. Remaining value: £%3$.2f. Thank you for riding with us!"
-TicketIn : "§aTicket from %s punched. Welcome aboard!"
-TicketOut : "§aTicket punched out at %s. Thank you for riding with us!"
+TappedIn: '§aTapped in at %1$s. Remaining value: £%2$.2f. Welcome aboard!'
+Transfer: '§aOut-of-station interchange recorded.'
+TappedOut: '§aTapped out at %1$s. Fare: £%2$.2f. Remaining value: £%3$.2f. Thank you for riding with us!'
+TicketIn: '§aTicket from %s punched. Welcome aboard!'
+TicketOut: '§aTicket punched out at %s. Thank you for riding with us!'

@@ -22,8 +22,8 @@ public class CustomConfig {
 
     if (!file.exists()) {
       Logger logger = plugin.getLogger();
-      logger.log(Level.INFO, file.getParentFile().mkdir() ? "[Iciwi] New config file created" : "[Iciwi] Config file already exists, initialising files...");
-      plugin.saveResource(name, true);
+      logger.log(Level.INFO, file.getParentFile().mkdirs() ? "[Iciwi] New config file created" : "[Iciwi] Config file already exists, initialising files...");
+      plugin.saveResource(name, false);
     }
 
     config = new YamlConfiguration();

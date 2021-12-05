@@ -1,5 +1,5 @@
 name: Iciwi
-version: 1.17.1a6
+version: 1.17.1a7
 main: mikeshafter.iciwi.Iciwi
 api-version: 1.17
 description: Iciwi plugin for Limaru
@@ -22,7 +22,7 @@ commands:
     usage: /<command> <number>. E.g. /redeemcard IA-12345
     description: Redeems an existing card with the stated serial number.
     permission: iciwi.redeemcard
-  reloadconfig:
+  reloadiciwi:
     usage: /<command>
     description: Reloads owners.yml
     permission: iciwi.reload
