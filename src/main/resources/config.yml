@@ -22,7 +22,7 @@ ticket-machine-type: STATION
 #ticket-machine-type: GLOBAL
 
 # global operator name (if GLOBAL is selected above)
-global-operator: HT
+global-operator: ExampleOperator
 
 # global ticket price
 global-ticket-price: 5.0

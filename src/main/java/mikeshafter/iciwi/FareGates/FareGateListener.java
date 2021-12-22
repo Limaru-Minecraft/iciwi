@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
@@ -54,10 +55,35 @@ public class FareGateListener implements Listener {
       plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> canClick = true, 10);
   
       if (state instanceof Sign sign && data instanceof WallSign) {
+        
+        // Payment sign
+        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.PAYMENT) && isDouble(sign.getLine(1))) {
+    
+          double price = Double.parseDouble(sign.getLine(1));
+          ItemStack item = player.getInventory().getItemInMainHand();
+    
+          if (item.getType() == Material.NAME_TAG &&
+                  item.hasItemMeta() &&
+                  item.getItemMeta() != null &&
+                  item.getItemMeta().hasLore() &&
+                  item.getItemMeta().getLore() != null &&
+                  item.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER)) {
+            String serial = item.getItemMeta().getLore().get(1);
+            Payment.pay(serial, player, price);
+          }
+          else {
+            Payment.pay(player, price);
+          }
+    
+          return;
+          // DO NOT PARSE THE REST OF THE CODE
+        }
+
         // Initialise fare gate; all signs point to this
-        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
+        else if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
         }
+        
       }
   
       // same thing, but for HL-style fare gates
@@ -89,8 +115,7 @@ public class FareGateListener implements Listener {
           String itemLore0 = meta.getLore().get(0);
 
           // station. if the gatetype is a faregate, use all 3 lines, else, use the first line only.
-          String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : sign.getLine(1)+sign.getLine(2)+sign.getLine(3));
-
+          String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : ChatColor.stripColor((gateType == GateType.FAREGATE) ? sign.getLine(1)+sign.getLine(2)+sign.getLine(3) : sign.getLine(0).split(" ", 2)[1] )).replaceAll(" ", "").replace("]", "");
 
           // === Card ===
           if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER)) {
@@ -98,9 +123,12 @@ public class FareGateListener implements Listener {
             String serial = meta.getLore().get(1);
             // If there is nothing in records, set gateAction to ENTRY. Else, set it to EXIT.
             gateAction = records.getString("station."+serial) == null ? GateType.ENTRY : GateType.EXIT;
+            
+            // boolean flag to block gate opening as that causes an error
+            boolean blockOpen = gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL;
 
             // set gateType to gateAction for easier manipulation since they are ambiguous. Also removes the chance of a fine.
-            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
+            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL) gateType = gateAction;
 
             if (gateType == GateType.ENTRY) {
 
@@ -112,9 +140,11 @@ public class FareGateListener implements Listener {
               double value = cardSql.getCardValue(serial);
               player.sendMessage(String.format(lang.TAPPED_IN, station, value));
 
-              gates.add(gate);
-              gate.open();
-              gate.hold();
+              if (!blockOpen) {
+                gates.add(gate);
+                gate.open();
+                gate.hold();
+              }
 
 
             } else if (gateType == GateType.EXIT) {
@@ -148,10 +178,13 @@ public class FareGateListener implements Listener {
               records.set("station."+serial, null);
 
               player.sendMessage(String.format(lang.TAPPED_OUT, station, fare, value));
-
-              gates.add(gate);
-              gate.open();
-              gate.hold();
+  
+              if (!blockOpen) {
+                gates.add(gate);
+                gate.open();
+                gate.hold();
+              }
+              
             }
           }
 
@@ -164,7 +197,7 @@ public class FareGateListener implements Listener {
             if (meta.getLore().get(1).contains("•")) gateType = null;
 
             // set gateType to gateAction for easier manipulation since they are ambiguous.
-            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR) gateType = gateAction;
+            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL) gateType = gateAction;
 
             if (gateType == GateType.ENTRY && !itemLore0.contains("•")) {
 
@@ -237,5 +270,13 @@ public class FareGateListener implements Listener {
         }
       }
     }
+  }
+  
+  private boolean isDouble(String s) {
+    final String Digits = "(\\p{Digit}+)";
+    final String HexDigits = "(\\p{XDigit}+)";
+    final String Exp = "[eE][+-]?"+Digits;
+    final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
+    return Pattern.matches(fpRegex, s);
   }
 }

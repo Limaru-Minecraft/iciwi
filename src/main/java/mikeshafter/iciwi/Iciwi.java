@@ -1,10 +1,9 @@
 package mikeshafter.iciwi;
 
+import kr.entree.spigradle.annotations.SpigotPlugin;
 import mikeshafter.iciwi.FareGates.FareGateListener;
-import mikeshafter.iciwi.Tickets.CompanyTicketMachine;
-import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
-import mikeshafter.iciwi.Tickets.TicketMachine;
-import mikeshafter.iciwi.Tickets.TicketMachineListener;
+import mikeshafter.iciwi.FareGates.GateCreateListener;
+import mikeshafter.iciwi.Tickets.*;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -18,13 +17,10 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-
+@SpigotPlugin
 public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
 
   public static Economy economy = null;
@@ -37,6 +33,9 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   @Override
   public void onDisable() {
     saveConfig();
+    lang.save();
+    owners.save();
+    records.save();
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
 
@@ -54,6 +53,19 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
       }
+    }
+  
+    // Get ticket
+    else if (command.getName().equalsIgnoreCase("gettick") && sender.hasPermission("iciwi.getticket") && sender instanceof Player) {
+      String from = args[0];
+      String to = args[1];
+      ItemStack item = new ItemStack(Material.PAPER, 1);
+      ItemMeta itemMeta = item.getItemMeta();
+      assert itemMeta != null;
+      itemMeta.setDisplayName(lang.TRAIN_TICKET);
+      itemMeta.setLore(Arrays.asList(new String[] {from, to}));
+      item.setItemMeta(itemMeta);
+      ((Player) sender).getInventory().addItem(item);
     }
 
     // Ticket Machine
@@ -207,6 +219,9 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     records = new Records(this);
     
     this.saveDefaultConfig();
+    lang.saveDefaultConfig();
+    owners.saveDefaultConfig();
+    records.saveDefaultConfig();
     
     this.getConfig().options().copyDefaults(true);
     lang.get().options().copyDefaults(true);
@@ -228,8 +243,10 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
-    
-    // === Register all stations in fares.json to owners.yml ===
+    getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new SignCreateListener(), this);
+      
+                                                      // === Register all stations in fares.json to owners.yml ===
     ArrayList<String> stations = JsonManager.getAllStations();
     for (String station : stations) {
       if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));

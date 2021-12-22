@@ -35,9 +35,14 @@ public class FareGate {
       String args = switch (gateType) {
         case ENTRY -> signText.substring(lang.ENTRY.length()+1, signText.length()-1);
         case EXIT -> signText.substring(lang.EXIT.length()+1, signText.length()-1);
-        case VALIDATOR -> signText.substring(lang.VALIDATOR.length()+1, signText.length()-1);
+        case VALIDATOR, SPECIAL -> "";
         case FAREGATE -> signText.substring(lang.FAREGATE.length()+1, signText.length()-1);
       };
+      
+      // Parse for validator
+      if (this.gateType == GateType.SPECIAL) {
+        return;
+      }
 
       // todo: args
       // Convert args into a binary
@@ -49,7 +54,7 @@ public class FareGate {
       if (args.contains("R")) flags += 16; // Redstone activator
       if (args.contains("E")) flags += 32; // Eye-level sign.
 
-      if ((flags&1) == 1 || this.gateType == GateType.VALIDATOR) {
+      if ((flags&1) == 1) {
         // validator, location does not matter
         this.gateType = GateType.VALIDATOR;
         return;
@@ -106,7 +111,7 @@ public class FareGate {
     } else if (text.contains(lang.EXIT)) {
       return GateType.EXIT;
     } else if (text.contains(lang.VALIDATOR)) {
-      return GateType.VALIDATOR;
+      return GateType.SPECIAL;
     } else if (text.contains(lang.FAREGATE)) {
       return GateType.FAREGATE;
     } else return null;
@@ -127,7 +132,7 @@ public class FareGate {
       case 4  -> new byte[][] {{-1, 0, -1}, {-2, 0, -1}};  //   D
       case 5  -> new byte[][] {{-1, 0, 0}, {-1, 0, 1}};  // S D
       case 6  -> new byte[][] {{1, 0, -1}, {2, 0, -1}};  //  LD
-      case 7  -> new byte[][] {{1, 0, 0}, {1, 0, -1}};  // SLD
+      case 7  -> new byte[][] {{1, 0, 0}, {1, 0, 1}};  // SLD
       case 8  -> new byte[][] {{0, -1, -1}};  //    R
       case 9  -> new byte[][] {{0, -1, -1}};  // S  R
       case 10 -> new byte[][] {{0, -1, -1}}; //  L R
@@ -143,7 +148,7 @@ public class FareGate {
       case 20 -> new byte[][] {{-1, -1, -1}, {-2, -1, -1}}; //   D E
       case 21 -> new byte[][] {{-1, -1, 0}, {-1, -1, 1}}; // S D E
       case 22 -> new byte[][] {{1, -1, -1}, {2, -1, -1}}; //  LD E
-      case 23 -> new byte[][] {{1, -1, 0}, {1, -1, -1}}; // SLD E
+      case 23 -> new byte[][] {{1, -1, 0}, {1, -1, 1}}; // SLD E
       case 24 -> new byte[][] {{0, -2, -1}}; //    RE
       case 25 -> new byte[][] {{0, -2, -1}}; // S  RE
       case 26 -> new byte[][] {{0, -2, -1}}; //  L RE

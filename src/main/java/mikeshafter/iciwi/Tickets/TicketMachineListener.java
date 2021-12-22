@@ -42,7 +42,7 @@ public class TicketMachineListener implements Listener {
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
       Player player = event.getPlayer();
 
-      if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]") && !sign.getLine(1).equals(ChatColor.BOLD+"Buy/Top Up")) {
+      if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
         if (Objects.equals(machineType, "COMPANY")) {
@@ -53,6 +53,7 @@ public class TicketMachineListener implements Listener {
         } else if (Objects.equals(machineType, "GLOBAL")) {
           String station = lang.GLOBAL_TICKET;
           machine = new GlobalTicketMachine(player);
+          this.operator = plugin.getConfig().getString("global-operator");
           machine.newTM_0();
         } else {
           String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
@@ -95,11 +96,14 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.contains(lang.__NEW_TICKET)) {
         value = Double.parseDouble(inventoryName.substring(lang.__NEW_TICKET.length()+lang.CURRENCY.length()));
 
-        player.closeInventory();
+        event.setCancelled(true);
 
         if (itemName.equals(lang.CLEAR)) machine.newTicket_1(0.0);
 
-        else if (itemName.equals(lang.ENTER)) machine.generateTicket(value);
+        else if (itemName.equals(lang.ENTER)) {
+          player.closeInventory();
+          machine.generateTicket(value);
+        }
 
         else {
           double numberPressed = Double.parseDouble(itemName);
@@ -124,11 +128,13 @@ public class TicketMachineListener implements Listener {
       else if (inventoryName.contains(lang.__ADJUST_FARES)) {
         value = Double.parseDouble(inventoryName.substring(lang.__ADJUST_FARES.length()+lang.CURRENCY.length()));
         ItemStack item0 = inventory.getItem(0);
-        player.closeInventory();
+        
+        event.setCancelled(true);
 
         if (itemName.equals(lang.CLEAR)) machine.adjustFares_2(0.0, item0);
 
         else if (itemName.equals(lang.ENTER) && item0 != null) {
+          player.closeInventory();
           machine.generateTicket(item0, value);
         } else {
           double numberPressed = Integer.parseInt(itemName);
@@ -233,6 +239,7 @@ public class TicketMachineListener implements Listener {
           Iciwi.economy.withdrawPlayer(player, price);
           player.sendMessage(String.format(lang.ADDED_RAIL_PASS, this.operator, days, price));
           app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
+          owners.deposit(operator, price);
 
         } else player.sendMessage(lang.NOT_ENOUGH_MONEY);
       }

@@ -41,23 +41,41 @@ public class GlobalTicketMachine extends TicketMachine {
     getPlayer().getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, lang.GLOBAL_TICKET, String.format("%.2f", value)));
   }
   
-  public void newSingleJourneyTicket_1() {
-    double value = plugin.getConfig().getDouble("global-ticket-price");
-    if (Iciwi.economy.getBalance(super.getPlayer()) >= value) {
-      Iciwi.economy.withdrawPlayer(super.getPlayer(), value);
-    }
-    super.getPlayer().getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, lang.GLOBAL_TICKET, String.valueOf(value)));
+  @Override
+  public void railPass_3(String serial, String operator) {
+    super.railPass_3(serial, operator);
   }
   
-  public void railPass_3(String serial) {
-    String operator = plugin.getConfig().getString("global-operator");
-    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__ADD_RAIL_PASS+"%s", serial));
-    Set<String> daysSet = owners.getRailPassDays(operator);
-    for (String days : daysSet) {
-      double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
-      i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+lang.DAYS, String.valueOf(price)));
-    }
+  @Override
+  public void cardOperations_1() {
+    super.cardOperations_1();
+  }
+  
+  @Override
+  public void newCard_3() {
+    super.newCard_3();
+  }
+  
+  @Override
+  public void cardOperations_2(String serial) {
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__CARD_OPERATION+"%s", serial));
+    double cardValue = app.getCardValue(serial);
+    i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS, String.format(lang.SERIAL_NUMBER+"%s", serial), String.format(lang.REMAINING_VALUE+lang.CURRENCY+"%.2f", cardValue)));
+    i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD));
+    i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD));
+    i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS, plugin.getConfig().getString("global-operator")));
+    i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD));
     super.getPlayer().openInventory(i);
+  }
+  
+  @Override
+  public void topUp_3(String serial) {
+    super.topUp_3(serial);
+  }
+  
+  @Override
+  public void checkFares_1() {
+    super.checkFares_1();
   }
   
   private boolean isDouble(String s) {

@@ -9,65 +9,86 @@ faregate: Faregate
 
 # Messages
 remaining: '§aRemaining value: §£%.2f'
-fareEvade: '§cYou have been caught fare evading! Fine: §e£8.00'
+fare-evade: '§cYou have been caught fare evading! Fine: §e£8.00'
 
 # =====================================
 # These options control the ticket machines.
 # =====================================
 # Global variables
-ticketMachine: Ticket Machine  # main menu text
 tickets: Tickets  # ticket machine sign text
-pluginName: '§aICIWI Card'  # Default card name
+plugin-name: '§aICIWI Card'  # Default card name
 currency: £
-serialNumber: 'Serial number: '  # First line of the lore on a card
-serialPrefix: 'A'  # 1 char only!
+serial-number: 'Serial number:'  # First line of the lore on a card
+serial-prefix: 'A'  # 1 char only!
 
 # Messages
-notEnoughMoney: §cNu! You dont have enuf monies!
+not-enough-money: §cNu! You dont have enuf monies!
 
-TicketMachine: '§1Ticket Machine'
+ticket-machine: '§1Ticket Machine'
 
-menuNewTicket: '§aNew Single Journey Ticket'
-menuAdjustFares: '§eAdjust Fares'
-CardOperations: '§dICIWI Card Operations'
-CheckFares: '§bCheck Fares'
+menu-new-ticket: '§aNew Single Journey Ticket'
+menu-adjust-fares: '§eAdjust Fares'
+card-operations: '§dICIWI Card Operations'
+check-fares: '§bCheck Fares'
 
-NewTicket: '§1New Ticket - '
-Clear: 'CLEAR'
-Enter: 'ENTER'
-TrainTicket: '§aTrain Ticket'
-generateTicket: '§aNew ticket for journeys costing up to £%2$.2f from %1$s generated.'
-generateTicketGlobal: '§aNew ticket for journeys costing up to £%1$.2f generated.'
-globalTicket: 'AllStations'  # must be CamelCase
+new-ticket: '§1New Ticket - '
+clear: 'CLEAR'
+enter: 'ENTER'
+train-ticket: '§aTrain Ticket'
+generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
+generate-ticket-global: '§aNew ticket for journeys costing up to §e£%1$.2f§a generated.'
+global-ticket: 'AllStations'  # must be CamelCase
 
-SelectTicket: '§1Select Ticket...'
+select-ticket: '§1Select Ticket...'
 
-AdjustFares: '§1Adjust Fare - '
-directTicketInvalid: '§cInvalid ticket! Direct tickets cannot be adjusted!'
+adjust-fares: '§1Adjust Fare - '
+direct-ticket-invalid: '§cInvalid ticket! Direct tickets cannot be adjusted!'
 
-SelectCard: '§1Select Card...'
+select-card: '§1Select Card...'
 
-CardOperation: '§1Select Option - '
-CardDetails: '§eCard Details'
-NewCard: '§dNew ICIWI Card'
-TopUpCard: '§bTop Up ICIWI Card'
-menuAddRailPass: '§aNew Rail Pass'
-RefundCard: '§6Refund Card'
-RemainingValue: 'Remaining value: '
-cardRefunded: '§aRefunded card %1$s. Received £%2$.2f.'
+card-operation: '§1Select Option - '
+card-details: '§eCard Details'
+new-card: '§dNew ICIWI Card'
+top-up-card: '§bTop Up ICIWI Card'
+menu-add-rail-pass: '§aNew Rail Pass'
+refund-card: '§6Refund Card'
+remaining-value: 'Remaining value: '
+card-refunded: '§aRefunded card §e%1$s§a. Received §e£%2$.2f§a.'
 
-SelectValue: '§1Select value...'
-NewCardCreated: '§aNew Card Created! Deposit: £%1$.2f, Card Value: £%2$.2f'
+select-value: '§1Select value...'
+new-card-created: '§aNew Card Created! Deposit: §e£%1$.2f§a, Card Value: §e£%2$.2f§a'
 
-TopUp: '§1Top Up - '
-CardToppedUp: '§aTopped up £%1$.2f.'
+top-up: '§1Top Up - '
+card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
-AddRailPass: '§1Add rail pass - '
-Days: ' Day(s)'
-AddedRailPass: '§aAdded a rail pass giving free access to all stations owned by %1$s for %2$d days. Price: £%3$.2f'
+add-rail-pass: '§1Add rail pass - '
+days: ' Day(s)'
+added-rail-pass: '§aAdded a rail pass giving free access to all stations owned by §e%1$s§a for §e%2$d§a days. Price: §e£%3$.2f§a.'
 
-TappedIn: '§aTapped in at %1$s. Remaining value: £%2$.2f. Welcome aboard!'
-Transfer: '§aOut-of-station interchange recorded.'
-TappedOut: '§aTapped out at %1$s. Fare: £%2$.2f. Remaining value: £%3$.2f. Thank you for riding with us!'
-TicketIn: '§aTicket from %s punched. Welcome aboard!'
-TicketOut: '§aTicket punched out at %s. Thank you for riding with us!'
+tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
+transfer: '§aOut-of-station interchange recorded.'
+tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
+ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
+ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
+
+payment: 'BusValidator'
+cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
+pay-success: '§aPaid §e£%.2f§a.'
+pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
+
+create-entry-sign: 'You created an entry sign! This sign is used to start a journey.'
+create-exit-sign: 'You created an exit sign! This sign is used to end a journey.'
+create-faregate-sign: 'You created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
+create-validator-sign: 'You created a validator sign! This sign is used to validate tickets and for payments.'
+create-ticket-machine: 'You created a ticket machine! This sign is used to buy tickets.'
+
+default-entry-sign-line-3: '<--'
+default-entry-sign-line-4: 'f'
+default-exit-sign-line-3: '<--'
+default-exit-sign-line-4: ''
+default-validator-sign-line-2: 'Tap here'
+default-validator-sign-line-3: 'to start/end journey'
+default-validator-sign-line-4: 'yes'
+default-tm-sign-line-2: 'Buy/Top Up'
+default-tm-sign-line-3: 'Go-2 Card'
+default-tm-sign-line-4: 'Tap to begin'

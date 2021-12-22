@@ -121,7 +121,7 @@ public class TicketMachine {
     // this.serial = serial;
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__CARD_OPERATION+"%s", serial));
     double cardValue = app.getCardValue(serial);
-    i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS, String.format(lang.SERIAL_NUMBER+"%s", serial), String.format(lang.REMAINING_VALUE+lang.CURRENCY+"%.2f", cardValue)));
+    i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS, String.format(lang.SERIAL_NUMBER+" %s", serial), String.format(lang.REMAINING_VALUE+lang.CURRENCY+"%.2f", cardValue)));
     i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD));
     i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD));
     i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS, owners.getOwner(this.station)));

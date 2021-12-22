@@ -1,16 +1,18 @@
 plugins {
     id 'java'
-    id 'fr.il_totore.manadrop' version '0.4.1-SNAPSHOT'
+    id 'kr.entree.spigradle' version '2.2.4'
 }
 
 group 'org.mikeshafter'
-version '1.17.1a7'
+version '1.18.1b1'
+
+compileJava.options.encoding 'UTF-8'
 
 //buildDir = "./../../M. Shaftere/servers/testserver/plugins"
 
 repositories {
     maven {
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        url = 'https//hub.spigotmc.org/nexus/content/repositories/snapshots/'
 
         // As of Gradle 5.1, you can limit this to only those
         // dependencies you expect from it
@@ -28,20 +30,121 @@ repositories {
     This is therefore not needed if you're using the full Spigot/CraftBukkit,
     or if you're using the Bukkit API.
     */
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https//oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https//oss.sonatype.org/content/repositories/central' }
+    jitpack() // For vault
     mavenLocal()
     mavenCentral() // This is needed for CraftBukkit and Spigot.
 }
 
 dependencies {
-  implementation 'org.jetbrains:annotations:22.0.0'
+    compileOnly spigot('1.14.4')
+    compileOnly(vaultAll()) { // instead of vault() for the dependency resolution by debug task 'prepareSpigotPlugins'.
+        transitive = false // No want to import vault's internal dependencies.
+    }
+}
 
-  // Pick only one of these and read the comment in the repositories block.
-    compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
-    // https://mvnrepository.com/artifact/net.milkbowl.vault/Vault
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+spigot {
+    name 'Iciwi'
+    description 'Iciwi plugin for Limaru'
+    depends 'Vault'
+    apiVersion '1.14'
+    commands {
+        checkfare {
+            usage '/<command> <from> <to>'
+            description 'Checks fare'
+            permission 'iciwi.checkfare'
+        }
+        ticketmachine {
+            usage '/<command> <station>'
+            description 'Ticket machine.'
+            permission 'iciwi.ticketmachine'
+        }
+        newdiscount {
+            usage '/ < command > < serial > < operator > < days before expiry >'
+            description 'Adds a rail pass("discounts") onto existing cards'
+            permission 'iciwi.newdiscount'
+        }
+        redeemcard {
+            usage '/<command> <number>. E.g. /redeemcard IA-12345'
+            description 'Redeems an existing card with the stated serial number.'
+            permission 'iciwi.redeemcard'
+        }
+        getticket {
+            usage '/<command> <from> <to>'
+            description 'Gives you a ticket'
+            permission 'iciwi.getticket'
+        }
+        reloadiciwi {
+            usage '/<command>'
+            description 'Reloads owners.yml'
+            permission 'iciwi.reload'
+        }
+        coffers {
+            usage '/<command> <empty | view> [(if empty) company name ]'
+            description 'Withdraws / view coffers'
+            permission 'iciwi.coffers'
+        }
+        odometer {
+            usage '/<command> <start|stop|record>'
+            description 'Measures distances on tracks'
+            permission 'iciwi.odometer'
+        }
+    }
+    permissions {
+        'iciwi.*' {
+            description "Gives access to all Iciwi commands"
+            children = [
+                'iciwi.checkfare': true,
+                'iciwi.ticketmachine': true,
+                'iciwi.newdiscount': true,
+                'iciwi.reload': true,
+                'iciwi.coffers': true,
+                'iciwi.odometer': true,
+            ]
+            defaults 'op'
+        }
+        'iciwi.checkfare' {
+            description "Allows the use of /checkfare"
+            defaults 'true'
+        }
+        'iciwi.ticketmachine' {
+            description 'Allows the use of /ticketmachine'
+            defaults 'op'
+        }
+        'iciwi.newdiscount' {
+            description 'Allows the use of /newdiscount'
+            defaults 'op'
+        }
+        'iciwi.getticket' {
+            description 'Allows the use of /getticket'
+            defaults 'op'
+        }
+        'iciwi.redeemcard'{
+            description 'Allows the use of /redeemcard'
+            defaults 'op'
+        }
+        'iciwi.reload'{
+            description 'Allows the use of all reload commands'
+            defaults 'op'
+        }
+        'iciwi.coffers'{
+            description 'Allows the use of /coffers'
+            defaults 'op'
+        }
+        'iciwi.coffers.viewall'{
+            description 'Makes /coffers view show all companies'
+            defaults 'false'
+        }
+        'iciwi.odometer'{
+            description 'Allows the use of /odometer'
+            defaults 'op'
+        }
+        'iciwi.create'{
+            description 'Create fare gates and ticket machines'
+            defaults 'op'
+        }
+    }
 }
 
 test {

@@ -42,6 +42,12 @@ public class CustomConfig {
     }
   }
   
+  public void saveDefaultConfig() {
+    if (!file.exists()) {
+      plugin.saveResource(name, false);
+    }
+  }
+  
   public File getFile() {
     return file;
   }
