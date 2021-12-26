@@ -44,14 +44,14 @@ public class TicketMachine {
   }
 
   public void newTM_0() {
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.__TICKET_MACHINE);
-
+    Inventory i = plugin.getServer().createInventory(null, 9, lang.__TICKET_MACHINE());
+  
     // Single Journey Ticket
-    i.setItem(1, makeButton(Material.PAPER, lang.NEW_TICKET));
-    i.setItem(3, makeButton(Material.MAP, lang.ADJUST_FARES));
-    i.setItem(5, makeButton(Material.NAME_TAG, lang.CARD_OPERATIONS));
-    i.setItem(7, makeButton(Material.BOOK, lang.CHECK_FARES));
-
+    i.setItem(1, makeButton(Material.PAPER, lang.NEW_TICKET()));
+    i.setItem(3, makeButton(Material.MAP, lang.ADJUST_FARES()));
+    i.setItem(5, makeButton(Material.NAME_TAG, lang.CARD_OPERATIONS()));
+    i.setItem(7, makeButton(Material.BOOK, lang.CHECK_FARES()));
+  
     player.openInventory(i);
   }
 
@@ -65,39 +65,39 @@ public class TicketMachine {
   }
 
   public void newTicket_1(double value) {
-    Inventory i = plugin.getServer().createInventory(null, 36, String.format((lang.__NEW_TICKET+lang.CURRENCY+"%.2f"), value));
+    Inventory i = plugin.getServer().createInventory(null, 36, String.format((lang.__NEW_TICKET()+lang.CURRENCY()+"%.2f"), value));
     for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
       i.setItem(ints[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(ints[1])));
     }
-    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, lang.CLEAR));
-    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, lang.ENTER));
-
+    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, lang.CLEAR()));
+    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, lang.ENTER()));
+  
     player.openInventory(i);
   }
 
   public void adjustFares_1() {
     // Ticket selection
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.__SELECT_TICKET);
+    Inventory i = plugin.getServer().createInventory(null, 9, lang.__SELECT_TICKET());
     player.openInventory(i);
   }
 
   public void adjustFares_2(double value, ItemStack item) {
-    Inventory i = plugin.getServer().createInventory(null, 36, String.format((lang.__ADJUST_FARES+lang.CURRENCY+"%.2f"), value));
+    Inventory i = plugin.getServer().createInventory(null, 36, String.format((lang.__ADJUST_FARES()+lang.CURRENCY()+"%.2f"), value));
     for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
       i.setItem(ints[0], makeButton(Material.GRAY_STAINED_GLASS_PANE, String.valueOf(ints[1])));
     }
     i.setItem(0, item);
-    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, lang.CLEAR));
-    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, lang.ENTER));
-
+    i.setItem(30, makeButton(Material.RED_STAINED_GLASS_PANE, lang.CLEAR()));
+    i.setItem(32, makeButton(Material.LIME_STAINED_GLASS_PANE, lang.ENTER()));
+  
     player.openInventory(i);
   }
 
   public void cardOperations_1() {
     // check if player has a card
     for (ItemStack i : player.getInventory().getContents()) {
-      if (i != null && i.hasItemMeta() && i.getItemMeta() != null && i.getItemMeta().hasLore() && i.getItemMeta().getLore() != null && i.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER)) {
-        Inventory j = plugin.getServer().createInventory(null, 9, lang.__SELECT_CARD);
+      if (i != null && i.hasItemMeta() && i.getItemMeta() != null && i.getItemMeta().hasLore() && i.getItemMeta().getLore() != null && i.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER())) {
+        Inventory j = plugin.getServer().createInventory(null, 9, lang.__SELECT_CARD());
         player.openInventory(j);
         return;
       }
@@ -106,26 +106,26 @@ public class TicketMachine {
   }
 
   public void newCard_3() {
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.__SELECT_VALUE);
+    Inventory i = plugin.getServer().createInventory(null, 9, lang.__SELECT_VALUE());
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     if (priceArray.size() == 0) {
       plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
     }
     for (int j = 0; j < priceArray.size(); j++) {
-      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(lang.CURRENCY+"%.2f", priceArray.get(j))));
+      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(lang.CURRENCY()+"%.2f", priceArray.get(j))));
     }
     player.openInventory(i);
   }
 
   public void cardOperations_2(String serial) {
     // this.serial = serial;
-    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__CARD_OPERATION+"%s", serial));
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__CARD_OPERATION()+"%s", serial));
     double cardValue = app.getCardValue(serial);
-    i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS, String.format(lang.SERIAL_NUMBER+" %s", serial), String.format(lang.REMAINING_VALUE+lang.CURRENCY+"%.2f", cardValue)));
-    i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD));
-    i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD));
-    i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS, owners.getOwner(this.station)));
-    i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD));
+    i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS(), String.format(lang.SERIAL_NUMBER()+" %s", serial), String.format(lang.REMAINING_VALUE()+lang.CURRENCY()+"%.2f", cardValue)));
+    i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD()));
+    i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD()));
+    i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS(), owners.getOwner(this.station)));
+    i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
     player.openInventory(i);
   }
 
@@ -136,17 +136,17 @@ public class TicketMachine {
       plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
     }
     for (int j = 0; j < priceArray.size(); j++) {
-      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(lang.CURRENCY+"%.2f", priceArray.get(j))));
+      i.setItem(j, makeButton(Material.PURPLE_STAINED_GLASS_PANE, String.format(lang.CURRENCY()+"%.2f", priceArray.get(j))));
     }
     player.openInventory(i);
   }
 
   public void railPass_3(String serial, String operator) {
-    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__ADD_RAIL_PASS+"%s", serial));
+    Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__ADD_RAIL_PASS()+"%s", serial));
     Set<String> daysSet = owners.getRailPassDays(operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
-      i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+lang.DAYS, String.valueOf(price)));
+      i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+lang.DAYS(), String.valueOf(price)));
     }
     player.openInventory(i);
   }
@@ -167,9 +167,9 @@ public class TicketMachine {
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
       }
-      player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
+      player.sendMessage(String.format(lang.GENERATE_TICKET(), station, value));
       player.getInventory().remove(item);
-      player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, lore0, String.valueOf(value)));
+      player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET(), lore0, String.valueOf(value)));
     }
   }
 
@@ -229,8 +229,8 @@ public CardSql getApp() {
     if (Iciwi.economy.getBalance(player) >= value) {
       Iciwi.economy.withdrawPlayer(player, value);
     }
-    player.sendMessage(String.format(lang.GENERATE_TICKET, station, value));
-    player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET, station, String.format("%.2f", value)));
+    player.sendMessage(String.format(lang.GENERATE_TICKET(), station, value));
+    player.getInventory().addItem(makeButton(Material.PAPER, lang.TRAIN_TICKET(), station, String.format("%.2f", value)));
   }
   
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {

@@ -42,7 +42,7 @@ public class TicketMachineListener implements Listener {
       String signLine0 = ChatColor.stripColor(sign.getLine(0));
       Player player = event.getPlayer();
 
-      if (signLine0.equalsIgnoreCase("["+lang.TICKETS+"]")) {
+      if (signLine0.equalsIgnoreCase("["+lang.TICKETS()+"]")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
         if (Objects.equals(machineType, "COMPANY")) {
@@ -51,7 +51,7 @@ public class TicketMachineListener implements Listener {
           machine = new CompanyTicketMachine(player, this.operator);
           machine.newTM_0();
         } else if (Objects.equals(machineType, "GLOBAL")) {
-          String station = lang.GLOBAL_TICKET;
+          String station = lang.GLOBAL_TICKET();
           machine = new GlobalTicketMachine(player);
           this.operator = plugin.getConfig().getString("global-operator");
           machine.newTM_0();
@@ -79,61 +79,59 @@ public class TicketMachineListener implements Listener {
 
       // == Page 0 ==
       double value;
-      if (inventoryName.equals(lang.__TICKET_MACHINE)) {
-  
-        if (itemName.equals(lang.NEW_TICKET)) {
+      if (inventoryName.equals(lang.__TICKET_MACHINE())) {
+    
+        if (itemName.equals(lang.NEW_TICKET())) {
           if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
             machine.generateTicket(plugin.getConfig().getDouble("global-ticket-price"));
             player.closeInventory();
           } else machine.newTicket_1(0.0);
-        } else if (itemName.equals(lang.ADJUST_FARES)) machine.adjustFares_1();
-        else if (itemName.equals(lang.CARD_OPERATIONS)) machine.cardOperations_1();
-        else if (itemName.equals(lang.CHECK_FARES)) machine.checkFares_1();
-  
+        } else if (itemName.equals(lang.ADJUST_FARES())) machine.adjustFares_1();
+        else if (itemName.equals(lang.CARD_OPERATIONS())) machine.cardOperations_1();
+        else if (itemName.equals(lang.CHECK_FARES())) machine.checkFares_1();
+    
       }
-
+  
       // == New Ticket : Page 1 ==
-      else if (inventoryName.contains(lang.__NEW_TICKET)) {
-        value = Double.parseDouble(inventoryName.substring(lang.__NEW_TICKET.length()+lang.CURRENCY.length()));
-
+      else if (inventoryName.contains(lang.__NEW_TICKET())) {
+        value = Double.parseDouble(inventoryName.substring(lang.__NEW_TICKET().length()+lang.CURRENCY().length()));
+    
         event.setCancelled(true);
-
-        if (itemName.equals(lang.CLEAR)) machine.newTicket_1(0.0);
-
-        else if (itemName.equals(lang.ENTER)) {
+    
+        if (itemName.equals(lang.CLEAR())) machine.newTicket_1(0.0);
+    
+        else if (itemName.equals(lang.ENTER())) {
           player.closeInventory();
           machine.generateTicket(value);
-        }
-
-        else {
+        } else {
           double numberPressed = Double.parseDouble(itemName);
           value = (Math.round(value*1000)+numberPressed)/100;
           machine.newTicket_1(value);
         }
-
+    
       }
-
+  
       // == Adjust Fares : Page 1 ==
-      else if (inventoryName.equals(lang.__SELECT_TICKET)) {
+      else if (inventoryName.equals(lang.__SELECT_TICKET())) {
         if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
           player.closeInventory();
           // String station = item.getItemMeta().getLore().get(0);
           String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
           if (isDouble(ticketPrice)) machine.adjustFares_2(0.0, item);
-          else player.sendMessage(lang.DIRECT_TICKET_INVALID);
+          else player.sendMessage(lang.DIRECT_TICKET_INVALID());
         }
       }
-
+  
       // == Adjust Fares : Page 2 ==
-      else if (inventoryName.contains(lang.__ADJUST_FARES)) {
-        value = Double.parseDouble(inventoryName.substring(lang.__ADJUST_FARES.length()+lang.CURRENCY.length()));
+      else if (inventoryName.contains(lang.__ADJUST_FARES())) {
+        value = Double.parseDouble(inventoryName.substring(lang.__ADJUST_FARES().length()+lang.CURRENCY().length()));
         ItemStack item0 = inventory.getItem(0);
-        
+    
         event.setCancelled(true);
-
-        if (itemName.equals(lang.CLEAR)) machine.adjustFares_2(0.0, item0);
-
-        else if (itemName.equals(lang.ENTER) && item0 != null) {
+    
+        if (itemName.equals(lang.CLEAR())) machine.adjustFares_2(0.0, item0);
+    
+        else if (itemName.equals(lang.ENTER()) && item0 != null) {
           player.closeInventory();
           machine.generateTicket(item0, value);
         } else {
@@ -141,57 +139,57 @@ public class TicketMachineListener implements Listener {
           value = (Math.round(value*1000)+numberPressed)/100;
           machine.adjustFares_2(value, item0);
         }
-
+    
       }
-
+  
       // == Card Operations : Page 1 ==
-      else if (inventoryName.equals(lang.__SELECT_CARD)) {
-        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER)) {
+      else if (inventoryName.equals(lang.__SELECT_CARD())) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER())) {
           player.closeInventory();
           String serial = item.getItemMeta().getLore().get(1);
           machine.cardOperations_2(serial);
         }
       }
-
+  
       // == Card Operations : Page 2 ==
-      else if (inventoryName.contains(lang.__CARD_OPERATION)) {
-        String serial = inventoryName.substring(lang.__CARD_OPERATION.length());
-        if (!itemName.equals(lang.CARD_DETAILS)) {
+      else if (inventoryName.contains(lang.__CARD_OPERATION())) {
+        String serial = inventoryName.substring(lang.__CARD_OPERATION().length());
+        if (!itemName.equals(lang.CARD_DETAILS())) {
           player.closeInventory();
-          if (itemName.equals(lang.NEW_CARD)) {
+          if (itemName.equals(lang.NEW_CARD())) {
             machine.newCard_3();
-          } else if (itemName.equals(lang.TOP_UP_CARD)) {
+          } else if (itemName.equals(lang.TOP_UP_CARD())) {
             machine.topUp_3(serial);
-          } else if (itemName.equals(lang.ADD_RAIL_PASS)) {
+          } else if (itemName.equals(lang.ADD_RAIL_PASS())) {
             machine.railPass_3(serial, this.operator);
-          } else if (itemName.equals(lang.REFUND_CARD)) {
+          } else if (itemName.equals(lang.REFUND_CARD())) {
             // search for player's card
             for (ItemStack itemStack : player.getInventory().getContents()) {
               // get loreStack
-              if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), lang.SERIAL_NUMBER)) {
+              if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), lang.SERIAL_NUMBER())) {
                 // get serialNumber
                 String serialNumber = itemStack.getItemMeta().getLore().get(1);
                 double remainingValue = app.getCardValue(serialNumber);
                 Iciwi.economy.depositPlayer(player, remainingValue);
                 player.getInventory().remove(itemStack);
                 app.delCard(serialNumber);
-                player.sendMessage(String.format(lang.CARD_REFUNDED, serialNumber, remainingValue));
+                player.sendMessage(String.format(lang.CARD_REFUNDED(), serialNumber, remainingValue));
                 break;
               }
             }
-
+        
           }
         }
       }
-
+  
       // == New Card : Page 3 ==
-      else if (inventoryName.equals(lang.__SELECT_VALUE)) {
-        if (itemName.contains(lang.CURRENCY)) {
+      else if (inventoryName.equals(lang.__SELECT_VALUE())) {
+        if (itemName.contains(lang.CURRENCY())) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
           double deposit = plugin.getConfig().getDouble("deposit");
-
+      
           player.closeInventory();
-
+      
           if (Iciwi.economy.getBalance(player) >= deposit+val) {
             // Take money from player and send message
             Iciwi.economy.withdrawPlayer(player, deposit+val);
@@ -200,48 +198,48 @@ public class TicketMachineListener implements Listener {
             char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                            ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                            ];
-            app.newCard(lang.SERIAL_PREFIX+sum+"-"+serial, val);
-            player.sendMessage(String.format(lang.NEW_CARD_CREATED, deposit, val));
-            player.getInventory().addItem(makeButton(lang.PLUGIN_NAME, lang.SERIAL_NUMBER, lang.SERIAL_PREFIX+sum+"-"+serial));
-          } else player.sendMessage(lang.NOT_ENOUGH_MONEY);
+            app.newCard(lang.SERIAL_PREFIX()+sum+"-"+serial, val);
+            player.sendMessage(String.format(lang.NEW_CARD_CREATED(), deposit, val));
+            player.getInventory().addItem(makeButton(lang.PLUGIN_NAME(), lang.SERIAL_NUMBER(), lang.SERIAL_PREFIX()+sum+"-"+serial));
+          } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
         }
       }
-
+  
       // == Top Up : Page 3 ==
-      else if (inventoryName.contains(lang.__TOP_UP)) {
-        String serial = inventoryName.substring(lang.__TOP_UP.length());
+      else if (inventoryName.contains(lang.__TOP_UP())) {
+        String serial = inventoryName.substring(lang.__TOP_UP().length());
         if (isDouble(itemName.replaceAll("[^\\d.]", ""))) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-
+      
           player.closeInventory();
-
+      
           // Top up existing card
           if (Iciwi.economy.getBalance(player) >= val) {
             Iciwi.economy.withdrawPlayer(player, val);
-            player.sendMessage(String.format(lang.CARD_TOPPED_UP, val));
+            player.sendMessage(String.format(lang.CARD_TOPPED_UP(), val));
             app.addValueToCard(serial, val);
-
-          } else player.sendMessage(lang.NOT_ENOUGH_MONEY);
+        
+          } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
         }
       }
-
+  
       // == Rail Pass : Page 3 ==
-      else if (inventoryName.contains(lang.__ADD_RAIL_PASS)) {
-        String serial = inventoryName.substring(lang.__ADD_RAIL_PASS.length());
+      else if (inventoryName.contains(lang.__ADD_RAIL_PASS())) {
+        String serial = inventoryName.substring(lang.__ADD_RAIL_PASS().length());
         long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
         double price = owners.getRailPassPrice(this.operator, days);
-
+    
         if (Iciwi.economy.getBalance(player) >= price) {
           app.setDiscount(serial, this.operator, System.currentTimeMillis()+days*86400000);
-
+      
           player.closeInventory();
-
+      
           Iciwi.economy.withdrawPlayer(player, price);
-          player.sendMessage(String.format(lang.ADDED_RAIL_PASS, this.operator, days, price));
+          player.sendMessage(String.format(lang.ADDED_RAIL_PASS(), this.operator, days, price));
           app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
           owners.deposit(operator, price);
-
-        } else player.sendMessage(lang.NOT_ENOUGH_MONEY);
+      
+        } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
       }
     }
   }

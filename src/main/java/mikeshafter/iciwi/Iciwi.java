@@ -62,7 +62,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       ItemStack item = new ItemStack(Material.PAPER, 1);
       ItemMeta itemMeta = item.getItemMeta();
       assert itemMeta != null;
-      itemMeta.setDisplayName(lang.TRAIN_TICKET);
+      itemMeta.setDisplayName(lang.TRAIN_TICKET());
       itemMeta.setLore(Arrays.asList(new String[] {from, to}));
       item.setItemMeta(itemMeta);
       ((Player) sender).getInventory().addItem(item);
@@ -217,11 +217,6 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
     lang = new Lang(this);
     owners = new Owners(this);
     records = new Records(this);
-    
-    this.saveDefaultConfig();
-    lang.saveDefaultConfig();
-    owners.saveDefaultConfig();
-    records.saveDefaultConfig();
     
     this.getConfig().options().copyDefaults(true);
     lang.get().options().copyDefaults(true);

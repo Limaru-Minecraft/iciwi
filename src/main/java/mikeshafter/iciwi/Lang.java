@@ -11,7 +11,7 @@ public class Lang extends CustomConfig {
   private File file;
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final String name;
-
+  
   public Lang(Plugin plugin) {
     super("lang.yml", plugin);
     this.name = "lang.yml";
@@ -20,96 +20,282 @@ public class Lang extends CustomConfig {
   
   // Fare gate strings
 // // Signs
-  public final String ENTRY = super.getString("entry");
-  public final String EXIT = super.getString("exit");
-  public final String VALIDATOR = super.getString("validator");
-  public final String FAREGATE = super.getString("faregate");
+  public String ENTRY() {
+    return super.getString("entry");
+  }
+  
+  public String EXIT() {
+    return super.getString("exit");
+  }
+  
+  public String VALIDATOR() {
+    return super.getString("validator");
+  }
+  
+  public String FAREGATE() {
+    return super.getString("faregate");
+  }
+  
   //--- Messages
-  public final String REMAINING = super.getString("remaining");
-  public final String FARE_EVADE = super.getString("fare-evade");
+  public String REMAINING() {
+    return super.getString("remaining");
+  }
+  
+  public String FARE_EVADE() {
+    return super.getString("fare-evade");
+  }
   
   
   // Ticket Machine Strings
 //--- Global variables
-  public final String TICKETS = super.getString("tickets");
-  public final String PLUGIN_NAME = super.getString("plugin-name");
-  public final String CURRENCY = super.getString("currency");
-  public final String SERIAL_NUMBER = super.getString("serial-number");
-  public final String SERIAL_PREFIX = super.getString("serial-prefix");
+  public String TICKETS() {
+    return super.getString("tickets");
+  }
+  
+  public String PLUGIN_NAME() {
+    return super.getString("plugin-name");
+  }
+  
+  public String CURRENCY() {
+    return super.getString("currency");
+  }
+  
+  public String SERIAL_NUMBER() {
+    return super.getString("serial-number");
+  }
+  
+  public String SERIAL_PREFIX() {
+    return super.getString("serial-prefix");
+  }
   
   
   //--- Messages
-  public final String NOT_ENOUGH_MONEY = super.getString("not-enough-money");
+  public String NOT_ENOUGH_MONEY() {
+    return super.getString("not-enough-money");
+  }
   
-  public final String __TICKET_MACHINE = super.getString("ticket-machine");
-  public final String NEW_TICKET = super.getString("menu-new-ticket");
-  public final String ADJUST_FARES = super.getString("menu-adjust-fares");
-  public final String CARD_OPERATIONS = super.getString("card-operations");
-  public final String CHECK_FARES = super.getString("check-fares");
+  public String __TICKET_MACHINE() {
+    return super.getString("ticket-machine");
+  }
   
-  public final String __NEW_TICKET = super.getString("new-ticket");
-  public final String CLEAR = super.getString("clear");
-  public final String ENTER = super.getString("enter");
-  public final String TRAIN_TICKET = super.getString("train-ticket");
-  public final String GENERATE_TICKET = super.getString("generate-ticket");
-  public final String GENERATE_TICKET_GLOBAL = super.getString("generate-ticket-global");
-  public final String GLOBAL_TICKET = super.getString("global-ticket");
+  public String NEW_TICKET() {
+    return super.getString("menu-new-ticket");
+  }
   
-  public final String __SELECT_TICKET = super.getString("select-ticket");
+  public String ADJUST_FARES() {
+    return super.getString("menu-adjust-fares");
+  }
   
-  public final String __ADJUST_FARES = super.getString("adjust-fares");
-  public final String DIRECT_TICKET_INVALID = super.getString("direct-ticket-invalid");
+  public String CARD_OPERATIONS() {
+    return super.getString("card-operations");
+  }
   
-  public final String __SELECT_CARD = super.getString("select-card");
+  public String CHECK_FARES() {
+    return super.getString("check-fares");
+  }
   
-  public final String __CARD_OPERATION = super.getString("card-operation");
-  public final String CARD_DETAILS = super.getString("card-details");
-  public final String NEW_CARD = super.getString("new-card");
-  public final String TOP_UP_CARD = super.getString("top-up-card");
-  public final String ADD_RAIL_PASS = super.getString("menu-add-rail-pass");
-  public final String REFUND_CARD = super.getString("refund-card");
-  public final String REMAINING_VALUE = super.getString("remaining-value");
-  public final String CARD_REFUNDED = super.getString("card-refunded");
+  public String __NEW_TICKET() {
+    return super.getString("new-ticket");
+  }
   
-  public final String __SELECT_VALUE = super.getString("select-value");
-  public final String NEW_CARD_CREATED = super.getString("new-card-created");
+  public String CLEAR() {
+    return super.getString("clear");
+  }
   
-  public final String __TOP_UP = super.getString("top-up");
-  public final String CARD_TOPPED_UP = super.getString("card-topped-up");
+  public String ENTER() {
+    return super.getString("enter");
+  }
   
-  public final String __ADD_RAIL_PASS = super.getString("add-rail-pass");
-  public final String DAYS = super.getString("days");
-  public final String ADDED_RAIL_PASS = super.getString("added-rail-pass");
+  public String TRAIN_TICKET() {
+    return super.getString("train-ticket");
+  }
   
-  public final String TAPPED_IN = super.getString("tapped-in");
-  public final String TRANSFER = super.getString("transfer");
-  public final String TAPPED_OUT = super.getString("tapped-out");
-  public final String TICKET_IN = super.getString("ticket-in");
-  public final String TICKET_OUT = super.getString("ticket-out");
+  public String GENERATE_TICKET() {
+    return super.getString("generate-ticket");
+  }
   
-  public final String PAYMENT = super.getString("payment");
-  public final String CASH_DIVERT = super.getString("cash-divert");
-  public final String PAY_SUCCESS = super.getString("pay-success");
-  public final String PAY_SUCCESS_CARD = super.getString("pay-success-card");
+  public String GENERATE_TICKET_GLOBAL() {
+    return super.getString("generate-ticket-global");
+  }
   
-  public final String CREATE_ENTRY_SIGN = super.getString("create-entry-sign");
-  public final String CREATE_EXIT_SIGN = super.getString("create-exit-sign");
-  public final String CREATE_FAREGATE_SIGN = super.getString("create-faregate-sign");
-  public final String CREATE_VALIDATOR_SIGN = super.getString("create-validator-sign");
-  public final String CREATE_TICKET_MACHINE = super.getString("create-ticket-machine");
+  public String GLOBAL_TICKET() {
+    return super.getString("global-ticket");
+  }
   
-  public final String DEFAULT_ENTRY_SIGN_LINE_3 = super.getString("default-entry-sign-line-3");
-  public final String DEFAULT_ENTRY_SIGN_LINE_4 = super.getString("default-entry-sign-line-4");
+  public String __SELECT_TICKET() {
+    return super.getString("select-ticket");
+  }
   
-  public final String DEFAULT_EXIT_SIGN_LINE_3 = super.getString("default-exit-sign-line-3");
-  public final String DEFAULT_EXIT_SIGN_LINE_4 = super.getString("default-exit-sign-line-4");
+  public String __ADJUST_FARES() {
+    return super.getString("adjust-fares");
+  }
   
-  public final String DEFAULT_VALIDATOR_SIGN_LINE_2 = super.getString("default-validator-sign-line-2");
-  public final String DEFAULT_VALIDATOR_SIGN_LINE_3 = super.getString("default-validator-sign-line-3");
-  public final String DEFAULT_VALIDATOR_SIGN_LINE_4 = super.getString("default-validator-sign-line-4");
+  public String DIRECT_TICKET_INVALID() {
+    return super.getString("direct-ticket-invalid");
+  }
   
-  public final String DEFAULT_TM_SIGN_LINE_2 = super.getString("default-tm-sign-line-2");
-  public final String DEFAULT_TM_SIGN_LINE_3 = super.getString("default-tm-sign-line-3");
-  public final String DEFAULT_TM_SIGN_LINE_4 = super.getString("default-tm-sign-line-4");
+  public String __SELECT_CARD() {
+    return super.getString("select-card");
+  }
+  
+  public String __CARD_OPERATION() {
+    return super.getString("card-operation");
+  }
+  
+  public String CARD_DETAILS() {
+    return super.getString("card-details");
+  }
+  
+  public String NEW_CARD() {
+    return super.getString("new-card");
+  }
+  
+  public String TOP_UP_CARD() {
+    return super.getString("top-up-card");
+  }
+  
+  public String ADD_RAIL_PASS() {
+    return super.getString("menu-add-rail-pass");
+  }
+  
+  public String REFUND_CARD() {
+    return super.getString("refund-card");
+  }
+  
+  public String REMAINING_VALUE() {
+    return super.getString("remaining-value");
+  }
+  
+  public String CARD_REFUNDED() {
+    return super.getString("card-refunded");
+  }
+  
+  public String __SELECT_VALUE() {
+    return super.getString("select-value");
+  }
+  
+  public String NEW_CARD_CREATED() {
+    return super.getString("new-card-created");
+  }
+  
+  public String __TOP_UP() {
+    return super.getString("top-up");
+  }
+  
+  public String CARD_TOPPED_UP() {
+    return super.getString("card-topped-up");
+  }
+  
+  public String __ADD_RAIL_PASS() {
+    return super.getString("add-rail-pass");
+  }
+  
+  public String DAYS() {
+    return super.getString("days");
+  }
+  
+  public String ADDED_RAIL_PASS() {
+    return super.getString("added-rail-pass");
+  }
+  
+  public String TAPPED_IN() {
+    return super.getString("tapped-in");
+  }
+  
+  public String TRANSFER() {
+    return super.getString("transfer");
+  }
+  
+  public String TAPPED_OUT() {
+    return super.getString("tapped-out");
+  }
+  
+  public String TICKET_IN() {
+    return super.getString("ticket-in");
+  }
+  
+  public String TICKET_OUT() {
+    return super.getString("ticket-out");
+  }
+  
+  public String INVALID_TICKET() {
+    return super.getString("invalid-ticket");
+  }
+  
+  public String PAYMENT() {
+    return super.getString("payment");
+  }
+  
+  public String CASH_DIVERT() {
+    return super.getString("cash-divert");
+  }
+  
+  public String PAY_SUCCESS() {
+    return super.getString("pay-success");
+  }
+  
+  public String PAY_SUCCESS_CARD() {
+    return super.getString("pay-success-card");
+  }
+  
+  public String CREATE_ENTRY_SIGN() {
+    return super.getString("create-entry-sign");
+  }
+  
+  public String CREATE_EXIT_SIGN() {
+    return super.getString("create-exit-sign");
+  }
+  
+  public String CREATE_FAREGATE_SIGN() {
+    return super.getString("create-faregate-sign");
+  }
+  
+  public String CREATE_VALIDATOR_SIGN() {
+    return super.getString("create-validator-sign");
+  }
+  
+  public String CREATE_TICKET_MACHINE() {
+    return super.getString("create-ticket-machine");
+  }
+  
+  public String DEFAULT_ENTRY_SIGN_LINE_3() {
+    return super.getString("default-entry-sign-line-3");
+  }
+  
+  public String DEFAULT_ENTRY_SIGN_LINE_4() {
+    return super.getString("default-entry-sign-line-4");
+  }
+  
+  public String DEFAULT_EXIT_SIGN_LINE_3() {
+    return super.getString("default-exit-sign-line-3");
+  }
+  
+  public String DEFAULT_EXIT_SIGN_LINE_4() {
+    return super.getString("default-exit-sign-line-4");
+  }
+  
+  public String DEFAULT_VALIDATOR_SIGN_LINE_2() {
+    return super.getString("default-validator-sign-line-2");
+  }
+  
+  public String DEFAULT_VALIDATOR_SIGN_LINE_3() {
+    return super.getString("default-validator-sign-line-3");
+  }
+  
+  public String DEFAULT_VALIDATOR_SIGN_LINE_4() {
+    return super.getString("default-validator-sign-line-4");
+  }
+  
+  public String DEFAULT_TM_SIGN_LINE_2() {
+    return super.getString("default-tm-sign-line-2");
+  }
+  
+  public String DEFAULT_TM_SIGN_LINE_3() {
+    return super.getString("default-tm-sign-line-3");
+  }
+  
+  public String DEFAULT_TM_SIGN_LINE_4() {
+    return super.getString("default-tm-sign-line-4");
+  }
   
 }

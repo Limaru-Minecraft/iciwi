@@ -19,7 +19,7 @@ public class Payment {
     if (app.getCardValue(serial) >= price) {
       app.subtractValueFromCard(serial, price);
       double value = app.getCardValue(serial);
-      player.sendMessage(String.format(lang.PAY_SUCCESS_CARD, price, value));
+      player.sendMessage(String.format(lang.PAY_SUCCESS_CARD(), price, value));
       
       if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
         Owners owners = new Owners(plugin);
@@ -31,8 +31,8 @@ public class Payment {
   
   public static void pay(Player player, double price) {
     Iciwi.economy.withdrawPlayer(player, price);
-    player.sendMessage(lang.CASH_DIVERT);
-    player.sendMessage(String.format(lang.PAY_SUCCESS, price));
+    player.sendMessage(lang.CASH_DIVERT());
+    player.sendMessage(String.format(lang.PAY_SUCCESS(), price));
   
     if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
       Owners owners = new Owners(plugin);

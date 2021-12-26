@@ -3,6 +3,13 @@
   <component name="FacetManager">
     <facet type="minecraft" name="Minecraft">
       <configuration>
+        <userChosenTypes>
+          <map>
+            <entry key="BUKKIT" value="false" />
+            <entry key="SPIGOT" value="true" />
+            <entry key="PAPER" value="false" />
+          </map>
+        </userChosenTypes>
         <autoDetectTypes>
           <platformType>SPIGOT</platformType>
         </autoDetectTypes>

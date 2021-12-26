@@ -70,6 +70,7 @@ transfer: '§aOut-of-station interchange recorded.'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
+invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the ticket machine!'
 
 payment: 'BusValidator'
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'

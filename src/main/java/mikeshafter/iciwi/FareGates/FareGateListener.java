@@ -57,30 +57,29 @@ public class FareGateListener implements Listener {
       if (state instanceof Sign sign && data instanceof WallSign) {
         
         // Payment sign
-        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.PAYMENT) && isDouble(sign.getLine(1))) {
-    
+        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.PAYMENT()) && isDouble(sign.getLine(1))) {
+  
           double price = Double.parseDouble(sign.getLine(1));
           ItemStack item = player.getInventory().getItemInMainHand();
-    
+  
           if (item.getType() == Material.NAME_TAG &&
                   item.hasItemMeta() &&
                   item.getItemMeta() != null &&
                   item.getItemMeta().hasLore() &&
                   item.getItemMeta().getLore() != null &&
-                  item.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER)) {
+                  item.getItemMeta().getLore().get(0).equals(lang.SERIAL_NUMBER())) {
             String serial = item.getItemMeta().getLore().get(1);
             Payment.pay(serial, player, price);
-          }
-          else {
+          } else {
             Payment.pay(player, price);
           }
-    
+  
           return;
           // DO NOT PARSE THE REST OF THE CODE
         }
 
         // Initialise fare gate; all signs point to this
-        else if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR)) {
+        else if (ChatColor.stripColor(sign.getLine(0)).contains(lang.ENTRY()) || ChatColor.stripColor(sign.getLine(0)).contains(lang.EXIT()) || ChatColor.stripColor(sign.getLine(0)).contains(lang.VALIDATOR())) {
           gate = new FareGate(player, sign.getLine(0), block.getLocation());
         }
         
@@ -88,7 +87,7 @@ public class FareGateListener implements Listener {
   
       // same thing, but for HL-style fare gates
       else if (data instanceof Openable) {
-        if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE)) {
+        if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.FAREGATE())) {
           gate = new FareGate(player, sign.getLine(0), sign.getLocation());
         }
       } else return;
@@ -118,17 +117,18 @@ public class FareGateListener implements Listener {
           String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : ChatColor.stripColor((gateType == GateType.FAREGATE) ? sign.getLine(1)+sign.getLine(2)+sign.getLine(3) : sign.getLine(0).split(" ", 2)[1] )).replaceAll(" ", "").replace("]", "");
 
           // === Card ===
-          if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER)) {
-
+          if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.SERIAL_NUMBER())) {
+    
             String serial = meta.getLore().get(1);
             // If there is nothing in records, set gateAction to ENTRY. Else, set it to EXIT.
             gateAction = records.getString("station."+serial) == null ? GateType.ENTRY : GateType.EXIT;
-            
+    
             // boolean flag to block gate opening as that causes an error
             boolean blockOpen = gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL;
-
+    
             // set gateType to gateAction for easier manipulation since they are ambiguous. Also removes the chance of a fine.
-            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL) gateType = gateAction;
+            if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL)
+              gateType = gateAction;
 
             if (gateType == GateType.ENTRY) {
 
@@ -138,7 +138,7 @@ public class FareGateListener implements Listener {
                 records.set("transfer."+serial, true);
               }
               double value = cardSql.getCardValue(serial);
-              player.sendMessage(String.format(lang.TAPPED_IN, station, value));
+              player.sendMessage(String.format(lang.TAPPED_IN(), station, value));
 
               if (!blockOpen) {
                 gates.add(gate);
@@ -173,11 +173,11 @@ public class FareGateListener implements Listener {
               // set remaining value and config
               cardSql.subtractValueFromCard(serial, fare);
               double value = cardSql.getCardValue(serial);
-              player.sendMessage(String.format(lang.REMAINING, value));
+              player.sendMessage(String.format(lang.REMAINING(), value));
               records.set("timestamp."+serial, System.currentTimeMillis());
               records.set("station."+serial, null);
-
-              player.sendMessage(String.format(lang.TAPPED_OUT, station, fare, value));
+  
+              player.sendMessage(String.format(lang.TAPPED_OUT(), station, fare, value));
   
               if (!blockOpen) {
                 gates.add(gate);
@@ -194,31 +194,30 @@ public class FareGateListener implements Listener {
 
             // Ticket
             gateAction = itemLore0.contains("•") ? GateType.EXIT : GateType.ENTRY;
-            if (meta.getLore().get(1).contains("•")) gateType = null;
 
             // set gateType to gateAction for easier manipulation since they are ambiguous.
             if (gateType == GateType.FAREGATE || gateType == GateType.VALIDATOR || gateType == GateType.SPECIAL) gateType = gateAction;
-
-            if (gateType == GateType.ENTRY && !itemLore0.contains("•")) {
-
+    
+            if (gateType == GateType.ENTRY && !itemLore0.contains("•") && !meta.getLore().get(1).contains("•")) {
+      
               // check if the ticket is valid for that station
-              if (itemLore0.equals(station) || itemLore0.equals(lang.GLOBAL_TICKET)) {
+              if (itemLore0.equals(station) || itemLore0.equals(lang.GLOBAL_TICKET())) {
                 // punch hole
                 List<String> lore = meta.getLore();
                 lore.set(0, itemLore0+" •");
                 meta.setLore(lore);
                 item.setItemMeta(meta);
-    
-                player.sendMessage(String.format(lang.TICKET_IN, station));
-    
+        
+                player.sendMessage(String.format(lang.TICKET_IN(), station));
+        
                 gates.add(gate);
                 gate.open();
                 gate.hold();
               }
-            } else if (gateType == GateType.EXIT && itemLore0.contains("•")) {
+            } else if (gateType == GateType.EXIT && itemLore0.contains("•") && !meta.getLore().get(1).contains("•")) {
               // check fare
               String entryStation = itemLore0.substring(0, itemLore0.length()-2);
-              if (!entryStation.equals(lang.GLOBAL_TICKET)) {
+              if (!entryStation.equals(lang.GLOBAL_TICKET())) {
                 double fare = JsonManager.getFare(entryStation, station);
                 String itemLore1 = meta.getLore().get(1);
                 if (!itemLore1.contains("•") && (Objects.equals(itemLore1, station) || Double.parseDouble(itemLore1) >= fare)) {
@@ -233,18 +232,18 @@ public class FareGateListener implements Listener {
                 meta.setLore(lore);
                 item.setItemMeta(meta);
               }
-              player.sendMessage(String.format(lang.TICKET_OUT, station));
-  
+              player.sendMessage(String.format(lang.getString("ticket-out"), station));
+      
               gates.add(gate);
               gate.open();
               gate.hold();
-            }
+            } else player.sendMessage(lang.getString("invalid-ticket"));
           }
         }
   
         // Check for fare evasion
         if (gateType != gateAction && (item.getType() == Material.NAME_TAG || item.getType() == Material.PAPER)) {
-          player.sendMessage(lang.FARE_EVADE);
+          player.sendMessage(lang.FARE_EVADE());
           Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         }
   
