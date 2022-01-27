@@ -36,6 +36,10 @@ public class Lang extends CustomConfig {
     return super.getString("faregate");
   }
   
+  public String MEMBER() {
+    return super.getString("member");
+  }
+  
   //--- Messages
   public String REMAINING() {
     return super.getString("remaining");

@@ -49,16 +49,18 @@ public class JsonManager {
       StringBuilder contentBuilder = new StringBuilder();
       while (scanner.hasNextLine()) contentBuilder.append(scanner.nextLine());
       scanner.close();
-      
-      //String content = nextLine.toString();
+  
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
-      //plugin.getServer().getConsoleSender().sendMessage(content); //TODO: Debug
-      
+  
       JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
-      
+  
       JsonObject entryStationJson = fares.getAsJsonObject(entryStation);
-      return entryStationJson.get(exitStation).getAsDouble();
-      
+  
+      if (entryStationJson != null)
+        return entryStationJson.get(exitStation).getAsDouble();
+      else
+        return 0d;
+  
     } catch (IOException|JsonSyntaxException e) {
       e.printStackTrace();
       return 0d;

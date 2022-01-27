@@ -6,6 +6,7 @@ entry: Entry
 exit: Exit
 validator: Validator
 faregate: Faregate
+member: Member
 
 # Messages
 remaining: '§aRemaining value: §£%.2f'
@@ -72,24 +73,13 @@ ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
 invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the ticket machine!'
 
-payment: 'BusValidator'
+payment: 'Payment'
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
 pay-success: '§aPaid §e£%.2f§a.'
 pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
 
-create-entry-sign: 'You created an entry sign! This sign is used to start a journey.'
-create-exit-sign: 'You created an exit sign! This sign is used to end a journey.'
-create-faregate-sign: 'You created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
-create-validator-sign: 'You created a validator sign! This sign is used to validate tickets and for payments.'
-create-ticket-machine: 'You created a ticket machine! This sign is used to buy tickets.'
-
-default-entry-sign-line-3: '<--'
-default-entry-sign-line-4: 'f'
-default-exit-sign-line-3: '<--'
-default-exit-sign-line-4: ''
-default-validator-sign-line-2: 'Tap here'
-default-validator-sign-line-3: 'to start/end journey'
-default-validator-sign-line-4: 'yes'
-default-tm-sign-line-2: 'Buy/Top Up'
-default-tm-sign-line-3: 'Go-2 Card'
-default-tm-sign-line-4: 'Tap to begin'
+create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
+create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
+create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
+create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
+create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'

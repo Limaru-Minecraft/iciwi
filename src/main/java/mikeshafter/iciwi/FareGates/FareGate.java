@@ -37,6 +37,7 @@ public class FareGate {
         case EXIT -> signText.substring(lang.EXIT().length()+1, signText.length()-1);
         case VALIDATOR, SPECIAL -> "";
         case FAREGATE -> signText.substring(lang.FAREGATE().length()+1, signText.length()-1);
+        case MEMBER -> signText.substring(lang.MEMBER().length()+1, signText.length()-1);
       };
       
       // Parse for validator
@@ -114,6 +115,8 @@ public class FareGate {
       return GateType.SPECIAL;
     } else if (text.contains(lang.FAREGATE())) {
       return GateType.FAREGATE;
+    } else if (text.contains(lang.MEMBER())) {
+      return GateType.MEMBER;
     } else return null;
   }
 

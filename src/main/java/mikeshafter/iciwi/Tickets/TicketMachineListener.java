@@ -80,6 +80,7 @@ public class TicketMachineListener implements Listener {
       // == Page 0 ==
       double value;
       if (inventoryName.equals(lang.__TICKET_MACHINE())) {
+        event.setCancelled(true);
     
         if (itemName.equals(lang.NEW_TICKET())) {
           if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
@@ -168,13 +169,14 @@ public class TicketMachineListener implements Listener {
               // get loreStack
               if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), lang.SERIAL_NUMBER())) {
                 // get serialNumber
-                String serialNumber = itemStack.getItemMeta().getLore().get(1);
-                double remainingValue = app.getCardValue(serialNumber);
-                Iciwi.economy.depositPlayer(player, remainingValue);
-                player.getInventory().remove(itemStack);
-                app.delCard(serialNumber);
-                player.sendMessage(String.format(lang.CARD_REFUNDED(), serialNumber, remainingValue));
-                break;
+                if (itemStack.getItemMeta().getLore().get(1).equals(serial)) {
+                  double remainingValue = app.getCardValue(serial);
+                  Iciwi.economy.depositPlayer(player, remainingValue);
+                  player.getInventory().remove(itemStack);
+                  app.delCard(serial);
+                  player.sendMessage(String.format(lang.CARD_REFUNDED(), serial, remainingValue));
+                  break;
+                }
               }
             }
         

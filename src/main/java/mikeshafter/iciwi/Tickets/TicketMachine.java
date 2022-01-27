@@ -45,7 +45,7 @@ public class TicketMachine {
 
   public void newTM_0() {
     Inventory i = plugin.getServer().createInventory(null, 9, lang.__TICKET_MACHINE());
-  
+
     // Single Journey Ticket
     i.setItem(1, makeButton(Material.PAPER, lang.NEW_TICKET()));
     i.setItem(3, makeButton(Material.MAP, lang.ADJUST_FARES()));
@@ -125,7 +125,8 @@ public class TicketMachine {
     i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD()));
     i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD()));
     i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS(), owners.getOwner(this.station)));
-    i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
+    if (serial.charAt(0) == 'A')
+      i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
     player.openInventory(i);
   }
 

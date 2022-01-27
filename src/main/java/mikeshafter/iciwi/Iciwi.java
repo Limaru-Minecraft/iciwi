@@ -9,7 +9,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,9 +23,10 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@SpigotPlugin
-public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompleter {
 
+@SpigotPlugin
+public final class Iciwi extends JavaPlugin implements TabExecutor {
+  
   public static Economy economy = null;
   public Lang lang;
   public Owners owners;
@@ -43,7 +47,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
     // Check Fare
-    if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare")) {
+    if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare") && args.length == 2) {
       try {
         String from = args[0];
         String to = args[1];
@@ -52,11 +56,12 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
         return true;
       } catch (Exception e) {
         sender.sendMessage("Error while checking fare.");
+        return true;
       }
     }
   
     // Get ticket
-    else if (command.getName().equalsIgnoreCase("gettick") && sender.hasPermission("iciwi.getticket") && sender instanceof Player) {
+    else if (command.getName().equalsIgnoreCase("getticket") && sender.hasPermission("iciwi.getticket") && sender instanceof Player && args.length == 2) {
       String from = args[0];
       String to = args[1];
       ItemStack item = new ItemStack(Material.PAPER, 1);
@@ -66,6 +71,7 @@ public final class Iciwi extends JavaPlugin implements CommandExecutor, TabCompl
       itemMeta.setLore(Arrays.asList(new String[] {from, to}));
       item.setItemMeta(itemMeta);
       ((Player) sender).getInventory().addItem(item);
+      return true;
     }
 
     // Ticket Machine
