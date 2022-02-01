@@ -3,3 +3,4 @@
 .idea/workspace.xml
 build
 .gradle
+.DS_Store

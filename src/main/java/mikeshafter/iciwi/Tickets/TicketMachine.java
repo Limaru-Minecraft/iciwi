@@ -1,9 +1,11 @@
 package mikeshafter.iciwi.Tickets;
 
-import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
-import mikeshafter.iciwi.Owners;
+import mikeshafter.iciwi.*;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -11,9 +13,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -125,8 +129,7 @@ public class TicketMachine {
     i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD()));
     i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD()));
     i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS(), owners.getOwner(this.station)));
-    if (serial.charAt(0) == 'A')
-      i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
+    i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
     player.openInventory(i);
   }
 
@@ -141,7 +144,7 @@ public class TicketMachine {
     }
     player.openInventory(i);
   }
-
+  
   public void railPass_3(String serial, String operator) {
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__ADD_RAIL_PASS()+"%s", serial));
     Set<String> daysSet = owners.getRailPassDays(operator);
@@ -151,11 +154,34 @@ public class TicketMachine {
     }
     player.openInventory(i);
   }
-
-  public void checkFares_1() {
-    this.player.sendMessage("fare checking not implemented, try again later.");
+  
+  public void checkFares_1(int page) {
+    Map<String, Double> fares = JsonManager.getFares(this.station);
+    if (fares != null) {
+      int size = fares.size();
+      List<String> stations = fares.keySet().stream().sorted().toList();
+      TextComponent menu = Component.text().content("==== Fares from "+this.station+" ====\n").color(NamedTextColor.GOLD).build();
+      for (int i = (page-1)*8; i < (page*8); i++) {
+        menu = i < size ? menu.append(Component.text().content("\u00A76- \u00A7a"+stations.get(i)+"\u00a76 - "+String.format("\u00a7b[%.2f]\n", fares.get(stations.get(i)))).build())
+                   : menu.append(Component.text("\n"));
+      }
+      int maxPage = (size-1)/8+1;
+      menu = menu.append((Component.text().content("== ").color(NamedTextColor.GOLD)).build());
+      menu = page == 1 ? menu.append(Component.text().content("[###]").color(NamedTextColor.GOLD).build()) : menu.append(Component.text().clickEvent(ClickEvent.runCommand(checkFares(page-1))).content("[<<<]").color(NamedTextColor.GOLD).build());
+      menu = menu.append(Component.text().content(String.format(" == Page %d of %d == ", page, maxPage)).color(NamedTextColor.GOLD).build());
+      menu = page == maxPage ? menu.append(Component.text().content("[###]").color(NamedTextColor.GOLD).build()) : menu.append(Component.text().clickEvent(ClickEvent.runCommand(checkFares(page+1))).content("[>>>]").color(NamedTextColor.GOLD).build());
+      menu = menu.append((Component.text().content(" ==").color(NamedTextColor.GOLD)).build());
+      Audience audience = (Audience) player;
+      audience.sendMessage(menu);
+    }
   }
-
+  
+  private @NotNull String checkFares(int page) {
+    
+    return "/iciwi:farechart "+this.station+" "+page;
+    
+  }
+  
   public void generateTicket(ItemStack item, double value) {
     // get current fare on the ticket
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
@@ -164,7 +190,7 @@ public class TicketMachine {
       String lore1 = item.getItemMeta().getLore().get(1);
       double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
       double parsedValue = value-val;
-  
+      
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
       }

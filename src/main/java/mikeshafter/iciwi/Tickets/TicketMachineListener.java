@@ -89,7 +89,7 @@ public class TicketMachineListener implements Listener {
           } else machine.newTicket_1(0.0);
         } else if (itemName.equals(lang.ADJUST_FARES())) machine.adjustFares_1();
         else if (itemName.equals(lang.CARD_OPERATIONS())) machine.cardOperations_1();
-        else if (itemName.equals(lang.CHECK_FARES())) machine.checkFares_1();
+        else if (itemName.equals(lang.CHECK_FARES())) machine.checkFares_1(1);
     
       }
   

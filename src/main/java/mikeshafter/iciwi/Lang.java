@@ -2,19 +2,11 @@ package mikeshafter.iciwi;
 
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
 
 public class Lang extends CustomConfig {
-  private File file;
-  private final Plugin plugin = getPlugin(Iciwi.class);
-  private final String name;
   
   public Lang(Plugin plugin) {
     super("lang.yml", plugin);
-    this.name = "lang.yml";
   }
   
   
@@ -260,46 +252,6 @@ public class Lang extends CustomConfig {
   
   public String CREATE_TICKET_MACHINE() {
     return super.getString("create-ticket-machine");
-  }
-  
-  public String DEFAULT_ENTRY_SIGN_LINE_3() {
-    return super.getString("default-entry-sign-line-3");
-  }
-  
-  public String DEFAULT_ENTRY_SIGN_LINE_4() {
-    return super.getString("default-entry-sign-line-4");
-  }
-  
-  public String DEFAULT_EXIT_SIGN_LINE_3() {
-    return super.getString("default-exit-sign-line-3");
-  }
-  
-  public String DEFAULT_EXIT_SIGN_LINE_4() {
-    return super.getString("default-exit-sign-line-4");
-  }
-  
-  public String DEFAULT_VALIDATOR_SIGN_LINE_2() {
-    return super.getString("default-validator-sign-line-2");
-  }
-  
-  public String DEFAULT_VALIDATOR_SIGN_LINE_3() {
-    return super.getString("default-validator-sign-line-3");
-  }
-  
-  public String DEFAULT_VALIDATOR_SIGN_LINE_4() {
-    return super.getString("default-validator-sign-line-4");
-  }
-  
-  public String DEFAULT_TM_SIGN_LINE_2() {
-    return super.getString("default-tm-sign-line-2");
-  }
-  
-  public String DEFAULT_TM_SIGN_LINE_3() {
-    return super.getString("default-tm-sign-line-3");
-  }
-  
-  public String DEFAULT_TM_SIGN_LINE_4() {
-    return super.getString("default-tm-sign-line-4");
   }
   
 }

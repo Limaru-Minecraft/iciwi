@@ -73,8 +73,8 @@ public class GlobalTicketMachine extends TicketMachine {
   }
   
   @Override
-  public void checkFares_1() {
-    super.checkFares_1();
+  public void checkFares_1(int page) {
+    super.checkFares_1(page);
   }
   
   private boolean isDouble(String s) {

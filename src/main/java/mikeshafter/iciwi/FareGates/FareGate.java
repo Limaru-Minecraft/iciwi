@@ -54,23 +54,23 @@ public class FareGate {
       if (args.contains("D")) flags += 8;  // Double fare gate
       if (args.contains("R")) flags += 16; // Redstone activator
       if (args.contains("E")) flags += 32; // Eye-level sign.
-
+  
       if ((flags&1) == 1) {
         // validator, location does not matter
         this.gateType = GateType.VALIDATOR;
         return;
       }
-
+  
       flags >>= 1;
-
+  
       // LM-style fare gates
       // location matters
-      if ((gateType == GateType.ENTRY || gateType == GateType.EXIT) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-
+      if ((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.MEMBER) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
+    
         BlockFace direction = sign.getFacing();
         byte[][] locations = parseArgsLM(flags);
         this.fareGates = new OpenFareGate[locations.length];
-
+    
         for (int i = 0; i < locations.length; i++) {
           byte[] locVector = locations[i];
           switch (direction) {

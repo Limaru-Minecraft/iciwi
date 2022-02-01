@@ -7,6 +7,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Scanner;
@@ -64,6 +65,36 @@ public class JsonManager {
     } catch (IOException|JsonSyntaxException e) {
       e.printStackTrace();
       return 0d;
+    }
+  }
+  
+  public static Map<String, Double> getFares(String station) {
+    Plugin plugin = getPlugin(Iciwi.class);
+    
+    File file = new File(plugin.getDataFolder(), "fares.json");
+    
+    try {
+      Scanner scanner = new Scanner(file);
+      StringBuilder contentBuilder = new StringBuilder();
+      while (scanner.hasNextLine()) contentBuilder.append(scanner.nextLine());
+      scanner.close();
+      
+      String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
+      
+      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+      
+      JsonObject stationJson = fares.getAsJsonObject(station);
+      
+      if (stationJson != null) {
+        return stationJson.entrySet().stream()
+            .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().getAsDouble()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+      } else
+        return null;
+      
+    } catch (IOException|JsonSyntaxException e) {
+      e.printStackTrace();
+      return null;
     }
   }
 }

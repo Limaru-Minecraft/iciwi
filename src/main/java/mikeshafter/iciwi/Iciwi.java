@@ -60,6 +60,19 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       }
     }
   
+    // Fare chart
+    if (command.getName().equalsIgnoreCase("farechart") && sender.hasPermission("iciwi.farechart") && args.length == 2 && sender instanceof Player player) {
+      try {
+        String station = args[0];
+        String page = args[1];
+        new TicketMachine(player, station).checkFares_1(Integer.parseInt(page));
+        return true;
+      } catch (NumberFormatException e) {
+        sender.sendMessage("Not a page!");
+        return true;
+      }
+    }
+  
     // Get ticket
     else if (command.getName().equalsIgnoreCase("getticket") && sender.hasPermission("iciwi.getticket") && sender instanceof Player && args.length == 2) {
       String from = args[0];
@@ -73,7 +86,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       ((Player) sender).getInventory().addItem(item);
       return true;
     }
-
+  
     // Ticket Machine
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (getConfig().getString("ticket-machine-type").equals("STATION") && sender instanceof Player player && !args[0].isEmpty()) {
@@ -90,7 +103,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         return false;
       }
     }
-
+  
     // Add Discount
     else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
@@ -100,7 +113,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         return true;
       }
     }
-
+  
     // Redeem Card
     else if (command.getName().equalsIgnoreCase("redeemcard") && sender.hasPermission("iciwi.redeemcard")) {
       if (sender instanceof Player player && !args[0].isEmpty()) {
@@ -131,7 +144,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         }
       }
     }
-
+  
     // Reload Config
     else if (command.getName().equalsIgnoreCase("reloadiciwi") && sender.hasPermission("iciwi.reload")) {
       reloadConfig();
@@ -140,7 +153,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       records.reload();
       return true;
     }
-
+  
     // Coffers
     else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
       if (args.length == 2 && args[0].equals("empty") && sender instanceof Player player) {
@@ -181,7 +194,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         return true;
       }
     }
-
+  
     // Odometer
     else if (command.getName().equalsIgnoreCase("odometer") && args.length == 1 && sender instanceof Player && sender.hasPermission("iciwi.odometer")) {
       Player player = (Player) sender;
@@ -238,23 +251,23 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-    
-    
+  
+  
     // === Register events ===
     ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
     getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new SignCreateListener(), this);
-      
-                                                      // === Register all stations in fares.json to owners.yml ===
+  
+    // === Register all stations in fares.json to owners.yml ===
     ArrayList<String> stations = JsonManager.getAllStations();
     for (String station : stations) {
       if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
     }
-    
+  
     owners.save();
-    
+  
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
   }
   

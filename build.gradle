@@ -38,14 +38,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly spigot('1.14.4')
+    compileOnly spigot(null)
     compileOnly(vaultAll()) { // instead of vault() for the dependency resolution by debug task 'prepareSpigotPlugins'.
         transitive = false // No want to import vault's internal dependencies.
     }
+    implementation "net.kyori:adventure-api:4.9.3"
 }
 
 spigot {
-    name 'Iciwi'
     description 'Iciwi plugin for Limaru'
     depends 'Vault'
     apiVersion '1.14'
@@ -54,6 +54,11 @@ spigot {
             usage '/<command> <from> <to>'
             description 'Checks fare'
             permission 'iciwi.checkfare'
+        }
+        farechart {
+            usage '/<command> <station> <page>'
+            description 'Generates fare chart'
+            permission 'iciwi.farechart'
         }
         ticketmachine {
             usage '/<command> <station>'
@@ -96,6 +101,7 @@ spigot {
             description "Gives access to all Iciwi commands"
             children = [
                 'iciwi.checkfare': true,
+                'iciwi.farechart': true,
                 'iciwi.ticketmachine': true,
                 'iciwi.newdiscount': true,
                 'iciwi.reload': true,
@@ -106,6 +112,10 @@ spigot {
         }
         'iciwi.checkfare' {
             description "Allows the use of /checkfare"
+            defaults 'true'
+        }
+        'iciwi.farechart' {
+            description "Allows the use of /farechart"
             defaults 'true'
         }
         'iciwi.ticketmachine' {

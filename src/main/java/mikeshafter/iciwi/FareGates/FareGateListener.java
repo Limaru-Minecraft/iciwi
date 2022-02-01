@@ -292,7 +292,7 @@ public class FareGateListener implements Listener {
             gates.add(gate);
             gate.open();
             gate.hold();
-          }
+          } else player.sendMessage(lang.getString("invalid-ticket"));
         }
       }
     
@@ -312,7 +312,7 @@ public class FareGateListener implements Listener {
           Bukkit.getScheduler().runTaskLater(plugin, () -> {
             g.close();
             gates.remove(g);
-          }, 10L);
+          }, 10);
 
         }
       }
