@@ -21,9 +21,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
@@ -166,22 +166,22 @@ public class FareGateListener implements Listener {
               double fare = JsonManager.getFare(entryStation, station);
             
               // get rail pass discounts
-              HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
+              Map<String, Long> discounts = cardSql.getDiscountedOperators(serial);
               String entryStationOwner = owners.getOwner(entryStation);
               String exitStationOwner = owners.getOwner(station);
-            
+  
               // get transfer discount
               if (records.getBoolean("transfer."+serial)) {
                 fare -= plugin.getConfig().getDouble("transfer-discount");
               }
-            
+  
               // remove fare from discounts
               double half = fare/2;
-              if (discounts.contains(entryStationOwner)) fare -= half;
-              if (discounts.contains(exitStationOwner)) fare -= half;
+              if (discounts.containsKey(entryStationOwner)) fare -= half;
+              if (discounts.containsKey(exitStationOwner)) fare -= half;
               owners.deposit(entryStationOwner, fare/2);
               owners.deposit(exitStationOwner, fare/2);
-            
+  
               // set remaining value and config
               cardSql.subtractValueFromCard(serial, fare);
               double value = cardSql.getCardValue(serial);
@@ -272,23 +272,26 @@ public class FareGateListener implements Listener {
             } else player.sendMessage(lang.getString("invalid-ticket"));
           }
         }
-      
+  
         // Check for fare evasion
         if (gateType != gateAction && (item.getType() == Material.NAME_TAG || item.getType() == Material.PAPER)) {
           player.sendMessage(lang.FARE_EVADE());
           Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         }
-      
-      } else if (gate != null && gate.getGateType() == GateType.MEMBER) {
+  
+      }
+
+      // membership gate
+      else if (gate != null && gate.getGateType() == GateType.MEMBER) {
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
         Sign sign = state instanceof Sign ? (Sign) state : location.getBlock().getState() instanceof Sign ? (Sign) location.getBlock().getState() : null;
         if (item.getType() == Material.NAME_TAG && meta != null && meta.hasLore() && meta.getLore() != null && meta.getLore().get(0).equals(lang.SERIAL_NUMBER())) {
-        
+    
           String serial = meta.getLore().get(1);
-          HashSet<String> discounts = cardSql.getDiscountedOperators(serial);
-        
-          if (sign != null && (discounts.contains(ChatColor.stripColor(sign.getLine(1))) || discounts.contains(owners.getOwner(ChatColor.stripColor(sign.getLine(1)))))) {
+          Map<String, Long> discounts = cardSql.getDiscountedOperators(serial);
+    
+          if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || discounts.containsKey(owners.getOwner(ChatColor.stripColor(sign.getLine(1)))))) {
             gates.add(gate);
             gate.open();
             gate.hold();

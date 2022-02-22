@@ -4,8 +4,9 @@ import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Objects;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
@@ -36,7 +37,6 @@ public class CardSql{
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
-    sql.add("CREATE TABLE IF NOT EXISTS log (serial text, start_station TEXT, end_station TEXT, price NUMERIC )");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text primary key references cards(serial) ON UPDATE CASCADE, operator text, expiry integer)");
 
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
@@ -70,21 +70,7 @@ public class CardSql{
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
-
-  public void log(String serial, String start_station, String end_station, double price) {
-    String sql = "INSERT INTO log (serial, start_station, end_station, price) VALUES ('?', '?', '?', '?')";
-
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, serial);
-      statement.setString(2, start_station);
-      statement.setString(3, end_station);
-      statement.setDouble(4, price);
-      statement.executeUpdate();
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-    }
-  }
-
+  
   public void setDiscount(String serial, String operator, long expiry) {
     String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -96,22 +82,41 @@ public class CardSql{
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
-
-  public HashSet<String> getDiscountedOperators(String serial) {
+  
+  public void renewDiscount(String serial, String operator, long expiry) {
+    String sql = "UPDATE discounts SET expiry = ? WHERE serial = ? AND operator = ?";
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setLong(1, expiry);
+      statement.setString(2, serial);
+      statement.setString(3, operator);
+      statement.executeUpdate();
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+  }
+  
+  public Map<String, Long> getDiscountedOperators(String serial) {
     String sql = "SELECT operator, expiry FROM discounts WHERE serial = ?";
-    HashSet<String> returnValue = new HashSet<>();
+    HashMap<String, Long> returnValue = new HashMap<>();
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
       ResultSet rs = statement.executeQuery();
-
+      
       while (rs.next()) {
         assert false;
         String operator = rs.getString(1);
         // Check if expired
         long expiry = rs.getLong(2);
-
+        
         if (expiry > Instant.now().getEpochSecond())
-          returnValue.add(operator);
+          returnValue.put(operator, expiry);
+        else {
+          String sql1 = "DELETE FROM DISCOUNTS WHERE serial = ?, operator = ?";
+          final PreparedStatement statement1 = conn.prepareStatement(sql1);
+          statement1.setString(1, serial);
+          statement1.setString(2, operator);
+          statement1.executeUpdate();
+        }
 
       }
 

@@ -142,6 +142,10 @@ public class Lang extends CustomConfig {
     return super.getString("card-details");
   }
   
+  public String CARD_DISCOUNTS() {
+    return super.getString("card-discounts");
+  }
+  
   public String NEW_CARD() {
     return super.getString("new-card");
   }
@@ -150,8 +154,8 @@ public class Lang extends CustomConfig {
     return super.getString("top-up-card");
   }
   
-  public String ADD_RAIL_PASS() {
-    return super.getString("menu-add-rail-pass");
+  public String RAIL_PASS() {
+    return super.getString("menu-rail-pass");
   }
   
   public String REFUND_CARD() {

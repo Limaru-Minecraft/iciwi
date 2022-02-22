@@ -128,7 +128,7 @@ public class TicketMachine {
     i.setItem(0, makeButton(Material.NAME_TAG, lang.CARD_DETAILS(), String.format(lang.SERIAL_NUMBER()+" %s", serial), String.format(lang.REMAINING_VALUE()+lang.CURRENCY()+"%.2f", cardValue)));
     i.setItem(1, makeButton(Material.MAGENTA_WOOL, lang.NEW_CARD()));
     i.setItem(2, makeButton(Material.CYAN_WOOL, lang.TOP_UP_CARD()));
-    i.setItem(3, makeButton(Material.LIME_WOOL, lang.ADD_RAIL_PASS(), owners.getOwner(this.station)));
+    i.setItem(3, makeButton(Material.LIME_WOOL, lang.RAIL_PASS(), owners.getOwner(this.station)));
     i.setItem(4, makeButton(Material.ORANGE_WOOL, lang.REFUND_CARD()));
     player.openInventory(i);
   }
@@ -147,6 +147,11 @@ public class TicketMachine {
   
   public void railPass_3(String serial, String operator) {
     Inventory i = plugin.getServer().createInventory(null, 9, String.format(lang.__ADD_RAIL_PASS()+"%s", serial));
+  
+    // Show card's current rail passes and expiry dates
+    i.addItem(makeButton(Material.NAME_TAG, lang.CARD_DISCOUNTS()));
+  
+    // Rail pass sales
     Set<String> daysSet = owners.getRailPassDays(operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Integer.parseInt(days));

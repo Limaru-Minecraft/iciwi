@@ -4,6 +4,10 @@ import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.Lang;
 import mikeshafter.iciwi.Owners;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
@@ -20,8 +24,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
@@ -45,12 +48,8 @@ public class TicketMachineListener implements Listener {
       if (signLine0.equalsIgnoreCase("["+lang.TICKETS()+"]")) {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
-        if (Objects.equals(machineType, "COMPANY")) {
-          String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
-          this.operator = owners.getOwner(station);
-          machine = new CompanyTicketMachine(player, this.operator);
-          machine.newTM_0();
-        } else if (Objects.equals(machineType, "GLOBAL")) {
+  
+        if (Objects.equals(machineType, "GLOBAL")) {
           String station = lang.GLOBAL_TICKET();
           machine = new GlobalTicketMachine(player);
           this.operator = plugin.getConfig().getString("global-operator");
@@ -89,7 +88,10 @@ public class TicketMachineListener implements Listener {
           } else machine.newTicket_1(0.0);
         } else if (itemName.equals(lang.ADJUST_FARES())) machine.adjustFares_1();
         else if (itemName.equals(lang.CARD_OPERATIONS())) machine.cardOperations_1();
-        else if (itemName.equals(lang.CHECK_FARES())) machine.checkFares_1(1);
+        else if (itemName.equals(lang.CHECK_FARES())) {
+          machine.checkFares_1(1);
+          player.closeInventory();
+        }
     
       }
   
@@ -161,7 +163,7 @@ public class TicketMachineListener implements Listener {
             machine.newCard_3();
           } else if (itemName.equals(lang.TOP_UP_CARD())) {
             machine.topUp_3(serial);
-          } else if (itemName.equals(lang.ADD_RAIL_PASS())) {
+          } else if (itemName.equals(lang.RAIL_PASS())) {
             machine.railPass_3(serial, this.operator);
           } else if (itemName.equals(lang.REFUND_CARD())) {
             // search for player's card
@@ -228,20 +230,41 @@ public class TicketMachineListener implements Listener {
       // == Rail Pass : Page 3 ==
       else if (inventoryName.contains(lang.__ADD_RAIL_PASS())) {
         String serial = inventoryName.substring(lang.__ADD_RAIL_PASS().length());
-        long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
-        double price = owners.getRailPassPrice(this.operator, days);
+  
+        // Check discounts
+        if (itemName.equals(lang.CARD_DISCOUNTS())) {
+          CardSql cardSql = new CardSql();
+          // Return a menu
+          List<TextComponent> discountDisplayList = cardSql.getDiscountedOperators(serial).entrySet().stream()
+              .sorted(Map.Entry.comparingByValue())
+              .map(entry -> Component.text().content(
+                  "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 - Expires "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000))).build()).toList();
     
-        if (Iciwi.economy.getBalance(player) >= price) {
-          app.setDiscount(serial, this.operator, System.currentTimeMillis()+days*86400000);
+          TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
+    
+          for (TextComponent displayEntry : discountDisplayList) menu = menu.append(displayEntry);
+    
+          Audience audience = (Audience) player;
+          audience.sendMessage(menu);
+        }
+  
+        // Buy new rail pass
+        else {
+          long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
+          double price = owners.getRailPassPrice(this.operator, days);
+    
+          if (Iciwi.economy.getBalance(player) >= price) {
+            app.setDiscount(serial, this.operator, System.currentTimeMillis()+days*86400000);
       
-          player.closeInventory();
+            player.closeInventory();
       
-          Iciwi.economy.withdrawPlayer(player, price);
-          player.sendMessage(String.format(lang.ADDED_RAIL_PASS(), this.operator, days, price));
-          app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
-          owners.deposit(operator, price);
+            Iciwi.economy.withdrawPlayer(player, price);
+            player.sendMessage(String.format(lang.ADDED_RAIL_PASS(), this.operator, days, price));
+            app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
+            owners.deposit(operator, price);
       
-        } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
+          } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
+        }
       }
     }
   }

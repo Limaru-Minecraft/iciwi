@@ -3,7 +3,10 @@ package mikeshafter.iciwi;
 import kr.entree.spigradle.annotations.SpigotPlugin;
 import mikeshafter.iciwi.FareGates.FareGateListener;
 import mikeshafter.iciwi.FareGates.GateCreateListener;
-import mikeshafter.iciwi.Tickets.*;
+import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
+import mikeshafter.iciwi.Tickets.SignCreateListener;
+import mikeshafter.iciwi.Tickets.TicketMachine;
+import mikeshafter.iciwi.Tickets.TicketMachineListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -91,9 +94,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       if (getConfig().getString("ticket-machine-type").equals("STATION") && sender instanceof Player player && !args[0].isEmpty()) {
         TicketMachine machine = new TicketMachine(player, args[0]);
-        return true;
-      } else if (getConfig().getString("ticket-machine-type").equals("COMPANY") && sender instanceof Player player && !args[0].isEmpty()) {
-        CompanyTicketMachine machine = new CompanyTicketMachine(player, args[0]);
         return true;
       } else if (getConfig().getString("ticket-machine-type").equals("GLOBAL") && sender instanceof Player player && args[0].isEmpty()) {
         GlobalTicketMachine machine = new GlobalTicketMachine(player);
