@@ -33,12 +33,12 @@ public class CardSql{
     // SQLite connection string
     // "jdbc:sqlite:IciwiCards.db"
     String url = plugin.getConfig().getString("database");
-
+  
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
-    sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial)); ");
-    sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text primary key references cards(serial) ON UPDATE CASCADE, operator text, expiry integer)");
-
+    sql.add("CREATE TABLE IF NOT EXISTS cards (serial text, value real, PRIMARY KEY (serial) ); ");
+    sql.add("CREATE TABLE IF NOT EXISTS discounts (serial text REFERENCES cards(serial) ON UPDATE CASCADE, operator text, expiry integer, PRIMARY KEY (serial, operator) ); ");
+  
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
         statement.execute(s);

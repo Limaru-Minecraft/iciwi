@@ -9,12 +9,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
+    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="Bump version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Lang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Lang.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/PlayerJoinAlerts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/PlayerJoinAlerts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/Iciwi.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/mikeshafter/iciwi/JSONmanager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -224,13 +232,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
-    </task>
-    <task id="LOCAL-00002" summary="1.16.1 Alpha 1">
-      <created>1597048955938</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1597048955938</updated>
     </task>
     <task id="LOCAL-00003" summary="1.16.3 Alpha 1">
       <created>1603891881727</created>
@@ -568,7 +569,14 @@
       <option name="project" value="LOCAL" />
       <updated>1646181204784</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="Add rail pass menu to PlayerJoinAlerts">
+      <created>1646189199027</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1646189199028</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -583,8 +591,6 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="nope it still doesnt work" />
-    <MESSAGE value="Create files for OOP" />
     <MESSAGE value="f" />
     <MESSAGE value="Create FareGateListener" />
     <MESSAGE value="Last commit before I will have to take a break from this as national exams are arriving and my grades are less than satisfactory." />
@@ -608,7 +614,9 @@
     <MESSAGE value="implement fare charts" />
     <MESSAGE value="add rail pass expiry checker, not tested" />
     <MESSAGE value="Add membership faregate and rail pass menu" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add membership faregate and rail pass menu" />
+    <MESSAGE value="Add rail pass menu to PlayerJoinAlerts" />
+    <MESSAGE value="Bump version" />
+    <option name="LAST_COMMIT_MESSAGE" value="Bump version" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

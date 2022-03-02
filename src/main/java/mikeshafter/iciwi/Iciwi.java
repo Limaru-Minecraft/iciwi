@@ -116,7 +116,9 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         if (cardSql.getDiscountedOperators(args[0]).containsKey(args[1]))
           cardSql.renewDiscount(args[0], args[1], Long.parseLong(args[2])*86400);
         else cardSql.setDiscount(args[0], args[1], expiry);
-    
+  
+        sender.sendMessage(String.format(lang.getString("added-rail-pass"), args[1], args[2], price));
+  
         return true;
       }
     }
@@ -158,6 +160,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       owners.reload();
       lang.reload();
       records.reload();
+      sender.sendMessage("Reloaded iciwi!");
       return true;
     }
   

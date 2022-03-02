@@ -33,9 +33,9 @@ public class PlayerJoinAlerts implements Listener {
     
     // Get serial number of player's card
     for (ItemStack itemStack : player.getInventory()) {
-      if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+      if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
         String serial = itemStack.getItemMeta().getLore().get(1);
-        
+  
         Audience audience = (Audience) player;
         audience.sendMessage(textMenu(serial));
       }
@@ -55,6 +55,7 @@ public class PlayerJoinAlerts implements Listener {
     TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
     
     for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
+    menu = menu.append(Component.text("\n"));
     
     return menu;
   }

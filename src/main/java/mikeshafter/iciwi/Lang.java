@@ -155,7 +155,7 @@ public class Lang extends CustomConfig {
   }
   
   public String RAIL_PASS() {
-    return super.getString("textMenu-rail-pass");
+    return super.getString("menu-rail-pass");
   }
   
   public String REFUND_CARD() {

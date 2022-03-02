@@ -52,7 +52,6 @@ public class TicketMachineListener implements Listener {
   
         String station;
         if (Objects.equals(machineType, "GLOBAL")) {
-          station = lang.GLOBAL_TICKET();
           machine = new GlobalTicketMachine(player);
           this.operator = plugin.getConfig().getString("global-operator");
         } else {
@@ -243,11 +242,12 @@ public class TicketMachineListener implements Listener {
                   .append(Component.text().content("\u00a76 | Extend \u00a7a"))
                   .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
                   .build()).toList();
-    
+  
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
   
           for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
-    
+          menu = menu.append(Component.text("\n"));
+  
           Audience audience = (Audience) player;
           audience.sendMessage(menu);
         }
