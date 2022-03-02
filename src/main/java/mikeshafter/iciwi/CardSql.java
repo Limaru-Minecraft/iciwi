@@ -71,6 +71,13 @@ public class CardSql{
     }
   }
   
+  /**
+   * Sets a rail pass for a certain card and operator
+   *
+   * @param serial   Serial number
+   * @param operator TOC of the rail pass
+   * @param expiry   Expiry time, in seconds after Java epoch
+   */
   public void setDiscount(String serial, String operator, long expiry) {
     String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -83,15 +90,37 @@ public class CardSql{
     }
   }
   
+  /**
+   * Sets a rail pass for a certain card and operator
+   *
+   * @param serial   Serial number
+   * @param operator TOC of the rail pass
+   * @param expiry   Extension time, in seconds.
+   */
   public void renewDiscount(String serial, String operator, long expiry) {
     String sql = "UPDATE discounts SET expiry = ? WHERE serial = ? AND operator = ?";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setLong(1, expiry);
+      statement.setLong(1, expiry+getExpiry(serial, operator));
       statement.setString(2, serial);
       statement.setString(3, operator);
       statement.executeUpdate();
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+  }
+  
+  public long getExpiry(String serial, String operator) {
+    String sql = "SELECT expiry FROM discounts WHERE serial = ? AND operator = ?";
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, serial);
+      statement.setString(2, operator);
+      ResultSet rs = statement.executeQuery();
+      
+      return rs.getLong(1);
+      
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return 0L;
     }
   }
   
@@ -111,7 +140,7 @@ public class CardSql{
         if (expiry > Instant.now().getEpochSecond())
           returnValue.put(operator, expiry);
         else {
-          String sql1 = "DELETE FROM DISCOUNTS WHERE serial = ?, operator = ?";
+          String sql1 = "DELETE FROM DISCOUNTS WHERE serial = ? AND operator = ?";
           final PreparedStatement statement1 = conn.prepareStatement(sql1);
           statement1.setString(1, serial);
           statement1.setString(2, operator);

@@ -25,47 +25,63 @@ serial-prefix: 'A'  # 1 char only!
 # Messages
 not-enough-money: §cNu! You dont have enuf monies!
 
+# Ticket Machine's menu text
 ticket-machine: '§1Ticket Machine'
 
+# == Main page item names ==
 menu-new-ticket: '§aNew Single Journey Ticket'
 menu-adjust-fares: '§eAdjust Fares'
 card-operations: '§dICIWI Card Operations'
 check-fares: '§bCheck Fares'
 
+# == Paper ticket subpage ==
 new-ticket: '§1New Ticket - '
 clear: 'CLEAR'
 enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
 generate-ticket-global: '§aNew ticket for journeys costing up to §e£%1$.2f§a generated.'
+
+# Station name if the fare type is GLOBAL
 global-ticket: 'AllStations'  # must be CamelCase
 
+# == Fare Adjustment Subpage ==
 select-ticket: '§1Select Ticket...'
-
 adjust-fares: '§1Adjust Fare - '
+
+# Message if ticket adjustment cannot be done
 direct-ticket-invalid: '§cInvalid ticket! Direct tickets cannot be adjusted!'
 
+# == Card Operations Subpage ==
 select-card: '§1Select Card...'
-
 card-operation: '§1Select Option - '
 card-details: '§eCard Details'
 new-card: '§dNew ICIWI Card'
 top-up-card: '§bTop Up ICIWI Card'
-menu-add-rail-pass: '§aNew Rail Pass'
+menu-rail-pass: '§aRail Pass'
 refund-card: '§6Refund Card'
 remaining-value: 'Remaining value: '
+
+# Message when card is refunded.
 card-refunded: '§aRefunded card §e%1$s§a. Received §e£%2$.2f§a.'
 
+# === New card subpage ===
 select-value: '§1Select value...'
 new-card-created: '§aNew Card Created! Deposit: §e£%1$.2f§a, Card Value: §e£%2$.2f§a'
 
+# === Top up card subpage ===
 top-up: '§1Top Up - '
 card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
-add-rail-pass: '§1Add rail pass - '
+# === Rail passes subpage ===
+add-rail-pass: '§1Rail passes - '
+card-discounts: '§aRail passes'
 days: ' Day(s)'
 added-rail-pass: '§aAdded a rail pass giving free access to all stations owned by §e%1$s§a for §e%2$d§a days. Price: §e£%3$.2f§a.'
 
+# =====================================
+# These options control the fare gates.
+# =====================================
 tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 transfer: '§aOut-of-station interchange recorded.'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
@@ -73,11 +89,16 @@ ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
 invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the ticket machine!'
 
+# Member sign
+member-gate: 'Membership valid. Welcome!'
+
+# Payment sign
 payment: 'Payment'
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
 pay-success: '§aPaid §e£%.2f§a.'
 pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
 
+# Sign creation messages
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
 create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'

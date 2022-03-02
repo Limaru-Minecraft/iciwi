@@ -7,6 +7,7 @@ import mikeshafter.iciwi.Owners;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -32,7 +33,7 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class TicketMachineListener implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
-  private final CardSql app = new CardSql();
+  private final CardSql cardSql = new CardSql();
   private final Owners owners = new Owners(plugin);
   private final Lang lang = new Lang(plugin);
   private String operator;
@@ -49,17 +50,17 @@ public class TicketMachineListener implements Listener {
         // Figure out which ticket machine is to be used
         String machineType = plugin.getConfig().getString("ticket-machine-type");
   
+        String station;
         if (Objects.equals(machineType, "GLOBAL")) {
-          String station = lang.GLOBAL_TICKET();
+          station = lang.GLOBAL_TICKET();
           machine = new GlobalTicketMachine(player);
           this.operator = plugin.getConfig().getString("global-operator");
-          machine.newTM_0();
         } else {
-          String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+          station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
           this.operator = owners.getOwner(station);
           machine = new TicketMachine(player, station);
-          machine.newTM_0();
         }
+        machine.newTM_0();
       }
     }
   }
@@ -172,10 +173,10 @@ public class TicketMachineListener implements Listener {
               if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), lang.SERIAL_NUMBER())) {
                 // get serialNumber
                 if (itemStack.getItemMeta().getLore().get(1).equals(serial)) {
-                  double remainingValue = app.getCardValue(serial);
+                  double remainingValue = cardSql.getCardValue(serial);
                   Iciwi.economy.depositPlayer(player, remainingValue);
                   player.getInventory().remove(itemStack);
-                  app.delCard(serial);
+                  cardSql.delCard(serial);
                   player.sendMessage(String.format(lang.CARD_REFUNDED(), serial, remainingValue));
                   break;
                 }
@@ -202,7 +203,7 @@ public class TicketMachineListener implements Listener {
             char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
                            ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
                            ];
-            app.newCard(lang.SERIAL_PREFIX()+sum+"-"+serial, val);
+            cardSql.newCard(lang.SERIAL_PREFIX()+sum+"-"+serial, val);
             player.sendMessage(String.format(lang.NEW_CARD_CREATED(), deposit, val));
             player.getInventory().addItem(makeButton(lang.PLUGIN_NAME(), lang.SERIAL_NUMBER(), lang.SERIAL_PREFIX()+sum+"-"+serial));
           } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
@@ -221,7 +222,7 @@ public class TicketMachineListener implements Listener {
           if (Iciwi.economy.getBalance(player) >= val) {
             Iciwi.economy.withdrawPlayer(player, val);
             player.sendMessage(String.format(lang.CARD_TOPPED_UP(), val));
-            app.addValueToCard(serial, val);
+            cardSql.addValueToCard(serial, val);
         
           } else player.sendMessage(lang.NOT_ENOUGH_MONEY());
         }
@@ -233,16 +234,19 @@ public class TicketMachineListener implements Listener {
   
         // Check discounts
         if (itemName.equals(lang.CARD_DISCOUNTS())) {
-          CardSql cardSql = new CardSql();
+          event.setCancelled(true);
           // Return a menu
-          List<TextComponent> discountDisplayList = cardSql.getDiscountedOperators(serial).entrySet().stream()
+          List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
               .sorted(Map.Entry.comparingByValue())
               .map(entry -> Component.text().content(
-                  "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 - Expires "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000))).build()).toList();
+                      "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
+                  .append(Component.text().content("\u00a76 | Extend \u00a7a"))
+                  .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
+                  .build()).toList();
     
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
-    
-          for (TextComponent displayEntry : discountDisplayList) menu = menu.append(displayEntry);
+  
+          for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
     
           Audience audience = (Audience) player;
           audience.sendMessage(menu);
@@ -254,13 +258,15 @@ public class TicketMachineListener implements Listener {
           double price = owners.getRailPassPrice(this.operator, days);
     
           if (Iciwi.economy.getBalance(player) >= price) {
-            app.setDiscount(serial, this.operator, System.currentTimeMillis()+days*86400000);
       
             player.closeInventory();
       
             Iciwi.economy.withdrawPlayer(player, price);
+            long expiry = days*86400+Instant.now().getEpochSecond();
             player.sendMessage(String.format(lang.ADDED_RAIL_PASS(), this.operator, days, price));
-            app.setDiscount(serial, operator, days*86400+Instant.now().getEpochSecond());
+            if (cardSql.getDiscountedOperators(serial).containsKey(operator))
+              cardSql.renewDiscount(serial, operator, days*86400);
+            else cardSql.setDiscount(serial, operator, expiry);
             owners.deposit(operator, price);
       
           } else player.sendMessage(lang.NOT_ENOUGH_MONEY());

@@ -154,7 +154,7 @@ public class TicketMachine {
     // Rail pass sales
     Set<String> daysSet = owners.getRailPassDays(operator);
     for (String days : daysSet) {
-      double price = owners.getRailPassPrice(operator, Integer.parseInt(days));
+      double price = owners.getRailPassPrice(operator, Long.parseLong(days));
       i.addItem(makeButton(Material.LIME_STAINED_GLASS_PANE, ChatColor.GREEN+days+lang.DAYS(), String.valueOf(price)));
     }
     player.openInventory(i);
@@ -182,9 +182,7 @@ public class TicketMachine {
   }
   
   private @NotNull String checkFares(int page) {
-    
     return "/iciwi:farechart "+this.station+" "+page;
-    
   }
   
   public void generateTicket(ItemStack item, double value) {

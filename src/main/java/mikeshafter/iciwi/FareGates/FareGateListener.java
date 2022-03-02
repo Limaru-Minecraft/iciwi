@@ -292,6 +292,9 @@ public class FareGateListener implements Listener {
           Map<String, Long> discounts = cardSql.getDiscountedOperators(serial);
     
           if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || discounts.containsKey(owners.getOwner(ChatColor.stripColor(sign.getLine(1)))))) {
+            player.sendMessage(lang.getString("member-gate"));
+  
+            // Open gates
             gates.add(gate);
             gate.open();
             gate.hold();

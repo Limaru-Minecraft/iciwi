@@ -99,17 +99,24 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         GlobalTicketMachine machine = new GlobalTicketMachine(player);
         return true;
       } else {
-        sender.sendMessage("Usage: /ticketmachine <station;company>");
         return false;
       }
     }
-  
+
     // Add Discount
-    else if (command.getName().equalsIgnoreCase("newdiscount") && sender.hasPermission("iciwi.newdiscount")) {
+    else if (command.getName().equalsIgnoreCase("newdiscount")) {
       // newdiscount <serial> <operator> <days before expiry>
       if (args.length == 3) {
+        double price = owners.getRailPassPrice(args[1], Long.parseLong(args[2]));
+        if (sender instanceof Player && !sender.hasPermission("iciwi.newdiscount")) {
+          economy.withdrawPlayer((Player) sender, price);
+        }
         long expiry = Long.parseLong(args[2])*86400+Instant.now().getEpochSecond();
-        new CardSql().setDiscount(args[0], args[1], expiry);
+        CardSql cardSql = new CardSql();
+        if (cardSql.getDiscountedOperators(args[0]).containsKey(args[1]))
+          cardSql.renewDiscount(args[0], args[1], Long.parseLong(args[2])*86400);
+        else cardSql.setDiscount(args[0], args[1], expiry);
+    
         return true;
       }
     }
@@ -262,9 +269,10 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   
     // === Register all stations in fares.json to owners.yml ===
     ArrayList<String> stations = JsonManager.getAllStations();
-    for (String station : stations) {
+    if (stations != null) stations.forEach(station -> {
       if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
-    }
+    });
+  
   
     owners.save();
   
