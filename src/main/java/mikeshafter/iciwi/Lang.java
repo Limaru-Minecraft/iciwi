@@ -75,11 +75,11 @@ public class Lang extends CustomConfig {
   }
   
   public String NEW_TICKET() {
-    return super.getString("menu-new-ticket");
+    return super.getString("textMenu-new-ticket");
   }
   
   public String ADJUST_FARES() {
-    return super.getString("menu-adjust-fares");
+    return super.getString("textMenu-adjust-fares");
   }
   
   public String CARD_OPERATIONS() {
@@ -155,7 +155,7 @@ public class Lang extends CustomConfig {
   }
   
   public String RAIL_PASS() {
-    return super.getString("menu-rail-pass");
+    return super.getString("textMenu-rail-pass");
   }
   
   public String REFUND_CARD() {

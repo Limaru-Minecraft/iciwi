@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Date;
@@ -20,16 +21,28 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class PlayerJoinAlerts implements Listener {
   
+  private final CardSql cardSql = new CardSql();
+  private final Plugin plugin = getPlugin(Iciwi.class);
+  private final Owners owners = new Owners(plugin);
+  private final Lang lang = new Lang(plugin);
+  
   @EventHandler
   public void playerJoin(PlayerJoinEvent event) {
     // Variables
-    CardSql cardSql = new CardSql();
-    Player player = event.getPlayer();
-    final Plugin plugin = getPlugin(Iciwi.class);
-    final Owners owners = new Owners(plugin);
+    final Player player = event.getPlayer();
     
     // Get serial number of player's card
-    
+    for (ItemStack itemStack : player.getInventory()) {
+      if (itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+        String serial = itemStack.getItemMeta().getLore().get(1);
+        
+        Audience audience = (Audience) player;
+        audience.sendMessage(textMenu(serial));
+      }
+    }
+  }
+  
+  public TextComponent textMenu(String serial) {
     // Return a menu
     List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
         .sorted(Map.Entry.comparingByValue())
@@ -43,7 +56,6 @@ public class PlayerJoinAlerts implements Listener {
     
     for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
     
-    Audience audience = (Audience) player;
-    audience.sendMessage(menu);
+    return menu;
   }
 }

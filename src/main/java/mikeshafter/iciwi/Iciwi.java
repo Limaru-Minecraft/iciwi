@@ -266,6 +266,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
     getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new SignCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
   
     // === Register all stations in fares.json to owners.yml ===
     ArrayList<String> stations = JsonManager.getAllStations();

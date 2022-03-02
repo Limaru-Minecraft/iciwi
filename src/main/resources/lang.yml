@@ -25,7 +25,7 @@ serial-prefix: 'A'  # 1 char only!
 # Messages
 not-enough-money: §cNu! You dont have enuf monies!
 
-# Ticket Machine's menu text
+# Ticket Machine's textMenu text
 ticket-machine: '§1Ticket Machine'
 
 # == Main page item names ==
