@@ -1,12 +1,7 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.plugin.Plugin;
-
-
 public class Records extends CustomConfig {
-  
-  public Records(Plugin plugin) {
+  public Records(org.bukkit.plugin.Plugin plugin) {
     super("records.yml", plugin);
   }
-  
 }

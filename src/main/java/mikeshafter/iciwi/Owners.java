@@ -1,17 +1,11 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.plugin.Plugin;
-
 import java.util.Objects;
 import java.util.Set;
 
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
-
 public class Owners extends CustomConfig {
-  private final Plugin plugin = getPlugin(Iciwi.class);
   
-  public Owners(Plugin plugin) {
+  public Owners(org.bukkit.plugin.Plugin plugin) {
     super("owners.yml", plugin);
   }
   

@@ -7,13 +7,10 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
-
 public class CustomConfig {
   private File file;
   private final YamlConfiguration config;
-  private final Plugin plugin = getPlugin(Iciwi.class);
+  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final String name;
 
   public CustomConfig(String name, Plugin plugin) {

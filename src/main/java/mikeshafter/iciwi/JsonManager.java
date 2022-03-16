@@ -13,13 +13,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
-
 public class JsonManager {
   
   public static ArrayList<String> getAllStations() {
-    Plugin plugin = getPlugin(Iciwi.class);
+    final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
     
     File file = new File(plugin.getDataFolder(), "fares.json");
     
@@ -30,8 +27,8 @@ public class JsonManager {
       scanner.close();
       
       String content = contentBuilder.toString();
-      
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+  
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
       return fares.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
       
     } catch (IOException|JsonSyntaxException e) {
@@ -41,7 +38,7 @@ public class JsonManager {
   }
   
   public static double getFare(String entryStation, String exitStation) {
-    Plugin plugin = getPlugin(Iciwi.class);
+    final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
     
     File file = new File(plugin.getDataFolder(), "fares.json");
     
@@ -53,7 +50,7 @@ public class JsonManager {
   
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
   
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
   
       JsonObject entryStationJson = fares.getAsJsonObject(entryStation);
   
@@ -69,7 +66,7 @@ public class JsonManager {
   }
   
   public static Map<String, Double> getFares(String station) {
-    Plugin plugin = getPlugin(Iciwi.class);
+    final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
     
     File file = new File(plugin.getDataFolder(), "fares.json");
     
@@ -80,8 +77,8 @@ public class JsonManager {
       scanner.close();
       
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
-      
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+  
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
       
       JsonObject stationJson = fares.getAsJsonObject(station);
       

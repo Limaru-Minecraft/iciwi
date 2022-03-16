@@ -33,11 +33,11 @@ public class FareGate {
 
     if (gateType != null) {
       String args = switch (gateType) {
-        case ENTRY -> signText.substring(lang.ENTRY().length()+1, signText.length()-1);
-        case EXIT -> signText.substring(lang.EXIT().length()+1, signText.length()-1);
+        case ENTRY -> signText.substring(lang.getString("entry").length()+1, signText.length()-1);
+        case EXIT -> signText.substring(lang.getString("exit").length()+1, signText.length()-1);
         case VALIDATOR, SPECIAL -> "";
-        case FAREGATE -> signText.substring(lang.FAREGATE().length()+1, signText.length()-1);
-        case MEMBER -> signText.substring(lang.MEMBER().length()+1, signText.length()-1);
+        case FAREGATE -> signText.substring(lang.getString("faregate").length()+1, signText.length()-1);
+        case MEMBER -> signText.substring(lang.getString("member").length()+1, signText.length()-1);
       };
       
       // Parse for validator
@@ -107,15 +107,15 @@ public class FareGate {
   }
 
   private GateType getGateType(String text) {
-    if (text.contains(lang.ENTRY())) {
+    if (text.contains(lang.getString("entry"))) {
       return GateType.ENTRY;
-    } else if (text.contains(lang.EXIT())) {
+    } else if (text.contains(lang.getString("exit"))) {
       return GateType.EXIT;
-    } else if (text.contains(lang.VALIDATOR())) {
+    } else if (text.contains(lang.getString("validator"))) {
       return GateType.SPECIAL;
-    } else if (text.contains(lang.FAREGATE())) {
+    } else if (text.contains(lang.getString("faregate"))) {
       return GateType.FAREGATE;
-    } else if (text.contains(lang.MEMBER())) {
+    } else if (text.contains(lang.getString("member"))) {
       return GateType.MEMBER;
     } else return null;
   }

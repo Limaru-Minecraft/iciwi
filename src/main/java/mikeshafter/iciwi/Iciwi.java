@@ -38,15 +38,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   
   @Override
-  public void onDisable() {
-    saveConfig();
-    lang.save();
-    owners.save();
-    records.save();
-    getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
-  }
-
-  @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
     // Check Fare
@@ -83,7 +74,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       ItemStack item = new ItemStack(Material.PAPER, 1);
       ItemMeta itemMeta = item.getItemMeta();
       assert itemMeta != null;
-      itemMeta.setDisplayName(lang.TRAIN_TICKET());
+      itemMeta.setDisplayName(lang.getString("train-ticket"));
       itemMeta.setLore(Arrays.asList(new String[] {from, to}));
       item.setItemMeta(itemMeta);
       ((Player) sender).getInventory().addItem(item);
@@ -233,6 +224,15 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     }
   
     return false;
+  }
+  
+  @Override
+  public void onDisable() {
+//    saveConfig();
+//    lang.save();
+//    owners.save();
+    records.save();
+    getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
   
   @Override

@@ -9,12 +9,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
-
-
 public class CardSql{
 
-  Plugin plugin = getPlugin(Iciwi.class);
+  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
 
   private Connection connect() {
     // SQLite connection string

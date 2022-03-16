@@ -1,10 +1,17 @@
 plugins {
     id 'java'
-    id 'kr.entree.spigradle' version '2.2.4'
+    id 'kr.entree.spigradle' version '2.3.4'
+    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 group 'org.mikeshafter'
 version '1.18.1r3'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
 
 compileJava.options.encoding 'UTF-8'
 
@@ -13,36 +20,23 @@ compileJava.options.encoding 'UTF-8'
 repositories {
     maven {
         url = 'https//hub.spigotmc.org/nexus/content/repositories/snapshots/'
-
-        // As of Gradle 5.1, you can limit this to only those
-        // dependencies you expect from it
         content {
             includeGroup 'org.bukkit'
             includeGroup 'org.spigotmc'
         }
     }
-    /*
-     As Spigot-API depends on the Bungeecord ChatComponent-API,
-    we need to add the Sonatype OSS repository, as Gradle,
-    in comparison to maven, doesn't want to understand the ~/.m2
-    directory unless added using mavenLocal(). Maven usually just gets
-    it from there, as most people have run the BuildTools at least once.
-    This is therefore not needed if you're using the full Spigot/CraftBukkit,
-    or if you're using the Bukkit API.
-    */
-    maven { url = 'https//oss.sonatype.org/content/repositories/snapshots' }
-    maven { url = 'https//oss.sonatype.org/content/repositories/central' }
     jitpack() // For vault
     mavenLocal()
     mavenCentral() // This is needed for CraftBukkit and Spigot.
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: '*.jar')
     compileOnly spigot(null)
     compileOnly(vaultAll()) { // instead of vault() for the dependency resolution by debug task 'prepareSpigotPlugins'.
         transitive = false // No want to import vault's internal dependencies.
     }
-    implementation "net.kyori:adventure-api:4.9.3"
+    compileOnly "net.kyori:adventure-api:4.9.3"
 }
 
 spigot {

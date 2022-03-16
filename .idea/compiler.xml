@@ -9,7 +9,7 @@
         <option name="pluginAnnotationResultPath" value="$PROJECT_DIR$/build/spigradle/plugin_main" />
         <option name="spigotAnnotationResultPath" value="$PROJECT_DIR$/build/spigradle/spigot_main" />
         <processorPath useClasspath="false">
-          <entry name="/usr/local/Cellar/gradle/7.2/caches/modules-2/files-2.1/kr.entree/spigradle-annotations/2.1.1/140e14d5fb373843420f0719f6f83cacc07d8cd1/spigradle-annotations-2.1.1.jar" />
+          <entry name="/usr/local/Cellar/gradle/7.2/caches/modules-2/files-2.1/kr.entree/spigradle-annotations/2.2.0/d6cccf0428074bd2cd715fea1d1528113a109e96/spigradle-annotations-2.2.0.jar" />
           <entry name="/usr/local/Cellar/gradle/7.2/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk8/1.5.31/ff5d99aecd328872494e8921b72bf6e3af97af3e/kotlin-stdlib-jdk8-1.5.31.jar" />
           <entry name="/usr/local/Cellar/gradle/7.2/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib-jdk7/1.5.31/77e0f2568912e45d26c31fd417a332458508acdf/kotlin-stdlib-jdk7-1.5.31.jar" />
           <entry name="/usr/local/Cellar/gradle/7.2/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.5.31/6628d61d0f5603568e72d2d5915d2c034b4f1c55/kotlin-stdlib-1.5.31.jar" />
@@ -19,6 +19,6 @@
         <module name="Iciwi.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="16" />
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>

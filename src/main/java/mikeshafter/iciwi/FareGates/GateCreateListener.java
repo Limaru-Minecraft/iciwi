@@ -20,30 +20,30 @@ public class GateCreateListener implements Listener {
     Player player = event.getPlayer();
   
     // Entry
-    if (ChatColor.stripColor(lines[0]).contains(lang.ENTRY())) {
+    if (ChatColor.stripColor(lines[0]).contains(lang.getString("entry"))) {
       if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.CREATE_ENTRY_SIGN());
+        player.sendMessage(lang.getString("create-entry-sign"));
       } else event.setCancelled(true);
     }
-  
+
     // Exit
-    else if (ChatColor.stripColor(lines[0]).contains(lang.EXIT())) {
+    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("exit"))) {
       if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.CREATE_EXIT_SIGN());
+        player.sendMessage(lang.getString("create-exit-sign"));
       } else event.setCancelled(true);
     }
-  
+
     // HL-style faregate
-    else if (ChatColor.stripColor(lines[0]).contains(lang.FAREGATE())) {
+    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("faregate"))) {
       if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.CREATE_FAREGATE_SIGN());
+        player.sendMessage(lang.getString("create-faregate-sign"));
       } else event.setCancelled(true);
     }
-  
+
     // HL-style validator
-    else if (ChatColor.stripColor(lines[0]).contains(lang.VALIDATOR())) {
+    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("validator"))) {
       if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.CREATE_VALIDATOR_SIGN());
+        player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
   
