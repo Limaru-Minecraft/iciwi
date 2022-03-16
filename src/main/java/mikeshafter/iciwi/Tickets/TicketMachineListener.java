@@ -64,15 +64,26 @@ public class TicketMachineListener implements Listener {
         }
         machine.newTM_0();
       }
-  
-  
+
+
       // === Custom ticket machine ===
-  
+
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
         String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
         CustomMachine machine = new CustomMachine(player, station);
         machine.open();
       }
+
+
+      // === Rail pass machine ===
+
+      else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
+        String company = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+        machine = new railPassMachine(player, company);
+        machine.newTM_0();
+      }
+  
+  
     }
   }
 
@@ -165,7 +176,16 @@ public class TicketMachineListener implements Listener {
           machine.cardOperations_2(serial);
         }
       }
-  
+
+      // == Rail Pass Ticket Menu : Page 0 ==
+      else if (inventoryName.equals(lang.getString("select-card-rail-pass")) && machine instanceof railPassMachine rpm) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+          player.closeInventory();
+          String serial = item.getItemMeta().getLore().get(1);
+          rpm.railPass_3(serial);
+        }
+      }
+
       // == Card Operations : Page 2 ==
       else if (inventoryName.contains(lang.getString("card-operation"))) {
         String serial = inventoryName.substring(lang.getString("card-operation").length());
@@ -199,19 +219,19 @@ public class TicketMachineListener implements Listener {
                 }
               }
             }
-        
+      
           }
         }
       }
-  
+
       // == New Card : Page 3 ==
       else if (inventoryName.equals(lang.getString("select-value"))) {
         if (itemName.contains(lang.getString("currency"))) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
           double deposit = plugin.getConfig().getDouble("deposit");
-      
+    
           player.closeInventory();
-      
+    
           if (Iciwi.economy.getBalance(player) >= deposit+val) {
             // Take money from player and send message
             Iciwi.economy.withdrawPlayer(player, deposit+val);
@@ -226,29 +246,29 @@ public class TicketMachineListener implements Listener {
           } else player.sendMessage(lang.getString("not-enough-money"));
         }
       }
-  
+
       // == Top Up : Page 3 ==
       else if (inventoryName.contains(lang.getString("top-up"))) {
         String serial = inventoryName.substring(lang.getString("top-up").length());
         if (isDouble(itemName.replaceAll("[^\\d.]", ""))) {
           double val = Double.parseDouble(itemName.replaceAll("[^\\d.]", ""));
-      
+    
           player.closeInventory();
-      
+    
           // Top up existing card
           if (Iciwi.economy.getBalance(player) >= val) {
             Iciwi.economy.withdrawPlayer(player, val);
             player.sendMessage(String.format(lang.getString("card-topped-up"), val));
             cardSql.addValueToCard(serial, val);
-        
+      
           } else player.sendMessage(lang.getString("not-enough-money"));
         }
       }
-  
+
       // == Rail Pass : Page 3 ==
       else if (inventoryName.contains(lang.getString("menu-rail-pass"))) {
         String serial = inventoryName.substring(lang.getString("menu-rail-pass").length());
-    
+  
         // Check discounts
         if (itemName.equals(lang.getString("card-discounts"))) {
           event.setCancelled(true);
@@ -260,25 +280,25 @@ public class TicketMachineListener implements Listener {
                   .append(Component.text().content("\u00a76 | Extend \u00a7a"))
                   .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
                   .build()).toList();
-
+    
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
-
+    
           for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
           menu = menu.append(Component.text("\n"));
-      
+    
           Audience audience = (Audience) player;
           audience.sendMessage(menu);
         }
-    
+  
         // Buy new rail pass
         else {
           long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
           double price = owners.getRailPassPrice(this.operator, days);
-      
+    
           if (Iciwi.economy.getBalance(player) >= price) {
-        
+      
             player.closeInventory();
-        
+      
             Iciwi.economy.withdrawPlayer(player, price);
             long expiry = days*86400+Instant.now().getEpochSecond();
             player.sendMessage(String.format(lang.getString("menu-rail-pass"), this.operator, days, price));
@@ -286,7 +306,7 @@ public class TicketMachineListener implements Listener {
               cardSql.renewDiscount(serial, operator, days*86400);
             else cardSql.setDiscount(serial, operator, expiry);
             owners.deposit(operator, price);
-        
+      
           } else player.sendMessage(lang.getString("not-enough-money"));
         }
       }

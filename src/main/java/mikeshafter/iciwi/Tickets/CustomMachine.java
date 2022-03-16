@@ -4,6 +4,7 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.Lang;
 import mikeshafter.iciwi.Owners;
 import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -30,18 +31,20 @@ public class CustomMachine {
   public void open() {
     new AnvilGUI.Builder()
         .title("Key in the destination")
-        .onClose(player -> player.sendMessage(lang.getString("custom-machine-cancel")))
-        .itemLeft(makeButton(Material.RED_STAINED_GLASS_PANE, lang.getString("clear")))
+        .itemLeft(makeItem(Material.EMERALD, " "))
         .onLeftInputClick(HumanEntity::closeInventory)
-        .text("")
+        .text(" ")
         .plugin(this.plugin)
-        .onComplete((player, endStation) -> price(makeButton(Material.PAPER, lang.getString("train-ticket"), station, endStation)))
+        .onComplete((player, endStation) -> {
+              endStation = endStation.replace(" ", "");
+              return price(makeItem(Material.PAPER, "", station, endStation));
+            }
+        )
         .open(this.player);
-    
   }
   
-  protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(material, 1);
+  private ItemStack makeItem(final Material material, final String displayName, final String... lore) {
+    ItemStack item = new ItemStack(material);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
     itemMeta.setDisplayName(displayName);
@@ -53,14 +56,17 @@ public class CustomMachine {
   public AnvilGUI.Response price(ItemStack incompleteTicket) {
     new AnvilGUI.Builder()
         .title("Key in the price")
-        .onClose(player -> player.sendMessage(lang.getString("custom-machine-cancel")))
-        .itemLeft(incompleteTicket)
+        .itemLeft(makeItem(Material.EMERALD, ""))
         .onLeftInputClick(HumanEntity::closeInventory)
-        .text("")
+        .text(" ")
         .plugin(this.plugin)
         .onComplete((player, price) -> {
-          if (isDouble(price) && incompleteTicket.hasItemMeta() && incompleteTicket.getItemMeta() != null && incompleteTicket.getItemMeta().hasDisplayName()) {
-            incompleteTicket.getItemMeta().setDisplayName(lang.getString("train-ticket")+" ||| "+price);
+          price = price.replace(" ", "");
+          if (isDouble(price) && incompleteTicket.hasItemMeta() && incompleteTicket.getItemMeta() != null) {
+            // generate ticket meta and change display name
+            ItemMeta itemMeta = incompleteTicket.getItemMeta();
+            itemMeta.setDisplayName(lang.getString("train-ticket")+ChatColor.AQUA+" | Price: "+price);
+            incompleteTicket.setItemMeta(itemMeta);
             // give money to station owner
             double d_price = Double.parseDouble(price);
             Owners owners = new Owners(plugin);
@@ -69,6 +75,7 @@ public class CustomMachine {
             Iciwi.economy.withdrawPlayer(player, d_price);
             // give ticket to player
             player.getInventory().addItem(incompleteTicket);
+            player.sendMessage(String.format(lang.getString("generate-ticket-global"), price));
           }
           return AnvilGUI.Response.close();
         })

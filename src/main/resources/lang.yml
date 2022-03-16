@@ -76,6 +76,9 @@ new-card-created: '§aNew Card Created! Deposit: §e£%1$.2f§a, Card Value: §e
 top-up: '§1Top Up - '
 card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
+# === Select card for rail pass subpage ===
+select-card-rail-pass: '§2Select Card...'
+
 # === Rail passes subpage ===
 add-rail-pass: '§1Rail passes - '
 card-discounts: '§aRail passes'

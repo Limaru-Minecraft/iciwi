@@ -32,8 +32,6 @@ public class TicketMachine {
   protected final CardSql app = new CardSql();
   protected final Owners owners = new Owners(plugin);
   protected final Lang lang = new Lang(plugin);
-  // private String serial;
-  // private double value;
   
   public TicketMachine(Player player, String station) {
     this.player = player;
