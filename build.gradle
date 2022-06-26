@@ -32,7 +32,7 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly spigot("1.14.2")
+    compileOnly spigot("1.14")
     compileOnly(vaultAll()) { // instead of vault() for the dependency resolution by debug task 'prepareSpigotPlugins'.
         transitive = false // No want to import vault's internal dependencies.
     }
