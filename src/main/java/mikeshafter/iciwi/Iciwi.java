@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -228,9 +227,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   @Override
   public void onDisable() {
-//    saveConfig();
-//    lang.save();
-//    owners.save();
     records.save();
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
@@ -264,7 +260,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   
     // === Register events ===
-    ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
     getServer().getPluginManager().registerEvents(new FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
     getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
@@ -276,11 +271,10 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     if (stations != null) stations.forEach(station -> {
       if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
     });
-  
-  
     owners.save();
+    Bukkit.shutdown(); ///gg
   
-    getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been invoked!");
+    getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been enabled!");
   }
   
   

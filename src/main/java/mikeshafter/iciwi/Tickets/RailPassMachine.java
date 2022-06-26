@@ -4,11 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 
-public class railPassMachine extends TicketMachine {
+public class RailPassMachine extends TicketMachine {
   
   private final String operator;
   
-  public railPassMachine(Player player, String operator) {
+  public RailPassMachine(Player player, String operator) {
     super(player, null);
     this.operator = operator;
   }

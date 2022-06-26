@@ -1,11 +1,11 @@
 plugins {
     id 'java'
-    id 'kr.entree.spigradle' version '2.3.4'
+    id "kr.entree.spigradle" version "2.4.2"
     id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 group 'org.mikeshafter'
-version '1.18.1r3'
+version '1.18.2r1'
 
 java {
     toolchain {
@@ -32,11 +32,11 @@ repositories {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly spigot(null)
+    compileOnly spigot("1.14.2")
     compileOnly(vaultAll()) { // instead of vault() for the dependency resolution by debug task 'prepareSpigotPlugins'.
         transitive = false // No want to import vault's internal dependencies.
     }
-    compileOnly "net.kyori:adventure-api:4.9.3"
+    compileOnly 'net.kyori:adventure-api:4.11.0'
 }
 
 spigot {
@@ -60,7 +60,7 @@ spigot {
             permission 'iciwi.ticketmachine'
         }
         newdiscount {
-            usage '/ < command > < serial > < operator > < days before expiry >'
+            usage '/<command> <serial> <operator> <days before expiry>'
             description 'Adds a rail pass("discounts") onto existing cards'
             permission 'iciwi.newdiscount'
         }

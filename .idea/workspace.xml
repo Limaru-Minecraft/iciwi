@@ -9,14 +9,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/railPassMachine.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/railPassMachineListener.java" afterDir="false" />
+    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="Not sure what i did, but cool">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules/Iciwi.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/Iciwi.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradlew" beforeDir="false" afterPath="$PROJECT_DIR$/gradlew" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/libs/anvilgui-1.5.3-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CustomConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JsonManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/JsonManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/railPassMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/RailPassMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/railPassMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/RailPassMachineListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,8 +149,8 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$/libs" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
-    <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="project.structure.side.proportion" value="0.2862069" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
@@ -188,33 +197,12 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="clean shadowJar" />
+        <option name="scriptParameters" value="shadowJar" />
         <option name="taskDescriptions">
           <list />
         </option>
         <option name="taskNames">
           <list />
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="iciwi [jar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="jar" />
-          </list>
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
@@ -255,16 +243,10 @@
     <list>
       <item itemvalue="Gradle.いきウィ build" />
       <item itemvalue="Gradle.いきウィ shadow" />
-      <item itemvalue="Gradle.iciwi [jar]" />
       <item itemvalue="JAR Application.RunPaper" />
       <item itemvalue="JAR Application.RunSpigot" />
       <item itemvalue="Remote JVM Debug.RemoteSpigot" />
     </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Gradle.iciwi [jar]" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -277,13 +259,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
-    </task>
-    <task id="LOCAL-00005" summary="1.16.3 Release 2">
-      <created>1607877349520</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1607877349522</updated>
     </task>
     <task id="LOCAL-00006" summary="Merge branch 'BetterMath'&#10;&#10;# Conflicts:&#10;#&#9;src/main/java/mikeshafter/iciwi/Events.java&#10;#&#9;src/main/java/mikeshafter/iciwi/plugin.yml&#10;#&#9;target/classes/mikeshafter/iciwi/Iciwi.class&#10;#&#9;target/classes/mikeshafter/iciwi/events.class&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst&#10;#&#9;target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst">
       <created>1608989321893</created>
@@ -621,7 +596,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647413443108</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="make rail pass sign">
+      <created>1647440304105</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1647440304106</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -636,8 +618,6 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Create FareGateListener" />
-    <MESSAGE value="Last commit before I will have to take a break from this as national exams are arriving and my grades are less than satisfactory." />
     <MESSAGE value="Alterations to fix errors, should compile without problems now" />
     <MESSAGE value="Update ticket machine" />
     <MESSAGE value="did more work on the ticket machine" />
@@ -661,7 +641,9 @@
     <MESSAGE value="Add rail pass menu to PlayerJoinAlerts" />
     <MESSAGE value="Bump version" />
     <MESSAGE value="use https://github.com/WesJD/AnvilGUI" />
-    <option name="LAST_COMMIT_MESSAGE" value="use https://github.com/WesJD/AnvilGUI" />
+    <MESSAGE value="make rail pass sign" />
+    <MESSAGE value="Not sure what i did, but cool" />
+    <option name="LAST_COMMIT_MESSAGE" value="Not sure what i did, but cool" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

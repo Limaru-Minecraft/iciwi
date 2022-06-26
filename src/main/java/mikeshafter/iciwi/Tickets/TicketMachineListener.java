@@ -71,7 +71,7 @@ public class TicketMachineListener implements Listener {
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
         String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
         CustomMachine machine = new CustomMachine(player, station);
-        machine.open();
+        //machine.open();
       }
 
 
@@ -79,7 +79,7 @@ public class TicketMachineListener implements Listener {
 
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
         String company = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
-        machine = new railPassMachine(player, company);
+        machine = new RailPassMachine(player, company);
         machine.newTM_0();
       }
   
@@ -178,7 +178,7 @@ public class TicketMachineListener implements Listener {
       }
 
       // == Rail Pass Ticket Menu : Page 0 ==
-      else if (inventoryName.equals(lang.getString("select-card-rail-pass")) && machine instanceof railPassMachine rpm) {
+      else if (inventoryName.equals(lang.getString("select-card-rail-pass")) && machine instanceof RailPassMachine rpm) {
         if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
           player.closeInventory();
           String serial = item.getItemMeta().getLore().get(1);
