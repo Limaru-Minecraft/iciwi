@@ -54,7 +54,7 @@ public class CustomMachine {
     //   and m is the match term length.
 
     /* At this point match does not contain search */
-    for (int i = l; i > 0; i--) { // i is length of substring
+    for (int i = l; i >= 2; i--) { // i is length of substring
       for (int j = 0; j + i <= searchLength; j++) {
         String subSearch = search.substring(j, j+i);
         int subLength = subSearch.length();
