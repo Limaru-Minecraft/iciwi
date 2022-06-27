@@ -4,4 +4,5 @@
 build
 .gradle
 .DS_Store
+Iciwi.java
 /libs/
