@@ -322,17 +322,13 @@ public class FareGateListener implements Listener {
   @EventHandler  // Close gates
   public void CheckPlayerMove(PlayerMoveEvent event) {
     Player player = event.getPlayer();
-    for (FareGate g : gates) {
+    for (FareGate g : this.gates) {
       int x = player.getLocation().getBlockX();
       int y = player.getLocation().getBlockY();
       int z = player.getLocation().getBlockZ();
       for (int[] gateLocation : g.getGateLocations()) {
         if (g.getPlayer() == player && gateLocation[0] == x && gateLocation[1] == y && gateLocation[2] == z) {
-          Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            g.close();
-            gates.remove(g);
-          }, 10);
-
+          Bukkit.getScheduler().runTaskLater(plugin, () -> {g.close(); gates.remove(g);}, 10);
         }
       }
     }

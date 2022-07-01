@@ -1,7 +1,6 @@
 plugins {
     id 'java'
     id "kr.entree.spigradle" version "2.4.2"
-    id "com.github.johnrengelman.shadow" version "7.1.2"
 }
 
 group 'org.mikeshafter'
@@ -37,6 +36,9 @@ dependencies {
         transitive = false // No want to import vault's internal dependencies.
     }
     compileOnly 'net.kyori:adventure-api:4.11.0'
+    compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.18.1-v3-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:TrainCarts:1.18.1-v3-SNAPSHOT'
+    compileOnly 'com.bergerkiller.bukkit:SignLink:1.18.1-v1-SNAPSHOT'
 }
 
 spigot {

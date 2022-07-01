@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FareGate {
+public abstract class FareGate {
 
   private final Player player;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
@@ -184,7 +184,7 @@ public class FareGate {
   }
 
   public Player getPlayer() {
-    return player;
+    return this.player;
   }
 
   public boolean open() {
