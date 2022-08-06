@@ -71,7 +71,6 @@ public class TicketMachineListener implements Listener {
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
         String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
         CustomMachine machine = new CustomMachine(player, station);
-        machine.open();
       }
 
 

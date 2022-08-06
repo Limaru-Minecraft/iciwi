@@ -21,7 +21,6 @@ public class OpenFareGate extends FareGate {
     this.blockLocation = blockLocation;
   }
 
-  @Override
   public boolean open() {
     state = blockLocation.getBlock().getState();
     // HL trapdoors

@@ -10,18 +10,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
-public abstract class FareGate {
-
+public class FareGate {
+  
   private final Player player;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang(plugin);
-  private FareGate[] fareGates;
+  private Location[] blockAbsoluteLocs;
   private GateType gateType;
-
+  
   public FareGate(Player player) {
     this.player = player;
   }
@@ -29,7 +29,6 @@ public abstract class FareGate {
   public FareGate(Player player, String signText, @Nullable Location signLoc) {
     this.player = player;
     this.gateType = getGateType(signText);
-    this.fareGates = null;
 
     if (gateType != null) {
       String args = switch (gateType) {
@@ -66,42 +65,42 @@ public abstract class FareGate {
       // LM-style fare gates
       // location matters
       if ((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.MEMBER) && (signLoc != null && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getState().getBlockData() instanceof WallSign sign)) {
-    
-        BlockFace direction = sign.getFacing();
-        byte[][] locations = parseArgsLM(flags);
-        this.fareGates = new OpenFareGate[locations.length];
-    
-        for (int i = 0; i < locations.length; i++) {
-          byte[] locVector = locations[i];
-          switch (direction) {
-            case SOUTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
-            case NORTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
-            case EAST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
-            case WEST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
+  
+        BlockFace signFacing = sign.getFacing();
+        byte[][] blockRelLoc = parseArgsLM(flags);
+        this.blockAbsoluteLocs = new Location[blockRelLoc.length];
+  
+        for (int i = 0; i < blockRelLoc.length; i++) {
+          byte[] locVector = blockRelLoc[i];
+          switch (signFacing) {
+            case SOUTH -> this.blockAbsoluteLocs[i] = signLoc.clone().add(locVector[0], locVector[1], locVector[2]);
+            case NORTH -> this.blockAbsoluteLocs[i] = signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]);
+            case EAST -> this.blockAbsoluteLocs[i] = signLoc.clone().add(locVector[2], locVector[1], -locVector[0]);
+            case WEST -> this.blockAbsoluteLocs[i] = signLoc.clone().add(-locVector[2], locVector[1], locVector[0]);
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-
+  
       }
 
       // HL-style fare gates
       else if (gateType == GateType.FAREGATE && !(signLoc == null) && signLoc.getBlock().getState() instanceof Sign && signLoc.getBlock().getBlockData() instanceof org.bukkit.block.data.type.Sign sign) {
-
-        BlockFace direction = sign.getRotation();
-        byte[][] locations = parseArgsHL(flags);
-        this.fareGates = new OpenFareGate[locations.length];
-
-        for (int i = 0; i < locations.length; i++) {
-          byte[] locVector = locations[i];
-          switch (direction) {
-            case SOUTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[0], locVector[1], locVector[2]));
-            case NORTH -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]));
-            case EAST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(locVector[2], locVector[1], -locVector[0]));
-            case WEST -> this.fareGates[i] = new OpenFareGate(player, signLoc.clone().add(-locVector[2], locVector[1], locVector[0]));
+  
+        BlockFace signFacing = sign.getRotation();
+        byte[][] blockRelLoc = parseArgsHL(flags);
+        this.blockAbsoluteLocs = new Location[blockRelLoc.length];
+  
+        for (int i = 0; i < blockRelLoc.length; i++) {
+          byte[] locVector = blockRelLoc[i];
+          switch (signFacing) {
+            case SOUTH -> this.blockAbsoluteLocs[i] = signLoc.clone().add(locVector[0], locVector[1], locVector[2]);
+            case NORTH -> this.blockAbsoluteLocs[i] = signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]);
+            case EAST -> this.blockAbsoluteLocs[i] = signLoc.clone().add(locVector[2], locVector[1], -locVector[0]);
+            case WEST -> this.blockAbsoluteLocs[i] = signLoc.clone().add(-locVector[2], locVector[1], locVector[0]);
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
-
+  
       }
     }
   }
@@ -187,33 +186,17 @@ public abstract class FareGate {
     return this.player;
   }
 
-  public boolean open() {
-    if (this.fareGates == null) return true;
-    else {
-      boolean a = true;
-      for (FareGate gate : fareGates) a &= gate.open();
-      return a;
-    }
-  }
-
   public void hold() {
     plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, this::close, plugin.getConfig().getLong("gate-close-delay"));
   }
 
 
   public List<int[]> getGateLocations() {
-    ArrayList<int[]> a = new ArrayList<>();
-    for (FareGate gate : this.fareGates) a.addAll(gate.getGateLocations());
-    return a;
+    return Arrays.stream(this.blockAbsoluteLocs).map(location -> new int[] {location.getBlockX(), location.getBlockY(), location.getBlockZ()}).toList();
   }
 
 
   public boolean close() {
-    if (this.fareGates == null) return true;
-    else {
-      boolean closed = true;
-      for (FareGate gate : this.fareGates) closed &= gate.close();
-      return closed;
-    }
+    return this.blockAbsoluteLocs == null;
   }
 }
