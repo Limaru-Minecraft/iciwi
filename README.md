@@ -4,12 +4,10 @@ Universal transportation ticket plugin.
 [![Java CI with Gradle](https://github.com/Mineshafter61/iciwi/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/Mineshafter61/iciwi/actions/workflows/gradle-publish.yml)
 
 # Development
-1. Use JDK 16 & Maven
+1. Use JDK 17 & Maven
 2. Download and run [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar)
 3. Fork or clone this project locally
 4. Start developing!
-
-Note: Iciwi is NOT open source. It might be in the future though.
 
 # Usage
 ## Entry and Exit
