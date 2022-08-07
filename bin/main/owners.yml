@@ -2,20 +2,18 @@
 # Only the owner of a company can withdraw the money from its coffers.
 # The format is <company>: <owner's username>
 Aliases:
-  Lipan: panas_d
-  Entetsu: Mineshafter61
-  YCM: YJJcoolcool
+  ExampleOperator: Mineshafter61
 
 # This section provides rail passes to give free travel for a certain duration to a player between a given operator's stations.
 # The format is in:
 # Company:
 #   No. of days: Price
 RailPassPrices:
-  Lipan:
+  ExampleOperator:
     7: 30
     30: 100
-  Entetsu:
-    7: 35
+  ExampleOperator1:
+    8: 35
     30: 130
 
 # This section assigns stations to companies. You will need to fill this up even if there is only 1 company on your server.
@@ -23,11 +21,7 @@ RailPassPrices:
 # The format is in <station name>: <company>.
 # The station name refers to the name in fares.yml.
 Operators:
-  Chiyoda: Entetsu
-  ChinaTown: Entetsu
+  ExampleStation: ExampleOperator
 
 # DO NOT TOUCH THIS SECTION unless you know what you are doing!
 Coffers:
-  Lipan:
-  Entetsu:
-  YCM:

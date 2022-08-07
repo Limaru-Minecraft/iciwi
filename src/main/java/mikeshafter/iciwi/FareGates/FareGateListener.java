@@ -326,9 +326,12 @@ public class FareGateListener implements Listener {
       int x = player.getLocation().getBlockX();
       int y = player.getLocation().getBlockY();
       int z = player.getLocation().getBlockZ();
-      for (int[] gateLocation : g.getGateLocations()) {
-        if (g.getPlayer() == player && gateLocation[0] == x && gateLocation[1] == y && gateLocation[2] == z) {
-          Bukkit.getScheduler().runTaskLater(plugin, () -> {g.close(); gates.remove(g);}, 10);
+      for (Location gateLocation : g.getGateLocations()) {
+        if (g.getPlayer() == player && gateLocation.getBlockX() == x && gateLocation.getBlockY() == y && gateLocation.getBlockZ() == z) {
+          Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            g.close();
+            gates.remove(g);
+          }, 10);
         }
       }
     }
