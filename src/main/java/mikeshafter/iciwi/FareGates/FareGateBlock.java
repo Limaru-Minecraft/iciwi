@@ -112,7 +112,7 @@ public class FareGateBlock {
     }
   }
   
-  public void onGateOpen() {
+  public void openGate() {
     int ticksToOpen = plugin.getConfig().getInt("ticks-to-open");
     activeGates.add(this);
     this.spawnFallingBlock();
@@ -122,6 +122,10 @@ public class FareGateBlock {
       this.onGateClose();
     }, (this.getOpenTime()+ticksToOpen+5));
     this.teleportFallingSand(this.armorStand, this.getOpenDirection().getDirection().multiply(1/ticksToOpen), ticksToOpen, true);
+  }
+  
+  public void closeGate() {
+    closeGate(false);
   }
   
   public void closeGate(boolean force) {

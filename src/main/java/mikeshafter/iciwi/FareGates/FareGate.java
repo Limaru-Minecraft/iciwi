@@ -3,15 +3,19 @@ package mikeshafter.iciwi.FareGates;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.Lang;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Openable;
+import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 
 
@@ -20,17 +24,18 @@ public class FareGate {
   private final Player player;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang(plugin);
-  private Map<Location, BlockFace> locationFaceMap;
+  private final HashMap<Location, BlockFace> faceMap;
+  private final HashMap<Location, BlockState> stateMap;
+  private final ArrayList<FareGateBlock> fareGateBlocks;
   private GateType gateType;
   
-  public FareGate(Player player) {
-    this.player = player;
-  }
-
   public FareGate(Player player, String signText, @Nullable Location signLoc) {
     this.player = player;
     this.gateType = getGateType(signText);
-
+    this.faceMap = new HashMap<>();
+    this.stateMap = new HashMap<>();
+    this.fareGateBlocks = new ArrayList<>();
+    
     if (gateType != null) {
       String args = switch (gateType) {
         case ENTRY -> signText.substring(lang.getString("entry").length()+1, signText.length()-1);
@@ -45,8 +50,6 @@ public class FareGate {
         return;
       }
 
-      // todo: args
-      // Convert args into a binary
       int flags = 0;
       if (args.contains("V")) flags += 1;  // Validator
       if (args.contains("S")) flags += 2;  // Sideways sign
@@ -72,10 +75,10 @@ public class FareGate {
   
         for (byte[] locVector : blockRelLoc) {
           switch (signFacing) {
-            case SOUTH -> this.locationFaceMap.put(signLoc.clone().add(locVector[0], locVector[1], locVector[2]), parseOpenDirection(signFacing, locVector[3]));
-            case NORTH -> this.locationFaceMap.put(signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]), parseOpenDirection(signFacing, locVector[3]));
-            case EAST -> this.locationFaceMap.put(signLoc.clone().add(locVector[2], locVector[1], -locVector[0]), parseOpenDirection(signFacing, locVector[3]));
-            case WEST -> this.locationFaceMap.put(signLoc.clone().add(-locVector[2], locVector[1], locVector[0]), parseOpenDirection(signFacing, locVector[3]));
+            case SOUTH -> this.faceMap.put(signLoc.clone().add(locVector[0], locVector[1], locVector[2]), parseOpenDirection(signFacing, locVector[3]));
+            case NORTH -> this.faceMap.put(signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]), parseOpenDirection(signFacing, locVector[3]));
+            case EAST -> this.faceMap.put(signLoc.clone().add(locVector[2], locVector[1], -locVector[0]), parseOpenDirection(signFacing, locVector[3]));
+            case WEST -> this.faceMap.put(signLoc.clone().add(-locVector[2], locVector[1], locVector[0]), parseOpenDirection(signFacing, locVector[3]));
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
@@ -90,10 +93,10 @@ public class FareGate {
   
         for (byte[] locVector : blockRelLoc) {
           switch (signFacing) {
-            case SOUTH -> this.locationFaceMap.put(signLoc.clone().add(locVector[0], locVector[1], locVector[2]), null);
-            case NORTH -> this.locationFaceMap.put(signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]), null);
-            case EAST -> this.locationFaceMap.put(signLoc.clone().add(locVector[2], locVector[1], -locVector[0]), null);
-            case WEST -> this.locationFaceMap.put(signLoc.clone().add(-locVector[2], locVector[1], locVector[0]), null);
+            case SOUTH -> this.faceMap.put(signLoc.clone().add(locVector[0], locVector[1], locVector[2]), null);
+            case NORTH -> this.faceMap.put(signLoc.clone().add(-locVector[0], locVector[1], -locVector[2]), null);
+            case EAST -> this.faceMap.put(signLoc.clone().add(locVector[2], locVector[1], -locVector[0]), null);
+            case WEST -> this.faceMap.put(signLoc.clone().add(-locVector[2], locVector[1], locVector[0]), null);
             default -> plugin.getServer().getLogger().info("Fare gate not set up correctly!");
           }
         }
@@ -101,7 +104,7 @@ public class FareGate {
       }
     }
   }
-
+  
   private GateType getGateType(String text) {
     if (text.contains(lang.getString("entry"))) {
       return GateType.ENTRY;
@@ -164,9 +167,6 @@ public class FareGate {
   
   private BlockFace parseOpenDirection(BlockFace signFacing, byte code) {
     switch (code) {
-      case 0 -> {
-        return null;
-      }  // get no open out of the way
       // same directions
       case 2 -> {
         return signFacing;
@@ -193,7 +193,7 @@ public class FareGate {
           default -> null;
         };
       }
-      default -> {
+      default -> { // if there is no need for an open direction, the code redirects to this
         return null;
       }
       
@@ -227,8 +227,37 @@ public class FareGate {
   }
   
   public void open() {
-    List<FareGateBlock> fareGateBlocks;
-    fareGateBlocks.forEach(FareGateBlock::onGateOpen);
+    faceMap.forEach((location, direction) -> {
+      if (location.getBlock().getBlockData() instanceof Openable || location.getBlock() instanceof Powerable || direction == null) {
+        // no animation
+        BlockState state = location.getBlock().getState();
+        stateMap.put(location, state);
+      
+        // HL trapdoors
+        if (state.getBlockData() instanceof Openable openable) {
+          openable.setOpen(true);
+          state.setBlockData(openable);
+          state.update();
+        }
+      
+        // Lever
+        else if (state.getBlockData() instanceof Powerable powerable) {
+          powerable.setPowered(true);
+          state.setBlockData(powerable);
+          state.update();
+        }
+      
+        // LM glass
+        else {
+          location.getBlock().setType(Material.AIR);
+        }
+      } else {
+      
+        // animate
+        fareGateBlocks.add(new FareGateBlock(location.getBlock(), direction, 100));
+      }
+    });
+    fareGateBlocks.forEach(FareGateBlock::openGate);
   }
   
   public void hold() {
@@ -237,12 +266,40 @@ public class FareGate {
   
   
   public Set<Location> getGateLocations() {
-    return this.locationFaceMap.keySet();
+    return this.faceMap.keySet();
   }
   
   
   public void close() {
-    List<FareGateBlock> fareGateBlocks;
-    fareGateBlocks.forEach(fareGateBlock -> close());
+    faceMap.forEach((location, direction) -> {
+      if (location.getBlock().getBlockData() instanceof Openable || location.getBlock() instanceof Powerable || direction == null) {
+      
+        // no animation
+        BlockState state = stateMap.get(location);
+      
+        // HL trapdoors
+        if (state.getBlockData() instanceof Openable openable) {
+          openable.setOpen(false);
+          state.setBlockData(openable);
+          state.update();
+        }
+      
+        // Lever
+        else if (state.getBlockData() instanceof Powerable powerable) {
+          powerable.setPowered(false);
+          state.setBlockData(powerable);
+          state.update();
+        }
+      
+        // LM glass
+        else {
+          state.update();
+          location.getBlock().setType(state.getType());
+          location.getBlock().setBlockData(state.getBlockData());
+        }
+      }
+    });
+  
+    if (fareGateBlocks.size() > 0) fareGateBlocks.forEach(FareGateBlock::closeGate);
   }
 }
