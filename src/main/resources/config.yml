@@ -23,3 +23,6 @@ global-operator: ExampleOperator
 
 # global ticket price
 global-ticket-price: 5.0
+
+ticks-to-open: 20
+ticks-to-close: 20
