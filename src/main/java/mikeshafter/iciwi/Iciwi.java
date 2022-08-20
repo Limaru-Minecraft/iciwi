@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import kr.entree.spigradle.annotations.SpigotPlugin;
 import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
 import mikeshafter.iciwi.Tickets.TicketMachine;
 import net.milkbowl.vault.economy.Economy;
@@ -22,7 +21,6 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-@SpigotPlugin
 public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   public static Economy economy = null;

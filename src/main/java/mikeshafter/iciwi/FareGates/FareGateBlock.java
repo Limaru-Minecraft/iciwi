@@ -10,10 +10,11 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.bukkit.entity.Player;  //todo: debug
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,7 +107,7 @@ public class FareGateBlock {
         entity.removePassenger(passenger);
         entity.teleport(newLoc);
         entity.addPassenger(passenger);
-        for (Player p : plugin.getServer().getOnlinePlayers()) p.sendMessage(String.parseInt(count)); //TODO: debug
+        for (Player p : plugin.getServer().getOnlinePlayers()) p.sendMessage(String.valueOf(count)); //TODO: debug
         Bukkit.getScheduler().runTaskLater(plugin, () -> this.teleportFallingSand(entity, direction, count-1, canCancel), 1L);
       }
       
