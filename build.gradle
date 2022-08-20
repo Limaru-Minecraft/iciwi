@@ -7,8 +7,6 @@ version '1.18.2r1'
 
 compileJava.options.encoding 'UTF-8'
 
-buildDir = "./../../M. Shaftere/servers/testserver/plugins/build"
-
 repositories {
     maven {url 'https://papermc.io/repo/repository/maven-public/'}
     maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
