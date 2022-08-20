@@ -7,10 +7,10 @@ version '1.18.2r1'
 
 compileJava.options.encoding 'UTF-8'
 
-//buildDir = "./../../M. Shaftere/servers/testserver/plugins"
+buildDir = "./../../M. Shaftere/servers/testserver/plugins/build"
 
 repositories {
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven {url 'https://papermc.io/repo/repository/maven-public/'}
     maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
     maven { url 'https://jitpack.io' }
     mavenLocal()
@@ -26,7 +26,6 @@ java {
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly 'net.kyori:adventure-api:4.11.0'
     compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
 }
 
