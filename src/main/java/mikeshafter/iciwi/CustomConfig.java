@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -15,7 +14,6 @@ public class CustomConfig {
   private final String name;
 
   public CustomConfig(String name, Plugin plugin) {
-    Bukkit.shutdown(); ///gg
     this.name = name;
     file = new File(plugin.getDataFolder(), name);
 

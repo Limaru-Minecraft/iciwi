@@ -21,12 +21,10 @@ public class CustomMachine extends MapWidgetSubmitText {
   
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
-  private final String station;
   private final ArrayList<String> stationList = JsonManager.getAllStations();
   
   public CustomMachine(Player player, String station) {
     this.player = player;
-    this.station = station;
     this.setDescription("Enter a search term for a station");
   }
   

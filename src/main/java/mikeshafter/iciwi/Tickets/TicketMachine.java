@@ -1,7 +1,6 @@
 package mikeshafter.iciwi.Tickets;
 
 import mikeshafter.iciwi.*;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -171,8 +170,7 @@ public class TicketMachine {
       menu = menu.append(Component.text().content(String.format(" == Page %d of %d == ", page, maxPage)).color(NamedTextColor.GOLD).build());
       menu = page == maxPage ? menu.append(Component.text().content("[###]").color(NamedTextColor.GOLD).build()) : menu.append(Component.text().clickEvent(ClickEvent.runCommand(checkFares(page+1))).content("[>>>]").color(NamedTextColor.GOLD).build());
       menu = menu.append((Component.text().content(" ==").color(NamedTextColor.GOLD)).build());
-      Audience audience = (Audience) player;
-      audience.sendMessage(menu);
+      player.sendMessage(menu);
     }
   }
   
@@ -209,46 +207,6 @@ public class TicketMachine {
   public String getStation() {
     return station;
   }
-
-//  public String getOperator() {
-//    return operator;
-//  }
-//
-//  public String getSerial() {
-//    return serial;
-//  }
-//
-//  public void setSerial(String serial) {
-//    this.serial = serial;
-//  }
-//
-//  public double getValue() {
-//    return value;
-//  }
-//
-//  public void setValue(double value) {
-//    this.value = value;
-//  }
-//
-//  public Hashtable<Integer, Double> getDaysList() {
-//    return daysList;
-//  }
-//
-//  public void setDaysList(Hashtable<Integer, Double> daysList) {
-//    this.daysList = daysList;
-//  }
-//
-public CardSql getApp() {
-  return app;
-}
-  
-  public Owners getOwners() {
-    return owners;
-  }
-  
-  public Lang getLang() {
-    return lang;
-  }
   
   public void generateTicket(double value) {
     if (Iciwi.economy.getBalance(player) >= value) {
@@ -267,15 +225,5 @@ public CardSql getApp() {
     item.setItemMeta(itemMeta);
     return item;
   }
-
-//  protected ItemStack makeButton(final Material material, final String displayName, final List<String> lore) {
-//    ItemStack item = new ItemStack(material, 1);
-//    ItemMeta itemMeta = item.getItemMeta();
-//    assert itemMeta != null;
-//    itemMeta.setDisplayName(displayName);
-//    itemMeta.setLore(lore);
-//    item.setItemMeta(itemMeta);
-//    return item;
-//  }
 
 }

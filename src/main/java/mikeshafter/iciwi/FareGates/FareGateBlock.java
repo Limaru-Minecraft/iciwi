@@ -13,7 +13,7 @@ import org.bukkit.entity.FallingBlock;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-import org.bukkit.entity.Player;  //todo: debug
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,7 +86,7 @@ public class FareGateBlock {
   
   private void onGateClose() {
     int ticksToClose = plugin.getConfig().getInt("ticks-to-close");
-    this.teleportFallingSand(this.getArmorStand(), this.getOpenDirection().getOppositeFace().getDirection().multiply(1/ticksToClose), ticksToClose-this.remainCount, false);
+    this.teleportFallingSand(this.getArmorStand(), this.getOpenDirection().getOppositeFace().getDirection().multiply(1d/ticksToClose), ticksToClose-this.remainCount, false);
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
       this.killFallingSand();
       this.getBlock().setBlockData(this.blockData);
@@ -106,7 +106,6 @@ public class FareGateBlock {
         entity.removePassenger(passenger);
         entity.teleport(newLoc);
         entity.addPassenger(passenger);
-        for (Player p : plugin.getServer().getOnlinePlayers()) p.sendMessage(String.parseInt(count)); //TODO: debug
         Bukkit.getScheduler().runTaskLater(plugin, () -> this.teleportFallingSand(entity, direction, count-1, canCancel), 1L);
       }
       
@@ -122,7 +121,7 @@ public class FareGateBlock {
       this.gateClosing = true;
       this.onGateClose();
     }, (this.getOpenTime()+ticksToOpen+5));
-    this.teleportFallingSand(this.armorStand, this.getOpenDirection().getDirection().multiply(1/ticksToOpen), ticksToOpen, true);
+    this.teleportFallingSand(this.armorStand, this.getOpenDirection().getDirection().multiply(1d/ticksToOpen), ticksToOpen, true);
   }
   
   public void closeGate() {

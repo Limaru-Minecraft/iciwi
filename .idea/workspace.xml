@@ -9,8 +9,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="animated fare gates!">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/gradle_build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/gradle_build.yml" afterDir="false" />
+    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/FareGates/FareGateBlock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/FareGates/FareGateBlock.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,8 +52,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="YAML" />
         <option value="Class" />
+        <option value="YAML" />
       </list>
     </option>
   </component>
@@ -139,7 +143,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/libs" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="SDKs" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2862069" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
@@ -251,27 +255,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Made some lol changes">
-      <created>1609470655481</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1609470655481</updated>
-    </task>
-    <task id="LOCAL-00012" summary="1.16.4b3">
-      <created>1609558967388</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1609558967388</updated>
-    </task>
-    <task id="LOCAL-00013" summary="updated plugin.yml">
-      <created>1610196761650</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1610196761650</updated>
     </task>
     <task id="LOCAL-00014" summary="Cleaned up code">
       <created>1615351500342</created>
@@ -595,7 +578,28 @@
       <option name="project" value="LOCAL" />
       <updated>1659950514846</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="reupload workflow">
+      <created>1659950731572</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1659950731572</updated>
+    </task>
+    <task id="LOCAL-00061" summary="apparently i had a few unpushed commits">
+      <created>1660906905722</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1660906905724</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Remove Spigradle dependency">
+      <created>1660963773472</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1660963773473</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -610,9 +614,6 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Add more items to Card Ops menu" />
-    <MESSAGE value="Added ticket generator" />
-    <MESSAGE value="Added more stuff in ticket machine" />
     <MESSAGE value="Finished testing single journey ticket creator, found 0 problems" />
     <MESSAGE value="Fixed entry sequence" />
     <MESSAGE value="Added odometer feature" />
@@ -635,7 +636,10 @@
     <MESSAGE value="Continue with CustomMachine, FareGate recode unfinished" />
     <MESSAGE value="terrible commit name" />
     <MESSAGE value="animated fare gates!" />
-    <option name="LAST_COMMIT_MESSAGE" value="animated fare gates!" />
+    <MESSAGE value="reupload workflow" />
+    <MESSAGE value="apparently i had a few unpushed commits" />
+    <MESSAGE value="Remove Spigradle dependency" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove Spigradle dependency" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

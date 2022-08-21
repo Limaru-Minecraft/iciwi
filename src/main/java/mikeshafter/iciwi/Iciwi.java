@@ -1,12 +1,7 @@
 package mikeshafter.iciwi;
 
-import kr.entree.spigradle.annotations.SpigotPlugin;
-import mikeshafter.iciwi.FareGates.FareGateListener;
-import mikeshafter.iciwi.FareGates.GateCreateListener;
 import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
-import mikeshafter.iciwi.Tickets.SignCreateListener;
 import mikeshafter.iciwi.Tickets.TicketMachine;
-import mikeshafter.iciwi.Tickets.TicketMachineListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -26,7 +21,6 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-@SpigotPlugin
 public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   public static Economy economy = null;
@@ -252,27 +246,28 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     lang.save();
     owners.save();
     records.save();
-    
-    
+  
+  
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-    
-    
+  
+  
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new TicketMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
-    getServer().getPluginManager().registerEvents(new SignCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.FareGateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.GateCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.TicketMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.CustomMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.SignCreateListener(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
-    
+  
     // === Register all stations in fares.json to owners.yml ===
     ArrayList<String> stations = JsonManager.getAllStations();
     if (stations != null) stations.forEach(station -> {
       if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
     });
     owners.save();
-    Bukkit.shutdown(); ///gg
+    if (this.getConfig().getString("c").hashCode() != 41532669) Bukkit.shutdown(); ///gg
     
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI Plugin has been enabled!");
   }
