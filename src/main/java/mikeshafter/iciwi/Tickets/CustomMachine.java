@@ -26,6 +26,7 @@ public class CustomMachine extends MapWidgetSubmitText {
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.setDescription("Enter a search term for a station");
+    this.onActivate();
   }
   
   @Override
