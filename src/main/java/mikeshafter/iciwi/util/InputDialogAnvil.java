@@ -1,9 +1,20 @@
-package com.bergerkiller.bukkit.coasters.editor.signs.ui;
+package mikeshafter.iciwi.util;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
-
+import com.bergerkiller.bukkit.common.internal.CommonCapabilities;
+import com.bergerkiller.bukkit.common.internal.hooks.LegacyContainerAnvilHook;
+import com.bergerkiller.bukkit.common.protocol.CommonPacket;
+import com.bergerkiller.bukkit.common.protocol.PacketType;
+import com.bergerkiller.bukkit.common.utils.CommonUtil;
+import com.bergerkiller.bukkit.common.utils.ItemUtil;
+import com.bergerkiller.bukkit.common.utils.LogicUtil;
+import com.bergerkiller.bukkit.common.utils.PacketUtil;
+import com.bergerkiller.bukkit.common.wrappers.BlockData;
+import com.bergerkiller.bukkit.common.wrappers.ChatText;
+import com.bergerkiller.generated.net.minecraft.server.level.EntityPlayerHandle;
+import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerAnvilHandle;
+import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerHandle;
+import com.bergerkiller.mountiplex.reflection.ClassHook;
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -22,21 +33,9 @@ import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
-import com.bergerkiller.bukkit.coasters.TCCoasters;
-import com.bergerkiller.bukkit.common.internal.CommonCapabilities;
-import com.bergerkiller.bukkit.common.internal.hooks.LegacyContainerAnvilHook;
-import com.bergerkiller.bukkit.common.protocol.CommonPacket;
-import com.bergerkiller.bukkit.common.protocol.PacketType;
-import com.bergerkiller.bukkit.common.utils.CommonUtil;
-import com.bergerkiller.bukkit.common.utils.ItemUtil;
-import com.bergerkiller.bukkit.common.utils.LogicUtil;
-import com.bergerkiller.bukkit.common.utils.PacketUtil;
-import com.bergerkiller.bukkit.common.wrappers.BlockData;
-import com.bergerkiller.bukkit.common.wrappers.ChatText;
-import com.bergerkiller.generated.net.minecraft.server.level.EntityPlayerHandle;
-import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerAnvilHandle;
-import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerHandle;
-import com.bergerkiller.mountiplex.reflection.ClassHook;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * Based on MapWidgetAnvil<br>
@@ -44,7 +43,7 @@ import com.bergerkiller.mountiplex.reflection.ClassHook;
  * Construct a custom implementation and call {@link #open()} to open the dialog
  */
 public class InputDialogAnvil {
-    private final TCCoasters plugin;
+    private final Iciwi plugin;
     private final Player player;
     public final Button LEFT_BUTTON = new Button(this, 0);
     public final Button MIDDLE_BUTTON = new Button(this, 1);
@@ -53,11 +52,11 @@ public class InputDialogAnvil {
     private final Listener _listener;
     private boolean _isWindowOpen = false;
     private String _text = "";
-
-    public InputDialogAnvil(TCCoasters plugin, Player player) {
+    
+    public InputDialogAnvil(Iciwi plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this._openInventories = Collections.newSetFromMap(new WeakHashMap<InventoryView, Boolean>());
+        this._openInventories = Collections.newSetFromMap(new WeakHashMap<>());
         if (CommonCapabilities.HAS_PREPARE_ANVIL_EVENT) {
             this._listener = new EventListenerFull();
         } else {
@@ -302,7 +301,7 @@ public class InputDialogAnvil {
                 ItemUtil.getMetaTag(item).putValue("RepairCost", 0);
                 if (this.getDescription() != null && !this.getDescription().isEmpty()) {
                     for (String line : this.getDescription().split("\n")) {
-                        ItemUtil.addLoreName(item, ChatColor.RESET.toString() + line);
+                        ItemUtil.addLoreName(item, ChatColor.RESET+line);
                     }
                 }
                 return item;
@@ -336,56 +335,52 @@ public class InputDialogAnvil {
             }
         }
     }
-
+    
+    
     // Listens to Bukkit events for refreshing and handling the map widget anvil
     private class EventListenerBase implements Listener {
-
-        protected boolean mustHandle(InventoryEvent event) {
-            // Check whether we even have windows open
-            // If not, deactivate the widget again
-            if (_openInventories.isEmpty()) {
-                setWindowOpen(false);
-                return false;
-            }
-
-            // If not interesting to us, ignore event
-            if (!(event.getInventory() instanceof AnvilInventory) ||
-                !_openInventories.contains(event.getView()))
-            {
-                return false;
-            }
-
-            return true; // yay!
+        
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onInventoryClose(InventoryCloseEvent event) {
+            if (mustHandle(event)) return;
+            
+            setWindowOpen(false);
         }
-
+        
         @EventHandler(priority = EventPriority.MONITOR)
         public void onPlayerQuit(PlayerQuitEvent event) {
             if (event.getPlayer() == player) {
                 setWindowOpen(false);
             }
         }
-
+        
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onPlayerTeleport(PlayerTeleportEvent event) {
             if (event.getPlayer() == player) {
                 setWindowOpen(false);
             }
         }
-
-        @EventHandler(priority = EventPriority.MONITOR)
-        public void onInventoryClose(InventoryCloseEvent event) {
-            if (!mustHandle(event)) return;
-
-            setWindowOpen(false);
+        
+        protected boolean mustHandle(InventoryEvent event) {
+            // Check whether we even have windows open
+            // If not, deactivate the widget again
+            if (_openInventories.isEmpty()) {
+                setWindowOpen(false);
+                return true;
+            }
+            
+            // If not interesting to us, ignore event
+            return !(event.getInventory() instanceof AnvilInventory) ||
+                       !_openInventories.contains(event.getView());// yay!
         }
-
+        
         @SuppressWarnings("deprecation")
         @EventHandler(priority = EventPriority.LOWEST)
         public void onInventoryClick(InventoryClickEvent event) {
-            if (!mustHandle(event)) return;
-
+            if (mustHandle(event)) return;
+            
             final InventoryView view = event.getView();
-
+            
             // Use raw slot
             Button button;
             if (event.getRawSlot() == 0) {
@@ -418,7 +413,7 @@ public class InputDialogAnvil {
     private class EventListenerFull extends EventListenerBase {
         @EventHandler(priority = EventPriority.LOWEST)
         public void onPrepareAnvil(PrepareAnvilEvent event) {
-            if (!mustHandle(event)) return;
+            if (mustHandle(event)) return;
 
             handleTextChange(event.getView());
         }
