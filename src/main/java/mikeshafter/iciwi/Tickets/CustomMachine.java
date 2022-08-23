@@ -1,10 +1,10 @@
 package mikeshafter.iciwi.Tickets;
 
-import com.bergerkiller.generated.net.minecraft.server.level.EntityPlayerHandle;
-import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerAnvilHandle;
-import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerHandle;
+import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.util.InputDialogSubmitText;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -29,27 +29,38 @@ public class CustomMachine {
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
+    InputDialogSubmitText submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
     
-  }
-
-  
-  
-  public void onAccept(String text) {
+      @Override
+      public void onOpen() {
+        super.onOpen();
+        this.setDescription("Enter destination");
+      }
     
-    // Sort stations based on relevance
-    TreeMap<Float, String> m = new TreeMap<>();
-    for (int i = 0; i < 54; i++) {
-      m.put(relevance(text, stationList.get(i)), stationList.get(i));
-    }
-    List<String> e = m.values().stream().toList();
+      @Override
+      public void onAccept(String text) {
+      
+        // Sort stations based on relevance
+        TreeMap<Float, String> m = new TreeMap<>();
+        List<String> e = null;
+        if (stationList != null && stationList.size() != 0) {
+          for (int i = 0; i < 54; i++) {
+            m.put(relevance(text, stationList.get(i)), stationList.get(i));
+          }
+          e = m.values().stream().toList();
+        } // else e is empty
+      
+        // Place each station into an inventory to be shown to the player
+        Inventory inventory = plugin.getServer().createInventory(null, 54, Component.text("Select station"));
+        if (e != null) for (int i = 0; i < 54; i++) {
+          inventory.setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(e.get(i))));
+        } // if e is empty, the inventory will be empty
+        player.openInventory(inventory);
+      }
     
-    // Place each station into an inventory to be shown to the player
-    Inventory inventory = plugin.getServer().createInventory(null, 54, "Select station");
-    for (int i = 0; i < 54; i++) {
-      inventory.setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, e.get(i)));
-    }
-    player.openInventory(inventory);
-    
+    };
+    // Open anvil on next tick due to problems with same-tick opening
+    CommonUtil.nextTick(submitText::open);
   }
   
   private float relevance(String search, String match) {
@@ -86,12 +97,12 @@ public class CustomMachine {
     return 0f;
   }
   
-  private ItemStack makeItem(final Material material, final String displayName, final String... lore) {
+  private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
     ItemStack item = new ItemStack(material);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(Arrays.asList(lore));
+    itemMeta.displayName(displayName);
+    itemMeta.lore(Arrays.asList(lore));
     item.setItemMeta(itemMeta);
     return item;
   }
