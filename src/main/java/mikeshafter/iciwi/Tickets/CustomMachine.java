@@ -1,6 +1,8 @@
 package mikeshafter.iciwi.Tickets;
 
-import com.bergerkiller.bukkit.common.map.widgets.MapWidgetSubmitText;
+import com.bergerkiller.generated.net.minecraft.server.level.EntityPlayerHandle;
+import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerAnvilHandle;
+import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerHandle;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.JsonManager;
 import org.bukkit.Material;
@@ -17,7 +19,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 
-public class CustomMachine extends MapWidgetSubmitText {
+public class CustomMachine {
   
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
@@ -27,11 +29,11 @@ public class CustomMachine extends MapWidgetSubmitText {
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
-    this.setDescription("Enter a search term for a station");
-    this.onActivate();
+    
   }
+
   
-  @Override
+  
   public void onAccept(String text) {
     
     // Sort stations based on relevance
