@@ -36,8 +36,7 @@ public class PlayerJoinAlerts implements Listener {
       if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
         String serial = itemStack.getItemMeta().getLore().get(1);
   
-        Audience audience = (Audience) player;
-        audience.sendMessage(textMenu(serial));
+        player.sendMessage(textMenu(serial));
       }
     }
   }
