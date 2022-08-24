@@ -21,8 +21,12 @@ ticket-machine-type: STATION
 # global operator name (if GLOBAL is selected above)
 global-operator: ExampleOperator
 
+# default train class
+default-class: Second Class
+
 # global ticket price
 global-ticket-price: 5.0
 
+# glass fare gate speed
 ticks-to-open: 20
 ticks-to-close: 20
