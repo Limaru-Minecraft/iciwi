@@ -1,8 +1,10 @@
 package mikeshafter.iciwi.Tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
+import mikeshafter.iciwi.Fares;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.Lang;
 import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -24,17 +26,20 @@ public class CustomMachine {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
   private final String station;
+  private final Lang lang = new Lang(plugin);
+  private final Fares fares = new Fares(plugin);
+  private Component terminal;
   private final ArrayList<String> stationList = JsonManager.getAllStations();
   
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
     InputDialogSubmitText submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
-    
+      
       @Override
       public void onOpen() {
         super.onOpen();
-        this.setDescription("Enter destination");
+        this.setDescription(lang.getString("enter-text-description"));
       }
     
       @Override
@@ -44,29 +49,37 @@ public class CustomMachine {
         TreeMap<Float, String> m = new TreeMap<>();
         List<String> e = null;
         if (stationList != null && stationList.size() != 0) {
-          for (int i = 0; i < 54; i++) {
-            m.put(relevance(text, stationList.get(i)), stationList.get(i));
+          for (String stationName : stationList) {
+            m.put(relevance(text, stationName), stationName);
           }
           e = m.values().stream().toList();
         } // else e is empty
       
         // Place each station into an inventory to be shown to the player
-        Inventory inventory = plugin.getServer().createInventory(null, 54, Component.text("Select station"));
+        Inventory inventory = plugin.getServer().createInventory(null, 54, lang.getString("select-station"));
         if (e != null) for (int i = 0; i < 54; i++) {
           inventory.setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(e.get(i))));
         } // if e is empty, the inventory will be empty
         player.openInventory(inventory);
       }
-    
+      
     };
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
   }
   
-  private float relevance(String search, String match) {
-    /* 
+  public float relevance(String search, String match) {
+    // Ignore case
+    search = search.toLowerCase();
+    match = match.toLowerCase();
+    
+    // Optimisation
+    if (match.equals(search)) return 1f;
+    
+    /*
     Search = the search term
     Match = a string containing the search term
+    match.length() >= search.length()
     Relevance = percentage of letters equal to the sequence in searchResult.
     */
     
@@ -75,26 +88,34 @@ public class CustomMachine {
     int matchLength = match.length();
     
     // If the match contains the search term, it is relevant, thus we give a positive score
-    if (match.contains(search)) return (float) searchLength/matchLength;
+    if (match.contains(search)) return ((float) searchLength)/matchLength;
     
     // If the match does not contain the search term, but contains parts of it, we give a divided score
     // The score is calculated by s_x/x*m where s is the search term length, x is the number of characters in the search term not matched,
     //   and m is the match term length.
     
     /* At this point match does not contain search */
-    for (int substrLength = searchLength; substrLength >= 2; substrLength--) { // i is length of substring
-      for (int j = 0; j+substrLength <= searchLength; j++) {
-        String subSearch = search.substring(j, j+substrLength);
-        int subLength = subSearch.length();
+    for (int i = searchLength; i >= 2; i--) { // i is length of substring
+      for (int j = 0; j+i <= searchLength; j++) {
+        String subSearch = search.substring(j, j+i);
         if (match.contains(subSearch)) {
           // found match, calculate relevance
-          return (float) subLength/(searchLength-substrLength)*matchLength;
+          return ((float) i)/(searchLength-i)/matchLength;
         }
       }
     }
     
     // if no match found, return 0f (search failed)
     return 0f;
+  }
+  
+  public void setTerminal(Component terminal) {
+    this.terminal = terminal;
+  }
+  
+  public void selectClass() {
+    Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("class-select")));
+    fares.getFaresFromDestinations(station, terminal.toString()).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
   }
   
   private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
