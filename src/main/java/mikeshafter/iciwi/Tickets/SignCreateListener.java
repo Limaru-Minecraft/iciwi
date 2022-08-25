@@ -1,7 +1,7 @@
 package mikeshafter.iciwi.Tickets;
 
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
+import mikeshafter.iciwi.config.Lang;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

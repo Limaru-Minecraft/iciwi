@@ -1,6 +1,10 @@
 package mikeshafter.iciwi.Tickets;
 
-import mikeshafter.iciwi.*;
+import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -189,10 +193,10 @@ public class TicketMachine {
   
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
-      }
-      player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
-      player.getInventory().remove(item);
-      player.getInventory().addItem(makeButton(Material.PAPER, lang.getString("train-ticket"), lore0, String.valueOf(value)));
+        player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
+        player.getInventory().remove(item);
+        player.getInventory().addItem(makeButton(Material.PAPER, lang.getString("train-ticket"), lore0, String.valueOf(value)));
+      } else player.sendMessage(lang.getString("not-enough-money"));
     }
   }
 
@@ -211,9 +215,9 @@ public class TicketMachine {
   public void generateTicket(double value) {
     if (Iciwi.economy.getBalance(player) >= value) {
       Iciwi.economy.withdrawPlayer(player, value);
-    }
-    player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
-    player.getInventory().addItem(makeButton(Material.PAPER, lang.getString("train-ticket"), station, String.format("%.2f", value)));
+      player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
+      player.getInventory().addItem(makeButton(Material.PAPER, lang.getString("train-ticket"), station, String.format("%.2f", value)));
+    } else player.sendMessage(lang.getString("not-enough-money"));
   }
   
   protected ItemStack makeButton(final Material material, final String displayName, final String... lore) {

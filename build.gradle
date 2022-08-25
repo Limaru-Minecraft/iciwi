@@ -22,7 +22,9 @@ java {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+  implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+  compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
 }

@@ -1,7 +1,7 @@
 package mikeshafter.iciwi.FareGates;
 
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
+import mikeshafter.iciwi.config.Lang;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
