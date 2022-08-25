@@ -3,7 +3,6 @@ package mikeshafter.iciwi.Tickets;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-
 public class RailPassMachine extends TicketMachine {
   
   private final String operator;

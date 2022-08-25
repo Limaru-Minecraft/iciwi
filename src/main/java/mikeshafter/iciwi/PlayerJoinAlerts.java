@@ -1,6 +1,7 @@
 package mikeshafter.iciwi;
 
-import net.kyori.adventure.audience.Audience;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;

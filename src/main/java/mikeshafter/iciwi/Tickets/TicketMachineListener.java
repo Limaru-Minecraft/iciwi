@@ -2,8 +2,8 @@ package mikeshafter.iciwi.Tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
-import mikeshafter.iciwi.Owners;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -279,13 +279,13 @@ public class TicketMachineListener implements Listener {
                   .append(Component.text().content("\u00a76 | Extend \u00a7a"))
                   .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
                   .build()).toList();
-    
+  
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
-    
+  
           for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
           menu = menu.append(Component.text("\n"));
-    
-          Audience audience = (Audience) player;
+  
+          Audience audience = player;
           audience.sendMessage(menu);
         }
   

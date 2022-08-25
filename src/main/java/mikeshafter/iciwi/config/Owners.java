@@ -1,4 +1,4 @@
-package mikeshafter.iciwi;
+package mikeshafter.iciwi.config;
 
 import java.util.Objects;
 import java.util.Set;

@@ -1,6 +1,10 @@
 package mikeshafter.iciwi.Tickets;
 
-import mikeshafter.iciwi.*;
+import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;

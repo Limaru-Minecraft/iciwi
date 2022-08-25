@@ -2,8 +2,8 @@ package mikeshafter.iciwi.Tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
-import mikeshafter.iciwi.Owners;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;

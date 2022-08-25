@@ -1,5 +1,6 @@
-package mikeshafter.iciwi;
+package mikeshafter.iciwi.config;
 
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
