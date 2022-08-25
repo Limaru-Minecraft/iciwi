@@ -2,8 +2,8 @@ package mikeshafter.iciwi.FareGates;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.Lang;
-import mikeshafter.iciwi.Owners;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
