@@ -41,7 +41,7 @@ new-ticket: '§1New Ticket - '
 clear: 'CLEAR'
 enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
-custom-machine-cancel: §aCancelled operation.
+generate-ticket-custom: '§aNew $s ticket from §e%from% to §e%to% generated.'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
 generate-ticket-global: '§aNew ticket for journeys costing up to §e£%1$.2f§a generated.'
 
@@ -88,6 +88,7 @@ added-rail-pass: '§aAdded a rail pass giving free access to all stations owned 
 # == Custom Ticket Machine ==
 enter-text-description: 'Key in the station name'
 select-station: 'Select station'
+select-class: 'Select class'
 
 # =====================================
 # These options control the fare gates.

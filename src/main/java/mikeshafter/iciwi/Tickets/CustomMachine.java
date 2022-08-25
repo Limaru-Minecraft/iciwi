@@ -14,10 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.regex.Pattern;
 
 
@@ -114,8 +111,35 @@ public class CustomMachine {
   }
   
   public void selectClass() {
-    Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("class-select")));
+    Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("select-class")));
     fares.getFaresFromDestinations(station, terminal.toString()).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+  }
+  
+  public void generateTicket(ItemStack item) {  //TODO: Payment using Iciwi and bank cards
+    /*
+    ItemStack item format:
+      DisplayName: Class
+      Lore[0]: Price
+    Ticket format:
+      DisplayName: &aTrain Ticket
+      Lore[0]: From
+      Lore[1]: To
+      Lore[2]: Class
+     */
+    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
+      Component priceComponent = item.getItemMeta().displayName();
+      double price = 0d;
+      if (priceComponent != null && isDouble(priceComponent.toString()))
+        price = Double.parseDouble(priceComponent.toString());
+      Component fareClass = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
+      
+      if (Iciwi.economy.getBalance(player) >= price) {
+        Iciwi.economy.withdrawPlayer(player, price);
+        player.sendMessage(String.format(lang.getString("generate-ticket-custom"), fareClass.toString(), station, terminal));
+        player.getInventory().remove(item);
+        player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
+      } else player.sendMessage(lang.getString("not-enough-money"));
+    }
   }
   
   private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
