@@ -59,6 +59,8 @@ public class CustomMachineListener implements Listener {
         // Select and set ending station
         machine.setTerminal(itemName);
         machine.selectClass();
+      } else if (inventoryName.equals(Component.text(lang.getString("select-class")))) {
+        machine.generateTicket(item);
       }
     }
   }
