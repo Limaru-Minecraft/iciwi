@@ -1,6 +1,11 @@
 package mikeshafter.iciwi.FareGates;
 
-import mikeshafter.iciwi.*;
+import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.config.Records;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
