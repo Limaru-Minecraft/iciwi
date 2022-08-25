@@ -1,4 +1,4 @@
-package mikeshafter.iciwi;
+package mikeshafter.iciwi.config;
 
 public class Records extends CustomConfig {
   public Records(org.bukkit.plugin.Plugin plugin) {

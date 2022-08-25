@@ -1,10 +1,10 @@
 package mikeshafter.iciwi.Tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
-import mikeshafter.iciwi.Fares;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.JsonManager;
-import mikeshafter.iciwi.Lang;
+import mikeshafter.iciwi.config.Fares;
+import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;

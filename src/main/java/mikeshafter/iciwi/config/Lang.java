@@ -1,4 +1,4 @@
-package mikeshafter.iciwi;
+package mikeshafter.iciwi.config;
 import net.kyori.adventure.text.Component;
 public class Lang extends CustomConfig {
   public Lang(org.bukkit.plugin.Plugin plugin) {super("lang.yml", plugin);}
