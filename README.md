@@ -76,10 +76,28 @@ Exiting one station and entering another within a certain time counts as a trans
 
 # Admin usage
 
-## fares.json
-This file lists all the fares. The format is `{"StartStation": {"EndStation": fare}}`. USE CAMELCASE FOR THIS FILE.
+## fares.yml
+This file lists all the fares. USE CAMELCASE FOR THIS FILE.
 
-This file reloads automatically when someone uses a fare gate, so doing a reload is not required. This makes making a 3rd-party plugin to implement time-based fares easy.
+This file reloads automatically when someone uses a fare gate, so doing a reload is not required. This makes making a 3rd-party plugin to implement time-based fares easy. (TO BE RE-IMPLEMENTED)
+
+Format:
+```yml
+FromStation:
+  ToStation:
+    Class: price
+    Class: price
+    Class: price
+    Class: price
+  ToStation:
+    Class: price
+    Class: price
+    Class: price
+    Class: price
+
+(And so on)
+```
+You need to set a class as a default class to use when someone uses an Iciwi card to tap in/out. By default, the default class is `Second Class` (because metros aren't first class for obvious reasons)
 
 ## owners.yml
 This file determines where money goes to when someone taps in/out.
