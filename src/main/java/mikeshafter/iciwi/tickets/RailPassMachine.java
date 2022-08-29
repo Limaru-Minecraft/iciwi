@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;

@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.Iciwi;

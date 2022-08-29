@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.Iciwi;
 import org.bukkit.ChatColor;

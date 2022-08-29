@@ -1,7 +1,7 @@
 package mikeshafter.iciwi;
 
-import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
-import mikeshafter.iciwi.Tickets.TicketMachine;
+import mikeshafter.iciwi.tickets.GlobalTicketMachine;
+import mikeshafter.iciwi.tickets.TicketMachine;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
@@ -270,11 +270,11 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   
   
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.GateCreateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.TicketMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.CustomMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.SignCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.TicketMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.CustomMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignCreateListener(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
   
     // === Register all stations in fares.json to owners.yml ===

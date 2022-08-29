@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
