@@ -1,9 +1,7 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
@@ -22,20 +20,17 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class CustomMachineListener implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
-  private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners(plugin);
   private final Lang lang = new Lang(plugin);
-  private String operator;
   private CustomMachine machine;
   
   @EventHandler
-  public void TMSignClick(PlayerInteractEvent event) {
+  public void CTMSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = ChatColor.stripColor(sign.line(0).toString());
       Player player = event.getPlayer();
-  
+      
       // === Custom ticket machine ===
-  
+      
       if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
         String station = ChatColor.stripColor(sign.line(1).toString()).replaceAll("\\s+", "");
         machine = new CustomMachine(player, station);
@@ -46,7 +41,6 @@ public class CustomMachineListener implements Listener {
   @EventHandler
   public void CustomMachineSelectStation(InventoryClickEvent event) {
     
-    Player player = (Player) event.getWhoClicked();
     Inventory inventory = event.getClickedInventory();
     ItemStack item = event.getCurrentItem();
     if (inventory == null) return;

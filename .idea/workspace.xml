@@ -9,12 +9,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="">
+    <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="Use PaperMC's Components instead of Strings [tickets]">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/fares.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachineListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/CustomMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachineListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/GlobalTicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/GlobalTicketMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/RailPassMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/RailPassMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachineListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/SignCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignCreateListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachineListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/Tickets/CustomMachineTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/tickets/CustomMachineTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,9 +61,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="YAML" />
         <option value="JUnit5 Test Class" />
         <option value="Class" />
+        <option value="YAML" />
       </list>
     </option>
   </component>
@@ -293,13 +302,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
-    </task>
-    <task id="LOCAL-00018" summary="FINALLY FIXED THE LOG TABLE">
-      <created>1618702204318</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1618702204318</updated>
     </task>
     <task id="LOCAL-00019" summary="1.17-proofing gate code: now you can have a fare gate at 0,0,0 (but why tho)">
       <created>1619320225898</created>
@@ -637,7 +639,14 @@
       <option name="project" value="LOCAL" />
       <updated>1661392981680</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="Add ticket generator for custom ticket machines">
+      <created>1661394892424</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1661394892424</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -646,14 +655,34 @@
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
   </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CODE_SMELLS_PROFILE" value="Default" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT_PROFILE" value="Default" />
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="1.17.1a6" />
-    <MESSAGE value="ya" />
     <MESSAGE value="squashed bugs" />
     <MESSAGE value="1.17.1a7" />
     <MESSAGE value="fix lang bug?" />
@@ -677,7 +706,9 @@
     <MESSAGE value="CustomMachine code with InputDialogSubmitText" />
     <MESSAGE value="Custom ticket machine half-done, not tested yet" />
     <MESSAGE value="Fix imports" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix imports" />
+    <MESSAGE value="Add ticket generator for custom ticket machines" />
+    <MESSAGE value="Use PaperMC's Components instead of Strings [tickets]" />
+    <option name="LAST_COMMIT_MESSAGE" value="Use PaperMC's Components instead of Strings [tickets]" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
