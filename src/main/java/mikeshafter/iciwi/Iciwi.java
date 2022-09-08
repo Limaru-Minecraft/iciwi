@@ -267,21 +267,21 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // == START TEMP SECTON ==
     JsonToYamlConverter.main();
     // == END TEMP SECTION ==
-    
-    
+  
+  
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-    
-    
+  
+  
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.GateCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.TicketMachineListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.CustomMachineListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignCreateListener(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
-    
+  
     // === Register all stations in fares.json to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> {

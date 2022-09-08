@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.FareGates;
+package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
