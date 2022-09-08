@@ -1,11 +1,11 @@
 package mikeshafter.iciwi;
 
-import mikeshafter.iciwi.Tickets.GlobalTicketMachine;
-import mikeshafter.iciwi.Tickets.TicketMachine;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.tickets.GlobalTicketMachine;
+import mikeshafter.iciwi.tickets.TicketMachine;
 import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -18,8 +18,9 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.*;
@@ -34,7 +35,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   public Records records;
   public Fares fares;
   private HashMap<Player, Queue<Integer>> statMap = new HashMap<>();
-  
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -221,8 +221,13 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
         return true;
       }
     }
-    
+  
     return false;
+  }
+  
+  @Override
+  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    return super.onTabComplete(sender, command, alias, args);
   }
   
   @Override
@@ -233,7 +238,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   }
   
   @Override
-  public void onEnable() { // Use config to store station names and fares
+  public void onEnable() {
     
     // === Economy ===
     boolean eco = setupEconomy();
@@ -262,21 +267,21 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // == START TEMP SECTON ==
     JsonToYamlConverter.main();
     // == END TEMP SECTION ==
-  
-  
+    
+    
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-  
-  
+    
+    
     // === Register events ===
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.FareGates.GateCreateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.TicketMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.CustomMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.Tickets.SignCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.TicketMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.CustomMachineListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignCreateListener(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
-  
+    
     // === Register all stations in fares.json to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> {
@@ -288,9 +293,8 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
   }
   
-  
   private boolean setupEconomy() {
-    RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+    org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {
       economy = economyProvider.getProvider();
     }

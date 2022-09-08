@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 public class RailPassMachineListener {
 

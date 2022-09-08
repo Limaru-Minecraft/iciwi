@@ -1,10 +1,9 @@
-package mikeshafter.iciwi.Tickets;
+package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -43,7 +42,7 @@ public class TicketMachineListener implements Listener {
   @EventHandler
   public void TMSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
-      String signLine0 = ChatColor.stripColor(sign.getLine(0));
+      String signLine0 = ChatColor.stripColor(sign.line(0).toString());
       Player player = event.getPlayer();
   
   
@@ -58,26 +57,17 @@ public class TicketMachineListener implements Listener {
           machine = new GlobalTicketMachine(player);
           this.operator = plugin.getConfig().getString("global-operator");
         } else {
-          station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+          station = ChatColor.stripColor(sign.line(1).toString()).replaceAll("\\s+", "");
           this.operator = owners.getOwner(station);
           machine = new TicketMachine(player, station);
         }
         machine.newTM_0();
       }
 
-
-      // === Custom ticket machine ===
-
-      else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
-        String station = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
-        CustomMachine machine = new CustomMachine(player, station);
-      }
-
-
       // === Rail pass machine ===
 
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
-        String company = ChatColor.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
+        String company = ChatColor.stripColor(sign.line(1).toString()).replaceAll("\\s+", "");
         machine = new RailPassMachine(player, company);
         machine.newTM_0();
       }
@@ -95,9 +85,9 @@ public class TicketMachineListener implements Listener {
     if (inventory == null) return;
 
     if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
-      String itemName = item.getItemMeta().getDisplayName();
-      String inventoryName = event.getView().getTitle();
-
+      String itemName = Objects.requireNonNull(item.getItemMeta().displayName()).toString();
+      String inventoryName = event.getView().title().toString();
+  
       // == Page 0 ==
       double value;
       if (inventoryName.equals(lang.getString("ticket-machine"))) {
@@ -138,10 +128,10 @@ public class TicketMachineListener implements Listener {
   
       // == Adjust Fares : Page 1 ==
       else if (inventoryName.equals(lang.getString("select-ticket"))) {
-        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
           player.closeInventory();
           // String station = item.getItemMeta().getLore().get(0);
-          String ticketPrice = item.getItemMeta().getLore().get(1).substring(1);
+          String ticketPrice = Objects.requireNonNull(item.getItemMeta().lore()).get(1).toString().substring(1);
           if (isDouble(ticketPrice)) machine.adjustFares_2(0.0, item);
           else player.sendMessage(lang.getString("direct-ticket-invalid"));
         }
@@ -169,18 +159,18 @@ public class TicketMachineListener implements Listener {
   
       // == Card Operations : Page 1 ==
       else if (inventoryName.equals(lang.getString("select-card"))) {
-        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null && Objects.requireNonNull(item.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
           player.closeInventory();
-          String serial = item.getItemMeta().getLore().get(1);
+          String serial = Objects.requireNonNull(item.getItemMeta().lore()).get(1).toString();
           machine.cardOperations_2(serial);
         }
       }
 
       // == Rail Pass Ticket Menu : Page 0 ==
       else if (inventoryName.equals(lang.getString("select-card-rail-pass")) && machine instanceof RailPassMachine rpm) {
-        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().getLore() != null && item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+        if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null && Objects.requireNonNull(item.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
           player.closeInventory();
-          String serial = item.getItemMeta().getLore().get(1);
+          String serial = Objects.requireNonNull(item.getItemMeta().lore()).get(1).toString();
           rpm.railPass_3(serial);
         }
       }
@@ -200,9 +190,9 @@ public class TicketMachineListener implements Listener {
             // search for player's card
             for (ItemStack itemStack : player.getInventory().getContents()) {
               // get loreStack
-              if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && Objects.equals(itemStack.getItemMeta().getLore().get(0), lang.getString("serial-number"))) {
+              if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
                 // get serialNumber
-                if (itemStack.getItemMeta().getLore().get(1).equals(serial)) {
+                if (Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
                   // return remaining value to the player
                   double remainingValue = cardSql.getCardValue(serial);
                   Iciwi.economy.depositPlayer(player, remainingValue);
@@ -235,13 +225,12 @@ public class TicketMachineListener implements Listener {
             // Take money from player and send message
             Iciwi.economy.withdrawPlayer(player, deposit+val);
             // Prepare card
-            int serial = new SecureRandom().nextInt(100000);
-            char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[
-                           ((serial%10)*2+(serial/10%10)*3+(serial/100%10)*5+(serial/1000%10)*7+(serial/10000)*9)%19
-                           ];
-            cardSql.newCard(lang.getString("serial-prefix")+sum+"-"+serial, val);
+            int s = new SecureRandom().nextInt(100000);
+            char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[((s%10)*2+(s/10%10)*3+(s/100%10)*5+(s/1000%10)*7+(s/10000)*9)%19];
+            // Generate card
+            machine.generateCard(lang.getString("serial-prefix")+sum+"-"+s, val);
+            // Send confirmation message
             player.sendMessage(String.format(lang.getString("new-card-created"), deposit, val));
-            player.getInventory().addItem(makeButton(lang.getString("plugin-name"), lang.getString("serial-number"), lang.getString("serial-prefix")+sum+"-"+serial));
           } else player.sendMessage(lang.getString("not-enough-money"));
         }
       }
@@ -285,8 +274,7 @@ public class TicketMachineListener implements Listener {
           for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
           menu = menu.append(Component.text("\n"));
   
-          Audience audience = player;
-          audience.sendMessage(menu);
+          player.sendMessage(menu);
         }
   
         // Buy new rail pass
@@ -311,7 +299,7 @@ public class TicketMachineListener implements Listener {
       }
     }
   }
-
+  
   private boolean isDouble(String s) {
     final String Digits = "(\\p{Digit}+)";
     final String HexDigits = "(\\p{XDigit}+)";
@@ -319,13 +307,13 @@ public class TicketMachineListener implements Listener {
     final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
     return Pattern.matches(fpRegex, s);
   }
-
-  protected ItemStack makeButton(final String displayName, final String... lore) {
-    ItemStack item = new ItemStack(Material.NAME_TAG, 1);
+  
+  private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
+    ItemStack item = new ItemStack(material);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
-    itemMeta.setDisplayName(displayName);
-    itemMeta.setLore(Arrays.asList(lore));
+    itemMeta.displayName(displayName);
+    itemMeta.lore(Arrays.asList(lore));
     item.setItemMeta(itemMeta);
     return item;
   }
