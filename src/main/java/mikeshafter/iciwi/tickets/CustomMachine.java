@@ -27,87 +27,106 @@ public class CustomMachine {
   private final Lang lang = new Lang(plugin);
   private final Fares fares = new Fares(plugin);
   private final Owners owners = new Owners(plugin);
+  private ItemStack[] items;
   private Component terminal;
-  private final ArrayList<String> stationList = JsonManager.getAllStations();
+  private final Set<String> stationList = Fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
-    InputDialogSubmitText submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
+    InputDialogAnvil submitText = new InputDialogAnvil((Iciwi) plugin, player) {
   
       // TODO: Remake this so that inventory contents are updated as the player types
       @Override
       public void onOpen() {
         super.onOpen();
         this.setDescription(lang.getString("enter-text-description"));
+
+        // Save player's inventory
+        items = player.getInventory().getItems();
       }
   
       @Override
-      public void onAccept(String text) {
-    
+      public void onTextChanged() {
+
+        // Clear the player's upper inventory
+        for (int i = 3; i < 30; i++) {
+          player.getInventory().setItem(i, new ItemStack());
+        }
+
+
+        // Get the string keyed in by the player
+        String text = super.getText();
+
+
         // Sort stations based on relevance
-        TreeMap<Float, String> m = new TreeMap<>();
-        List<String> e = null;
-        if (stationList != null && stationList.size() != 0) {
-          for (String stationName : stationList) {
-            m.put(relevance(text, stationName), stationName);
-          }
-          e = m.values().stream().toList();
-        } // else e is empty
+        String[] stations = relevanceSort(stationList);
     
-        // Place each station into an inventory to be shown to the player
-        Inventory inventory = plugin.getServer().createInventory(null, 54, lang.getComponent("select-station"));
+
+        // Place each station the player's inventory
         if (e != null) {
-          for (int i = 0; i < e.size() && i < 54; i++) {
-            inventory.setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(e.get(i))));
+          for (int i = 3; i < 30; i++) {
+            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(e.get(i))));
           }
-        } // if e is empty, the inventory will be empty
-        player.openInventory(inventory);
+        }
       }
   
     };
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
   }
+
+  /**
+   * Sort an Iterable based on each string's relevance.
+   */
+  public String[] relevanceSort(String pattern, Iterable<String> values) {
+    ArrayList<Float> relevances = new ArrayList<>();
+    values.forEach(value -> relevances.add(relevance(pattern, value)));
+    // decide on sorting algorithm
+    // sort
+  }
   
-  public float relevance(String search, String match) {
+  /**
+   * Relevance function
+   */
+  public float relevance(String pattern, String term) {
     // Ignore case
-    search = search.toLowerCase();
-    match = match.toLowerCase();
+    pattern = pattern.toLowerCase();
+    term = term.toLowerCase();
     
     // Optimisation
-    if (match.equals(search)) return 1f;
+    if (term.equals(pattern)) return 1f;
 
     /*
-    Search = the search term
-    Match = a string containing the search term
-    match.length() >= search.length()
+    Search = the pattern term
+    Match = a string containing the pattern term
+    term.length() >= pattern.length()
     Relevance = percentage of letters equal to the sequence in searchResult.
     */
     
     // Required variables
-    int searchLength = search.length();
-    int matchLength = match.length();
+    int searchLength = pattern.length();
+    int matchLength = term.length();
     
-    // If the match contains the search term, it is relevant, thus we give a positive score
-    if (match.contains(search)) return ((float) searchLength)/matchLength;
+    // If the term contains the pattern term, it is relevant, thus we give a full score
+    if (term.contains(pattern)) return ((float) searchLength)/matchLength;
     
-    // If the match does not contain the search term, but contains parts of it, we give a divided score
-    // The score is calculated by s_x/x*m where s is the search term length, x is the number of characters in the search term not matched,
-    //   and m is the match term length.
+    // If the term does not contain the pattern term, but contains parts of it, we give a divided score
+    // The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
+    //   and m is the term term length.
     
-    /* At this point match does not contain search */
+    /* At this point term does not contain pattern */
     for (int i = searchLength; i >= 2; i--) { // i is length of substring
       for (int j = 0; j+i <= searchLength; j++) {
-        String subSearch = search.substring(j, j+i);
-        if (match.contains(subSearch)) {
-          // found match, calculate relevance
+        String subSearch = pattern.substring(j, j+i);
+        if (term.contains(subSearch)) {
+          // found term, calculate relevance
           return ((float) i)/(searchLength-i)/matchLength;
         }
       }
     }
     
-    // if no match found, return 0f (search failed)
+    // if no term found, return 0f (pattern failed)
     return 0f;
   }
   
