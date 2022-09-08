@@ -2,11 +2,10 @@ package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.JsonManager;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.util.InputDialogSubmitText;
+import mikeshafter.iciwi.util.InputDialogAnvil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +14,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -29,61 +30,61 @@ public class CustomMachine {
   private final Owners owners = new Owners(plugin);
   private ItemStack[] items;
   private Component terminal;
-  private final Set<String> stationList = Fares.getAllStations();
+  private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
     InputDialogAnvil submitText = new InputDialogAnvil((Iciwi) plugin, player) {
   
-      // TODO: Remake this so that inventory contents are updated as the player types
+      @Override
+      public void onTextChanged() {
+  
+        // Clear the player's upper inventory
+        for (int i = 3; i < 30; i++) {
+          player.getInventory().setItem(i, null);
+        }
+  
+        // Get the string keyed in by the player
+        String text = super.getText();
+  
+        // Sort stations based on relevance
+        String[] stations = relevanceSort(text, stationList.toArray(String[]::new));
+  
+        // Place each station the player's inventory
+        if (stations != null) {
+          for (int i = 3; i < 30; i++) {
+            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(stations[i])));
+          }
+        }
+      }
+  
       @Override
       public void onOpen() {
         super.onOpen();
         this.setDescription(lang.getString("enter-text-description"));
-
+    
         // Save player's inventory
-        items = player.getInventory().getItems();
+        items = player.getInventory().getContents();
       }
   
       @Override
-      public void onTextChanged() {
-
-        // Clear the player's upper inventory
-        for (int i = 3; i < 30; i++) {
-          player.getInventory().setItem(i, new ItemStack());
-        }
-
-
-        // Get the string keyed in by the player
-        String text = super.getText();
-
-
-        // Sort stations based on relevance
-        String[] stations = relevanceSort(stationList);
-    
-
-        // Place each station the player's inventory
-        if (e != null) {
-          for (int i = 3; i < 30; i++) {
-            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(e.get(i))));
-          }
-        }
+      public void onClose() {
+        for (int i = 0; i < items.length; i++)
+          player.getInventory().setItem(i, items[i]);
       }
   
     };
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
   }
-
+  
   /**
    * Sort an Iterable based on each string's relevance.
    */
-  public String[] relevanceSort(String pattern, Iterable<String> values) {
-    ArrayList<Float> relevances = new ArrayList<>();
-    values.forEach(value -> relevances.add(relevance(pattern, value)));
-    // decide on sorting algorithm
-    // sort
+  public String[] relevanceSort(String pattern, String[] values) {
+    Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v1), relevance(pattern, v2)));
+    return values;
   }
   
   /**
