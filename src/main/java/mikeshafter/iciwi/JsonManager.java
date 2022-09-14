@@ -28,7 +28,7 @@ public class JsonManager {
       
       String content = contentBuilder.toString();
   
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
       return fares.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
       
     } catch (IOException|JsonSyntaxException e) {
@@ -50,7 +50,7 @@ public class JsonManager {
   
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
   
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
   
       JsonObject entryStationJson = fares.getAsJsonObject(entryStation);
   
@@ -78,7 +78,7 @@ public class JsonManager {
       
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
   
-      JsonObject fares = new JsonParser().parse(content).getAsJsonObject();
+      JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
       
       JsonObject stationJson = fares.getAsJsonObject(station);
       
