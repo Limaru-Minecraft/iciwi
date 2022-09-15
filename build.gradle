@@ -1,34 +1,33 @@
 plugins {
-    id 'java'
+  id 'java'
 }
 
 group 'org.mikeshafter'
-version '1.18.2r1'
+version '1.18.2r2'
 
 compileJava.options.encoding 'UTF-8'
 
 repositories {
-    maven {url 'https://papermc.io/repo/repository/maven-public/'}
-    maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
-    maven { url 'https://jitpack.io' }
-    mavenLocal()
-    mavenCentral() // This is needed for CraftBukkit and Spigot.
+  maven {url 'https://papermc.io/repo/repository/maven-public/'}
+  maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
+  maven { url 'https://jitpack.io' }
+  mavenLocal()
+  mavenCentral() // This is needed for CraftBukkit and Spigot.
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
 }
 
 dependencies {
-    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-  implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+  implementation 'org.junit.jupiter:junit-jupiter:5.9.0'
   compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
+  compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
 }
 
 test {
-    useJUnitPlatform()
+  useJUnitPlatform()
 }

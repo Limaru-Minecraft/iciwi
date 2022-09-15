@@ -29,7 +29,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
@@ -62,9 +61,9 @@ public class FareGateListener implements Listener {
       if (state instanceof Sign sign && data instanceof WallSign) {
   
         // Payment sign
-        if (ChatColor.stripColor(sign.line(0).toString()).contains(lang.getString("payment")) && isDouble(sign.line(1).toString())) {
+        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("payment")) && isDouble(sign.getLine(1))) {
     
-          double price = Double.parseDouble(sign.line(1).toString());
+          double price = Double.parseDouble(sign.getLine(1));
           ItemStack item = player.getInventory().getItemInMainHand();
     
           // Check for Iciwi card
@@ -72,9 +71,9 @@ public class FareGateListener implements Listener {
                   item.hasItemMeta() &&
                   item.getItemMeta() != null &&
                   item.getItemMeta().hasLore() &&
-                  item.getItemMeta().lore() != null &&
-                  Objects.requireNonNull(item.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
-            String serial = Objects.requireNonNull(item.getItemMeta().lore()).get(1).toString();
+                  item.getItemMeta().getLore() != null &&
+                  item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
+            String serial = item.getItemMeta().getLore().get(1);
       
             // Pay using Iciwi card
             Payment.pay(serial, player, price);

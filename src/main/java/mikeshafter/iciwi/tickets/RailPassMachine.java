@@ -14,7 +14,7 @@ public class RailPassMachine extends TicketMachine {
   
   @Override
   public void newTM_0() {
-    Inventory j = plugin.getServer().createInventory(null, 9, lang.getString("select-card-rail-pass"));
+    Inventory j = plugin.getServer().createInventory(null, 9, lang.getComponent("select-card-rail-pass"));
     player.openInventory(j);
   }
   
