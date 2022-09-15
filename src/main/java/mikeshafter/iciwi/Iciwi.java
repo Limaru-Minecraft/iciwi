@@ -233,7 +233,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   @Override
   public void onDisable() {
     records.save();
-    fares.save();
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
   
@@ -278,7 +277,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.TicketMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.CustomMachineListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignCreateListener(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
   

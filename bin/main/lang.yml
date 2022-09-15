@@ -41,7 +41,7 @@ new-ticket: '§1New Ticket - '
 clear: 'CLEAR'
 enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
-custom-machine-cancel: §aCancelled operation.
+generate-ticket-custom: '§aNew $s ticket from §e%from% to §e%to% generated.'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
 generate-ticket-global: '§aNew ticket for journeys costing up to §e£%1$.2f§a generated.'
 
@@ -68,22 +68,27 @@ remaining-value: 'Remaining value: '
 # Message when card is refunded.
 card-refunded: '§aRefunded card §e%1$s§a. Received §e£%2$.2f§a.'
 
-# === New card subpage ===
+# == New card subpage ==
 select-value: '§1Select value...'
 new-card-created: '§aNew Card Created! Deposit: §e£%1$.2f§a, Card Value: §e£%2$.2f§a'
 
-# === Top up card subpage ===
+# == Top up card subpage ==
 top-up: '§1Top Up - '
 card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
-# === Select card for rail pass subpage ===
+# == Select card for rail pass subpage ==
 select-card-rail-pass: '§2Select Card...'
 
-# === Rail passes subpage ===
+# == Rail passes subpage ==
 add-rail-pass: '§1Rail passes - '
 card-discounts: '§aRail passes'
 days: ' Day(s)'
 added-rail-pass: '§aAdded a rail pass giving free access to all stations owned by §e%1$s§a for §e%2$d§a days. Price: §e£%3$.2f§a.'
+
+# == Custom Ticket Machine ==
+enter-text-description: 'Key in the station name'
+select-station: 'Select station'
+select-class: 'Select class'
 
 # =====================================
 # These options control the fare gates.

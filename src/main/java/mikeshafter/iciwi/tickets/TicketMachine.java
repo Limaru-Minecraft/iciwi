@@ -20,8 +20,9 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
+import static mikeshafter.iciwi.util.MachineUtil.componentToString;
+import static mikeshafter.iciwi.util.MachineUtil.isDouble;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
@@ -188,11 +189,11 @@ public class TicketMachine {
   public void generateTicket(ItemStack item, double value) {
     // get current fare on the ticket
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
-      String lore0 = Objects.requireNonNull(item.getItemMeta().lore()).get(0).toString();
-      String lore1 = Objects.requireNonNull(item.getItemMeta().lore()).get(1).toString();
+      String lore0 = componentToString(Objects.requireNonNull(item.getItemMeta().lore()).get(0));
+      String lore1 = componentToString(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
       double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
       double parsedValue = value-val;
-      
+  
       if (Iciwi.economy.getBalance(player) >= parsedValue) {
         Iciwi.economy.withdrawPlayer(player, parsedValue);
         player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
@@ -200,14 +201,6 @@ public class TicketMachine {
         player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(lore0), Component.text(value)));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }
-  }
-  
-  private boolean isDouble(String s) {
-    final String Digits = "(\\p{Digit}+)";
-    final String HexDigits = "(\\p{XDigit}+)";
-    final String Exp = "[eE][+-]?"+Digits;
-    final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
-    return Pattern.matches(fpRegex, s);
   }
   
   public void generateTicket(double value) {

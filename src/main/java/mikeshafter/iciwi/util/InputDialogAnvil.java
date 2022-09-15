@@ -74,12 +74,29 @@ public class InputDialogAnvil {
     }
 
     /**
+     * Sets the description displayed to the user, explaining
+     * what this dialog is about.
+     *
+     * @param text description
+     */
+    public InputDialogAnvil setDescription(String text) {
+      if (text == null || text.isEmpty()) {
+        MIDDLE_BUTTON.setMaterial(null);
+      } else {
+        MIDDLE_BUTTON.setMaterial(Material.PAPER);
+        MIDDLE_BUTTON.setTitle(ChatColor.YELLOW + "About");
+        MIDDLE_BUTTON.setDescription(text);
+      }
+      return this;
+    }
+
+    /**
      * Gets the title to display for the window
      *
      * @return title
      */
     public ChatText getTitle() {
-        return null;
+      return null;
     }
 
     /**
