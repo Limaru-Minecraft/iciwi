@@ -5,10 +5,15 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.util.InputDialogAnvil;
+import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,7 +22,9 @@ import org.bukkit.plugin.Plugin;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
+
+import static mikeshafter.iciwi.util.MachineUtil.componentToString;
+import static mikeshafter.iciwi.util.MachineUtil.isDouble;
 
 
 public class CustomMachine {
@@ -29,22 +36,24 @@ public class CustomMachine {
   private final Fares fares = new Fares(plugin);
   private final Owners owners = new Owners(plugin);
   private ItemStack[] items;
+  private final Listener listener;
   private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
-    InputDialogAnvil submitText = new InputDialogAnvil((Iciwi) plugin, player) {
-  
+    this.listener = new EventListener();
+    var submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
+    
       @Override
       public void onTextChanged() {
-  
+      
         // Clear the player's upper inventory
         for (int i = 3; i < 30; i++) {
           player.getInventory().setItem(i, null);
         }
-  
+      
         // Get the string keyed in by the player
         String text = super.getText();
   
@@ -53,28 +62,41 @@ public class CustomMachine {
   
         // Place each station the player's inventory
         if (stations != null) {
-          for (int i = 3; i < 30; i++) {
-            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(stations[i])));
+          for (int i = 9; i < 36; i++) {
+            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(stations[i-9])));
           }
         }
       }
-  
+    
       @Override
       public void onOpen() {
         super.onOpen();
         this.setDescription(lang.getString("enter-text-description"));
-    
+      
         // Save player's inventory
         items = player.getInventory().getContents();
       }
-  
+    
+      @Override
+      public void onAccept(String text) {
+        onClose();
+      }
+    
+      @Override
+      public void onCancel() {
+        onClose();
+      }
+    
       @Override
       public void onClose() {
         for (int i = 0; i < items.length; i++)
           player.getInventory().setItem(i, items[i]);
       }
-  
     };
+  
+    // Start listening
+    Bukkit.getPluginManager().registerEvents(this.listener, plugin);
+  
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
   }
@@ -83,7 +105,7 @@ public class CustomMachine {
    * Sort an Iterable based on each string's relevance.
    */
   public String[] relevanceSort(String pattern, String[] values) {
-    Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v1), relevance(pattern, v2)));
+    Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
     return values;
   }
   
@@ -136,8 +158,10 @@ public class CustomMachine {
   }
   
   public void selectClass() {
+    // Create inventory and create items
     Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("select-class")));
-    fares.getFaresFromDestinations(station, terminal.toString()).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    fares.getFaresFromDestinations(station, componentToString(terminal)).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    player.openInventory(inventory);
   }
   
   public void generateTicket(ItemStack item) {  //TODO: Payment using Iciwi and bank cards
@@ -152,18 +176,17 @@ public class CustomMachine {
       Lore[2]: Class
      */
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
-      Component priceComponent = item.getItemMeta().displayName();
+      Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
       double price = 0d;
-      if (priceComponent != null && isDouble(priceComponent.toString()))
-        price = Double.parseDouble(priceComponent.toString());
-      Component fareClass = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
-      
+      if (priceComponent != null && isDouble(componentToString(priceComponent)))
+        price = Double.parseDouble(componentToString(priceComponent));
+      Component fareClass = item.getItemMeta().displayName();
+  
       if (Iciwi.economy.getBalance(player) >= price) {
         Iciwi.economy.withdrawPlayer(player, price);
         owners.deposit(owners.getOwner(station), price/2);
-        owners.deposit(owners.getOwner(terminal.toString()), price/2);
-        player.sendMessage(String.format(lang.getString("generate-ticket-custom"), fareClass.toString(), station, terminal));
-        player.getInventory().remove(item);
+        owners.deposit(owners.getOwner(componentToString(priceComponent)), price/2);
+        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), componentToString(fareClass), station, componentToString(terminal)));
         player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }
@@ -179,8 +202,30 @@ public class CustomMachine {
     return item;
   }
   
-  private boolean isDouble(String s) {
-    return Pattern.matches(("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|"+"(\\.(\\p{Digit}+)([eE][+-]?(\\p{Digit}+))?)|"+"(("+"(0[xX](\\p{XDigit}+)(\\.)?)|"+"(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))"+")[pP][+-]?(\\p{Digit}+)))"+"[fFdD]?))"+"[\\x00-\\x20]*"), s);
+  private class EventListener implements Listener {
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+      Inventory inventory = event.getClickedInventory();
+      ItemStack item = event.getCurrentItem();
+      if (inventory == null) return;
+      
+      if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
+        Component itemName = item.getItemMeta().displayName();
+        Component inventoryName = event.getView().title();
+        
+        if (inventoryName.equals(Component.text(lang.getString("select-class")))) {
+          generateTicket(item);
+          inventory.close();
+          CommonUtil.unregisterListener(this);
+        } else {
+          inventory.close();
+          setTerminal(itemName);
+          selectClass();
+        }
+      }
+    }
+    
   }
   
 }

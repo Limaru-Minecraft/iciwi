@@ -20,17 +20,20 @@ public class JsonToYamlConverter {
   public static void main() {
     
     final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-    final File json = new File(plugin.getDataFolder(), "fares.json");
     File yamlF = new File(plugin.getDataFolder(), "fares.yml");
-    YamlConfiguration yaml = new YamlConfiguration();
+    final File json = new File(plugin.getDataFolder(), "fares.json");
     
     try {
+      Scanner yamlScanner = new Scanner(yamlF);
+      if (yamlScanner.hasNext()) return; // don't process if yamlF already has data
+  
+      YamlConfiguration yaml = new YamlConfiguration();
       yaml.load(yamlF);
       Scanner jsonScanner = new Scanner(json);
       StringBuilder contentBuilder = new StringBuilder();
       while (jsonScanner.hasNextLine()) contentBuilder.append(jsonScanner.nextLine());
       jsonScanner.close();
-      
+  
       String content = contentBuilder.toString();//.replaceAll(", ", "").replaceAll("[\\[\\]]", "");
       JsonObject fares = JsonParser.parseString(content).getAsJsonObject();
       ArrayList<String> stations = fares.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toCollection(ArrayList::new));
