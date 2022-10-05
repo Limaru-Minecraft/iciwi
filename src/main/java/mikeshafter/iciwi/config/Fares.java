@@ -14,6 +14,10 @@ public class Fares extends CustomConfig {
   public Fares(org.bukkit.plugin.Plugin plugin) {
     super("fares.yml", plugin);
   }
+
+  public Fares () {
+    super("fares.yml");
+  }
   
   public Set<String> getAllStations() {
     return this.get().getKeys(false);
