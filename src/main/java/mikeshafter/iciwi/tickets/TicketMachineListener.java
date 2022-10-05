@@ -269,7 +269,7 @@ public class TicketMachineListener implements Listener {
         if (itemName.equals(lang.getString("card-discounts"))) {
           event.setCancelled(true);
           // Return a menu
-          List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
+          List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
               .sorted(Map.Entry.comparingByValue())
               .map(entry -> Component.text().content(
                       "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
@@ -297,7 +297,7 @@ public class TicketMachineListener implements Listener {
             Iciwi.economy.withdrawPlayer(player, price);
             long expiry = days*86400+Instant.now().getEpochSecond();
             player.sendMessage(String.format(lang.getString("menu-rail-pass"), this.operator, days, price));
-            if (cardSql.getDiscountedOperators(serial).containsKey(operator))
+            if (cardSql.getAllDiscounts(serial).containsKey(operator))
               cardSql.renewDiscount(serial, operator, days*86400);
             else cardSql.setDiscount(serial, operator, expiry);
             owners.deposit(operator, price);

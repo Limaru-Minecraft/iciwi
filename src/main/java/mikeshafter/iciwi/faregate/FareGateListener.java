@@ -172,7 +172,7 @@ public class FareGateListener implements Listener {
               double fare = JsonManager.getFare(entryStation, station);
   
               // get rail pass discounts
-              Map<String, Long> discounts = cardSql.getDiscountedOperators(serial);
+              Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
               String entryStationOwner = owners.getOwner(entryStation);
               String exitStationOwner = owners.getOwner(station);
   
@@ -309,7 +309,7 @@ public class FareGateListener implements Listener {
         if (item.getType() == Material.NAME_TAG && meta != null && meta.hasLore() && meta.getLore() != null && meta.getLore().get(0).equals(lang.getString("serial-number"))) {
     
           String serial = meta.getLore().get(1);
-          Map<String, Long> discounts = cardSql.getDiscountedOperators(serial);
+          Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
     
           if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || discounts.containsKey(owners.getOwner(ChatColor.stripColor(sign.getLine(1)))))) {
             player.sendMessage(lang.getString("member-gate"));

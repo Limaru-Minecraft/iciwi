@@ -44,7 +44,7 @@ public class PlayerJoinAlerts implements Listener {
   
   public TextComponent textMenu(String serial) {
     // Return a menu
-    List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
+    List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
         .sorted(Map.Entry.comparingByValue())
         .map(entry -> Component.text().content(
                 "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
