@@ -95,20 +95,20 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     
     // Add Discount
     else if (command.getName().equalsIgnoreCase("newdiscount")) {
-      // newdiscount <serial> <operator> <days before expiry>
+      // newdiscount <serial> <name>
       if (args.length == 3) {
-        double price = owners.getRailPassPrice(args[1], Long.parseLong(args[2]));
+        double price = owners.getRailPassPrice(args[1]);
         if (sender instanceof Player && !sender.hasPermission("iciwi.newdiscount")) {
           economy.withdrawPlayer((Player) sender, price);
         }
         long expiry = Long.parseLong(args[2])*86400+Instant.now().getEpochSecond();
         CardSql cardSql = new CardSql();
-        if (cardSql.getDiscountedOperators(args[0]).containsKey(args[1]))
-          cardSql.renewDiscount(args[0], args[1], Long.parseLong(args[2])*86400);
-        else cardSql.setDiscount(args[0], args[1], expiry);
-        
+//        if (cardSql.getDiscountedOperators(args[0]).containsKey(args[1]))
+//          cardSql.renewDiscount(args[0], args[1], Long.parseLong(args[2])*86400);
+//        else cardSql.setDiscount(args[0], args[1], expiry);
+  
         sender.sendMessage(String.format(lang.getString("added-rail-pass"), args[1], args[2], price));
-        
+  
         return true;
       }
     }

@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.mikeshafter'
-version '1.18.2r2'
+version '1.18.2r3'
 
 compileJava.options.encoding 'UTF-8'
 
