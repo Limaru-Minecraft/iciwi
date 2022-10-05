@@ -10,18 +10,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="Write JsonToYamlConverter.java">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachineListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachineListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignCreateListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachineListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/JsonToYamlConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/JsonToYamlConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/fares.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/lang.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/CardSql.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGate.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGateBlock.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/GateCreateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/GateType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/Payment.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/Iciwi.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/JsonManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/PlayerJoinAlerts.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/CustomConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Fares.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Lang.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Owners.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Records.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/GlobalTicketMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/RailPassMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/RailPassMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/SignCreateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/TicketMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/TicketMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$Button.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$EventListenerBase.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$EventListenerFull.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogSubmitText.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/JsonToYamlConverter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/owners.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/plugin.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/records.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +97,7 @@
               <list>
                 <branch-info repo="$PROJECT_DIR$" source="BetterMath" />
                 <branch-info repo="$PROJECT_DIR$" source="Discounts" />
+                <branch-info repo="$PROJECT_DIR$" source="translation-and-refactoring" />
               </list>
             </value>
           </entry>
@@ -95,7 +119,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="translation-and-refactoring" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -224,6 +248,27 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="CustomMachineTest.testRelevance" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;mikeshafter.iciwi.Tickets.CustomMachineTest.testRelevance&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="RunPaper" type="JarApplication">
       <option name="JAR_PATH" value="$PROJECT_DIR$/debug/spigot/server.jar" />
       <option name="PROGRAM_PARAMETERS" value="nogui" />
@@ -259,7 +304,13 @@
       <item itemvalue="JAR Application.RunPaper" />
       <item itemvalue="JAR Application.RunSpigot" />
       <item itemvalue="Remote JVM Debug.RemoteSpigot" />
+      <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
