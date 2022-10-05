@@ -1,6 +1,8 @@
 package mikeshafter.iciwi.config;
 
-import java.util.Objects;
+import mikeshafter.iciwi.util.RailPassInfo;
+
+import java.util.HashSet;
 import java.util.Set;
 
 public class Owners extends CustomConfig {
@@ -26,12 +28,38 @@ public class Owners extends CustomConfig {
     super.save();
   }
   
-  public double getRailPassPrice(String operator, long days) {
-    return super.getDouble("RailPassPrices."+operator+"."+days);
+  public void setRailPassInfo(String name, RailPassInfo info) {
+    super.set("RailPassPrices."+name, info);
+    super.save();
   }
   
-  public Set<String> getRailPassDays(String operator) {
-    return Objects.requireNonNull(super.get().getConfigurationSection("RailPassPrices."+operator)).getKeys(false);
+  public long getRailPassDuration(String name) {
+    return getRailPassInfo(name).duration;
+  }
+  
+  public RailPassInfo getRailPassInfo(String name) {
+    return (RailPassInfo) super.get("RailPassPrices."+name);
+  }
+  
+  public double getRailPassPercentage(String name) {
+    return getRailPassInfo(name).percentage;
+  }
+  
+  public double getRailPassPrice(String name) {
+    return getRailPassInfo(name).price;
+  }
+  
+  public String getRailPassOperator(String name) {
+    return getRailPassInfo(name).operator;
+  }
+  
+  @Deprecated
+  public Set<String> getRailPassNames(String operator) {
+    Set<String> returnSet = new HashSet<String>();
+    // Loop through all names in RailPasses
+    // Check if the name has the given operator
+    // If it has, add it to returnSet
+    return returnSet;
   }
   
   public double getCoffers(String operator) {

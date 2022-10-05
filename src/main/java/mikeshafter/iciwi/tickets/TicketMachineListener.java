@@ -274,7 +274,7 @@ public class TicketMachineListener implements Listener {
               .map(entry -> Component.text().content(
                       "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
                   .append(Component.text().content("\u00a76 | Extend \u00a7a"))
-                  .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
+                  .append(owners.getRailPassNames(entry.getKey()).stream().map(name -> Component.text().content("["+name+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), name)+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+name))).toList())
                   .build()).toList();
   
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
@@ -287,13 +287,13 @@ public class TicketMachineListener implements Listener {
   
         // Buy new rail pass
         else {
-          long days = Long.parseLong(itemName.replaceAll("[^\\d.]", ""));
-          double price = owners.getRailPassPrice(this.operator, days);
-    
+          String name = itemName.replaceAll("[^\\d.]", "");
+          double price = owners.getRailPassPrice(this.operator, name);
+  
           if (Iciwi.economy.getBalance(player) >= price) {
-      
+    
             player.closeInventory();
-      
+    
             Iciwi.economy.withdrawPlayer(player, price);
             long expiry = days*86400+Instant.now().getEpochSecond();
             player.sendMessage(String.format(lang.getString("menu-rail-pass"), this.operator, days, price));
