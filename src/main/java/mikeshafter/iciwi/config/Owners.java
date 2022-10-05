@@ -10,6 +10,10 @@ public class Owners extends CustomConfig {
   public Owners(org.bukkit.plugin.Plugin plugin) {
     super("owners.yml", plugin);
   }
+
+  public Owners() {
+    super("owners.yml");
+  }
   
   public String getOwner(String station) {
     return super.getString("Operators."+station);

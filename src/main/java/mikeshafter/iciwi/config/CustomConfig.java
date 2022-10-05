@@ -14,6 +14,10 @@ public class CustomConfig {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final String name;
 
+  public CustomConfig(String name) {
+    this(name, Iciwi.getPlugin(Iciwi.class));
+  }
+
   public CustomConfig(String name, Plugin plugin) {
     this.name = name;
     file = new File(plugin.getDataFolder(), name);
