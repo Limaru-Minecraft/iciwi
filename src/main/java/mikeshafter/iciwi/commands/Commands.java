@@ -17,10 +17,10 @@ import java.util.*;
 public class Commands implements TabExecutor {
   
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  public Lang lang;
-  public Records records;
-  public Fares fares;
-  private final HashMap<Player, Queue<Integer>> statMap = new HashMap<>();
+  private final Lang lang = new Lang();
+  private final Records records = new Records();
+  private final Fares fares = new Fares();
+  private final Owners owners = new Owners();
   
   @Override
   public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -44,7 +44,7 @@ public class Commands implements TabExecutor {
             case 2 :
               return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));break;
             case 3:
-              if (fares.getFare(args[2], args[3] > 0)){sender.sendMessage(fares.getFare(args[1], args[2]));
+              if (fares.getFare(args[2], args[3] > 0d)){sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
               return new CommandReturnValues(true, List.copyOf(fares.getClasses(args[1], args[2])));
               break;}
               else {return new CommandReturnValues(false, List.copyOf(fares.getClasses(args[1], args[2])));break;}
@@ -83,6 +83,7 @@ public class Commands implements TabExecutor {
           fares.reload();
           lang.reload();
           owners.reload();
+          break;
     
     // Coffers
         case "coffers":
