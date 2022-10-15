@@ -11,10 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 
 public class Commands implements TabExecutor {
@@ -37,32 +34,88 @@ public class Commands implements TabExecutor {
     // initial method
     if (length == 0) {
       return new CommandReturnValues(false, Arrays.asList("checkfare", "farechart", "getticket", "railpass", "redeemcard", "reload", "coffers"));
-    }
-    
+    } else {
+
+      switch (args[1]) {
     // Check Fare
-    
+        case "checkfare":
+          switch (length) {
+            case 1 -> return new CommandReturnValues(false, fares.getAllStations().toList());
+            case 2 -> return new CommandReturnValues(false, fares.getAllStations().toList());
+            case 3:
+              if (fares.getFare(args[2], args[3] > 0)){sender.sendMessage(fares.getFare(args[1], args[2]));
+              return new CommandReturnValues(true, fares.getClasses(args[1], args[2]));
+              break;}
+              else {return new CommandReturnValues(false, fares.getClasses(args[1], args[2]).toList();break;}
+            case 4:
+              if (execute) sender.sendMessage(fares.getFare(args[1], args[2], args[3]));
+              return new CommandReturnValues(true, null);
+              break;
+          }
+          break;
     
     // Fare chart
-    
+        case "farechart":
+          switch (length) {
+            case 1 -> return new CommandReturnValues(false, fares.getAllStations().toList());
+            //TODO: Copy from Github branch
+          }
+          break;
     
     // Get ticket
-    
+        case "getticket":
+          break;
     
     // Rail Pass
-    
+    case "railpass":
+          break;
     
     // Redeem Card
-    
+    case "redeemcard":
+          break;
     
     // Reload Config
-    
+        case "reload":
+          plugin.getConfig.reload();
+          fares.reload();
+          lang.reload();
+          owners.reload();
     
     // Coffers
-    
-    
-    // Odometer - Deprecated
-    
-    
+        case "coffers":
+          if (length == 1) {
+            return sender instanceof Player ? new CommandReturnValues(Arrays.asList("empty", "view")) : new CommandReturnValues(Collections.singletonList("view"));
+          }
+            
+          else if (length == 2 && args[2].equals("empty") && sender instanceof Player player) {
+            // Get the companies the player owns
+            List<String> companies = owners.getOwnedCompanies(player.getName());
+            if (execute) {
+              for (String company : companies) {
+                double coffer = owners.getCoffers(company);
+                sender.sendMessage(String.format("Received $%.2f from %s", coffer, company));
+                plugin.economy.depositPlayer(player, coffer);
+                owners.setCoffers(company, 0d);
+              }
+            }
+            return new CommandReturnValues(true, companies);
+          }
+
+          else if (length == 3 && args[2].equals("empty") && sender instanceof Player player) {
+            if (execute && owners.getOwnership(player.getName(), args[3])) {
+              plugin.economy.depositPlayer(player, owners.getCoffers(company);
+              owners.setCoffers(company, 0d);
+              return new CommandReturnValues(true);
+            }
+          }
+
+          else if (length == 2 && args[2].equals("view")) {
+            //TODO
+          }
+          break;
+          
+      }
+    }
     return new CommandReturnValues();
   }
   
@@ -77,5 +130,13 @@ public class Commands implements TabExecutor {
 record CommandReturnValues(boolean execute, List<String> tabComplete) {
   public CommandReturnValues() {
     this(false, null);
+  }
+
+  public CommandReturnValues(boolean execute) {
+    this(execute, null);
+  }
+
+  public CommandReturnValues(List<String> tabComplete) {
+    this(false, tabComplete);
   }
 }
