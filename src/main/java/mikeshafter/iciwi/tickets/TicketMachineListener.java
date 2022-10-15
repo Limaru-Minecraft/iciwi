@@ -209,7 +209,7 @@ public class TicketMachineListener implements Listener {
                   Iciwi.economy.depositPlayer(player, deposit);
                   // remove card from the inventory and from the database
                   player.getInventory().remove(itemStack);
-                  cardSql.delCard(serial);
+                  cardSql.deleteCard(serial);
                   // send message and break out of loop
                   player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue+deposit));
                   break;
@@ -272,9 +272,10 @@ public class TicketMachineListener implements Listener {
           List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
               .sorted(Map.Entry.comparingByValue())
               .map(entry -> Component.text().content(
+                      // Show expiry date
                       "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
-                  .append(Component.text().content("\u00a76 | Extend \u00a7a"))
-                  .append(owners.getRailPassNames(entry.getKey()).stream().map(name -> Component.text().content("["+name+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), name)+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+name))).toList())
+                  // Option to extend
+                  .append(Component.text().content("\u00a76 | Extend \u00a7a")).clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()))
                   .build()).toList();
   
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
@@ -288,20 +289,22 @@ public class TicketMachineListener implements Listener {
         // Buy new rail pass
         else {
           String name = itemName.replaceAll("[^\\d.]", "");
-          double price = owners.getRailPassPrice(this.operator, name);
+          double price = owners.getRailPassPrice(name);
   
           if (Iciwi.economy.getBalance(player) >= price) {
-    
+  
             player.closeInventory();
-    
+  
             Iciwi.economy.withdrawPlayer(player, price);
-            long expiry = days*86400+Instant.now().getEpochSecond();
-            player.sendMessage(String.format(lang.getString("menu-rail-pass"), this.operator, days, price));
-            if (cardSql.getAllDiscounts(serial).containsKey(operator))
-              cardSql.renewDiscount(serial, operator, days*86400);
-            else cardSql.setDiscount(serial, operator, expiry);
+            long duration = owners.getRailPassDuration(name);
+  
+            if (cardSql.getAllDiscounts(serial).containsKey(name))
+              cardSql.setDiscount(serial, name, cardSql.getStart(serial, name)+duration);
+            else
+              cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+  
             owners.deposit(operator, price);
-      
+  
           } else player.sendMessage(lang.getString("not-enough-money"));
         }
       }

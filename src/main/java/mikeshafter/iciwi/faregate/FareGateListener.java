@@ -2,7 +2,7 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
@@ -37,17 +37,18 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 public class FareGateListener implements Listener {
   private final Plugin plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
-  private final Lang lang = new Lang(plugin);
-  private final Records records = new Records(plugin);
-  private final Owners owners = new Owners(plugin);
+  private final Lang lang = new Lang();
+  private final Records records = new Records();
+  private final Owners owners = new Owners();
+  private final Fares fares = new Fares();
   private final LinkedList<FareGate> gates = new LinkedList<>();
   boolean canClick = true;
-
-
+  
+  
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && canClick) {
-    
+      
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
@@ -169,7 +170,7 @@ public class FareGateListener implements Listener {
   
               // get entry station and fare.
               String entryStation = records.getString("station."+serial);
-              double fare = JsonManager.getFare(entryStation, station);
+              double fare = fares.getFare(entryStation, station);
   
               // get rail pass discounts
               Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
@@ -179,7 +180,7 @@ public class FareGateListener implements Listener {
               // get transfer discount
               if (records.getBoolean("has-transfer."+serial)) {
                 String prevStation = records.getString("previous-station."+serial);
-                double noOsiFare = JsonManager.getFare(prevStation, station);
+                double noOsiFare = fares.getFare(prevStation, station);
                 if (noOsiFare > fare) {
                   fare = noOsiFare;
                 }
@@ -261,7 +262,7 @@ public class FareGateListener implements Listener {
               if (!entryStation.equals(lang.getString("global-ticket"))) {
     
                 // get fare
-                double fare = JsonManager.getFare(entryStation, station);
+                double fare = fares.getFare(entryStation, station);
                 String itemLore1 = meta.getLore().get(1);
     
                 // check if the station is the exit point, or if the fare works out

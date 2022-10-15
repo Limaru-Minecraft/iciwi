@@ -4,27 +4,16 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
-import mikeshafter.iciwi.tickets.GlobalTicketMachine;
-import mikeshafter.iciwi.tickets.TicketMachine;
 import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.HashMap;
+import java.util.Queue;
+import java.util.Set;
 
 
 public final class Iciwi extends JavaPlugin { 
@@ -77,26 +66,11 @@ public final class Iciwi extends JavaPlugin {
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-
-
+  
+  
     // === Set command executors ===
-    this.getCommand("checkfare").setExecutor(new mikeshafter.iciwi.commands.CheckFare());
-    this.getCommand("coffers").setExecutor(new mikeshafter.iciwi.commands.Coffers());
-    this.getCommand("farechart").setExecutor(new mikeshafter.iciwi.commands.FareChart());
-    this.getCommand("getticket").setExecutor(new mikeshafter.iciwi.commands.GetTicket());
-    this.getCommand("newdiscount").setExecutor(new mikeshafter.iciwi.commands.NewDiscount());
-    this.getCommand("odometer").setExecutor(new mikeshafter.iciwi.commands.Odometer());
-    this.getCommand("redeemcard").setExecutor(new mikeshafter.iciwi.commands.RedeemCard());
-    this.getCommand("reloadiciwi").setExecutor(new mikeshafter.iciwi.commands.ReloadIciwi());
-
-    this.getCommand("checkfare").setTabCompleter(new mikeshafter.iciwi.commands.CheckFare());
-    this.getCommand("coffers").setTabCompleter(new mikeshafter.iciwi.commands.Coffers());
-    this.getCommand("farechart").setTabCompleter(new mikeshafter.iciwi.commands.FareChart());
-    this.getCommand("getticket").setTabCompleter(new mikeshafter.iciwi.commands.GetTicket());
-    this.getCommand("newdiscount").setTabCompleter(new mikeshafter.iciwi.commands.NewDiscount());
-    this.getCommand("odometer").setTabCompleter(new mikeshafter.iciwi.commands.Odometer());
-    this.getCommand("redeemcard").setTabCompleter(new mikeshafter.iciwi.commands.RedeemCard());
-    this.getCommand("reloadiciwi").setTabCompleter(new mikeshafter.iciwi.commands.ReloadIciwi());
+    this.getCommand("iciwi").setExecutor(new mikeshafter.iciwi.commands.Commands());
+    this.getCommand("iciwi").setTabCompleter(new mikeshafter.iciwi.commands.Commands());
   
     // === Register events ===
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
