@@ -40,13 +40,13 @@ public class Commands implements TabExecutor {
     // Check Fare
         case "checkfare":
           switch (length) {
-            case 1 -> return new CommandReturnValues(false, fares.getAllStations().toList());
-            case 2 -> return new CommandReturnValues(false, fares.getAllStations().toList());
+            case 1 -> return new CommandReturnValues(false, List.copyOf(fares.getAllStations());
+            case 2 -> return new CommandReturnValues(false, List.copyOf(fares.getAllStations());
             case 3:
               if (fares.getFare(args[2], args[3] > 0)){sender.sendMessage(fares.getFare(args[1], args[2]));
-              return new CommandReturnValues(true, fares.getClasses(args[1], args[2]));
+              return new CommandReturnValues(true, List.copyOf(fares.getClasses(args[1], args[2])));
               break;}
-              else {return new CommandReturnValues(false, fares.getClasses(args[1], args[2]).toList();break;}
+              else {return new CommandReturnValues(false, List.copyOf(fares.getClasses(args[1], args[2])));break;}
             case 4:
               if (execute) sender.sendMessage(fares.getFare(args[1], args[2], args[3]));
               return new CommandReturnValues(true, null);
@@ -57,7 +57,7 @@ public class Commands implements TabExecutor {
     // Fare chart
         case "farechart":
           switch (length) {
-            case 1 -> return new CommandReturnValues(false, fares.getAllStations().toList());
+            case 1 -> return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));
             //TODO: Copy from Github branch
           }
           break;
@@ -103,7 +103,7 @@ public class Commands implements TabExecutor {
 
           else if (length == 3 && args[2].equals("empty") && sender instanceof Player player) {
             if (execute && owners.getOwnership(player.getName(), args[3])) {
-              plugin.economy.depositPlayer(player, owners.getCoffers(company);
+              plugin.economy.depositPlayer(player, owners.getCoffers(company));
               owners.setCoffers(company, 0d);
               return new CommandReturnValues(true);
             }
