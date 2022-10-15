@@ -4,6 +4,7 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.config.Owners;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -44,7 +45,7 @@ public class Commands implements TabExecutor {
             case 2 :
               return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));break;
             case 3:
-              if (fares.getFare(args[2], args[3] > 0d)){sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
+              if (fares.getFare(args[2], args[3]) > 0d){sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
               return new CommandReturnValues(true, List.copyOf(fares.getClasses(args[1], args[2])));
               break;}
               else {return new CommandReturnValues(false, List.copyOf(fares.getClasses(args[1], args[2])));break;}
