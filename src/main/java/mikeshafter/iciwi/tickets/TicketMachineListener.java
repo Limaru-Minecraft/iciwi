@@ -108,7 +108,8 @@ public class TicketMachineListener implements Listener {
         } else if (itemName.equals(lang.getString("menu-adjust-fares"))) machine.adjustFares_1();
         else if (itemName.equals(lang.getString("card-operations"))) machine.cardOperations_1();
         else if (itemName.equals(lang.getString("check-fares"))) {
-          machine.checkFares_1(1);
+          //machine.checkFares_1(1);
+          new CustomMachine(this.machine.player, this.machine.station);
           player.closeInventory();
         }
     

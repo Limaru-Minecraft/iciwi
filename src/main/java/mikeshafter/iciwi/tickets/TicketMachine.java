@@ -164,7 +164,7 @@ public class TicketMachine {
   }
   
   private @NotNull String checkFares(int page) {
-    return "/iciwi:farechart "+this.station+" "+page;
+    return "/iciwi:iciwi farechart "+this.station+" "+page;
   }
   
   public void railPass_3(String serial, String operator) {

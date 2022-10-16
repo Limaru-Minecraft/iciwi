@@ -8,42 +8,9 @@ depend:
 description: Iciwi plugin for Limaru
 prefix: Iciwi
 commands:
-  checkfare:
-    usage: /<command> <from> <to>
-    description: Checks fare
-    permission: iciwi.checkfare
-  farechart:
-    usage: /<command> <station> <page>
-    description: Generates fare chart
-    permission: iciwi.farechart
-  ticketmachine:
-    usage: /<command> <station>
-    description: Ticket machine.
-    permission: iciwi.ticketmachine
-  newdiscount:
-    usage: /<command> <serial> <operator> <days before expiry>
-    description: Adds a rail pass(discounts) onto existing cards
-    permission: iciwi.newdiscount
-  redeemcard:
-    usage: /<command> <number>. E.g. /redeemcard IA-12345
-    description: Redeems an existing card with the stated serial number.
-    permission: iciwi.redeemcard
-  getticket:
-    usage: /<command> <from> <to>
-    description: Gives you a ticket
-    permission: iciwi.getticket
-  reloadiciwi:
+  iciwi:
     usage: /<command>
-    description: Reloads owners.yml
-    permission: iciwi.reload
-  coffers:
-    usage: '/<command> <empty | view> [(if empty) company name ]'
-    description: Withdraws / view coffers
-    permission: iciwi.coffers
-  odometer:
-    usage: /<command> <start|stop|record>
-    description: Measures distances on tracks
-    permission: iciwi.odometer
+    description: Main Iciwi command
 permissions:
   iciwi.*:
     description: Gives access to all Iciwi commands

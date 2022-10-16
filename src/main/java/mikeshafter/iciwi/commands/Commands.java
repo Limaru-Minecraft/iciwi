@@ -5,16 +5,23 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.tickets.TicketMachine;
+import net.kyori.adventure.text.Component;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 public class Commands implements TabExecutor {
@@ -36,7 +43,7 @@ public class Commands implements TabExecutor {
     
     // initial method
     if (length == 0) {
-      return new CommandReturnValues(false, Arrays.asList("checkfare", "farechart", "getticket", "railpass", "redeemcard", "reload", "coffers"));
+      return new CommandReturnValues(false, Arrays.asList("checkfare", "farechart", "getticket", "railpass", "reload", "coffers"));
     } else {
   
       switch (args[0]) {
@@ -59,29 +66,41 @@ public class Commands implements TabExecutor {
               return new CommandReturnValues(true, null);
           }
           break;
-    
-    // Fare chart
+  
+        // todo Fare chart - deprecated, will replace with better menu
         case "farechart":
-          switch (length) {
-            case 1:
-              return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));
-            //TODO: Copy from Github branch
+          if (sender instanceof Player) {
+            try {
+              String station = args[1];
+              String page = args[2];
+              new TicketMachine((Player) sender, station).checkFares_1(Integer.parseInt(page));
+              return new CommandReturnValues(true);
+            } catch (NumberFormatException e) {
+              sender.sendMessage("Not a page!");
+              return new CommandReturnValues(true);
+            }
           }
-          break;
     
-    // Get ticket
+          // todo Get ticket
         case "getticket":
-          break;
+          if (sender instanceof Player) {
+            String from = args[1];
+            String to = args[2];
+            ItemStack item = new ItemStack(Material.PAPER, 1);
+            ItemMeta itemMeta = item.getItemMeta();
+            assert itemMeta != null;
+            itemMeta.displayName(lang.getComponent("train-ticket"));
+            itemMeta.lore(Arrays.asList(Component.text(from), Component.text(to)));
+            item.setItemMeta(itemMeta);
+            ((Player) sender).getInventory().addItem(item);
+            return new CommandReturnValues(true);
+          }
     
-    // Rail Pass
-    case "railpass":
+          // todo Rail Pass
+        case "railpass":
           break;
-    
-    // Redeem Card
-    case "redeemcard":
-          break;
-    
-    // Reload Config
+  
+        // Reload Config
         case "reload":
           plugin.reloadConfig();
           fares.reload();
@@ -112,7 +131,19 @@ public class Commands implements TabExecutor {
               return new CommandReturnValues(true);
             }
           } else if (length == 2 && args[2].equals("view")) {
-            //TODO
+            if (sender.hasPermission("iciwi.coffers.viewall")) {
+              sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
+              for (String company : Objects.requireNonNull(owners.getConfigurationSection("Coffers")).getKeys(false)) {
+                sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
+              }
+            } else {
+              Player player = (Player) sender;
+              sender.sendMessage("=== COFFERS OF YOUR COMPANIES ===");
+              for (String company : owners.getOwnedCompanies(player.getName())) {
+                sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
+              }
+            }
+            return new CommandReturnValues(true);
           }
           break;
           
