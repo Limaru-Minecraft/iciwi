@@ -3,8 +3,8 @@ package mikeshafter.iciwi.commands;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.config.Records;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -12,7 +12,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class Commands implements TabExecutor {
@@ -36,23 +38,25 @@ public class Commands implements TabExecutor {
     if (length == 0) {
       return new CommandReturnValues(false, Arrays.asList("checkfare", "farechart", "getticket", "railpass", "redeemcard", "reload", "coffers"));
     } else {
-
-      switch (args[1]) {
-    // Check Fare
+  
+      switch (args[0]) {
+        // Check Fare
         case "checkfare":
           switch (length) {
-            case 1 :
-            case 2 :
-              return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));break;
+            case 1:
+            case 2:
+              return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));
             case 3:
-              if (fares.getFare(args[2], args[3]) > 0d){sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
-              return new CommandReturnValues(true, List.copyOf(fares.getClasses(args[1], args[2])));
-              break;}
-              else {return new CommandReturnValues(false, List.copyOf(fares.getClasses(args[1], args[2])));break;}
+              if (fares.getFare(args[2], args[3]) > 0d) {
+                sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
+                return new CommandReturnValues(true, List.copyOf(fares.getClasses(args[1], args[2])));
+              } else {
+                return new CommandReturnValues(false, List.copyOf(fares.getClasses(args[1], args[2])));
+              }
             case 4:
-              if (execute) sender.sendMessage(fares.getFare(args[1], args[2], args[3]));
+              if (execute)
+                sender.sendMessage(args[3]+" fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2], args[3]));
               return new CommandReturnValues(true, null);
-              break;
           }
           break;
     
@@ -61,7 +65,6 @@ public class Commands implements TabExecutor {
           switch (length) {
             case 1:
               return new CommandReturnValues(false, List.copyOf(fares.getAllStations()));
-              break;
             //TODO: Copy from Github branch
           }
           break;
@@ -80,7 +83,7 @@ public class Commands implements TabExecutor {
     
     // Reload Config
         case "reload":
-          plugin.getConfig.reload();
+          plugin.reloadConfig();
           fares.reload();
           lang.reload();
           owners.reload();
@@ -90,31 +93,25 @@ public class Commands implements TabExecutor {
         case "coffers":
           if (length == 1) {
             return sender instanceof Player ? new CommandReturnValues(Arrays.asList("empty", "view")) : new CommandReturnValues(Collections.singletonList("view"));
-          }
-            
-          else if (length == 2 && args[2].equals("empty") && sender instanceof Player player) {
+          } else if (length == 2 && args[1].equals("empty") && sender instanceof Player player) {
             // Get the companies the player owns
             List<String> companies = owners.getOwnedCompanies(player.getName());
             if (execute) {
               for (String company : companies) {
                 double coffer = owners.getCoffers(company);
                 sender.sendMessage(String.format("Received $%.2f from %s", coffer, company));
-                plugin.economy.depositPlayer(player, coffer);
+                Iciwi.economy.depositPlayer(player, coffer);
                 owners.setCoffers(company, 0d);
               }
             }
             return new CommandReturnValues(true, companies);
-          }
-
-          else if (length == 3 && args[2].equals("empty") && sender instanceof Player player) {
+          } else if (length == 3 && args[1].equals("empty") && sender instanceof Player player) {
             if (execute && owners.getOwnership(player.getName(), args[3])) {
-              plugin.economy.depositPlayer(player, owners.getCoffers(company));
-              owners.setCoffers(company, 0d);
+              Iciwi.economy.depositPlayer(player, owners.getCoffers(args[2]));
+              owners.setCoffers(args[2], 0d);
               return new CommandReturnValues(true);
             }
-          }
-
-          else if (length == 2 && args[2].equals("view")) {
+          } else if (length == 2 && args[2].equals("view")) {
             //TODO
           }
           break;

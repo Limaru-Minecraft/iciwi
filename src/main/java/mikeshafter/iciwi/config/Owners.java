@@ -6,11 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Map;
+import java.util.*;
 
 
 public class Owners extends CustomConfig {
@@ -179,7 +175,7 @@ public class Owners extends CustomConfig {
   */
   public List<String> getOwnedCompanies(String player) {
     Map<String, Object> operatorMap = super.getConfigurationSection("Aliases").getValues(false);
-    return operatorMap.entrySet().stream().filter(entry -> player.equals((String) entry.getValue())).map(Map.Entry::getKey).toList();
+    return operatorMap.entrySet().stream().filter(entry -> player.equals(entry.getValue())).map(Map.Entry::getKey).toList();
   }
 
   /**
