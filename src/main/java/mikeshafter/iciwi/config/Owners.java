@@ -60,10 +60,11 @@ public class Owners extends CustomConfig {
    * @param duration   How long the rail pass lasts (in d:hh:mm:ss)
    * @param price      Price of the rail pass
    * @param percentage Percentage payable by the commuter when taking a train owned by said operator
+   *                   Creates a rail pass using a long Unix time as its duration.
    */
   public void setRailPassInfo(String name, String operator, long duration, double price, double percentage) {
     super.set("RailPassPrices."+name+"operator", operator);
-    super.set("RailPassPrices."+name+"duration", duration);
+    super.set("RailPassPrices."+name+"duration", timeToString(duration));
     super.set("RailPassPrices."+name+"price", price);
     super.set("RailPassPrices."+name+"percentage", percentage);
     super.save();
@@ -75,6 +76,7 @@ public class Owners extends CustomConfig {
    * @param duration   How long the rail pass lasts (in milliseconds)
    * @param price      Price of the rail pass
    * @param percentage Percentage payable by the commuter
+   *                   Creates a rail pass using a timestring as its duration.
    */
   public void setRailPassInfo(String name, String operator, String duration, double price, double percentage) {
     super.set("RailPassPrices."+name+"operator", operator);
@@ -118,7 +120,7 @@ public class Owners extends CustomConfig {
   /**
    * @param name Name of the rail pass
    * @return Price of the rail pass
-   * This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
+   *             This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public double getRailPassPrice(String name) {
     return super.getDouble("RailPassPrices."+name+"price");
@@ -127,7 +129,7 @@ public class Owners extends CustomConfig {
   /**
    * @param name Name of the rail pass
    * @return The operator who sells the rail pass
-   * This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
+   *             This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public String getRailPassOperator(String name) {
     return super.getString("RailPassPrices."+name+"operator");

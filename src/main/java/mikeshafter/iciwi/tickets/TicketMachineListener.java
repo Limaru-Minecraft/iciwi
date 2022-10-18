@@ -272,11 +272,11 @@ public class TicketMachineListener implements Listener {
           // Return a menu
           List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
               .sorted(Map.Entry.comparingByValue())
-              .map(entry -> Component.text().content(
+              .map(railPass -> Component.text().content(
                       // Show expiry date
-                      "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
+                      "\u00A76- \u00A7a"+railPass.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(railPass.getValue()*1000)))
                   // Option to extend
-                  .append(Component.text().content("\u00a76 | Extend \u00a7a")).clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()))
+                  .append(Component.text().content("\u00a76 | Extend \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+" "+railPass.getKey()))
                   .build()).toList();
   
           TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
@@ -300,8 +300,10 @@ public class TicketMachineListener implements Listener {
             long duration = owners.getRailPassDuration(name);
   
             if (cardSql.getAllDiscounts(serial).containsKey(name))
-              cardSql.setDiscount(serial, name, cardSql.getStart(serial, name)+duration);
+              // Extend by <duration>
+              cardSql.setDiscount(serial, name, cardSql.getExpiry(serial, name)+duration);
             else
+              // New rail pass
               cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
   
             owners.deposit(operator, price);
