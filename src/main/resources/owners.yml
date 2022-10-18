@@ -6,15 +6,32 @@ Aliases:
 
 # This section provides rail passes to give free travel for a certain duration to a player between a given operator's stations.
 # The format is in:
-# Company:
-#   No. of days: Price
-RailPassPrices:
-  ExampleOperator:
-    7: 30
-    30: 100
-  ExampleOperator1:
-    8: 35
-    30: 130
+# Name of rail pass:
+#   operator
+#   duration
+#   price
+#   fraction payable
+RailPasses:
+  '7 days half price':
+    operator: ExampleOperator
+    duration: '7:00:00:00'
+    price: 32.5
+    percentage: 0.5
+  '30 days free journeys':
+    operator: ExampleOperator
+    duration: '30:00:00:00'
+    price: 109.9
+    percentage: 0.0
+  '8 days free journeys':
+    operator: ExampleOperator1
+    duration: '8:00:00:00'
+    price: 32.5
+    percentage: 0.0
+  '35 days half price':
+    operator: ExampleOperator1
+    duration: '7:00:00:00'
+    price: 60.0
+    percentage: 0.5
 
 # This section assigns stations to companies. You will need to fill this up even if there is only 1 company on your server.
 # Stations not belonging to any company will belong to the "null" company.

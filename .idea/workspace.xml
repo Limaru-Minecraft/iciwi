@@ -10,18 +10,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d40a1cd5-a81d-42a8-8d83-c40eedc5f0ce" name="Default Changelist" comment="Write JsonToYamlConverter.java">
-      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachineListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachineListener.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignCreateListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachineListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachineListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/JsonToYamlConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/JsonToYamlConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/config.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/fares.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/lang.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/CardSql.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGate.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGateBlock.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/FareGateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/GateCreateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/GateType.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/FareGates/Payment.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/Iciwi.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/JsonManager.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/PlayerJoinAlerts.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/CustomConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Fares.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Lang.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Owners.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/config/Records.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/GlobalTicketMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/RailPassMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/RailPassMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/SignCreateListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/TicketMachine.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/TicketMachineListener.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$Button.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$EventListenerBase.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil$EventListenerFull.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogAnvil.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/InputDialogSubmitText.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/JsonToYamlConverter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/owners.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/plugin.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/main/records.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,6 +97,7 @@
               <list>
                 <branch-info repo="$PROJECT_DIR$" source="BetterMath" />
                 <branch-info repo="$PROJECT_DIR$" source="Discounts" />
+                <branch-info repo="$PROJECT_DIR$" source="translation-and-refactoring" />
               </list>
             </value>
           </entry>
@@ -95,7 +119,7 @@
     </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="translation-and-refactoring" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -153,10 +177,10 @@
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/libs" />
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2862069" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
   </component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
@@ -178,7 +202,6 @@
       <recent name="" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
-      <recent name="mikeshafter.iciwi.tickets" />
       <recent name="mikeshafter.iciwi.Tickets" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -224,6 +247,27 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="CustomMachineTest.testRelevance" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--tests &quot;mikeshafter.iciwi.Tickets.CustomMachineTest.testRelevance&quot;" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value=":test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
     <configuration name="RunPaper" type="JarApplication">
       <option name="JAR_PATH" value="$PROJECT_DIR$/debug/spigot/server.jar" />
       <option name="PROGRAM_PARAMETERS" value="nogui" />
@@ -256,10 +300,19 @@
     <list>
       <item itemvalue="Gradle.いきウィ build" />
       <item itemvalue="Gradle.いきウィ shadow" />
+      <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
       <item itemvalue="JAR Application.RunPaper" />
       <item itemvalue="JAR Application.RunSpigot" />
       <item itemvalue="Remote JVM Debug.RemoteSpigot" />
+      <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
     </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
+        <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
+        <item itemvalue="Gradle.CustomMachineTest.testRelevance" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -272,6 +325,34 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1591185449867</updated>
+    </task>
+    <task id="LOCAL-00018" summary="FINALLY FIXED THE LOG TABLE">
+      <created>1618702204318</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1618702204318</updated>
+    </task>
+    <task id="LOCAL-00019" summary="1.17-proofing gate code: now you can have a fare gate at 0,0,0 (but why tho)">
+      <created>1619320225898</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1619320225898</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Create StationOwners.java">
+      <created>1619583636748</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1619583636748</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Rewrote ticket barriers">
+      <created>1623393049087</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1623393049088</updated>
     </task>
     <task id="LOCAL-00022" summary="Use Gson instead of JsonSimple">
       <created>1624166348391</created>
@@ -588,35 +669,7 @@
       <option name="project" value="LOCAL" />
       <updated>1661392981680</updated>
     </task>
-    <task id="LOCAL-00067" summary="Add ticket generator for custom ticket machines">
-      <created>1661394892424</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1661394892424</updated>
-    </task>
-    <task id="LOCAL-00068" summary="e">
-      <created>1662628760153</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1662628760157</updated>
-    </task>
-    <task id="LOCAL-00069" summary="figure out relevanceSort">
-      <created>1662633595557</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1662633595557</updated>
-    </task>
-    <task id="LOCAL-00070" summary="Write JsonToYamlConverter.java">
-      <created>1663170906418</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1663170906418</updated>
-    </task>
-    <option name="localTasksCounter" value="71" />
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -624,17 +677,6 @@
   </component>
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
-  </component>
-  <component name="Vcs.Log.History.Properties">
-    <option name="COLUMN_ID_ORDER">
-      <list>
-        <option value="Default.Root" />
-        <option value="Default.Author" />
-        <option value="Default.Date" />
-        <option value="Default.Subject" />
-        <option value="Space.CommitStatus" />
-      </list>
-    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -654,6 +696,10 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="ya" />
+    <MESSAGE value="squashed bugs" />
+    <MESSAGE value="1.17.1a7" />
+    <MESSAGE value="fix lang bug?" />
     <MESSAGE value="[Member] sign for rail pass holders only (half of FedFox's request, the other half requires a complete rework of the rail pass system)" />
     <MESSAGE value="implement fare charts" />
     <MESSAGE value="add rail pass expiry checker, not tested" />
@@ -674,12 +720,8 @@
     <MESSAGE value="CustomMachine code with InputDialogSubmitText" />
     <MESSAGE value="Custom ticket machine half-done, not tested yet" />
     <MESSAGE value="Fix imports" />
-    <MESSAGE value="Add ticket generator for custom ticket machines" />
-    <MESSAGE value="Use PaperMC's Components instead of Strings [tickets]" />
-    <MESSAGE value="e" />
-    <MESSAGE value="figure out relevanceSort" />
-    <MESSAGE value="Write JsonToYamlConverter.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Write JsonToYamlConverter.java" />
+    <MESSAGE value="idk" />
+    <option name="LAST_COMMIT_MESSAGE" value="idk" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

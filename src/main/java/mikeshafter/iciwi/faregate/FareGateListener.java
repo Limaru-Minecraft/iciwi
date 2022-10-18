@@ -67,6 +67,7 @@ public class FareGateListener implements Listener {
           ItemStack item = player.getInventory().getItemInMainHand();
     
           // Check for Iciwi card
+          // TODO: Other payment methods
           if (item.getType() == Material.NAME_TAG &&
                   item.hasItemMeta() &&
                   item.getItemMeta() != null &&
@@ -116,7 +117,7 @@ public class FareGateListener implements Listener {
         Card            |     Y Y
         • in Lore?      | Y N
         Card in config? |     Y N
-        ==========================
+        ===========================
         Entry           |   x   x
         Exit            | x   x
          */
@@ -195,6 +196,7 @@ public class FareGateListener implements Listener {
               owners.deposit(exitStationOwner, fare/2);
   
               // set remaining value and config
+              // TODO: other payment methods
               cardSql.subtractValueFromCard(serial, fare);
               double value = cardSql.getCardValue(serial);
               player.sendMessage(String.format(lang.getString("remaining"), value));

@@ -1,8 +1,9 @@
 /target/
 /.idea/
-.idea/workspace.xml
+/.settings/
 build
 .gradle
 .DS_Store
 Iciwi.java
 /libs/
+/bin/

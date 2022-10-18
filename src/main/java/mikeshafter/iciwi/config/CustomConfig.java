@@ -59,6 +59,10 @@ public class CustomConfig {
     return config;
   }
   
+  public Object get(String path) {
+    return this.config.get(path);
+  }
+  
   public String getString(String path) {
     return this.config.getString(path);
   }
