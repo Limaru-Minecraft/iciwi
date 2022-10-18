@@ -9,17 +9,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static mikeshafter.iciwi.util.MachineUtil.componentToString;
 import static mikeshafter.iciwi.util.MachineUtil.isDouble;
@@ -28,12 +29,12 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class TicketMachine {
   
-  protected final Plugin plugin = getPlugin(Iciwi.class);
-  protected final String station;
-  protected final Player player;
-  protected final CardSql cardSql = new CardSql();
-  protected final Owners owners = new Owners(plugin);
-  protected final Lang lang = new Lang(plugin);
+  private final Iciwi plugin = getPlugin(Iciwi.class);
+  private final String station;
+  private final Player player;
+  private final CardSql cardSql = new CardSql();
+  private final Owners owners = new Owners(plugin);
+  private final Lang lang = new Lang(plugin);
   
   public TicketMachine(Player player, String station) {
     this.player = player;
@@ -174,11 +175,13 @@ public class TicketMachine {
     i.addItem(makeItem(Material.NAME_TAG, lang.getComponent("card-discounts")));
     
     // Rail pass sales
+    /*
     Set<String> daysSet = owners.getRailPassDays(operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Long.parseLong(days));
       i.addItem(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(days).append(lang.getComponent("days")).color(TextColor.color(0, 255, 0)), Component.text(price)));
     }
+     */
     player.openInventory(i);
   }
   
