@@ -28,12 +28,12 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class TicketMachine {
   
-  protected final Plugin plugin = getPlugin(Iciwi.class);
-  protected final String station;
-  protected final Player player;
-  protected final CardSql cardSql = new CardSql();
-  protected final Owners owners = new Owners(plugin);
-  protected final Lang lang = new Lang(plugin);
+  private final Plugin plugin = getPlugin(Iciwi.class);
+  private final String station;
+  private final Player player;
+  private final CardSql cardSql = new CardSql();
+  private final Owners owners = new Owners(plugin);
+  private final Lang lang = new Lang(plugin);
   
   public TicketMachine(Player player, String station) {
     this.player = player;

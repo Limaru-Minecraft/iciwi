@@ -5,7 +5,6 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.config.Records;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -29,7 +28,6 @@ public class Commands implements TabExecutor {
   
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang();
-  private final Records records = new Records();
   private final Fares fares = new Fares();
   private final Owners owners = new Owners();
   
@@ -50,78 +48,77 @@ public class Commands implements TabExecutor {
       switch (args[0]) {
         // Check Fare
         case "checkfare":
-          switch (length) {
-            case 1:
-            case 2:
-              return new CmdRntVal(false, List.copyOf(fares.getAllStations()));
-            case 3:
-              if (execute && fares.getFare(args[1], args[2]) > 0d) {
-                sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
-                return new CmdRntVal(true);
-              } else {
-                return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
-              }
-            case 4:
-              if (execute)
-                sender.sendMessage(args[3]+" fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2], args[3]));
+          if (length == 1 || length == 2) {
+            return new CmdRntVal(false, List.copyOf(fares.getAllStations()));
+          } else if (length == 3) {
+            if (execute && fares.getFare(args[1], args[2]) > 0d) {
+              sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
               return new CmdRntVal(true);
+            } else {
+              return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
+            }
+          } else if (length == 4) {
+            if (execute) {
+              sender.sendMessage(args[3]+" fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2], args[3]));
+              return new CmdRntVal(true);
+            } else {
+              return new CmdRntVal(false);
+            }
           }
           break;
-        
+  
         // Get ticket
         case "getticket":
-          switch (length) {
-            case 1:
-            case 2:
-              return new CmdRntVal(List.copyOf(fares.getAllStations()));
-            case 3:
-              if (execute && sender instanceof Player) {
-                ItemStack item = new ItemStack(Material.PAPER, 1);
-                ItemMeta itemMeta = item.getItemMeta();
-                assert itemMeta != null;
-                itemMeta.displayName(lang.getComponent("train-ticket"));
-                itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2])));
-                item.setItemMeta(itemMeta);
-                ((Player) sender).getInventory().addItem(item);
-                return new CmdRntVal(true);
-              } else {
-                return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
-              }
-            case 4:
-              if (execute && sender instanceof Player) {
-                ItemStack item = new ItemStack(Material.PAPER, 1);
-                ItemMeta itemMeta = item.getItemMeta();
-                assert itemMeta != null;
-                itemMeta.displayName(lang.getComponent("train-ticket"));
-                itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2]), Component.text(args[3])));
-                item.setItemMeta(itemMeta);
-                ((Player) sender).getInventory().addItem(item);
-                return new CmdRntVal(true);
-              }
+          if (length == 1 || length == 2) {
+            return new CmdRntVal(List.copyOf(fares.getAllStations()));
+          } else if (length == 3) {
+            if (execute && sender instanceof Player) {
+              ItemStack item = new ItemStack(Material.PAPER, 1);
+              ItemMeta itemMeta = item.getItemMeta();
+              assert itemMeta != null;
+              itemMeta.displayName(lang.getComponent("train-ticket"));
+              itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2])));
+              item.setItemMeta(itemMeta);
+              ((Player) sender).getInventory().addItem(item);
+              return new CmdRntVal(true);
+            } else {
+              return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
+            }
+          } else if (length == 4) {
+            if (execute && sender instanceof Player) {
+              ItemStack item = new ItemStack(Material.PAPER, 1);
+              ItemMeta itemMeta = item.getItemMeta();
+              assert itemMeta != null;
+              itemMeta.displayName(lang.getComponent("train-ticket"));
+              itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2]), Component.text(args[3])));
+              item.setItemMeta(itemMeta);
+              ((Player) sender).getInventory().addItem(item);
+              return new CmdRntVal(true);
+            } else {
+              return new CmdRntVal();
+            }
           }
           break;
-        
-        // todo Rail Pass
+  
+        // Rail Pass
         case "railpass":
           // iciwi railpass <serial> <railpassname>
-          switch (length) {
-            case 1:
-              return new CmdRntVal();  //Iciwi cards' serials should not be listed
-            case 2:
-              return new CmdRntVal(owners.getConfigurationSection("RailPasses").getKeys(false).stream().toList());
-            case 3:
-              if (execute) {
-                CardSql cardSql = new CardSql();
-                if (cardSql.getAllDiscounts(args[0]).containsKey(args[1]))
-                  // Extend by <duration>
-                  cardSql.setDiscount(args[0], args[1], cardSql.getExpiry(args[0], args[1])+owners.getRailPassDuration(args[1]));
-                else
-                  // New rail pass
-                  cardSql.setDiscount(args[0], args[1], Instant.now().getEpochSecond());
-              }
+          if (length == 1) {
+            return new CmdRntVal();  //Iciwi cards' serials should not be listed
+          } else if (length == 2) {
+            return new CmdRntVal(owners.getConfigurationSection("RailPasses").getKeys(false).stream().toList());
+          } else if (length == 3 && execute) {
+            CardSql cardSql = new CardSql();
+            if (cardSql.getAllDiscounts(args[0]).containsKey(args[1]))
+              // Extend by <duration>
+              cardSql.setDiscount(args[0], args[1], cardSql.getExpiry(args[0], args[1])+owners.getRailPassDuration(args[1]));
+            else
+              // New rail pass
+              cardSql.setDiscount(args[0], args[1], Instant.now().getEpochSecond());
           }
-          
-          // Reload Config
+          break;
+  
+        // Reload Config
         case "reload":
           if (execute) {
             plugin.reloadConfig();
@@ -131,6 +128,7 @@ public class Commands implements TabExecutor {
             sender.sendMessage("Reloaded iciwi!");
             return new CmdRntVal(true);
           }
+          break;
           
           // Coffers
         case "coffers":
