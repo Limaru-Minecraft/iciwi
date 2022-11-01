@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.config;
 
 import mikeshafter.iciwi.Iciwi;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -81,6 +82,10 @@ public class CustomConfig {
   
   public long getLong(String path) {
     return this.config.getLong(path);
+  }
+  
+  public ConfigurationSection getConfigurationSection(String path) {
+    return this.config.getConfigurationSection(path);
   }
   
   public void set(String path, Object value) {

@@ -4,10 +4,8 @@ import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+
 
 public class CardSql {
   
@@ -25,12 +23,15 @@ public class CardSql {
     }
     return conn;
   }
-
+  
+  /**
+   * Initialise SQL tables
+   */
   public void initTables() {
     // SQLite connection string
     // "jdbc:sqlite:IciwiCards.db"
     String url = plugin.getConfig().getString("database");
-  
+    
     // SQL statement for creating a new table
     LinkedList<String> sql = new LinkedList<>();
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial TEXT, value TEXT, PRIMARY KEY (serial) ); ");
@@ -48,7 +49,6 @@ public class CardSql {
   
   /**
    * Creates a new Iciwi card
-   *
    * @param serial Serial number
    * @param value  Starting value of the card
    */
@@ -66,10 +66,9 @@ public class CardSql {
   
   /**
    * Deletes an existing Iciwi card
-   *
    * @param serial Serial number
    */
-  public void delCard(String serial) {
+  public void deleteCard(String serial) {
     String sql = "DELETE FROM cards WHERE serial = ? ;";
     
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -80,24 +79,13 @@ public class CardSql {
     }
   }
   
-  /**
-   * Sets a rail pass for a certain card and operator
-   *
-   * @param serial Serial number
-   * @param name   Name of the discount (include operator)
-   * @param start  Start time of the discount
-   */
-  @Deprecated
-  public void renewDiscount(String serial, String name, long start) {
-    setDiscount(serial, name, start);
-  }
   
   /**
    * Sets a rail pass for a certain card and operator
    *
    * @param serial Serial number
-   * @param name   Name of the discount (include operator)
-   * @param start  Start time of the discount
+   * @param name   Name of the rail pass
+   * @param start  Start time of the rail pass, as a long
    */
   public void setDiscount(String serial, String name, long start) {
     String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
@@ -111,10 +99,11 @@ public class CardSql {
     }
   }
   
+  
   /**
    * Gets all the rail passes of a card
-   *
    * @param serial Serial number
+   * @return Map in the format String name, Long start.
    */
   public Map<String, Long> getAllDiscounts(String serial) {
     String sql = "SELECT name, start FROM discounts WHERE serial = ?";
@@ -124,7 +113,6 @@ public class CardSql {
       ResultSet rs = statement.executeQuery();
       
       while (rs.next()) {
-        assert false;
         String name = rs.getString(1);
         // Check if expired
         long expiry = getExpiry(serial, name);
@@ -148,6 +136,7 @@ public class CardSql {
     return returnValue;
   }
   
+  
   /**
    * Gets the expiry time of a certain railpass belonging to a card
    *
@@ -168,7 +157,7 @@ public class CardSql {
       String sql1 = "SELECT duration FROM railpasses WHERE name = ?";
       final PreparedStatement statement1 = conn.prepareStatement(sql1);
       statement1.setString(1, name);
-      ResultSet rs = statement.executeQuery();
+      rs = statement.executeQuery();
       long duration = rs.getLong(1);
       
       return start+duration;
@@ -179,9 +168,9 @@ public class CardSql {
     }
   }
   
+  
   /**
    * Adds a value to a card
-   *
    * @param serial Serial number
    * @param value  Value to be added
    */
@@ -190,11 +179,11 @@ public class CardSql {
     updateCard(serial, getCardValue(serial)+value);
   }
   
+  
   /**
    * Changes a value of a card
-   *
    * @param serial Serial number
-   * @param Value  New value of card
+   * @param value  New value of card
    */
   public void updateCard(String serial, double value) {
     String sql = "UPDATE cards SET value = ? WHERE serial = ?";
@@ -207,9 +196,9 @@ public class CardSql {
     }
   }
   
+  
   /**
    * Gets the value of a card
-   *
    * @param serial Serial number
    */
   public double getCardValue(String serial) {
@@ -218,21 +207,44 @@ public class CardSql {
       statement.setString(1, serial);
       ResultSet rs = statement.executeQuery();
       return Math.round(rs.getDouble("value")*100.0)/100.0;
-      
+  
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
       return 0d;
     }
   }
   
+  
   /**
    * Subtracts a value from a card
-   *
    * @param serial Serial number
    * @param value  Value to be subtracted
    */
   public void subtractValueFromCard(String serial, double value) {
     updateCard(serial, getCardValue(serial)-value);
+  }
+  
+  
+  /**
+   * Gets the rail passes sold by an operator
+   * @param operator Operator to query
+   */
+  public SortedSet<String> getRailPassNames(String operator) {
+    String sql = "SELECT name FROM railpasses WHERE operator = ? ;";
+    SortedSet<String> set = new TreeSet<>();
+    
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, operator);
+      ResultSet rs = statement.executeQuery();
+      while (rs.next()) {
+        set.add(rs.getString(1));
+      }
+      return set;
+      
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return null;
+    }
   }
   
 }
