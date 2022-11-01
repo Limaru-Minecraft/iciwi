@@ -2,7 +2,7 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.JsonManager;
+import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import net.kyori.adventure.text.Component;
@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -28,12 +27,12 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 public class TicketMachine {
   
-  protected final Plugin plugin = getPlugin(Iciwi.class);
-  protected final String station;
-  protected final Player player;
-  protected final CardSql cardSql = new CardSql();
-  protected final Owners owners = new Owners(plugin);
-  protected final Lang lang = new Lang(plugin);
+  private final Iciwi plugin = getPlugin(Iciwi.class);
+  private final String station;
+  private final Player player;
+  private final CardSql cardSql = new CardSql();
+  private final Owners owners = new Owners(plugin);
+  private final Lang lang = new Lang(plugin);
   
   public TicketMachine(Player player, String station) {
     this.player = player;
@@ -144,13 +143,13 @@ public class TicketMachine {
   }
 
   public void checkFares_1(int page) {
-    Map<String, Double> fares = JsonManager.getFares(this.station);
-    if (fares != null) {
-      int size = fares.size();
-      List<String> stations = fares.keySet().stream().sorted().toList();
+    Map<String, Double> faresMap = new Fares().getFares(this.station);
+    if (faresMap != null) {
+      int size = faresMap.size();
+      List<String> stations = faresMap.keySet().stream().sorted().toList();
       TextComponent menu = Component.text().content("==== Fares from "+this.station+" ====\n").color(NamedTextColor.GOLD).build();
       for (int i = (page-1)*8; i < (page*8); i++) {
-        menu = i < size ? menu.append(Component.text().content("\u00A76- \u00A7a"+stations.get(i)+"\u00a76 - "+String.format("\u00a7b[%.2f]\n", fares.get(stations.get(i)))).build())
+        menu = i < size ? menu.append(Component.text().content("\u00A76- \u00A7a"+stations.get(i)+"\u00a76 - "+String.format("\u00a7b[%.2f]\n", faresMap.get(stations.get(i)))).build())
                    : menu.append(Component.text("\n"));
       }
       int maxPage = (size-1)/8+1;
@@ -164,21 +163,28 @@ public class TicketMachine {
   }
   
   private @NotNull String checkFares(int page) {
-    return "/iciwi:farechart "+this.station+" "+page;
+    return "/iciwi:iciwi farechart "+this.station+" "+page;
   }
   
   public void railPass_3(String serial, String operator) {
     Inventory i = plugin.getServer().createInventory(null, 9, Component.text(String.format(lang.getString("menu-rail-pass")+"%s", serial)));
-    
+  
     // Show card's current rail passes and expiry dates
     i.addItem(makeItem(Material.NAME_TAG, lang.getComponent("card-discounts")));
-    
+  
     // Rail pass sales
+    Set<String> names = cardSql.getRailPassNames(operator);
+    for (String name : names) {
+      double price = owners.getRailPassPrice(name);
+      i.addItem(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(name).color(TextColor.color(0, 255, 0)), Component.text(price)));
+    }
+      
+    /*
     Set<String> daysSet = owners.getRailPassDays(operator);
     for (String days : daysSet) {
       double price = owners.getRailPassPrice(operator, Long.parseLong(days));
       i.addItem(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(days).append(lang.getComponent("days")).color(TextColor.color(0, 255, 0)), Component.text(price)));
-    }
+     */
     player.openInventory(i);
   }
   

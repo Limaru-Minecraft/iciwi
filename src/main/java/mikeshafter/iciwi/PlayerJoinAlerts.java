@@ -37,26 +37,26 @@ public class PlayerJoinAlerts implements Listener {
       if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().getLore() != null && itemStack.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
         String serial = itemStack.getItemMeta().getLore().get(1);
   
-        player.sendMessage(textMenu(serial));
+        //player.sendMessage(textMenu(serial));
       }
     }
   }
   
-  public TextComponent textMenu(String serial) {
-    // Return a menu
-    List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
-        .sorted(Map.Entry.comparingByValue())
-        .map(entry -> Component.text().content(
-                "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
-            .append(Component.text().content("\u00a76 | Extend \u00a7a"))
-            .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
-            .build()).toList();
-    
-    TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
-    
-    for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
-    menu = menu.append(Component.text("\n"));
-    
-    return menu;
-  }
+//  public TextComponent textMenu(String serial) {
+//    // Return a menu
+//    List<TextComponent> discountList = cardSql.getDiscountedOperators(serial).entrySet().stream()
+//        .sorted(Map.Entry.comparingByValue())
+//        .map(entry -> Component.text().content(
+//                "\u00A76- \u00A7a"+entry.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(entry.getValue()*1000)))
+//            .append(Component.text().content("\u00a76 | Extend \u00a7a"))
+//            .append(owners.getRailPassDays(entry.getKey()).stream().map(days -> Component.text().content("["+days+"d: \u00a7a"+owners.getRailPassPrice(entry.getKey(), Long.parseLong(days))+"\u00a76]").clickEvent(ClickEvent.runCommand("/newdiscount "+serial+" "+entry.getKey()+" "+days))).toList())
+//            .build()).toList();
+//
+//    TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
+//
+//    for (TextComponent displayEntry : discountList) menu = menu.append(displayEntry);
+//    menu = menu.append(Component.text("\n"));
+//
+//    return menu;
+//  }
 }

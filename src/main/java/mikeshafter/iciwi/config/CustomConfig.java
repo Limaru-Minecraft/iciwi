@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.config;
 
 import mikeshafter.iciwi.Iciwi;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -13,21 +14,21 @@ public class CustomConfig {
   private final YamlConfiguration config;
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final String name;
-
+  
   public CustomConfig(String name) {
     this(name, Iciwi.getPlugin(Iciwi.class));
   }
-
+  
   public CustomConfig(String name, Plugin plugin) {
     this.name = name;
     file = new File(plugin.getDataFolder(), name);
-
+    
     if (!file.exists()) {
       Logger logger = plugin.getLogger();
       logger.log(Level.INFO, file.getParentFile().mkdirs() ? "[Iciwi] New config file created" : "[Iciwi] Config file already exists, initialising files...");
       plugin.saveResource(name, false);
     }
-
+    
     config = new YamlConfiguration();
     try {
       config.load(file);
@@ -35,7 +36,7 @@ public class CustomConfig {
       e.printStackTrace();
     }
   }
-
+  
   public void save() {
     try {
       config.save(file);
@@ -81,6 +82,10 @@ public class CustomConfig {
   
   public long getLong(String path) {
     return this.config.getLong(path);
+  }
+  
+  public ConfigurationSection getConfigurationSection(String path) {
+    return this.config.getConfigurationSection(path);
   }
   
   public void set(String path, Object value) {

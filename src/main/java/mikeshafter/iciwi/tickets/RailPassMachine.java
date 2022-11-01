@@ -12,12 +12,6 @@ public class RailPassMachine extends TicketMachine {
     this.operator = operator;
   }
   
-  @Override
-  public void newTM_0() {
-    Inventory j = plugin.getServer().createInventory(null, 9, lang.getComponent("select-card-rail-pass"));
-    player.openInventory(j);
-  }
-  
   public void railPass_3(String serial) {
     super.railPass_3(serial, operator);
   }

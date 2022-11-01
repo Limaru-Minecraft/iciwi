@@ -14,7 +14,7 @@ public class Fares extends CustomConfig {
   public Fares(org.bukkit.plugin.Plugin plugin) {
     super("fares.yml", plugin);
   }
-
+  
   public Fares () {
     super("fares.yml");
   }
@@ -51,5 +51,10 @@ public class Fares extends CustomConfig {
       section.getKeys(false).forEach(fareClass -> fareMap.put(fareClass, this.getDouble(from+"."+to+"."+fareClass)));
       return fareMap;
     } else return null;
+  }
+  
+  public Set<String> getClasses(String from, String to) {
+    ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
+    return section == null ? null : section.getKeys(false);
   }
 }
