@@ -1,3 +1,4 @@
+
 package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.Iciwi;

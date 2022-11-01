@@ -170,6 +170,24 @@ public class Owners extends CustomConfig {
     super.set("Coffers."+operator, amt);
     save();
   }
+
+  /**
+   * @param player Name of the player
+   * @return List of companies the player owns
+  */
+  public List<String> getOwnedCompanies(String player) {
+    Map<String, Object> operatorMap = super.getConfigurationSection("Aliases").getValues(false);
+    return operatorMap.entrySet().stream().filter(entry -> player.equals(entry.getValue())).map(Map.Entry::getKey).toList();
+  }
+
+  /**
+  * @param player Name of the player
+  * @param operator TOC to search up
+  * @return whether the player owns the TOC
+  */
+  public boolean getOwnership(String player, String operator) {
+    return player.equalsIgnoreCase(super.getString("Aliases."+operator));
+  }
   
   /**
    * @param player Name of the player
