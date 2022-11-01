@@ -52,4 +52,9 @@ public class Fares extends CustomConfig {
       return fareMap;
     } else return null;
   }
+  
+  public Set<String> getClasses(String from, String to) {
+    ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
+    return section == null ? null : section.getKeys(false);
+  }
 }

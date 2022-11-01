@@ -1,6 +1,8 @@
 package mikeshafter.iciwi.tickets;
 
+import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.config.Lang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,16 +10,21 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.Objects;
 
+import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
+
 
 public class GlobalTicketMachine extends TicketMachine {
-
+  private final Iciwi plugin = getPlugin(Iciwi.class);
+  private final CardSql cardSql = new CardSql();
+  private final Lang lang = new Lang(plugin);
+  
   public GlobalTicketMachine(Player player) {
     super(player, null);
   }
-
+  
   public void newTM_0() {
     Inventory tm = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
-  
+    
     tm.setItem(1, super.makeItem(Material.PAPER, lang.getComponent("menu-new-ticket"), Component.text(plugin.getConfig().getDouble("global-ticket-price"))));
     tm.setItem(4, super.makeItem(Material.NAME_TAG, lang.getComponent("card-operations")));
     tm.setItem(7, super.makeItem(Material.BOOK, lang.getComponent("check-fares")));
