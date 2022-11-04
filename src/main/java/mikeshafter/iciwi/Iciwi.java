@@ -1,5 +1,8 @@
 package mikeshafter.iciwi;
 
+import cloud.commandframework.CommandTree;
+import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
+import cloud.commandframework.execution.CommandExecutionCoordinator;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
@@ -8,12 +11,14 @@ import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 
 
 public final class Iciwi extends JavaPlugin { 
@@ -68,9 +73,12 @@ public final class Iciwi extends JavaPlugin {
     app.initTables();
   
   
-    // === Set command executors ===
-    this.getCommand("iciwi").setExecutor(new mikeshafter.iciwi.commands.Commands());
-    this.getCommand("iciwi").setTabCompleter(new mikeshafter.iciwi.commands.Commands());
+    // === Initialise commands ===
+    
+    // This is a function that will provide a command execution coordinator that parses and executes commands
+    // asynchronously
+    final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction =
+        AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
   
     // === Register events ===
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);

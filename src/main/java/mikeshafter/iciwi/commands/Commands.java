@@ -1,14 +1,37 @@
 package mikeshafter.iciwi.commands;
 
+import cloud.commandframework.Command;
+import cloud.commandframework.CommandTree;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.annotations.Argument;
+import cloud.commandframework.annotations.CommandDescription;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.suggestions.Suggestions;
+import cloud.commandframework.arguments.parser.ParserParameters;
+import cloud.commandframework.arguments.parser.StandardParameters;
+import cloud.commandframework.arguments.standard.EnumArgument;
+import cloud.commandframework.arguments.standard.StringArgument;
+import cloud.commandframework.bukkit.BukkitCommandManager;
+import cloud.commandframework.bukkit.CloudBukkitCapabilities;
+import cloud.commandframework.context.CommandContext;
+import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
+import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.extra.confirmation.CommandConfirmationManager;
+import cloud.commandframework.meta.CommandMeta;
+import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler;
+import cloud.commandframework.minecraft.extras.MinecraftHelp;
+import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.CloudExamplePlugin;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
@@ -18,180 +41,160 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+
+import static net.kyori.adventure.text.Component.text;
 
 
-public class Commands implements TabExecutor {
+public class Commands {
   
+  // Cloud Command Framework
+  private BukkitCommandManager<CommandSender> manager;
+  private BukkitAudiences bukkitAudiences;
+  private MinecraftHelp<CommandSender> minecraftHelp;
+  private CommandConfirmationManager<CommandSender> confirmationManager;
+  private AnnotationParser<CommandSender> annotationParser;
+  
+  // Iciwi config
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang();
   private final Fares fares = new Fares();
   private final Owners owners = new Owners();
+  private final CardSql cardSql = new CardSql();
   
-  @Override
-  public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-    return inCommand(sender, command, label, args, true).execute();
-  }
-  
-  private CmdRntVal inCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args, boolean execute) {
-    // args.length drivers
-    int length = args.length-1;
+  public Commands () {
     
-    // initial method
-    if (length == 0) {
-      return new CmdRntVal(false, Arrays.asList("checkfare", "farechart", "getticket", "railpass", "reload", "coffers"));
-    } else {
-      
-      switch (args[0]) {
-        // Check Fare
-        case "checkfare":
-          if (length == 1 || length == 2) {
-            return new CmdRntVal(false, List.copyOf(fares.getAllStations()));
-          } else if (length == 3) {
-            if (execute && fares.getFare(args[1], args[2]) > 0d) {
-              sender.sendMessage("Fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2]));
-              return new CmdRntVal(true);
-            } else {
-              return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
-            }
-          } else if (length == 4) {
-            if (execute) {
-              sender.sendMessage(args[3]+" fare from "+args[1]+" to "+args[2]+": "+fares.getFare(args[1], args[2], args[3]));
-              return new CmdRntVal(true);
-            } else {
-              return new CmdRntVal(false);
-            }
-          }
-          break;
-        
-        // Get ticket
-        case "getticket":
-          if (length == 1 || length == 2) {
-            return new CmdRntVal(List.copyOf(fares.getAllStations()));
-          } else if (length == 3) {
-            if (execute && sender instanceof Player) {
-              ItemStack item = new ItemStack(Material.PAPER, 1);
-              ItemMeta itemMeta = item.getItemMeta();
-              assert itemMeta != null;
-              itemMeta.displayName(lang.getComponent("train-ticket"));
-              itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2])));
-              item.setItemMeta(itemMeta);
-              ((Player) sender).getInventory().addItem(item);
-              return new CmdRntVal(true);
-            } else {
-              return new CmdRntVal(List.copyOf(fares.getClasses(args[1], args[2])));
-            }
-          } else if (length == 4) {
-            if (execute && sender instanceof Player) {
-              ItemStack item = new ItemStack(Material.PAPER, 1);
-              ItemMeta itemMeta = item.getItemMeta();
-              assert itemMeta != null;
-              itemMeta.displayName(lang.getComponent("train-ticket"));
-              itemMeta.lore(Arrays.asList(Component.text(args[1]), Component.text(args[2]), Component.text(args[3])));
-              item.setItemMeta(itemMeta);
-              ((Player) sender).getInventory().addItem(item);
-              return new CmdRntVal(true);
-            } else {
-              return new CmdRntVal();
-            }
-          }
-          break;
-        
-        // Rail Pass
-        case "railpass":
-          // iciwi railpass <serial> <railpassname>
-          if (length == 1) {
-            return new CmdRntVal();  //Iciwi cards' serials should not be listed
-          } else if (length == 2) {
-            return new CmdRntVal(owners.getConfigurationSection("RailPasses").getKeys(false).stream().toList());
-          } else if (length == 3 && execute) {
-            CardSql cardSql = new CardSql();
-            if (cardSql.getAllDiscounts(args[0]).containsKey(args[1]))
-              // Extend by <duration>
-              cardSql.setDiscount(args[0], args[1], cardSql.getExpiry(args[0], args[1])+owners.getRailPassDuration(args[1]));
-            else
-              // New rail pass
-              cardSql.setDiscount(args[0], args[1], Instant.now().getEpochSecond());
-          }
-          break;
-        
-        // Reload Config
-        case "reload":
-          if (execute) {
-            plugin.reloadConfig();
-            fares.reload();
-            lang.reload();
-            owners.reload();
-            sender.sendMessage("Reloaded iciwi!");
-            return new CmdRntVal(true);
-          }
-          break;
-        
-        // Coffers
-        case "coffers":
-          if (length == 1) {
-            return sender instanceof Player ? new CmdRntVal(Arrays.asList("empty", "view")) : new CmdRntVal(Collections.singletonList("view"));
-          } else if (length == 2 && args[1].equals("empty") && sender instanceof Player player) {
-            // Get the companies the player owns
-            List<String> companies = owners.getOwnedCompanies(player.getName());
-            if (execute) {
-              for (String company : companies) {
-                double coffer = owners.getCoffers(company);
-                sender.sendMessage(String.format("Received $%.2f from %s", coffer, company));
-                Iciwi.economy.depositPlayer(player, coffer);
-                owners.setCoffers(company, 0d);
-              }
-            }
-            return new CmdRntVal(true, companies);
-          } else if (length == 3 && args[1].equals("empty") && sender instanceof Player player) {
-            if (execute && owners.getOwnership(player.getName(), args[3])) {
-              Iciwi.economy.depositPlayer(player, owners.getCoffers(args[2]));
-              owners.setCoffers(args[2], 0d);
-              return new CmdRntVal(true);
-            }
-          } else if (length == 2 && args[2].equals("view")) {
-            if (sender.hasPermission("iciwi.coffers.viewall")) {
-              sender.sendMessage("=== COFFERS OF EVERY COMPANY ===");
-              for (String company : Objects.requireNonNull(owners.getConfigurationSection("Coffers")).getKeys(false)) {
-                sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
-              }
-            } else {
-              Player player = (Player) sender;
-              sender.sendMessage("=== COFFERS OF YOUR COMPANIES ===");
-              for (String company : owners.getOwnedCompanies(player.getName())) {
-                sender.sendMessage(ChatColor.GREEN+company+" : "+ChatColor.YELLOW+owners.get().getDouble("Coffers."+company));
-              }
-            }
-            return new CmdRntVal(true);
-          }
-          break;
-        
-      }
+    // This is a function that will provide a command execution coordinator that parses and executes commands asynchronously
+    final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction =
+        AsynchronousCommandExecutionCoordinator.<CommandSender>newBuilder().build();
+  
+    // This function maps the command sender type of our choice to the bukkit command sender.
+    // However, in this example we use the Bukkit command sender, and so we just need to map it to itself
+    final Function<CommandSender, CommandSender> mapperFunction = Function.identity();
+    try {
+      this.manager = new PaperCommandManager<>(
+          /* Owning plugin */ plugin,
+          /* Coordinator function */ executionCoordinatorFunction,
+          /* Command Sender -> C */ mapperFunction,
+          /* C -> Command Sender */ mapperFunction
+      );
+    } catch (final Exception e) {
+      plugin.getLogger().severe("Failed to initialize the commands class!");
+      /* Disable the plugin */
+      plugin.getServer().getPluginManager().disablePlugin(plugin);
+      return;
     }
-    return new CmdRntVal();
-  }
-  
-  @Override
-  public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-    return inCommand(sender, command, label, args, false).tabComplete();
-  }
-  
-}
+    
+    // Create a BukkitAudiences instance (adventure) in order to use the minecraft-extras help system
+    this.bukkitAudiences = BukkitAudiences.create(plugin);
+    
+    // Create the Minecraft help menu system
+    this.minecraftHelp = new MinecraftHelp<>(
+        /* Help Prefix */ "/iciwi help",
+        /* Audience mapper */ this.bukkitAudiences::sender,
+        /* Manager */ this.manager
+    );
+    
+    // Register Brigadier mappings
+    if (this.manager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
+      this.manager.registerBrigadier();
+    }
+    
+    // Register asynchronous completions
+    if (this.manager.hasCapability(CloudBukkitCapabilities.ASYNCHRONOUS_COMPLETION)) {
+      ((PaperCommandManager<CommandSender>) this.manager).registerAsynchronousCompletions();
+    }
 
+    // Create the confirmation this.manager. This allows us to require certain commands to be confirmed before they can be executed
+    this.confirmationManager = new CommandConfirmationManager<>(
+        /* Timeout */ 30L,
+        /* Timeout unit */ TimeUnit.SECONDS,
+        /* Action when confirmation is required */ context -> context.getCommandContext().getSender().sendMessage(
+        ChatColor.RED + "Confirmation required. Confirm using /iciwi confirm."),
+        /* Action when no confirmation is pending */ sender -> sender.sendMessage(
+        ChatColor.RED + "You don't have any pending commands.")
+    );
+    
+    // Register the confirmation processor. This will enable confirmations for commands that require it
+    this.confirmationManager.registerConfirmationProcessor(this.manager);
+    
+    // Create the annotation parser. This allows you to define commands using methods annotated with @CommandMethod
+    final Function<ParserParameters, CommandMeta> commandMetaFunction = p ->
+                                                                            CommandMeta.simple()
+                                                                                // This will allow you to decorate commands with descriptions
+                                                                                .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
+                                                                                .build();
+    this.annotationParser = new AnnotationParser<>(
+        /* Manager */ this.manager,
+        /* Command sender type */ CommandSender.class,
+        /* Mapper for command meta instances */ commandMetaFunction
+    );
+    
+    // Override the default exception handlers
+    new MinecraftExceptionHandler<CommandSender>()
+        .withInvalidSyntaxHandler()
+        .withInvalidSenderHandler()
+        .withNoPermissionHandler()
+        .withArgumentParsingHandler()
+        .withCommandExecutionHandler()
+        .withDecorator(
+            component -> text()
+                             .append(text("[", NamedTextColor.DARK_GRAY))
+                             .append(text("Example", NamedTextColor.GOLD))
+                             .append(text("] ", NamedTextColor.DARK_GRAY))
+                             .append(component).build()
+        ).apply(this.manager, this.bukkitAudiences::sender);
 
-record CmdRntVal(boolean execute, List<String> tabComplete) {
-  public CmdRntVal() {
-    this(false, null);
+    // Create the commands
+    this.constructCommands();
   }
   
-  public CmdRntVal(boolean execute) {
-    this(execute, null);
+  
+  private void constructCommands () {
+    // Add a custom permission checker
+    // no permission checker needed for Iciwi
+    
+    // Parse all @CommandMethod-annotated methods
+    this.annotationParser.parse(this);
+    
+    // Parse all @CommandContainer-annotated classes
+    try {
+      this.annotationParser.parseContainers();
+    } catch (final Exception e) {
+      e.printStackTrace();
+    }
+    
+    // Base command builder
+    final Command.Builder<CommandSender> builder = this.manager.commandBuilder("iciwi");
+    
+    // Add a confirmation command
+    this.manager.command(builder.literal("confirm")
+        .meta(CommandMeta.DESCRIPTION, "Confirm a pending command")
+        .handler(this.confirmationManager.createConfirmationExecutionHandler())
+    );
   }
   
-  public CmdRntVal(List<String> tabComplete) {
-    this(false, tabComplete);
+  @Suggestions("station-list")
+  public List<String> getAllStations (final CommandContext<CommandSender> context, final String input) {
+    return new ArrayList<>(fares.getAllStations());
   }
+  
+//  @Suggestions("fare-class")
+//  public List<String> getFareClasses (final CommandContext<CommandSender> context, final String input) {
+//
+//  }
+  
+  @CommandMethod("iciwi checkfare <start-station> <end-station> <fare-class>")
+  @CommandDescription("Displays the fare between two stations")
+  public void checkFare(
+      final CommandSender sender,
+      final @Argument(value="start-station", suggestions="station-list") String startStation,
+      final @Argument(value="end-station", suggestions="station-list") String endStation,
+      final @Argument(value="fare-class") String fareClass
+      ) {
+    sender.sendMessage(String.valueOf(fares.getFare(startStation, endStation, fareClass)));
+  }
+  
 }
