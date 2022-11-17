@@ -175,7 +175,7 @@ public class CardSql {
    * @param value  Value to be added
    */
   public void addValueToCard(String serial, double value) {
-    plugin.getServer().getLogger().info(serial+" "+value);
+    //plugin.getServer().getLogger().info(serial+" "+value);
     updateCard(serial, getCardValue(serial)+value);
   }
   

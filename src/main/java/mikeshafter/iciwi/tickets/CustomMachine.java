@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static mikeshafter.iciwi.util.MachineUtil.componentToString;
 import static mikeshafter.iciwi.util.MachineUtil.isDouble;
+import static mikeshafter.iciwi.util.MachineUtil.makeItem;
 
 
 public class CustomMachine {
@@ -193,16 +194,6 @@ public class CustomMachine {
     }
   }
   
-  private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
-    ItemStack item = new ItemStack(material);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.displayName(displayName);
-    itemMeta.lore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
-  }
-  
   private class EventListener implements Listener {
     
     @EventHandler(priority = EventPriority.LOWEST)
@@ -225,6 +216,11 @@ public class CustomMachine {
           selectClass();
         }
       }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClose(InventoryCloseEvent event) {
+      CommonUtil.unregisterListener(this);
     }
     
   }

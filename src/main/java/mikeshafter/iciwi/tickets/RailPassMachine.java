@@ -10,9 +10,10 @@ public class RailPassMachine extends TicketMachine {
   public RailPassMachine(Player player, String operator) {
     super(player, null);
     this.operator = operator;
+    super.newRailPass(serial, operator);
   }
   
-  public void railPass_3(String serial) {
-    super.railPass_3(serial, operator);
+  public void railPass(String serial) {
+    super.railPass(serial, operator);
   }
 }

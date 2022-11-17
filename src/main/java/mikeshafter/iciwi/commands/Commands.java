@@ -196,5 +196,7 @@ public class Commands {
       ) {
     sender.sendMessage(String.valueOf(fares.getFare(startStation, endStation, fareClass)));
   }
+
+  @CommandMethod("iciwi railpass <name>")
   
 }
