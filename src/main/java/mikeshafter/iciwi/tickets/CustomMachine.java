@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -31,7 +32,7 @@ import static mikeshafter.iciwi.util.MachineUtil.makeItem;
 
 public class CustomMachine {
 
-  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
   private final String station;
   private final Lang lang = new Lang(plugin);
@@ -46,7 +47,7 @@ public class CustomMachine {
     this.player = player;
     this.station = station;
     this.listener = new EventListener();
-    var submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
+    var submitText = new InputDialogSubmitText(plugin, player) {
     
       @Override
       public void onTextChanged() {
@@ -138,7 +139,7 @@ public class CustomMachine {
     
     // If the term does not contain the pattern term, but contains parts of it, we give a divided score
     // The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
-    //   and m is the term term length.
+    //   and m is the term length.
     
     /* At this point term does not contain pattern */
     for (int i = searchLength; i >= 2; i--) { // i is length of substring
