@@ -264,7 +264,7 @@
 //
 //      // == Rail Pass : Page 3 ==
 //      else if (inventoryName.contains(lang.getString("menu-rail-pass"))) {
-//        String serial = inventoryName.substring(lang.getString("menu-rail-pass").length());
+//        fnew = inventoryName.substring(lang.getString("menu-rail-pass").length());
 //
 //        // Check discounts
 //        if (itemName.equals(lang.getString("card-discounts"))) {

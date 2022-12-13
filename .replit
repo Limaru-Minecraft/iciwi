@@ -1,5 +1,5 @@
 compile = "gradle build"
-run = "java -classpath .:target/dependency/* Main"
+run = ""
 hidden = ["**/*.class"]
 
 [packager]
