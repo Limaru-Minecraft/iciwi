@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 
-import static mikeshafter.iciwi.util.MachineUtil.componentToString;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 
 
 public class SignCreateListener implements Listener {
@@ -18,7 +18,7 @@ public class SignCreateListener implements Listener {
   
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {
-    String line = componentToString(event.line(0));
+    String line = parseComponent(event.line(0));
     Player player = event.getPlayer();
   
     // General Ticket machine

@@ -21,7 +21,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -33,10 +32,10 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
   public Owners owners;
   public Records records;
   public Fares fares;
-  private HashMap<Player, Queue<Integer>> statMap = new HashMap<>();
+  private final HashMap<Player, Queue<Integer>> statMap = new HashMap<>();
   
   @Override
-  public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+  public boolean onCommand(@NotNull CommandSender sender, Command command, @NotNull String label, String[] args) {
     
     // Check Fare
     if (command.getName().equalsIgnoreCase("checkfare") && sender.hasPermission("iciwi.checkfare") && args.length == 2) {
@@ -52,19 +51,6 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       }
     }
     
-    // Fare chart
-    if (command.getName().equalsIgnoreCase("farechart") && sender.hasPermission("iciwi.farechart") && args.length == 2 && sender instanceof Player player) {
-      try {
-        String station = args[0];
-        String page = args[1];
-        //new TicketMachine(player, station).checkFares_1(Integer.parseInt(page));
-        return true;
-      } catch (NumberFormatException e) {
-        sender.sendMessage("Not a page!");
-        return true;
-      }
-    }
-    
     // Get ticket
     else if (command.getName().equalsIgnoreCase("getticket") && sender.hasPermission("iciwi.getticket") && sender instanceof Player && args.length == 2) {
       String from = args[0];
@@ -72,7 +58,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
       ItemStack item = new ItemStack(Material.PAPER, 1);
       ItemMeta itemMeta = item.getItemMeta();
       assert itemMeta != null;
-      itemMeta.setDisplayName(lang.getString("train-ticket"));
+      itemMeta.displayName(lang.getComponent("train-ticket"));
       itemMeta.setLore(Arrays.asList(from, to));
       item.setItemMeta(itemMeta);
       ((Player) sender).getInventory().addItem(item);
@@ -81,16 +67,12 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     
     // Ticket Machine
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
-      if (getConfig().getString("ticket-machine-type").equals("STATION") && sender instanceof Player player && !args[0].isEmpty()) {
+      //GlobalTicketMachine machine = new GlobalTicketMachine(player);
+      if (Objects.equals(getConfig().getString("ticket-machine-type"), "STATION") && sender instanceof Player player && !args[0].isEmpty()) {
         var tm = new TicketMachine();
         tm.init(player, args[0]);
         return true;
-      } else if (getConfig().getString("ticket-machine-type").equals("GLOBAL") && sender instanceof Player player && args[0].isEmpty()) {
-        //GlobalTicketMachine machine = new GlobalTicketMachine(player);
-        return true;
-      } else {
-        return false;
-      }
+      } else return Objects.equals(getConfig().getString("ticket-machine-type"), "GLOBAL") && sender instanceof Player player && args[0].isEmpty();
     }
     
     // Add Discount
@@ -168,7 +150,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     else if (command.getName().equalsIgnoreCase("odometer") && args.length == 1 && sender instanceof Player player && sender.hasPermission("iciwi.odometer")) {
       if (args[0].equalsIgnoreCase("start")) {
         // start recording
-        statMap.put(player, new LinkedBlockingQueue<Integer>());
+        statMap.put(player, new LinkedBlockingQueue<>());
         statMap.get(player).add(player.getStatistic(Statistic.MINECART_ONE_CM));
         player.sendMessage(ChatColor.GREEN+""+player.getStatistic(Statistic.MINECART_ONE_CM));
         return true;
@@ -209,7 +191,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     
     // === Economy ===
     boolean eco = setupEconomy();
-    
+    if (eco) getServer().getLogger().info(ChatColor.AQUA+"Iciwi has detected an Economy!");
     
     // === Load config files ===
     lang = new Lang(this);
@@ -251,7 +233,7 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> {
-      if (owners.getOwner(station) == null) owners.setOwner(station, getConfig().getString("global-operator"));
+      if (owners.getOwners(station) == null) owners.setOwners(station, Collections.singletonList(getConfig().getString("global-operator")));
     });
     owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg

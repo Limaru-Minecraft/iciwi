@@ -18,14 +18,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-import static mikeshafter.iciwi.util.MachineUtil.componentToString;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 import static mikeshafter.iciwi.util.MachineUtil.isDouble;
 import static mikeshafter.iciwi.util.MachineUtil.makeItem;
 
@@ -39,14 +38,13 @@ public class CustomMachine {
   private final Fares fares = new Fares(plugin);
   private final Owners owners = new Owners(plugin);
   private ItemStack[] items;
-  private final Listener listener;
   private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
-    this.listener = new EventListener();
+    Listener listener = new EventListener();
     var submitText = new InputDialogSubmitText(plugin, player) {
     
       @Override
@@ -98,7 +96,7 @@ public class CustomMachine {
     };
   
     // Start listening
-    Bukkit.getPluginManager().registerEvents(this.listener, plugin);
+    Bukkit.getPluginManager().registerEvents(listener, plugin);
   
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
@@ -163,7 +161,7 @@ public class CustomMachine {
   public void selectClass() {
     // Create inventory and create items
     Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("select-class")));
-    fares.getFaresFromDestinations(station, componentToString(terminal)).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    fares.getFaresFromDestinations(station, parseComponent(terminal)).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
     player.openInventory(inventory);
   }
   
@@ -181,15 +179,26 @@ public class CustomMachine {
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
       Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
       double price = 0d;
-      if (priceComponent != null && isDouble(componentToString(priceComponent)))
-        price = Double.parseDouble(componentToString(priceComponent));
+      if (priceComponent != null && isDouble(parseComponent(priceComponent)))
+        price = Double.parseDouble(parseComponent(priceComponent));
       Component fareClass = item.getItemMeta().displayName();
   
       if (Iciwi.economy.getBalance(player) >= price) {
         Iciwi.economy.withdrawPlayer(player, price);
-        owners.deposit(owners.getOwner(station), price/2);
-        owners.deposit(owners.getOwner(componentToString(priceComponent)), price/2);
-        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), componentToString(fareClass), station, componentToString(terminal)));
+        
+        // find owners of the current station and deposit accordingly
+        List<String> ownersList = owners.getOwners(station);
+        int ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+  
+        // find owners of the station the ticket goes to and deposit accordingly
+        ownersList = owners.getOwners(parseComponent(terminal));
+        ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+        
+        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
         player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }

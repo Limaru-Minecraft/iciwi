@@ -19,20 +19,34 @@ public class Owners extends CustomConfig {
     super("owners.yml");
   }
   
-  /**
-   * @param station Station to get the operator of
-   * @return The TOC
-   */
-  public String getOwner(String station) {
-    return super.getString("Operators."+station);
+  public List<String> getOwners(String station) {
+    return super.get().getStringList("Operators."+station);
   }
   
   /**
    * @param station  Station to set a TOC to
+   * @param operators The TOCs
+   */
+  public void setOwners(String station, List<String> operators) { super.set("Operators."+station, operators); }
+  
+  /**
+   * @param station  Station to add a TOC to
    * @param operator The TOC
    */
-  public void setOwner(String station, String operator) {
-    super.set("Operators."+station, operator);
+  public void addOwner(String station, String operator) {
+    List<String> operators = getOwners(station);
+    operators.add(operator);
+    setOwners(station, operators);
+  }
+  
+  /**
+   * @param station  Station to remove a TOC from
+   * @param operator The TOC
+   */
+  public void removeOwner(String station, String operator) {
+    List<String> operators = getOwners(station);
+    operators.remove(operator);
+    setOwners(station, operators);
   }
   
   /**

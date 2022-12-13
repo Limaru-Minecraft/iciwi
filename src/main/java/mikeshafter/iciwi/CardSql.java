@@ -85,7 +85,7 @@ public class CardSql {
    *
    * @param serial Serial number
    * @param name   Name of the rail pass
-   * @param start  Start time of the rail pass, as a long
+   * @param start  Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z.
    */
   public void setDiscount(String serial, String name, long start) {
     String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
