@@ -54,8 +54,8 @@ permissions:
     description: Create fare gates and ticket machines
     default: op
     children:
-      iciwi.create.faregates
-      iciwi.create.ticketmachines
+      iciwi.create.faregates: true
+      iciwi.create.ticketmachines: true
   iciwi.create.faregates:
     description: Create fare gates
     default: op

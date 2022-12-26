@@ -29,7 +29,7 @@ import static mikeshafter.iciwi.util.MachineUtil.isDouble;
 import static mikeshafter.iciwi.util.MachineUtil.makeItem;
 
 
-public class CustomMachine {
+public class CustomMachine implements Machine {
 
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;

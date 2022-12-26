@@ -8,6 +8,7 @@ import mikeshafter.iciwi.util.Clickable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,15 +23,16 @@ import org.bukkit.inventory.ItemStack;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 
 import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 import static mikeshafter.iciwi.util.MachineUtil.makeItem;
 
 
-public class TicketMachine implements Listener {
+public class TicketMachine implements Listener, Machine {
   
   // Attributes
-  private Inventory i;
+  private Inventory inv;
   private Clickable[] clickables;
   private final HashMap<UUID, Clickable[]> clickableMap;
   private final HashMap<UUID, ItemStack> selectedItem;
@@ -50,72 +52,76 @@ public class TicketMachine implements Listener {
     selectedItem = new HashMap<>();
     operatorsMap = new HashMap<>();
   }
-
+  
   // initial menu
   public void init (Player player, String station)
   {
     // setup inventory
-    i = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
-    clickables = new Clickable[9];
+    inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
+    this.clickables = new Clickable[9];
     
-    clickables[2] = Clickable.of(makeItem(Material.PAPER, Component.text("New Single Journey Ticket"), Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
-    clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")), (event) -> newCard(player));
-    clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, Component.text("Insert Card")), (event) -> selectCard(player));
-
+    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, Component.text("New Single Journey Ticket"), Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
+    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")), (event) -> newCard(player));
+    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, Component.text("Insert Card")), (event) -> selectCard(player));
+    
     // for (int a = 0; a < 9; a++) i.setItem(a, clickables[a].getItem());
     // open inventory
-    i = setItems(clickables, i);
-    clickableMap.put(player.getUniqueId(), clickables);
-    operatorsMap.put(player.getUniqueId(), owners.getOwners(station));
-    player.openInventory(i);
+    inv = setItems(clickables, inv);
+    
+    this.clickableMap.put(player.getUniqueId(), this.clickables);
+    this.operatorsMap.put(player.getUniqueId(), this.owners.getOwners(station));
+    
+    
   }
-
+  
   // card selection menu. player clicks in their own inventory to select a card
   public void selectCard (Player player)
   {
-    i = plugin.getServer().createInventory(null, 9, lang.getComponent("select-card"));
-    flags = (byte) 1;
-    player.openInventory(i);
+    inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
+    this.flags = (byte) 1;
+    player.openInventory(inv);
+    
   }
-
+  
   // main menu after inserting iciwi card
   public void cardMenu (Player player)
   {
-    i = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
-    clickables = new Clickable[9];
+    inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("ticket-machine"));
+    this.clickables = new Clickable[9];
     
-    clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")), (event) -> newCard(player));
-    clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")), (event) -> topUpCard(player, selectedItem.get(player.getUniqueId())));
-    clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")), (event) -> railPass(player, selectedItem.get(player.getUniqueId())));
-    clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")), (event) -> refundCard(player, selectedItem.get(player.getUniqueId())));
-    clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")), (event) -> selectCard(player));
-
+    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")), (event) -> newCard(player));
+    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")), (event) -> topUpCard(player, selectedItem.get(player.getUniqueId())));
+    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")), (event) -> railPass(player, selectedItem.get(player.getUniqueId())));
+    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")), (event) -> refundCard(player, selectedItem.get(player.getUniqueId())));
+    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")), (event) -> selectCard(player));
+    
     // open inventory
-    i = setItems(clickables, i);
-    clickableMap.put(player.getUniqueId(), clickables);
-    player.openInventory(i);
+    inv = setItems(this.clickables, inv);
+    this.clickableMap.put(player.getUniqueId(), this.clickables);
+    player.openInventory(inv);
+    
   }
-
+  
   // new iciwi card menu
   public void newCard (Player player)
   {
-    i = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
+    inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     clickables = new Clickable[priceArray.size()];
     
-    for (int j = 0; j < priceArray.size(); j++) 
+    for (int i = 0; i < priceArray.size(); i++)
     {
-      clickables[j] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(String.format(lang.getString("currency")+"%.2f", priceArray.get(j)))), (event) -> {
+      clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(String.format(lang.getString("currency")+"%.2f", priceArray.get(i)))), (event) -> {
         double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
         double deposit = plugin.getConfig().getDouble("deposit");
-
+        
         player.closeInventory();
-
-        if (Iciwi.economy.getBalance(player) >= deposit+value) 
+        
+        if (Iciwi.economy.getBalance(player) >= deposit+value)
         {
           // Take money from player and send message
           Iciwi.economy.withdrawPlayer(player, deposit+value);
-           
+          
           // Prepare card
           int s = new SecureRandom().nextInt(100000);
           char sum = new char[] {'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[((s%10)*2+(s/10%10)*3+(s/100%10)*5+(s/1000%10)*7+(s/10000)*9)%19];
@@ -125,51 +131,54 @@ public class TicketMachine implements Listener {
           cardSql.newCard(serial, value);
           player.getInventory().addItem(makeItem(Material.NAME_TAG, lang.getComponent("plugin-name"), lang.getComponent("serial-number"), Component.text(serial)));
           
-          // Send confirmation message 
+          // Send confirmation message
           player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
-
+          
         } else player.sendMessage(lang.getString("not-enough-money"));
       });
     }
-
-    i = setItems(clickables, i);
-    player.openInventory(i);
+    
+    inv = setItems(clickables, inv);
+    player.openInventory(inv);
+    
   }
-
+  
   // top up menu
   public void topUpCard (Player player, ItemStack item)
   {
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     int invSize = (priceArray.size() + 8) / 9 * 9;
-    i = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+    inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
     clickables = new Clickable[invSize];
-
+    
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-
-    for (int j = 0; j < priceArray.size(); j++) 
+    
+    for (int j = 0; j < priceArray.size(); j++)
     {
       clickables[j] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(String.format(lang.getString("currency")+"%.2f", priceArray.get(j)))), (event) -> {
         double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
         
         player.closeInventory();
-
-        if (Iciwi.economy.getBalance(player) >= value) 
+        
+        if (Iciwi.economy.getBalance(player) >= value)
         {
           // Take money from player and send message
           Iciwi.economy.withdrawPlayer(player, value);
-
+          
           // Update value in SQL
           cardSql.addValueToCard(serial, value);
         }
       });
-    
+      
       // set items and open inventory
-      i = setItems(clickables, i);
-      player.openInventory(i);
+      inv = setItems(clickables, inv);
+      player.openInventory(inv);
+      // start listening
+      Bukkit.getPluginManager().registerEvents(this, plugin);
     }
   }
-
+  
   // rail pass menu
   public void railPass (Player player, ItemStack item)
   {
@@ -177,26 +186,26 @@ public class TicketMachine implements Listener {
     List<String> operators = operatorsMap.get(player.getUniqueId());
     ArrayList<String> railPassNames = new ArrayList<>();
     operators.forEach((o) -> railPassNames.addAll(cardSql.getRailPassNames(o)));
-
+    
     int invSize = (railPassNames.size() / 9 + 1) * 9;
-    i = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+    inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
     clickables = new Clickable[invSize];
-
+    
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-
+    
     // rail pass viewer
     clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, Component.text("View Rail Passes")), (event) -> {
       //print current rail passes
       // get current passes
       List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
-          .sorted(Map.Entry.comparingByValue())
-          .map(railPass -> Component.text().content(
-              // Show expiry date
-              "\u00A76- \u00A7a"+railPass.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(railPass.getValue()*1000)))
-              // Option to extend (currently disabled)
-              // .append(Component.text().content("\u00a76 | Extend \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+" "+railPass.getKey()))
-              .build()).toList();
+                                             .sorted(Map.Entry.comparingByValue())
+                                             .map(railPass -> Component.text().content(
+                                                     // Show expiry date
+                                                     "\u00A76- \u00A7a"+railPass.getKey()+"\u00a76 | Exp. "+String.format("\u00a7b%s\n", new Date(railPass.getValue()*1000)))
+                                                                  // Option to extend (currently disabled)
+                                                                  // .append(Component.text().content("\u00a76 | Extend \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+" "+railPass.getKey()))
+                                                                  .build()).toList();
       // menu title
       TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
       // build content
@@ -205,79 +214,88 @@ public class TicketMachine implements Listener {
       // send to player
       player.sendMessage(menu);
     });
-
+    
     // create all rail pass buttons
-    for (int j = 1; j <= railPassNames.size(); j++)
+    for (int i = 1; i <= railPassNames.size(); i++)
     {
-      clickables[j] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(j))), (event) -> {
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i))), (event) -> {
         String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
-        double price = owners.getRailPassPrice(name);
-
-          if (Iciwi.economy.getBalance(player) >= price)
-          {
-            // take money from player
-            Iciwi.economy.withdrawPlayer(player, price);
-  
-            // check if the card already has the rail pass
-            if (cardSql.getAllDiscounts(serial).containsKey(name))
-              // Extend by the duration of the rail pass (change start time to the current expiry time)
-              cardSql.setDiscount(serial, name, cardSql.getExpiry(serial, name));
-            else
-              // New rail pass
-              cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
-            
-            // pay the TOC
-            owners.deposit(owners.getRailPassOperator(name), price);
-          }
-          else player.sendMessage(lang.getString("not-enough-money"));
+        double price = this.owners.getRailPassPrice(name);
+        
+        if (Iciwi.economy.getBalance(player) >= price)
+        {
+          // take money from player
+          Iciwi.economy.withdrawPlayer(player, price);
           
+          // check if the card already has the rail pass
+          if (this.cardSql.getAllDiscounts(serial).containsKey(name))
+            // Extend by the duration of the rail pass (change start time to the current expiry time)
+            this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
+          else
+            // New rail pass
+            this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+          
+          // pay the TOC
+          this.owners.deposit(this.owners.getRailPassOperator(name), price);
+        }
+        else player.sendMessage(this.lang.getString("not-enough-money"));
+        
         // close inventory
         player.closeInventory();
       });
     }
-
+    
     // set items and open inventory
-    i = setItems(clickables, i);
-    player.openInventory(i);
+    inv = setItems(clickables, inv);
+    player.openInventory(inv);
+    
   }
-
+  
   // refunds the card
   public void refundCard (Player player, ItemStack item)
   {
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-    for (ItemStack itemStack : player.getInventory().getContents()) 
+    for (ItemStack itemStack : player.getInventory().getContents())
     {
       // get loreStack
       if (itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null
-             && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) 
+              && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number")))
       {
-       // get serialNumber
-        if (Objects.requireNonNull(item.getItemMeta().lore()).get(1).equals(Component.text(serial))) 
+        // get serialNumber
+        if (Objects.requireNonNull(item.getItemMeta().lore()).get(1).equals(Component.text(serial)))
         {
-         // return remaining value to the player
-          double remainingValue = cardSql.getCardValue(serial);
+          // return remaining value to the player
+          double remainingValue = this.cardSql.getCardValue(serial);
           Iciwi.economy.depositPlayer(player, remainingValue);
           // return the deposit to the player
-          double deposit = plugin.getConfig().getDouble("deposit");
+          double deposit = this.plugin.getConfig().getDouble("deposit");
           Iciwi.economy.depositPlayer(player, deposit);
           // remove card from the inventory and from the database
           player.getInventory().remove(itemStack);
-          cardSql.deleteCard(serial);
+          this.cardSql.deleteCard(serial);
           // send message and break out of loop
-         player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue+deposit));
-         break;
+          player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue+deposit));
+          break;
         }
       }
     }
   }
-
+  
   // puts the items of a clickable[] into an inventory
-  public Inventory setItems (Clickable[] items, Inventory inventory)
+  public Inventory setItems (Clickable[] clickables, Inventory inventory)
   {
-    inventory.setStorageContents((ItemStack[]) Arrays.stream(items).map(Clickable::getItem).toArray());
+    Function<Clickable[], ItemStack[]> getItems = (c) -> {
+      ItemStack[] items = new ItemStack[c.length];
+      for (int i = 0; i < c.length; i++) {
+        if (c[i] != null) items[i] = c[i].getItem();
+      }
+      return items;
+    };
+    inventory.setStorageContents(getItems.apply(clickables));
     return inventory;
   }
+  
   
   // Listener
   @EventHandler
@@ -287,29 +305,29 @@ public class TicketMachine implements Listener {
     // Restrict putting items from the bottom inventory into the top inventory
     Inventory clickedInventory = event.getClickedInventory();
     Player player = (Player) event.getWhoClicked();
-  
-    if (!clickableMap.containsKey(player.getUniqueId()))
+    
+    if (!this.clickableMap.containsKey(player.getUniqueId()))
       return;
     
-    if (clickedInventory == player.getOpenInventory().getBottomInventory()) 
+    if (clickedInventory == player.getOpenInventory().getBottomInventory())
     {
-      if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) 
+      if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY)
       {
         event.setCancelled(true);
         return;
       }
-    
-      if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE) 
+      
+      if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE)
       {
         event.setCancelled(true);
         return;
       }
-
+      
       // player inventory item selection code
       selectedItem.put(player.getUniqueId(), event.getCurrentItem());
       // the mapping must be removed once the inventory is closed.
-
-      // if the player selected a card 
+      
+      // if the player selected a card
       if (flags == (byte) 1)
       {
         cardMenu(player);
@@ -317,31 +335,31 @@ public class TicketMachine implements Listener {
       }
     }
     
-    if (clickedInventory == player.getOpenInventory().getTopInventory()) 
+    if (clickedInventory == player.getOpenInventory().getTopInventory())
     {
       event.setCancelled(true);
       // reset bottom inventory item
-      selectedItem.remove(player.getUniqueId());
+      this.selectedItem.remove(player.getUniqueId());
       // get contents of actual inventory
       ItemStack[] contents = clickedInventory.getContents();
       // get clickable inventory contents
-      Clickable[] clickables = clickableMap.get(player.getUniqueId());
+      Clickable[] clickables = this.clickableMap.get(player.getUniqueId());
       // get slot
       int clickedSlot = event.getRawSlot();
       // get clicked item
       Clickable clickedItem = clickables[clickedSlot];
       // compare items and run
-      if (clickedItem.getItem().equals(contents[clickedSlot])) 
+      if (clickedItem.getItem().equals(contents[clickedSlot]))
         clickedItem.run(event);
     }
     
   }
-
+  
   @EventHandler
   public void onInvClose(InventoryCloseEvent event)
   {
     Player player = (Player) event.getPlayer();
-    selectedItem.remove(player.getUniqueId());
+    this.selectedItem.remove(player.getUniqueId());
   }
   
 }

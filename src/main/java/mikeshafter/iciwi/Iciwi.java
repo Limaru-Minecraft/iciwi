@@ -68,11 +68,12 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // Ticket Machine
     else if (command.getName().equalsIgnoreCase("ticketmachine") && sender.hasPermission("iciwi.ticketmachine")) {
       //GlobalTicketMachine machine = new GlobalTicketMachine(player);
-      if (Objects.equals(getConfig().getString("ticket-machine-type"), "STATION") && sender instanceof Player player && !args[0].isEmpty()) {
+      if (Objects.equals(getConfig().getString("ticket-machine-type"), "STATION") && sender instanceof Player player && !args[0].isEmpty())
+      {
         var tm = new TicketMachine();
         tm.init(player, args[0]);
         return true;
-      } else return Objects.equals(getConfig().getString("ticket-machine-type"), "GLOBAL") && sender instanceof Player player && args[0].isEmpty();
+      }
     }
     
     // Add Discount
@@ -226,8 +227,8 @@ public final class Iciwi extends JavaPlugin implements TabExecutor {
     // === Register events ===
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
-    //getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.TicketMachineListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
+    getServer().getPluginManager().registerEvents(new TicketMachine(), this);
     getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
   
     // === Register all stations in fares.yml to owners.yml ===
