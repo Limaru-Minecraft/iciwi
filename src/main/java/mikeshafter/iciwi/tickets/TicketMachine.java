@@ -8,7 +8,6 @@ import mikeshafter.iciwi.util.Clickable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,8 +24,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 import static mikeshafter.iciwi.util.MachineUtil.makeItem;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 
 
 public class TicketMachine implements Listener, Machine {
@@ -34,10 +33,10 @@ public class TicketMachine implements Listener, Machine {
   // Attributes
   private Inventory inv;
   private Clickable[] clickables;
-  private final HashMap<UUID, Clickable[]> clickableMap;
-  private final HashMap<UUID, ItemStack> selectedItem;
-  private final HashMap<UUID, List<String>> operatorsMap;
-  private byte flags;
+  private static HashMap<UUID, Clickable[]> clickableMap;
+  private static HashMap<UUID, ItemStack> selectedItem;
+  private static HashMap<UUID, List<String>> operatorsMap;
+  private static byte flags;
   
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
@@ -68,10 +67,10 @@ public class TicketMachine implements Listener, Machine {
     // open inventory
     inv = setItems(clickables, inv);
     
-    this.clickableMap.put(player.getUniqueId(), this.clickables);
+    clickableMap.put(player.getUniqueId(), this.clickables);
     this.operatorsMap.put(player.getUniqueId(), this.owners.getOwners(station));
-    
-    
+  
+    player.openInventory(inv);
   }
   
   // card selection menu. player clicks in their own inventory to select a card
@@ -97,7 +96,7 @@ public class TicketMachine implements Listener, Machine {
     
     // open inventory
     inv = setItems(this.clickables, inv);
-    this.clickableMap.put(player.getUniqueId(), this.clickables);
+    clickableMap.put(player.getUniqueId(), this.clickables);
     player.openInventory(inv);
     
   }
@@ -139,6 +138,7 @@ public class TicketMachine implements Listener, Machine {
     }
     
     inv = setItems(clickables, inv);
+    clickableMap.put(player.getUniqueId(), this.clickables);
     player.openInventory(inv);
     
   }
@@ -173,9 +173,8 @@ public class TicketMachine implements Listener, Machine {
       
       // set items and open inventory
       inv = setItems(clickables, inv);
+      clickableMap.put(player.getUniqueId(), this.clickables);
       player.openInventory(inv);
-      // start listening
-      Bukkit.getPluginManager().registerEvents(this, plugin);
     }
   }
   
@@ -247,6 +246,7 @@ public class TicketMachine implements Listener, Machine {
     
     // set items and open inventory
     inv = setItems(clickables, inv);
+    clickableMap.put(player.getUniqueId(), this.clickables);
     player.openInventory(inv);
     
   }
@@ -306,7 +306,7 @@ public class TicketMachine implements Listener, Machine {
     Inventory clickedInventory = event.getClickedInventory();
     Player player = (Player) event.getWhoClicked();
     
-    if (!this.clickableMap.containsKey(player.getUniqueId()))
+    if (!clickableMap.containsKey(player.getUniqueId()))
       return;
     
     if (clickedInventory == player.getOpenInventory().getBottomInventory())
@@ -339,11 +339,11 @@ public class TicketMachine implements Listener, Machine {
     {
       event.setCancelled(true);
       // reset bottom inventory item
-      this.selectedItem.remove(player.getUniqueId());
+      selectedItem.remove(player.getUniqueId());
       // get contents of actual inventory
       ItemStack[] contents = clickedInventory.getContents();
       // get clickable inventory contents
-      Clickable[] clickables = this.clickableMap.get(player.getUniqueId());
+      Clickable[] clickables = clickableMap.get(player.getUniqueId());
       // get slot
       int clickedSlot = event.getRawSlot();
       // get clicked item
@@ -359,7 +359,7 @@ public class TicketMachine implements Listener, Machine {
   public void onInvClose(InventoryCloseEvent event)
   {
     Player player = (Player) event.getPlayer();
-    this.selectedItem.remove(player.getUniqueId());
+    selectedItem.remove(player.getUniqueId());
   }
   
 }
