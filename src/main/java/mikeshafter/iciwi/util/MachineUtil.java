@@ -35,4 +35,16 @@ public class MachineUtil {
     item.setItemMeta(itemMeta);
     return item;
   }
+  
+  public static int ceilDiv(final int n, final int d) {
+    return (n + d - 1) / d;
+  }
+  
+  public static int roundUp(final int n, final int r) {
+    return ceilDiv(n, r) * r;
+  }
+  
+  public static boolean loreCheck(ItemStack itemStack) { return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null; }
+
+  public static boolean displayNameCheck(ItemStack itemStack) { return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().displayName() != null; }
 }

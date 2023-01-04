@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
@@ -20,9 +21,9 @@ import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 
 
 public class SignInteractListener implements Listener {
-  Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  Lang lang = new Lang(plugin);
-  HashMap<Player, Machine> machineHashMap = new HashMap<>();
+  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Lang lang = new Lang(plugin);
+  private final HashMap<Player, Machine> machineHashMap = new HashMap<>();
   
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {
@@ -52,7 +53,7 @@ public class SignInteractListener implements Listener {
   
   }
   
-  @EventHandler
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = MachineUtil.parseComponent(sign.line(0));
@@ -63,8 +64,8 @@ public class SignInteractListener implements Listener {
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
         String station = ((TextComponent) sign.line(1)).content().replaceAll("\\s+", "");
-        TicketMachine machine = new TicketMachine();
-        machine.init(player, station);
+        TicketMachine machine = new TicketMachine(player);
+        machine.init(station);
         machineHashMap.put(player, machine);
       }
 
