@@ -23,7 +23,7 @@ import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 public class SignInteractListener implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang(plugin);
-  private final HashMap<Player, Machine> machineHashMap = new HashMap<>();
+  protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
   
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {

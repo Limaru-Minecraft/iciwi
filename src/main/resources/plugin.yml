@@ -1,6 +1,6 @@
 name: Iciwi
-version: 1.18.2r3
-api-version: 1.18
+version: 1.19.3a1
+api-version: 1.17
 main: mikeshafter.iciwi.Iciwi
 depend:
   - Vault

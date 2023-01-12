@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
-import static mikeshafter.iciwi.util.MachineUtil.isDouble;
-import static mikeshafter.iciwi.util.MachineUtil.makeItem;
-
+import static mikeshafter.iciwi.util.MachineUtil.*;
 
 public class CustomMachine implements Machine {
 
@@ -160,8 +158,9 @@ public class CustomMachine implements Machine {
   
   public void selectClass() {
     // Create inventory and create items
-    Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("select-class")));
-    fares.getFaresFromDestinations(station, parseComponent(terminal)).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
+    Inventory inventory = plugin.getServer().createInventory(null, roundUp(fareClasses.size(), 9), Component.text(lang.getString("select-class")));
+    fareClasses.forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
     player.openInventory(inventory);
   }
   

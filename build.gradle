@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'org.mikeshafter'
-version '1.18.2r3'
+version '1.19.3a1'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -25,7 +25,7 @@ dependencies {
   implementation 'org.junit.jupiter:junit-jupiter:5.9.0'
   compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
   compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19.3-v1'
 }
 
 test {

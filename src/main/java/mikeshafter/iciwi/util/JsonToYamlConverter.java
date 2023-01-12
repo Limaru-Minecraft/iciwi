@@ -25,7 +25,10 @@ public class JsonToYamlConverter {
     
     try {
       Scanner yamlScanner = new Scanner(yamlF);
-      if (yamlScanner.hasNext()) return; // don't process if yamlF already has data
+      if (yamlScanner.hasNext()) {
+        yamlScanner.close();
+        return;
+      } // don't process if yamlF already has data
   
       YamlConfiguration yaml = new YamlConfiguration();
       yaml.load(yamlF);
@@ -49,6 +52,7 @@ public class JsonToYamlConverter {
       }
       
       yaml.save(yamlF);
+      yamlScanner.close();
       
     } catch (IOException|JsonSyntaxException|InvalidConfigurationException e) {
       e.printStackTrace();
