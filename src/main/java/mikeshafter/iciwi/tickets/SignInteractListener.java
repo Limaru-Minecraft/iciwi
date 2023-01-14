@@ -61,10 +61,10 @@ public class SignInteractListener implements Listener {
       // close the previous inventory
       // player.closeInventory();
       // player inventory item selection code
-      if (machine instanceof TicketMachine tm && machine.useBottomInventory()) {
-        tm.setSelectedItem(event.getCurrentItem());
+      if (machine.useBottomInventory()) {
+        machine.setSelectedItem(event.getCurrentItem());
         // there can only be 1 action here, which is to open the card menu
-        tm.cardMenu();
+        machine.onCardSelection();
       }
       return;
     }
@@ -94,12 +94,10 @@ public class SignInteractListener implements Listener {
   @EventHandler
   public void onInvClose(InventoryCloseEvent event) {
     Player player = (Player) event.getPlayer();
+    machineHashMap.get(player).setSelectedItem(null);
     machineHashMap.remove(player);
   }
 
-  
-
-  
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {
     String line = parseComponent(event.line(0));
@@ -135,7 +133,6 @@ public class SignInteractListener implements Listener {
       Player player = event.getPlayer();
 
       // === Normal ticket machine ===
-
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
         String station = ((TextComponent) sign.line(1)).content().replaceAll("\\s+", "");
@@ -151,7 +148,6 @@ public class SignInteractListener implements Listener {
       }
 
       // === Custom machine ===
-
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
       {
         String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");

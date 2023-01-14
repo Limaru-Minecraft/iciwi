@@ -244,5 +244,23 @@ public class CustomMachine implements Machine {
   public boolean useBottomInventory() {
     return false;
   }
+
+  @Override
+  public void setSelectedItem(ItemStack selectedItem) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public ItemStack getSelectedItem() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void onCardSelection() {
+    // TODO Auto-generated method stub
+    
+  }
   
 }
