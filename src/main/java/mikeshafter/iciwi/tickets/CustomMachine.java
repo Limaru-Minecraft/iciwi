@@ -6,6 +6,7 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -232,6 +233,16 @@ public class CustomMachine implements Machine {
       CommonUtil.unregisterListener(this);
     }
     
+  }
+
+  @Override
+  public Clickable[] getClickables() {
+    return null;
+  }
+
+  @Override
+  public boolean useBottomInventory() {
+    return false;
   }
   
 }

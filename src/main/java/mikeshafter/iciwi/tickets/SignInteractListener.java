@@ -2,6 +2,7 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.MachineUtil;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
@@ -12,7 +13,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
@@ -24,6 +31,74 @@ public class SignInteractListener implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Lang lang = new Lang(plugin);
   protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
+
+
+  @EventHandler(priority = EventPriority.LOWEST)
+  public void TicketMachineListener(InventoryClickEvent event) {
+    System.out.println("DEBUG: Registered a click!");
+
+    // Cancel unwanted clicks
+    // Restrict putting items from the bottom inventory into the top inventory
+    Inventory clickedInventory = event.getClickedInventory();
+    Player player = (Player) event.getWhoClicked();
+
+    // Get the ticket machine reference
+    Machine machine = machineHashMap.get(player);
+
+    if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR
+        || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
+      event.setCancelled(true);
+      return;
+    }
+
+    if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE) {
+      event.setCancelled(true);
+      return;
+    }
+
+    if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
+      event.setCancelled(true);
+      // close the previous inventory
+      // player.closeInventory();
+      // player inventory item selection code
+      if (machine instanceof TicketMachine tm && machine.useBottomInventory()) {
+        tm.setSelectedItem(event.getCurrentItem());
+        // there can only be 1 action here, which is to open the card menu
+        tm.cardMenu();
+      }
+      return;
+    }
+
+    if (clickedInventory == player.getOpenInventory().getTopInventory()) {
+      event.setCancelled(true);
+      // close the previous inventory
+      // player.closeInventory();
+      // get contents of actual inventory
+      ItemStack[] contents = clickedInventory.getContents();
+      // get slot
+      int clickedSlot = event.getRawSlot();
+      // get clicked item
+      Clickable clickedItem = machine.getClickables()[clickedSlot];
+      // compare items and run
+      if (clickedItem.getItem().equals(contents[clickedSlot]))
+        clickedItem.run(event);
+      // don't need to test for more
+      return;
+    }
+    if (clickedInventory != null) {
+      clickedInventory.close();
+    }
+
+  }
+
+  @EventHandler
+  public void onInvClose(InventoryCloseEvent event) {
+    Player player = (Player) event.getPlayer();
+    machineHashMap.remove(player);
+  }
+
+  
+
   
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {

@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.tickets;
 
-import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
@@ -9,16 +8,8 @@ import mikeshafter.iciwi.util.Clickable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +29,7 @@ public class TicketMachine implements Machine {
   private ItemStack selectedItem;
   private List<String> operators;
   private final Player player;
+  private boolean flag;
 
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
@@ -48,10 +40,16 @@ public class TicketMachine implements Machine {
   // Constructor and Menu Display
   public TicketMachine (Player player) { this.player = player; }
 
+  // getters
+  public Clickable[] getClickables () { return clickables; }
+  public ItemStack getSelectedItem () { return selectedItem; }
+  public boolean useBottomInventory () { return flag; }
+  
+  // setters
+  public void setSelectedItem(ItemStack selectedItem) { this.selectedItem = selectedItem; }
+
   // initial menu
   public void init (String station) {
-    // Setup listener
-    Listener listener = new EventListener();
     // setup inventory
     inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
     this.clickables = new Clickable[9];
@@ -64,7 +62,7 @@ public class TicketMachine implements Machine {
     });
     this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, Component.text("Insert Card")), (event) -> {
       TicketMachine nextMachine = new TicketMachine(player);
-      nextMachine.selectCard(player);
+      nextMachine.selectCard();
     });
 
     // Get operators
@@ -72,41 +70,36 @@ public class TicketMachine implements Machine {
     // Set items
     inv = setItems(clickables, inv);
     // Start listening and open inventory
-    Bukkit.getPluginManager().registerEvents(listener, plugin);
     player.openInventory(inv);
   }
 
   // card selection menu. player clicks in their own inventory to select a card
-  public void selectCard (Player player) {
+  public void selectCard () {
     // Setup listener for bottom inventory selection
-    Listener listener = new EventListener((byte) 1);
     // Create inventory
     inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
     // Start listening and open inventory
-    Bukkit.getPluginManager().registerEvents(listener, plugin);
     player.openInventory(inv);
   }
 
   // main menu after inserting iciwi card
-  public void cardMenu (Player player) {
+  public void cardMenu () {
     // Setup listener
     TicketMachine nextMachine = new TicketMachine(player);
-    Listener listener = new EventListener();
     // setup inventory
     inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
     this.clickables = new Clickable[9];
 
     // Create buttons
     this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")), (event) -> nextMachine.newCard());
-    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")), (event) -> nextMachine.topUpCard(player, this.selectedItem));
-    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")), (event) -> nextMachine.railPass(player, this.selectedItem));
-    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")), (event) -> nextMachine.refundCard(player, this.selectedItem));
-    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")), (event) -> nextMachine.selectCard(player));
+    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")), (event) -> nextMachine.topUpCard(this.selectedItem));  // todo: fix this next
+    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")), (event) -> nextMachine.railPass(this.selectedItem));  // todo: fix this next
+    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")), (event) -> nextMachine.refundCard(this.selectedItem));  // todo: fix this next
+    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")), (event) -> nextMachine.selectCard());
 
     // Set items
     inv = setItems(this.clickables, inv);
     // Start listening and open inventory
-    Bukkit.getPluginManager().registerEvents(listener, plugin);
     player.openInventory(inv);
   }
 
@@ -114,7 +107,6 @@ public class TicketMachine implements Machine {
   public void newCard ()
   {
     // Setup listener
-    Listener listener = new EventListener();
     // setup inventory
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     int invSize = roundUp(priceArray.size(), 9);
@@ -158,14 +150,12 @@ public class TicketMachine implements Machine {
     // Set items
     inv = setItems(this.clickables, inv);
     // Start listening and open inventory
-    Bukkit.getPluginManager().registerEvents(listener, plugin);
     player.openInventory(inv);
   }
 
   // top up menu
-  public void topUpCard (Player player, ItemStack item) {
+  public void topUpCard (ItemStack item) {
     // Setup listener
-    Listener listener = new EventListener();
     // setup inventory
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     int invSize = roundUp(priceArray.size(), 9);
@@ -196,12 +186,11 @@ public class TicketMachine implements Machine {
     // Set items
     inv = setItems(this.clickables, inv);
     // Start listening and open inventory
-    Bukkit.getPluginManager().registerEvents(listener, plugin);
     player.openInventory(inv);
   }
 
   // rail pass menu
-  public void railPass (Player player, ItemStack item)
+  public void railPass (ItemStack item)
   {
     // get available railpasses
     ArrayList<String> railPassNames = new ArrayList<>();
@@ -272,7 +261,7 @@ public class TicketMachine implements Machine {
   }
 
   // refunds the card
-  public void refundCard (Player player, ItemStack item)
+  public void refundCard (ItemStack item)
   {
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
@@ -312,81 +301,4 @@ public class TicketMachine implements Machine {
     inventory.setStorageContents(getItems.apply(clickables));
     return inventory;
   }
-
-  private class EventListener implements Listener {
-
-    private final byte flags;
-
-    public EventListener (byte flags) { 
-      this.flags = flags;
-      System.out.println("DEBUG: Registered a new listener!");
-    }
-
-    public EventListener () { 
-      this.flags = 0; 
-      System.out.println("DEBUG: Registered a new listener!");
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void TicketMachineListener (InventoryClickEvent event) {
-      System.out.println("DEBUG: Registered a click!");
-
-      // Cancel unwanted clicks
-      // Restrict putting items from the bottom inventory into the top inventory
-      Inventory clickedInventory = event.getClickedInventory();
-      Player player = (Player) event.getWhoClicked();
-
-      if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-        event.setCancelled(true);
-        return;
-      }
-
-      if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE) {
-        event.setCancelled(true);
-        return;
-      }
-
-      if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
-        event.setCancelled(true);
-        // close the previous inventory
-        //player.closeInventory();
-        // player inventory item selection code
-        if (flags == (byte) 1) {
-          selectedItem = event.getCurrentItem();
-          // there can only be 1 action here, which is to open the card menu
-          cardMenu(player);
-        }
-        return;
-      }
-
-      if (clickedInventory == player.getOpenInventory().getTopInventory()) {
-        event.setCancelled(true);
-        // close the previous inventory
-        //player.closeInventory();
-        // get contents of actual inventory
-        ItemStack[] contents = clickedInventory.getContents();
-        // get slot
-        int clickedSlot = event.getRawSlot();
-        // get clicked item
-        Clickable clickedItem = clickables[clickedSlot];
-        // compare items and run
-        if (clickedItem.getItem().equals(contents[clickedSlot])) clickedItem.run(event);
-        // don't need to test for more
-        return;
-      }
-      if (clickedInventory != null) {
-        clickedInventory.close();
-        // end of event, therefore we unregister this
-        CommonUtil.unregisterListener(this);
-      }
-
-    }
-
-    @EventHandler
-    public void onInvClose (InventoryCloseEvent event) {
-      CommonUtil.unregisterListener(this);
-      selectedItem = null;
-    }
-  }
-
 }
