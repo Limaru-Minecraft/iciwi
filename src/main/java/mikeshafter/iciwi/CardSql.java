@@ -37,7 +37,7 @@ public class CardSql {
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial TEXT, value TEXT, PRIMARY KEY (serial) ); ");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial) ON UPDATE CASCADE, name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
     sql.add("CREATE TABLE IF NOT EXISTS railpasses (name TEXT, operator TEXT, duration INTEGER, percentage REAL, price REAL, PRIMARY KEY (name) ); ");
-  
+    
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
         statement.execute(s);
@@ -85,7 +85,7 @@ public class CardSql {
    *
    * @param serial Serial number
    * @param name   Name of the rail pass
-   * @param start  Start time of the rail pass, as a long
+   * @param start  Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z.
    */
   public void setDiscount(String serial, String name, long start) {
     String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
@@ -175,7 +175,7 @@ public class CardSql {
    * @param value  Value to be added
    */
   public void addValueToCard(String serial, double value) {
-    plugin.getServer().getLogger().info(serial+" "+value);
+    //plugin.getServer().getLogger().info(serial+" "+value);
     updateCard(serial, getCardValue(serial)+value);
   }
   
@@ -207,7 +207,7 @@ public class CardSql {
       statement.setString(1, serial);
       ResultSet rs = statement.executeQuery();
       return Math.round(rs.getDouble("value")*100.0)/100.0;
-  
+      
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
       return 0d;

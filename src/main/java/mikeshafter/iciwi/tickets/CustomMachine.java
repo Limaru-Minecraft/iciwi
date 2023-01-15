@@ -6,6 +6,7 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -15,37 +16,35 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 
-import static mikeshafter.iciwi.util.MachineUtil.componentToString;
-import static mikeshafter.iciwi.util.MachineUtil.isDouble;
+import static mikeshafter.iciwi.util.MachineUtil.*;
 
+public class CustomMachine implements Machine {
 
-public class CustomMachine {
-
-  private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
   private final String station;
   private final Lang lang = new Lang(plugin);
   private final Fares fares = new Fares(plugin);
   private final Owners owners = new Owners(plugin);
   private ItemStack[] items;
-  private final Listener listener;
   private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
     this.player = player;
     this.station = station;
-    this.listener = new EventListener();
-    var submitText = new InputDialogSubmitText((Iciwi) plugin, player) {
+    Listener listener = new EventListener();
+    var submitText = new InputDialogSubmitText(plugin, player) {
     
       @Override
       public void onTextChanged() {
@@ -96,7 +95,7 @@ public class CustomMachine {
     };
   
     // Start listening
-    Bukkit.getPluginManager().registerEvents(this.listener, plugin);
+    Bukkit.getPluginManager().registerEvents(listener, plugin);
   
     // Open anvil on next tick due to problems with same-tick opening
     CommonUtil.nextTick(submitText::open);
@@ -137,7 +136,7 @@ public class CustomMachine {
     
     // If the term does not contain the pattern term, but contains parts of it, we give a divided score
     // The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
-    //   and m is the term term length.
+    //   and m is the term length.
     
     /* At this point term does not contain pattern */
     for (int i = searchLength; i >= 2; i--) { // i is length of substring
@@ -160,8 +159,9 @@ public class CustomMachine {
   
   public void selectClass() {
     // Create inventory and create items
-    Inventory inventory = plugin.getServer().createInventory(null, 36, Component.text(lang.getString("select-class")));
-    fares.getFaresFromDestinations(station, componentToString(terminal)).forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
+    Inventory inventory = plugin.getServer().createInventory(null, roundUp(fareClasses.size(), 9), Component.text(lang.getString("select-class")));
+    fareClasses.forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
     player.openInventory(inventory);
   }
   
@@ -179,28 +179,29 @@ public class CustomMachine {
     if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
       Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
       double price = 0d;
-      if (priceComponent != null && isDouble(componentToString(priceComponent)))
-        price = Double.parseDouble(componentToString(priceComponent));
+      if (priceComponent != null && isDouble(parseComponent(priceComponent)))
+        price = Double.parseDouble(parseComponent(priceComponent));
       Component fareClass = item.getItemMeta().displayName();
   
       if (Iciwi.economy.getBalance(player) >= price) {
         Iciwi.economy.withdrawPlayer(player, price);
-        owners.deposit(owners.getOwner(station), price/2);
-        owners.deposit(owners.getOwner(componentToString(priceComponent)), price/2);
-        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), componentToString(fareClass), station, componentToString(terminal)));
+        
+        // find owners of the current station and deposit accordingly
+        List<String> ownersList = owners.getOwners(station);
+        int ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+  
+        // find owners of the station the ticket goes to and deposit accordingly
+        ownersList = owners.getOwners(parseComponent(terminal));
+        ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+        
+        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
         player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }
-  }
-  
-  private ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
-    ItemStack item = new ItemStack(material);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.displayName(displayName);
-    itemMeta.lore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
   }
   
   private class EventListener implements Listener {
@@ -226,7 +227,43 @@ public class CustomMachine {
         }
       }
     }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClose(InventoryCloseEvent event) {
+      CommonUtil.unregisterListener(this);
+    }
     
   }
+
+  @Override
+  public Clickable[] getClickables() {
+    return null;
+  }
+
+  @Override
+  public boolean useBottomInv() {
+    return false;
+  }
+
+  @Override
+  public void setSelectedItem(ItemStack selectedItem) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public ItemStack getSelectedItem() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void onCardSelection() {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void setBottomInv(boolean b) {}
   
 }

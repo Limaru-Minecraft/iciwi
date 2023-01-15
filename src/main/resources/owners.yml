@@ -35,10 +35,13 @@ RailPasses:
 
 # This section assigns stations to companies. You will need to fill this up even if there is only 1 company on your server.
 # Stations not belonging to any company will belong to the "null" company.
-# The format is in <station name>: <company>.
+# The format is in
+# <station name>:
+# - <company>
 # The station name refers to the name in fares.yml.
 Operators:
-  ExampleStation: ExampleOperator
+  ExampleStation:
+  - ExampleOperator
 
 # DO NOT TOUCH THIS SECTION unless you know what you are doing!
 Coffers:

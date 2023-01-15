@@ -4,6 +4,9 @@ penalty: 8.0
 # This sets the deposit that a player pays when they buy a new card
 deposit: 5.0
 
+# Prices listed when buying a new Iciwi card
+price-array: [10.0, 20.0, 30.0, 50.0, 100.0]
+
 # Database
 database: jdbc:sqlite:IciwiCards.db
 

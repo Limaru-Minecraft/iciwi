@@ -2,227 +2,363 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.Clickable;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.*;
+import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.componentToString;
-import static mikeshafter.iciwi.util.MachineUtil.isDouble;
-import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
+import static mikeshafter.iciwi.util.MachineUtil.*;
 
+public class TicketMachine implements Machine {
 
-public class TicketMachine {
-  
-  private final Iciwi plugin = getPlugin(Iciwi.class);
-  private final String station;
+  // Attributes
+  private Inventory inv;
+  private Clickable[] clickables;
+  private ItemStack selectedItem;
+  private List<String> operators;
   private final Player player;
+  private boolean bottomInv;
+
+  // Constant helper classes
   private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners(plugin);
-  private final Lang lang = new Lang(plugin);
-  
-  public TicketMachine(Player player, String station) {
+  private final Owners owners = new Owners();
+  private final Lang lang = new Lang();
+  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+
+  // Constructor and Menu Display
+  public TicketMachine(Player player) {
     this.player = player;
-    this.station = station;
-  }
-  
-  public Player getPlayer() {
-    return player;
   }
 
-  public void newTM_0() {
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
-  
-    // Single Journey Ticket
-    i.setItem(1, makeItem(Material.PAPER, lang.getComponent("menu-new-ticket")));
-    i.setItem(3, makeItem(Material.MAP, lang.getComponent("menu-adjust-fares")));
-    i.setItem(5, makeItem(Material.NAME_TAG, lang.getComponent("card-operations")));
-    i.setItem(7, makeItem(Material.BOOK, lang.getComponent("check-fares")));
-  
-    player.openInventory(i);
+  // getters
+  public Clickable[] getClickables() {
+    return clickables;
   }
-  
-  protected ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
-    ItemStack item = new ItemStack(material, 1);
-    ItemMeta itemMeta = item.getItemMeta();
-    assert itemMeta != null;
-    itemMeta.displayName(displayName);
-    itemMeta.lore(Arrays.asList(lore));
-    item.setItemMeta(itemMeta);
-    return item;
+
+  public ItemStack getSelectedItem() {
+    return selectedItem;
   }
-  
-  public void newTicket_1(double value) {
-    Inventory i = plugin.getServer().createInventory(null, 36, Component.text(String.format((lang.getString("menu-new-ticket")+lang.getString("currency")+"%.2f"), value)));
-    for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
-      i.setItem(ints[0], makeItem(Material.GRAY_STAINED_GLASS_PANE, Component.text(ints[1])));
+
+  public boolean useBottomInv() {
+    return bottomInv;
+  }
+
+  // setters
+  @Override
+  public void setSelectedItem(ItemStack selectedItem) {
+    this.selectedItem = selectedItem;
+  }
+
+  // initial menu
+  public void init(String station) {
+    // setup inventory
+    inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
+    this.clickables = new Clickable[9];
+
+    // Create buttons
+    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, Component.text("New Single Journey Ticket"),
+        Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
+    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")),
+        (event) -> newCard());
+    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, Component.text("Insert Card")),
+        (event) -> selectCard());
+
+    // Get operators
+    operators = this.owners.getOwners(station);
+    //TODO: debug
+    System.out.println(operators.toString());
+    // Set items
+    inv = setItems(clickables, inv);
+    // Start listening and open inventory
+    player.openInventory(inv);
+  }
+
+  // card selection menu. player clicks in their own inventory to select a card
+  public void selectCard() {
+    // Setup listener for bottom inventory selection
+    // Create inventory
+    inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
+    // Swap flag
+    bottomInv = true;
+    // Start listening and open inventory
+    player.openInventory(inv);
+  }
+
+  @Override
+  public void onCardSelection() {
+    cardMenu();
+  }
+
+  // main menu after inserting iciwi card
+  public void cardMenu() {
+    // setup inventory
+    inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
+    this.clickables = new Clickable[9];
+
+    // Create buttons
+    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")),
+        (event) -> newCard());
+    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")),
+        (event) -> topUpCard(this.selectedItem)); // todo: fix this next
+    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")),
+        (event) -> railPass(this.selectedItem)); // todo: fix this next
+    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")),
+        (event) -> refundCard(this.selectedItem)); // todo: fix this next
+    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")),
+        (event) -> selectCard());
+
+    // Set items
+    inv = setItems(this.clickables, inv);
+    // Start listening and open inventory
+    player.openInventory(inv);
+  }
+
+  // new iciwi card menu
+  public void newCard() {
+    // Setup listener
+    // setup inventory
+    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
+    int invSize = roundUp(priceArray.size(), 9);
+    inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+    this.clickables = new Clickable[priceArray.size()];
+
+    for (int i = 0; i < priceArray.size(); i++) {
+      this.clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE,
+          Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
+            double value = Double
+                .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
+                    .replaceAll("[^\\d.]", ""));
+            double deposit = plugin.getConfig().getDouble("deposit");
+
+            event.setCancelled(true);
+
+            if (Iciwi.economy.getBalance(player) >= deposit + value) {
+              // Take money from player and send message
+              Iciwi.economy.withdrawPlayer(player, deposit + value);
+
+              // Prepare card
+              int s = new SecureRandom().nextInt(100000);
+              char sum = new char[] { 'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R',
+                  'S', 'T',
+                  'Y' }[((s % 10) * 2 + (s / 10 % 10) * 3 + (s / 100 % 10) * 5 + (s / 1000 % 10) * 7 + (s / 10000) * 9)
+                      % 19];
+              String serial = lang.getString("serial-prefix") + sum + "-" + s;
+
+              // Generate card
+              cardSql.newCard(serial, value);
+              player.getInventory().addItem(makeItem(Material.NAME_TAG, lang.getComponent("plugin-name"),
+                  lang.getComponent("serial-number"), Component.text(serial)));
+
+              // Send confirmation message
+              player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
+              player.closeInventory();
+            } else {
+              player.closeInventory();
+              player.sendMessage(lang.getString("not-enough-money"));
+            }
+          });
     }
-    i.setItem(30, makeItem(Material.RED_STAINED_GLASS_PANE, lang.getComponent("clear")));
-    i.setItem(32, makeItem(Material.LIME_STAINED_GLASS_PANE, lang.getComponent("enter")));
-    
-    player.openInventory(i);
+
+    // Set items
+    inv = setItems(this.clickables, inv);
+    // Start listening and open inventory
+    player.openInventory(inv);
   }
 
-  public void adjustFares_1() {
-    // Ticket selection
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.getComponent("select-ticket"));
-    player.openInventory(i);
-  }
+  // top up menu
+  public void topUpCard(ItemStack item) {
+    // Setup listener
+    // setup inventory
+    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
+    int invSize = roundUp(priceArray.size(), 9);
+    inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+    clickables = new Clickable[invSize];
 
-  public void adjustFares_2(double value, ItemStack item) {
-    Inventory i = plugin.getServer().createInventory(null, 36, Component.text(String.format((lang.getString("menu-adjust-fares")+lang.getString("currency")+"%.2f"), value)));
-    for (int[] ints : new int[][] {{3, 1}, {4, 2}, {5, 3}, {12, 4}, {13, 5}, {14, 6}, {21, 7}, {22, 8}, {23, 9}, {31, 0}}) {
-      i.setItem(ints[0], makeItem(Material.GRAY_STAINED_GLASS_PANE, Component.text(ints[1])));
+    // get serial number
+    String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+
+    for (int i = 0; i < priceArray.size(); i++) {
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE,
+          Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
+            double value = Double
+                .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
+                    .replaceAll("[^\\d.]", ""));
+
+            if (Iciwi.economy.getBalance(player) >= value) {
+              // Take money from player and send message
+              Iciwi.economy.withdrawPlayer(player, value);
+              player.sendMessage(String.format(lang.getString("card-topped-up"), value));
+
+              // Update value in SQL
+              cardSql.addValueToCard(serial, value);
+              player.closeInventory();
+            } 
+            else 
+            {
+              player.closeInventory();
+              player.sendMessage(lang.getString("not-enough-money"));
+            }
+          });
     }
-    i.setItem(0, item);
-    i.setItem(30, makeItem(Material.RED_STAINED_GLASS_PANE, lang.getComponent("clear")));
-    i.setItem(32, makeItem(Material.LIME_STAINED_GLASS_PANE, lang.getComponent("enter")));
-  
-    player.openInventory(i);
+
+    // Set items
+    inv = setItems(this.clickables, inv);
+    // Start listening and open inventory
+    player.openInventory(inv);
   }
 
-  public void cardOperations_1() {
-    // check if player has a card
-    for (ItemStack i : player.getInventory().getContents()) {
-      if (i != null && i.hasItemMeta() && i.getItemMeta() != null && i.getItemMeta().hasLore() && i.getItemMeta().lore() != null && Objects.requireNonNull(i.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
-        Inventory j = plugin.getServer().createInventory(null, 9, lang.getComponent("select-card"));
-        player.openInventory(j);
-        return;
+  // rail pass menu
+  public void railPass(ItemStack item) {
+    // get available railpasses
+    ArrayList<String> railPassNames = new ArrayList<>();
+    this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
+
+    // TODO: debug
+    System.out.println(operators.toString());
+    // TODO: debug
+    System.out.println(railPassNames.toString());
+
+    int invSize = (railPassNames.size() / 9 + 1) * 9;
+    inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+    clickables = new Clickable[invSize];
+
+    // get serial number
+    String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+
+    // rail pass viewer
+    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, Component.text("View Rail Passes")),
+        (event) -> {
+          // print current rail passes
+          // get current passes
+          List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
+              .sorted(Map.Entry.comparingByValue())
+              .map(railPass -> Component.text().content(
+                  // Show expiry date
+                  "\u00A76- \u00A7a" + railPass.getKey() + "\u00a76 | Exp. "
+                      + String.format("\u00a7b%s\n", new Date(railPass.getValue() * 1000)))
+                  // Option to extend (currently disabled)
+                  // .append(Component.text().content("\u00a76 | Extend
+                  // \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
+                  // "+railPass.getKey()))
+                  .build())
+              .toList();
+          // menu title
+          TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD)
+              .build();
+          // build content
+          for (TextComponent displayEntry : discountList)
+            menu = menu.append(displayEntry);
+          menu = menu.append(Component.text("\n"));
+          // send to player
+          player.sendMessage(menu);
+
+          // close inventory so that the player can see the message
+          player.closeInventory();
+        });
+
+    // create all rail pass buttons
+    for (int i = 1; i < railPassNames.size() + 1; i++) {
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i-1))),
+          (event) -> {
+            String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
+            double price = this.owners.getRailPassPrice(name);
+
+            if (Iciwi.economy.getBalance(player) >= price) {
+              // take money from player
+              Iciwi.economy.withdrawPlayer(player, price);
+
+              // check if the card already has the rail pass
+              if (this.cardSql.getAllDiscounts(serial).containsKey(name))
+                // Extend by the duration of the rail pass (change start time to the current
+                // expiry time)
+              {
+                this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
+                player.sendMessage(this.lang.getString("added-rail-pass"));
+              }
+              else
+                // New rail pass
+              {
+                this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+                player.sendMessage(this.lang.getString("extended-rail-pass"));
+              }
+
+              // pay the TOC
+              this.owners.deposit(this.owners.getRailPassOperator(name), price);
+            }
+            else
+              player.sendMessage(this.lang.getString("not-enough-money"));
+
+            // close inventory
+            player.closeInventory();
+          });
+    }
+
+    // set items and open inventory
+    inv = setItems(clickables, inv);
+    player.openInventory(inv);
+
+  }
+
+
+  // refunds the card
+  public void refundCard(ItemStack item) 
+  {  
+    // get serial number
+    String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+    for (ItemStack itemStack : player.getInventory().getContents()) {
+      // check if the lore matches
+      if (loreCheck(itemStack) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number")) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
+
+        // return remaining value to the player
+        double remainingValue = this.cardSql.getCardValue(serial);
+        Iciwi.economy.depositPlayer(player, remainingValue);
+
+        // return the deposit to the player
+        double deposit = this.plugin.getConfig().getDouble("deposit");
+        Iciwi.economy.depositPlayer(player, deposit);
+
+        // remove card from the inventory and from the database
+        player.getInventory().remove(itemStack);
+        this.cardSql.deleteCard(serial);
+
+        // send message and break out of loop
+        player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
+
+        // close inventory
+        player.closeInventory();
+        break;
       }
     }
-    this.newCard_3();
+  }
+  
+
+  // puts the items of a clickable[] into an inventory
+  public Inventory setItems(Clickable[] clickables, Inventory inventory) {
+    Function<Clickable[], ItemStack[]> getItems = (c) -> {
+      ItemStack[] items = new ItemStack[c.length];
+      for (int i = 0; i < c.length; i++)
+        if (c[i] != null)
+          items[i] = c[i].getItem();
+      return items;
+    };
+    inventory.setStorageContents(getItems.apply(clickables));
+    return inventory;
   }
 
-  public void newCard_3() {
-    Inventory i = plugin.getServer().createInventory(null, 9, lang.getComponent("select-value"));
-    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
-    if (priceArray.size() == 0) {
-      plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
-    }
-    for (int j = 0; j < priceArray.size(); j++) {
-      i.setItem(j, makeItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(String.format(lang.getString("currency")+"%.2f", priceArray.get(j)))));
-    }
-    player.openInventory(i);
+  @Override
+  public void setBottomInv(boolean b) {
+    this.bottomInv = b;
   }
 
-  public void cardOperations_2(String serial) {
-    // this.serial = serial;
-    Inventory i = plugin.getServer().createInventory(null, 9, Component.text(String.format(lang.getString("card-operation")+"%s", serial)));
-    double cardValue = cardSql.getCardValue(serial);
-    i.setItem(0, makeItem(Material.NAME_TAG, lang.getComponent("card-details"), Component.text(String.format(lang.getString("serial-number")+" %s", serial)), Component.text(String.format(lang.getString("remaining-value")+lang.getString("currency")+"%.2f", cardValue))));
-    i.setItem(1, makeItem(Material.MAGENTA_WOOL, lang.getComponent("new-card")));
-    i.setItem(2, makeItem(Material.CYAN_WOOL, lang.getComponent("top-up-card")));
-    i.setItem(3, makeItem(Material.LIME_WOOL, lang.getComponent("menu-rail-pass"), Component.text(owners.getOwner(this.station))));
-    i.setItem(4, makeItem(Material.ORANGE_WOOL, lang.getComponent("refund-card")));
-    player.openInventory(i);
-  }
-
-  public void topUp_3(String serial) {
-    Inventory i = plugin.getServer().createInventory(null, 9, Component.text(String.format(ChatColor.DARK_BLUE+"Top Up - %s", serial)));
-    List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
-    if (priceArray.size() == 0) {
-      plugin.getConfig().set("price-array", new double[] {10d, 20d, 30d, 50d, 100d});
-    }
-    for (int j = 0; j < priceArray.size(); j++) {
-      i.setItem(j, makeItem(Material.PURPLE_STAINED_GLASS_PANE, Component.text(String.format(lang.getString("currency")+"%.2f", priceArray.get(j)))));
-    }
-    player.openInventory(i);
-  }
-
-  public void checkFares_1(int page) {
-    Map<String, Double> faresMap = new Fares().getFares(this.station);
-    if (faresMap != null) {
-      int size = faresMap.size();
-      List<String> stations = faresMap.keySet().stream().sorted().toList();
-      TextComponent menu = Component.text().content("==== Fares from "+this.station+" ====\n").color(NamedTextColor.GOLD).build();
-      for (int i = (page-1)*8; i < (page*8); i++) {
-        menu = i < size ? menu.append(Component.text().content("\u00A76- \u00A7a"+stations.get(i)+"\u00a76 - "+String.format("\u00a7b[%.2f]\n", faresMap.get(stations.get(i)))).build())
-                   : menu.append(Component.text("\n"));
-      }
-      int maxPage = (size-1)/8+1;
-      menu = menu.append((Component.text().content("== ").color(NamedTextColor.GOLD)).build());
-      menu = page == 1 ? menu.append(Component.text().content("[###]").color(NamedTextColor.GOLD).build()) : menu.append(Component.text().clickEvent(ClickEvent.runCommand(checkFares(page-1))).content("[<<<]").color(NamedTextColor.GOLD).build());
-      menu = menu.append(Component.text().content(String.format(" == Page %d of %d == ", page, maxPage)).color(NamedTextColor.GOLD).build());
-      menu = page == maxPage ? menu.append(Component.text().content("[###]").color(NamedTextColor.GOLD).build()) : menu.append(Component.text().clickEvent(ClickEvent.runCommand(checkFares(page+1))).content("[>>>]").color(NamedTextColor.GOLD).build());
-      menu = menu.append((Component.text().content(" ==").color(NamedTextColor.GOLD)).build());
-      player.sendMessage(menu);
-    }
-  }
-  
-  private @NotNull String checkFares(int page) {
-    return "/iciwi:iciwi farechart "+this.station+" "+page;
-  }
-  
-  public void railPass_3(String serial, String operator) {
-    Inventory i = plugin.getServer().createInventory(null, 9, Component.text(String.format(lang.getString("menu-rail-pass")+"%s", serial)));
-  
-    // Show card's current rail passes and expiry dates
-    i.addItem(makeItem(Material.NAME_TAG, lang.getComponent("card-discounts")));
-  
-    // Rail pass sales
-    Set<String> names = cardSql.getRailPassNames(operator);
-    for (String name : names) {
-      double price = owners.getRailPassPrice(name);
-      i.addItem(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(name).color(TextColor.color(0, 255, 0)), Component.text(price)));
-      
-    /*
-    Set<String> daysSet = owners.getRailPassDays(operator);
-    for (String days : daysSet) {
-      double price = owners.getRailPassPrice(operator, Long.parseLong(days));
-      i.addItem(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(days).append(lang.getComponent("days")).color(TextColor.color(0, 255, 0)), Component.text(price)));
-     */
-    player.openInventory(i);
-  }
-  
-  public String getStation() {
-    return station;
-  }
-  
-  public void generateTicket(ItemStack item, double value) {
-    // get current fare on the ticket
-    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
-      String lore0 = componentToString(Objects.requireNonNull(item.getItemMeta().lore()).get(0));
-      String lore1 = componentToString(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-      double val = (!lore1.contains("•") && isDouble(lore1)) ? Double.parseDouble(lore1) : 0;
-      double parsedValue = value-val;
-  
-      if (Iciwi.economy.getBalance(player) >= parsedValue) {
-        Iciwi.economy.withdrawPlayer(player, parsedValue);
-        player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
-        player.getInventory().remove(item);
-        player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(lore0), Component.text(value)));
-      } else player.sendMessage(lang.getString("not-enough-money"));
-    }
-  }
-  
-  public void generateTicket(double value) {
-    if (Iciwi.economy.getBalance(player) >= value) {
-      Iciwi.economy.withdrawPlayer(player, value);
-      player.sendMessage(String.format(lang.getString("generate-ticket"), station, value));
-      player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), Component.text(String.format("%.2f", value))));
-    } else player.sendMessage(lang.getString("not-enough-money"));
-  }
-  
-  public void generateCard(String serial, double value) {
-    if (Iciwi.economy.getBalance(player) >= value) {
-      cardSql.newCard(serial, value);
-      player.getInventory().addItem(makeItem(Material.NAME_TAG, lang.getComponent("plugin-name"), lang.getComponent("serial-number"), Component.text(serial)));
-    } else player.sendMessage(lang.getString("not-enough-money"));
-  }
-  
 }

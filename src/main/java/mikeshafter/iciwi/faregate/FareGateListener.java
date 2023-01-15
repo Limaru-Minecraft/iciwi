@@ -2,10 +2,10 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.config.Fares;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -24,18 +24,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static mikeshafter.iciwi.util.MachineUtil.any;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
 public class FareGateListener implements Listener {
-  private final Plugin plugin = getPlugin(Iciwi.class);
+  private final Iciwi plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
   private final Lang lang = new Lang();
   private final Records records = new Records();
@@ -43,12 +43,12 @@ public class FareGateListener implements Listener {
   private final Fares fares = new Fares();
   private final LinkedList<FareGate> gates = new LinkedList<>();
   boolean canClick = true;
-  
-  
+
+
   @EventHandler
   public void TicketBarrierSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && canClick) {
-      
+    
       Player player = event.getPlayer();
       Block block = event.getClickedBlock();
       BlockState state = block.getState();
@@ -114,10 +114,10 @@ public class FareGateListener implements Listener {
       if (gate != null && gate.getGateType() != GateType.MEMBER) {
         GateType gateType = gate.getGateType();
         /*
-        Paper ticket    | Y Y
-        Card            |     Y Y
-        • in Lore?      | Y N
-        Card in config? |     Y N
+        Paper ticket    | • •
+        Card            |     • •
+        • in Lore?      | • ×
+        Card in config? |     • ×
         ===========================
         Entry           |   x   x
         Exit            | x   x
@@ -174,8 +174,8 @@ public class FareGateListener implements Listener {
   
               // get rail pass discounts
               Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
-              String entryStationOwner = owners.getOwner(entryStation);
-              String exitStationOwner = owners.getOwner(station);
+              String entryStationOwner = owners.getOwners(entryStation).get(0);
+              String exitStationOwner = owners.getOwners(station).get(0);
   
               // get transfer discount
               if (records.getBoolean("has-transfer."+serial)) {
@@ -312,7 +312,7 @@ public class FareGateListener implements Listener {
           String serial = meta.getLore().get(1);
           Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
     
-          if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || discounts.containsKey(owners.getOwner(ChatColor.stripColor(sign.getLine(1)))))) {
+          if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || any(discounts.keySet(), owners.getOwners(ChatColor.stripColor(sign.getLine(1)) )) )) {
             player.sendMessage(lang.getString("member-gate"));
       
             // Open gates
