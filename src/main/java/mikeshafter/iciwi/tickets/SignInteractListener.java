@@ -43,17 +43,6 @@ public class SignInteractListener implements Listener {
     // Get the ticket machine reference
     Machine machine = machineHashMap.get(player);
 
-    if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR
-        || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-      event.setCancelled(true);
-      return;
-    }
-
-    if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE) {
-      event.setCancelled(true);
-      return;
-    }
-
     if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
       event.setCancelled(true);
       // close the previous inventory
