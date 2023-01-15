@@ -31,7 +31,7 @@ public class RailPassMachine implements Machine {
   private ItemStack selectedItem;
   private List<String> operators;
   private final Player player;
-  private boolean flag;
+  private boolean bottomInv;
 
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
@@ -40,7 +40,7 @@ public class RailPassMachine implements Machine {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
   public RailPassMachine (Player player) { 
-    flag = true; 
+    bottomInv = true; 
     this.player = player; 
   }
 
@@ -61,7 +61,7 @@ public class RailPassMachine implements Machine {
   public void railPass(ItemStack item) {
     // get available railpasses
     ArrayList<String> railPassNames = new ArrayList<>();
-    this.operators.forEach((o) -> railPassNames.addAll(cardSql.getRailPassNames(o)));
+    this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
 
     int invSize = (railPassNames.size() / 9 + 1) * 9;
     inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
@@ -139,7 +139,7 @@ public class RailPassMachine implements Machine {
   public Clickable[] getClickables() { return this.clickables; }
 
   @Override
-  public boolean useBottomInventory() { return flag; }
+  public boolean useBottomInv() { return bottomInv; }
 
   @Override
   public void setSelectedItem(ItemStack selectedItem) { this.selectedItem = selectedItem; }
@@ -158,5 +158,10 @@ public class RailPassMachine implements Machine {
     };
     inventory.setStorageContents(getItems.apply(clickables));
     return inventory;
+  }
+
+  @Override
+  public void setBottomInv(boolean b) {
+    this.bottomInv = b;
   }
 }

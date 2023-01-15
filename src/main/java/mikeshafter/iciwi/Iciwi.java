@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-public final class Iciwi extends JavaPlugin implements TabExecutor {
+public final class Iciwi extends JavaPlugin {
   
   public static Economy economy = null;
   public Lang lang;

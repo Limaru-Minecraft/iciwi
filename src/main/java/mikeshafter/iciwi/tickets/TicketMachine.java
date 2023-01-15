@@ -28,7 +28,7 @@ public class TicketMachine implements Machine {
   private ItemStack selectedItem;
   private List<String> operators;
   private final Player player;
-  private boolean flag;
+  private boolean bottomInv;
 
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
@@ -50,8 +50,8 @@ public class TicketMachine implements Machine {
     return selectedItem;
   }
 
-  public boolean useBottomInventory() {
-    return flag;
+  public boolean useBottomInv() {
+    return bottomInv;
   }
 
   // setters
@@ -76,6 +76,8 @@ public class TicketMachine implements Machine {
 
     // Get operators
     operators = this.owners.getOwners(station);
+    //TODO: debug
+    System.out.println(operators.toString());
     // Set items
     inv = setItems(clickables, inv);
     // Start listening and open inventory
@@ -87,6 +89,8 @@ public class TicketMachine implements Machine {
     // Setup listener for bottom inventory selection
     // Create inventory
     inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
+    // Swap flag
+    bottomInv = true;
     // Start listening and open inventory
     player.openInventory(inv);
   }
@@ -101,9 +105,6 @@ public class TicketMachine implements Machine {
     // setup inventory
     inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
     this.clickables = new Clickable[9];
-
-    // todo: debug
-    System.out.println(this.selectedItem.getType().toString());
 
     // Create buttons
     this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")),
@@ -194,14 +195,19 @@ public class TicketMachine implements Machine {
                 .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
                     .replaceAll("[^\\d.]", ""));
 
-            player.closeInventory();
-
             if (Iciwi.economy.getBalance(player) >= value) {
               // Take money from player and send message
               Iciwi.economy.withdrawPlayer(player, value);
+              player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 
               // Update value in SQL
               cardSql.addValueToCard(serial, value);
+              player.closeInventory();
+            } 
+            else 
+            {
+              player.closeInventory();
+              player.sendMessage(lang.getString("not-enough-money"));
             }
           });
     }
@@ -216,7 +222,12 @@ public class TicketMachine implements Machine {
   public void railPass(ItemStack item) {
     // get available railpasses
     ArrayList<String> railPassNames = new ArrayList<>();
-    this.operators.forEach((o) -> railPassNames.addAll(cardSql.getRailPassNames(o)));
+    this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
+
+    // TODO: debug
+    System.out.println(operators.toString());
+    // TODO: debug
+    System.out.println(railPassNames.toString());
 
     int invSize = (railPassNames.size() / 9 + 1) * 9;
     inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
@@ -251,11 +262,14 @@ public class TicketMachine implements Machine {
           menu = menu.append(Component.text("\n"));
           // send to player
           player.sendMessage(menu);
+
+          // close inventory so that the player can see the message
+          player.closeInventory();
         });
 
     // create all rail pass buttons
-    for (int i = 1; i <= railPassNames.size(); i++) {
-      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i))),
+    for (int i = 1; i < railPassNames.size() + 1; i++) {
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i-1))),
           (event) -> {
             String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
             double price = this.owners.getRailPassPrice(name);
@@ -268,14 +282,21 @@ public class TicketMachine implements Machine {
               if (this.cardSql.getAllDiscounts(serial).containsKey(name))
                 // Extend by the duration of the rail pass (change start time to the current
                 // expiry time)
+              {
                 this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
+                player.sendMessage("Rail pass extended!");  //todo: better message
+              }
               else
                 // New rail pass
+              {
                 this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+                player.sendMessage("Bought new rail pass!");  //todo: better message
+              }
 
               // pay the TOC
               this.owners.deposit(this.owners.getRailPassOperator(name), price);
-            } else
+            }
+            else
               player.sendMessage(this.lang.getString("not-enough-money"));
 
             // close inventory
@@ -289,32 +310,38 @@ public class TicketMachine implements Machine {
 
   }
 
+
   // refunds the card
-  public void refundCard(ItemStack item) {
+  public void refundCard(ItemStack item) 
+  {  
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
     for (ItemStack itemStack : player.getInventory().getContents()) {
-      // get loreStack
-      if (loreCheck(itemStack)
-          && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number"))) {
-        // get serialNumber
-        if (Objects.requireNonNull(item.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
-          // return remaining value to the player
-          double remainingValue = this.cardSql.getCardValue(serial);
-          Iciwi.economy.depositPlayer(player, remainingValue);
-          // return the deposit to the player
-          double deposit = this.plugin.getConfig().getDouble("deposit");
-          Iciwi.economy.depositPlayer(player, deposit);
-          // remove card from the inventory and from the database
-          player.getInventory().remove(itemStack);
-          this.cardSql.deleteCard(serial);
-          // send message and break out of loop
-          player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
-          break;
-        }
+      // check if the lore matches
+      if (loreCheck(itemStack) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number")) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
+
+        // return remaining value to the player
+        double remainingValue = this.cardSql.getCardValue(serial);
+        Iciwi.economy.depositPlayer(player, remainingValue);
+
+        // return the deposit to the player
+        double deposit = this.plugin.getConfig().getDouble("deposit");
+        Iciwi.economy.depositPlayer(player, deposit);
+
+        // remove card from the inventory and from the database
+        player.getInventory().remove(itemStack);
+        this.cardSql.deleteCard(serial);
+
+        // send message and break out of loop
+        player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
+
+        // close inventory
+        player.closeInventory();
+        break;
       }
     }
   }
+  
 
   // puts the items of a clickable[] into an inventory
   public Inventory setItems(Clickable[] clickables, Inventory inventory) {
@@ -327,6 +354,11 @@ public class TicketMachine implements Machine {
     };
     inventory.setStorageContents(getItems.apply(clickables));
     return inventory;
+  }
+
+  @Override
+  public void setBottomInv(boolean b) {
+    this.bottomInv = b;
   }
 
 }

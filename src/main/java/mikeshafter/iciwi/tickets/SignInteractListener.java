@@ -16,7 +16,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,6 @@ public class SignInteractListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void TicketMachineListener(InventoryClickEvent event) {
-    System.out.println("DEBUG: Registered a click!");
 
     // Cancel unwanted clicks
     // Restrict putting items from the bottom inventory into the top inventory
@@ -61,10 +59,11 @@ public class SignInteractListener implements Listener {
       // close the previous inventory
       // player.closeInventory();
       // player inventory item selection code
-      if (machine.useBottomInventory()) {
+      if (machine.useBottomInv()) {
         machine.setSelectedItem(event.getCurrentItem());
         // there can only be 1 action here, which is to open the card menu
         machine.onCardSelection();
+        machine.setBottomInv(false);
       }
       return;
     }
@@ -91,12 +90,11 @@ public class SignInteractListener implements Listener {
 
   }
 
-  @EventHandler
-  public void onInvClose(InventoryCloseEvent event) {
-    Player player = (Player) event.getPlayer();
-    machineHashMap.get(player).setSelectedItem(null);
-    machineHashMap.remove(player);
-  }
+  // @EventHandler
+  // public void onInvClose(InventoryCloseEvent event) {
+  //   Player player = (Player) event.getPlayer();
+  //   machineHashMap.remove(player);
+  // }
 
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {

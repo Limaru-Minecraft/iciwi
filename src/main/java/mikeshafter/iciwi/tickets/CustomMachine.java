@@ -241,7 +241,7 @@ public class CustomMachine implements Machine {
   }
 
   @Override
-  public boolean useBottomInventory() {
+  public boolean useBottomInv() {
     return false;
   }
 
@@ -262,5 +262,8 @@ public class CustomMachine implements Machine {
     // TODO Auto-generated method stub
     
   }
+
+  @Override
+  public void setBottomInv(boolean b) {}
   
 }

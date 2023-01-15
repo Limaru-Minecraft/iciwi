@@ -152,9 +152,7 @@ public class Owners extends CustomConfig {
   /**
    * @param operator TOC to search up
    * @return Names of rail passes sold by the operator
-   * @deprecated This method is deprecated as future queries into rail passes should be made into the SQL database instead.
    */
-  @Deprecated
   public Set<String> getRailPassNames(String operator) {
     // Loop through all names in RailPasses
     ConfigurationSection railPassPrices = super.get().getConfigurationSection("RailPassPrices");
