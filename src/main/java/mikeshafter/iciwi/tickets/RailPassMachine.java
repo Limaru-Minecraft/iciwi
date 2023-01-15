@@ -113,10 +113,18 @@ public class RailPassMachine implements Machine {
           if (this.cardSql.getAllDiscounts(serial).containsKey(name))
             // Extend by the duration of the rail pass (change start time to the current
             // expiry time)
+            {
             this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
+            player.sendMessage(this.lang.getString("added-rail-pass"));
+            }
+
           else
             // New rail pass
+            {
             this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+            player.sendMessage(this.lang.getString("extended-rail-pass"));
+            }
+
 
           // pay the TOC
           this.owners.deposit(this.owners.getRailPassOperator(name), price);

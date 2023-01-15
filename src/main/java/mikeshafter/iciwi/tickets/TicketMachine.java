@@ -284,13 +284,13 @@ public class TicketMachine implements Machine {
                 // expiry time)
               {
                 this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
-                player.sendMessage("Rail pass extended!");  //todo: better message
+                player.sendMessage(this.lang.getString("added-rail-pass"));
               }
               else
                 // New rail pass
               {
                 this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
-                player.sendMessage("Bought new rail pass!");  //todo: better message
+                player.sendMessage(this.lang.getString("extended-rail-pass"));
               }
 
               // pay the TOC
