@@ -25,12 +25,23 @@ public class MachineUtil {
     for (E e:k) if (c.contains(e)) return true;
     return false;
   }
+
+@Deprecated public static ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
+  ItemStack item = new ItemStack(material);
+    ItemMeta itemMeta = item.getItemMeta();
+    assert itemMeta != null;
+    itemMeta.displayName(displayName);
+    itemMeta.lore(Arrays.asList(lore));
+    item.setItemMeta(itemMeta);
+    return item;
+  }
   
-  public static ItemStack makeItem(final Material material, final Component displayName, final Component... lore) {
+  public static ItemStack makeItem(final Material material, final int customModelData, final Component displayName, final Component... lore) {
     ItemStack item = new ItemStack(material);
     ItemMeta itemMeta = item.getItemMeta();
     assert itemMeta != null;
     itemMeta.displayName(displayName);
+    itemMeta.setCustomModelData(customModelData);
     itemMeta.lore(Arrays.asList(lore));
     item.setItemMeta(itemMeta);
     return item;

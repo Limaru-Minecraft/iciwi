@@ -33,3 +33,8 @@ global-ticket-price: 5.0
 # glass fare gate speed
 ticks-to-open: 20
 ticks-to-close: 20
+
+# custom item usage
+card:
+  material: NAME_TAG
+  custom-model-data: 0

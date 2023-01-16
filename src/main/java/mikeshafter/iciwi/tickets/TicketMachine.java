@@ -155,9 +155,12 @@ public class TicketMachine implements Machine {
                       % 19];
               String serial = lang.getString("serial-prefix") + sum + "-" + s;
 
+              // Get card generator
+              Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
+              int customModelData = plugin.getConfig().getInt("card.custom-model-data");
               // Generate card
               cardSql.newCard(serial, value);
-              player.getInventory().addItem(makeItem(Material.NAME_TAG, lang.getComponent("plugin-name"),
+              player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"),
                   lang.getComponent("serial-number"), Component.text(serial)));
 
               // Send confirmation message
