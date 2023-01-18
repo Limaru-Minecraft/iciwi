@@ -199,7 +199,11 @@ public class CustomMachine implements Machine {
           owners.deposit(owner, price/2/ownerCount);
         
         //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
-        player.getInventory().addItem(makeItem(Material.PAPER, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
+        // Get ticket generator
+              Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
+              int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
+              // Generate card
+        player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }
   }
