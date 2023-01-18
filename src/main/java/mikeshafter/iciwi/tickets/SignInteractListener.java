@@ -35,13 +35,17 @@ public class SignInteractListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void TicketMachineListener(InventoryClickEvent event) {
 
-    // Cancel unwanted clicks
-    // Restrict putting items from the bottom inventory into the top inventory
     Inventory clickedInventory = event.getClickedInventory();
     Player player = (Player) event.getWhoClicked();
-
-    // Get the ticket machine reference
-    Machine machine = machineHashMap.get(player);
+    Machine machine;
+    
+    // Return if there is no machine
+    if (machineHashMap.containsKey(player)) {
+      machine = machineHashMap.get(player);
+    }
+    else {
+      return;
+    }
 
     if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
       event.setCancelled(true);
@@ -79,11 +83,11 @@ public class SignInteractListener implements Listener {
 
   }
 
-  // @EventHandler
-  // public void onInvClose(InventoryCloseEvent event) {
-  //   Player player = (Player) event.getPlayer();
-  //   machineHashMap.remove(player);
-  // }
+   @EventHandler
+   public void onInvClose(InventoryCloseEvent event) {
+     Player player = (Player) event.getPlayer();
+     machineHashMap.remove(player);
+   }
 
   @EventHandler
   public void onSignPlace(SignChangeEvent event) {
