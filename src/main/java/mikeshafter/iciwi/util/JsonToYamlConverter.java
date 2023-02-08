@@ -21,9 +21,9 @@ public class JsonToYamlConverter {
     
     final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
     File yamlF = new File(plugin.getDataFolder(), "fares.yml");
-    final File json = new File(plugin.getDataFolder(), "fares.json");
-    
+
     try {
+      File json = new File(plugin.getDataFolder(), "fares.json");
       Scanner yamlScanner = new Scanner(yamlF);
       if (yamlScanner.hasNext()) {
         yamlScanner.close();
@@ -54,8 +54,15 @@ public class JsonToYamlConverter {
       yaml.save(yamlF);
       yamlScanner.close();
       
-    } catch (IOException|JsonSyntaxException|InvalidConfigurationException e) {
-      e.printStackTrace();
+    }
+    catch (IOException e) {
+      Iciwi.getPlugin(Iciwi.class).getLogger().warning("fares.json could not be found! If you already have a fares.yml, please ignore this warning.");
+    }
+    catch (InvalidConfigurationException e) {
+      Iciwi.getPlugin(Iciwi.class).getLogger().warning("fares.json is wrongly configured!");
+    }
+    catch (JsonSyntaxException e) {
+      Iciwi.getPlugin(Iciwi.class).getLogger().warning("fares.yml is wrongly configured!");
     }
   }
 }

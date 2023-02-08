@@ -6,4 +6,4 @@ build
 .DS_Store
 /libs/
 /bin/
-/.idea/
+/src/main/java/mikeshafter/iciwi/faregate/

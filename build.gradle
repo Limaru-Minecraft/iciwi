@@ -1,5 +1,6 @@
 plugins {
   id 'java'
+  id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 group 'org.mikeshafter'
@@ -8,8 +9,9 @@ version '1.19.3a1'
 compileJava.options.encoding 'UTF-8'
 
 repositories {
-  maven {url 'https://papermc.io/repo/repository/maven-public/'}
+  maven { url 'https://papermc.io/repo/repository/maven-public/' }
   maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
+  maven { url 'https://libraries.minecraft.net/' }
   maven { url 'https://jitpack.io' }
   mavenLocal()
   mavenCentral() // This is needed for CraftBukkit and Spigot.
@@ -25,7 +27,17 @@ dependencies {
   implementation 'org.junit.jupiter:junit-jupiter:5.9.0'
   compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
   compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19.3-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19-v1'
+  implementation 'me.lucko:commodore:2.2'
+}
+
+shadowJar {
+  dependencies {
+    exclude(dependency('com.mojang:brigadier'))
+  }
+
+  /* vvv Replace with the package of your plugin vvv */
+  relocate 'me.lucko.commodore', 'mikeshafter.iciwi.commodore'
 }
 
 test {
