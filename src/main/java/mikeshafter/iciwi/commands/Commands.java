@@ -10,85 +10,138 @@ import me.lucko.commodore.Commodore;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabExecutor;
+import org.bukkit.command.CommandExecutor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Commands implements TabExecutor {
+public class Commands implements CommandExecutor {
   @Override public boolean onCommand (@NotNull CommandSender sender, @NotNull Command command, String alias, @NotNull String[] args) {
     return false;
   }
 
-  @Override public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias,
-      @NotNull String[] args) {
-    return null;
-  }
-
   public static void registerCompletions(Commodore commodore, PluginCommand command) {
-    commodore.register(command, LiteralArgumentBuilder.literal("iciwi")
+    var commandStructure = LiteralArgumentBuilder.literal("iciwi")
       .then(LiteralArgumentBuilder.literal("config")
         .then(LiteralArgumentBuilder.literal("reload"))
         .then(LiteralArgumentBuilder.literal("penalty") 
-          .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()) ) 
+          .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg())
+               .executes(c -> {
+                 return 1;
+               }
+            )
+          )
         )
         .then(LiteralArgumentBuilder.literal("deposit") 
-          .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()) ) 
+          .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()) 
+               .executes(c -> {
+                 return 1;
+               }
+            )
+               ) 
         )
         .then(LiteralArgumentBuilder.literal("initialcardvalues")
           .then(LiteralArgumentBuilder.literal("add") 
-            .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()) )
+            .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()).executes(c -> {
+                 return 1;
+               }
+            ) )
           )
           .then(LiteralArgumentBuilder.literal("remove") 
-            .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()) )
+            .then(RequiredArgumentBuilder.argument("amount", FloatArgumentType.floatArg()).executes(c -> {
+                 return 1;
+               }
+            ) )
           )
         )
-        .then(LiteralArgumentBuilder.literal("maxtransfertime") .then(RequiredArgumentBuilder.argument("transfertime", LongArgumentType.longArg()) ) )
-        .then(LiteralArgumentBuilder.literal("gateclosedelay") .then(RequiredArgumentBuilder.argument("closedelay", IntegerArgumentType.integer()) ) )
-        .then(LiteralArgumentBuilder.literal("defaultclass") .then(RequiredArgumentBuilder.argument("classname", StringArgumentType.word()) ) )
+        .then(LiteralArgumentBuilder.literal("maxtransfertime") .then(RequiredArgumentBuilder.argument("transfertime", LongArgumentType.longArg()).executes(c -> {
+                 return 1;
+               }
+            ) ) )
+        .then(LiteralArgumentBuilder.literal("gateclosedelay") .then(RequiredArgumentBuilder.argument("closedelay", IntegerArgumentType.integer()) .executes(c -> {
+                 return 1;
+               }
+            )) )
+        .then(LiteralArgumentBuilder.literal("defaultclass") .then(RequiredArgumentBuilder.argument("classname", StringArgumentType.word()) .executes(c -> {
+                 return 1;
+               }
+            )) )
       )
 
       .then(LiteralArgumentBuilder.literal("owners")
         .then(LiteralArgumentBuilder.literal("alias")
           .then(LiteralArgumentBuilder.literal("set")
             .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) 
-              .then(RequiredArgumentBuilder.argument("username", StringArgumentType.word()) )
+              .then(RequiredArgumentBuilder.argument("username", StringArgumentType.word()) .executes(c -> {
+                 return 1;
+               }
+            ))
             )
           )
           .then(LiteralArgumentBuilder.literal("unset")
-            .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) )
+            .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) .executes(c -> {
+                 return 1;
+               }
+            ))
           )
         )
         .then(LiteralArgumentBuilder.literal("operator")
           .then(RequiredArgumentBuilder.argument("station", StringArgumentType.word())
             .then(LiteralArgumentBuilder.literal("add")
-              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) )
+              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) .executes(c -> {
+                 return 1;
+               }
+            ))
             )
             .then(LiteralArgumentBuilder.literal("remove")
-              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) )
+              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ) )
             )
             .then(LiteralArgumentBuilder.literal("set")
-              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) )
+              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()) .executes(c -> {
+                 return 1;
+               }
+            ))
             )
-            .then(LiteralArgumentBuilder.literal("delete")
+            .then(LiteralArgumentBuilder.literal("delete").executes(c -> {
+                 return 1;
+               }
+            )
             )
           )
         )
         .then(LiteralArgumentBuilder.literal("railpass")
           .then(RequiredArgumentBuilder.argument("name", StringArgumentType.word())
             .then(LiteralArgumentBuilder.literal("operator")
-              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()))
+              .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
             )
             .then(LiteralArgumentBuilder.literal("duration")
-              .then(RequiredArgumentBuilder.argument("duration", StringArgumentType.word()))
+              .then(RequiredArgumentBuilder.argument("duration", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
             )
             .then(LiteralArgumentBuilder.literal("price")
-              .then(RequiredArgumentBuilder.argument("price", FloatArgumentType.floatArg()))
+              .then(RequiredArgumentBuilder.argument("price", FloatArgumentType.floatArg()).executes(c -> {
+                 return 1;
+               }
+            ))
             )
             .then(LiteralArgumentBuilder.literal("percentage")
-              .then(RequiredArgumentBuilder.argument("paidpercentage", FloatArgumentType.floatArg()))
+              .then(RequiredArgumentBuilder.argument("paidpercentage", FloatArgumentType.floatArg()).executes(c -> {
+                 return 1;
+               }
+            ))
             )
-            .then(LiteralArgumentBuilder.literal("delete"))
+            .then(LiteralArgumentBuilder.literal("delete").executes(c -> {
+                 return 1;
+               }
+            ))
           )
         )
       )
@@ -98,7 +151,10 @@ public class Commands implements TabExecutor {
           .then(RequiredArgumentBuilder.argument("start", StringArgumentType.word())
             .then(RequiredArgumentBuilder.argument("end", StringArgumentType.word())
               .then(RequiredArgumentBuilder.argument("class", StringArgumentType.word())
-                .then(RequiredArgumentBuilder.argument("price", FloatArgumentType.floatArg()))            
+                .then(RequiredArgumentBuilder.argument("price", FloatArgumentType.floatArg()).executes(c -> {
+                 return 1;
+               }
+            ))            
               )
             )
           )
@@ -106,39 +162,67 @@ public class Commands implements TabExecutor {
         .then(LiteralArgumentBuilder.literal("unset")
           .then(RequiredArgumentBuilder.argument("start", StringArgumentType.word())
             .then(RequiredArgumentBuilder.argument("end", StringArgumentType.word())
-              .then(RequiredArgumentBuilder.argument("class", StringArgumentType.word()))
+              .then(RequiredArgumentBuilder.argument("class", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
             )
           )
         )
         .then(LiteralArgumentBuilder.literal("deletejourney")
           .then(RequiredArgumentBuilder.argument("start", StringArgumentType.word())
-            .then(RequiredArgumentBuilder.argument("end", StringArgumentType.word()))
+            .then(RequiredArgumentBuilder.argument("end", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
           )
         )
         .then(LiteralArgumentBuilder.literal("deletestation")
-          .then(RequiredArgumentBuilder.argument("start", StringArgumentType.word()))
+          .then(RequiredArgumentBuilder.argument("start", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
         )
       )
 
       .then(LiteralArgumentBuilder.literal("coffers")
         .then(LiteralArgumentBuilder.literal("withdraw")
-          .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()))
+          .then(RequiredArgumentBuilder.argument("company", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
         )
-        .then(LiteralArgumentBuilder.literal("withdrawall"))
-        .then(LiteralArgumentBuilder.literal("view"))
+        .then(LiteralArgumentBuilder.literal("withdrawall").executes(c -> {
+                 return 1;
+               }
+            ))
+        .then(LiteralArgumentBuilder.literal("view").executes(c -> {
+                 return 1;
+               }
+            ))
       )
 
       .then(LiteralArgumentBuilder.literal("odometer")
-        .then(LiteralArgumentBuilder.literal("start-lap"))
-        .then(LiteralArgumentBuilder.literal("stop-reset"))
+        .then(LiteralArgumentBuilder.literal("start-lap").executes(c -> {
+                 return 1;
+               }
+            ))
+        .then(LiteralArgumentBuilder.literal("stop-reset").executes(c -> {
+                 return 1;
+               }
+            ))
       )
 
       .then(LiteralArgumentBuilder.literal("railpass")
         .then(RequiredArgumentBuilder.argument("name", StringArgumentType.word())
-          .then(RequiredArgumentBuilder.argument("serial", StringArgumentType.word()))
+          .then(RequiredArgumentBuilder.argument("serial", StringArgumentType.word()).executes(c -> {
+                 return 1;
+               }
+            ))
         )
       )
-    .build()
-    );
+    .build();
+
+    commodore.register(command, commandStructure);
   }
 }

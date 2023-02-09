@@ -179,9 +179,6 @@ public final class Iciwi extends JavaPlugin {
     records.save();
     getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
   }
-
-  // Iciwi is only for >1.13 and therefore this method is placed in the main class
-
   
   @Override
   public void onEnable() {
