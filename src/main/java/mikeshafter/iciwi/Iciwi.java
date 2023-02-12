@@ -1,11 +1,5 @@
 package mikeshafter.iciwi;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-import me.lucko.commodore.Commodore;
-import me.lucko.commodore.CommodoreProvider;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -15,7 +9,6 @@ import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
@@ -96,13 +89,14 @@ public final class Iciwi extends JavaPlugin {
 //
 //    // Reload Config
 //    else if (command.getName().equalsIgnoreCase("reloadiciwi") && sender.hasPermission("iciwi.reload")) {
-//      reloadConfig();
-//      owners.reload();
-//      lang.reload();
-//      records.reload();
-//      sender.sendMessage("Reloaded iciwi!");
-//      return true;
-//    }
+  public boolean reloadAllConfig(){
+    new Lang(this).reload();
+    new Owners(this).reload();
+    new Records(this).reload();
+    new Fares(this).reload();
+    reloadConfig();
+    return true;
+  }
 //
 //    // Coffers
 //    else if (command.getName().equalsIgnoreCase("coffers") && sender.hasPermission("iciwi.coffers")) {
@@ -208,18 +202,12 @@ public final class Iciwi extends JavaPlugin {
 
     // === Register commands ===
     var commands = new Commands();
-    var command = this.getCommand("iciwi");
-    if (command != null) {
-      command.setExecutor(commands);
+    var pluginCommand = this.getCommand("iciwi");
+    if (pluginCommand != null) {
+      pluginCommand.setExecutor(commands);
+      pluginCommand.setTabCompleter(commands);
     }
 
-    // check if brigadier is supported
-    if (CommodoreProvider.isSupported()) {
-      // get a commodore instance
-      Commodore commodore = CommodoreProvider.getCommodore(this);
-      // register your completions.
-      Commands.registerCompletions(commodore, command);
-    }
 
 
     // == START TEMP SECTON ==

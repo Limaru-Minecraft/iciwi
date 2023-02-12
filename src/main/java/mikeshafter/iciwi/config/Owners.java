@@ -22,7 +22,12 @@ public class Owners extends CustomConfig {
   public List<String> getOwners(String station) {
     return super.get().getStringList("Operators."+station);
   }
-  
+
+  public Set<String> getAllCompanies() {
+    var aliases = this.get().getConfigurationSection("Aliases");
+    return aliases == null ? new HashSet<>() : aliases.getKeys(false);
+  }
+
   /**
    * @param station  Station to set a TOC to
    * @param operators The TOCs
@@ -77,10 +82,10 @@ public class Owners extends CustomConfig {
    *                   Creates a rail pass using a long Unix time as its duration.
    */
   public void setRailPassInfo(String name, String operator, long duration, double price, double percentage) {
-    super.set("RailPassPrices."+name+"operator", operator);
-    super.set("RailPassPrices."+name+"duration", timeToString(duration));
-    super.set("RailPassPrices."+name+"price", price);
-    super.set("RailPassPrices."+name+"percentage", percentage);
+    super.set("RailPasses."+name+"operator", operator);
+    super.set("RailPasses."+name+"duration", timeToString(duration));
+    super.set("RailPasses."+name+"price", price);
+    super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
   
@@ -93,10 +98,10 @@ public class Owners extends CustomConfig {
    *                   Creates a rail pass using a timestring as its duration.
    */
   public void setRailPassInfo(String name, String operator, String duration, double price, double percentage) {
-    super.set("RailPassPrices."+name+"operator", operator);
-    super.set("RailPassPrices."+name+"duration", duration);
-    super.set("RailPassPrices."+name+"price", price);
-    super.set("RailPassPrices."+name+"percentage", percentage);
+    super.set("RailPasses."+name+"operator", operator);
+    super.set("RailPasses."+name+"duration", duration);
+    super.set("RailPasses."+name+"price", price);
+    super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
   
