@@ -6,8 +6,10 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.regex.Pattern;
 
 
@@ -19,6 +21,12 @@ public class MachineUtil {
   public static String parseComponent(Component c) {
     if (c instanceof TextComponent) return ((TextComponent) c).content();
     else return c.examinableName();
+  }
+
+  public static List<String> parseComponents(List<Component> componentList) {
+    List<String> r = new ArrayList<>();
+    componentList.forEach(c -> r.add(parseComponent(c)));
+    return r;
   }
   
   public static <E> boolean any(Collection<E> c, Collection<E> k) {
