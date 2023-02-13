@@ -100,7 +100,6 @@ public class Commands implements TabExecutor {
               return true;
             }))))
       .then(of("operator")
-        .suggestions(plugin.fares.getAllStations().stream().toList())
         .then(of("station", String.class)
           .then(of("add")
             .then(of("company", String.class)

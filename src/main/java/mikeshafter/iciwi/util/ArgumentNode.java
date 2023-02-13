@@ -11,7 +11,7 @@ public class ArgumentNode {
 
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
   private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction;
-  private List<String> suggestionList;
+  private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction;
   private final String literal;
   private final String name;
   private final Class<?> type;
@@ -99,15 +99,9 @@ public class ArgumentNode {
     return getThis();
   }
 
-  public ArgumentNode suggestions (List<String> suggestionList) {
-    this.suggestionList = suggestionList;
+  public ArgumentNode suggestions (SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction) {
+    this.suggestionFunction = suggestionFunction;
     return getThis();
-  }
-
-  public List<String> getSuggestions() {
-    List<String> l = this.suggestionList;
-    l.addAll(children.keySet());
-    return l;
   }
 
   private ArgumentNode getChild(String name) {return children.get(name);}
@@ -184,7 +178,9 @@ public class ArgumentNode {
   private @Nullable List<String> onTabComplete(CommandSender sender, String[] parsedArgs, int argPointer) {
     if (parsedArgs.length == ++argPointer) {
       ArrayList<String> completions = new ArrayList<>();
-      StringUtil.copyPartialMatches(parsedArgs[argPointer-1], this.getSuggestions(), completions);
+      List<String> suggestions = suggestionFunction.apply(sender, parsedArgs, this);
+      suggestions.addAll(this.children.keySet());
+      StringUtil.copyPartialMatches(parsedArgs[argPointer-1], suggestions, completions);
       return completions;
     } else {
       if (this.getArgumentType() < 0)
