@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="bump">
+    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="remove deprecations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/Clickable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/Clickable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +41,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectId" id="2Iqb3AK1Z8UTc57tdNTUf3daq9k" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -54,6 +56,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
     &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi-faregates&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
@@ -154,8 +157,26 @@
       <option name="project" value="LOCAL" />
       <updated>1672146162131</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="remove deprecations">
+      <created>1676290830703</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1676290830703</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -173,7 +194,8 @@
     <MESSAGE value="no idea what i did but ok" />
     <MESSAGE value="made ticket machine work (top inventory only)" />
     <MESSAGE value="bump" />
-    <option name="LAST_COMMIT_MESSAGE" value="bump" />
+    <MESSAGE value="remove deprecations" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove deprecations" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
