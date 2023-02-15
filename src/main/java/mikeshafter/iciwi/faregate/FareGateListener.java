@@ -6,6 +6,7 @@ import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.config.Fares;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,9 +29,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static mikeshafter.iciwi.util.MachineUtil.any;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
 
@@ -62,9 +65,9 @@ public class FareGateListener implements Listener {
       if (state instanceof Sign sign && data instanceof WallSign) {
   
         // Payment sign
-        if (ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("payment")) && isDouble(sign.getLine(1))) {
+        if (ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("payment")) && isDouble(parseComponent(sign.line(1)))) {
     
-          double price = Double.parseDouble(sign.getLine(1));
+          double price = Double.parseDouble(parseComponent(sign.line(1)));
           ItemStack item = player.getInventory().getItemInMainHand();
     
           // Check for Iciwi card
@@ -73,9 +76,9 @@ public class FareGateListener implements Listener {
                   item.hasItemMeta() &&
                   item.getItemMeta() != null &&
                   item.getItemMeta().hasLore() &&
-                  item.getItemMeta().getLore() != null &&
-                  item.getItemMeta().getLore().get(0).equals(lang.getString("serial-number"))) {
-            String serial = item.getItemMeta().getLore().get(1);
+                  item.getItemMeta().lore() != null &&
+                  parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(0)).equals(lang.getString("serial-number"))) {
+            String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
       
             // Pay using Iciwi card
             Payment.pay(serial, player, price);
@@ -92,17 +95,17 @@ public class FareGateListener implements Listener {
   
         // === Normal signs ===
   
-        // Initialise fare gate; all signs point to this (normal fare gates)
-        else if (ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("entry")) || ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("exit")) || ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("validator")) || ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("member"))) {
-          gate = new FareGate(player, sign.getLine(0), block.getLocation());
+        // Initialize fare gate; all signs point to this (normal fare gates)
+        else if (ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("entry")) || ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("exit")) || ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("validator")) || ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("member"))) {
+          gate = new FareGate(player, parseComponent(sign.line(0)), block.getLocation());
         }
       
       }
     
       // same thing, but for HL-style fare gates
       else if (data instanceof Openable) {
-        if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(sign.getLine(0)).contains(lang.getString("faregate"))) {
-          gate = new FareGate(player, sign.getLine(0), sign.getLocation());
+        if (location.add(0, -2, 0).getBlock().getState() instanceof Sign sign && ChatColor.stripColor(parseComponent(sign.line(0))).contains(lang.getString("faregate"))) {
+          gate = new FareGate(player, parseComponent(sign.line(0)), sign.getLocation());
         }
       }
     
@@ -127,17 +130,17 @@ public class FareGateListener implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
         Sign sign = state instanceof Sign ? (Sign) state : location.getBlock().getState() instanceof Sign ? (Sign) location.getBlock().getState() : null;
-        if (meta != null && meta.hasLore() && meta.getLore() != null && sign != null) {
+        if (meta != null && meta.hasLore() && meta.lore() != null && sign != null) {
   
-          String itemLore0 = meta.getLore().get(0);
+          String itemLore0 = parseComponent(Objects.requireNonNull(meta.lore()).get(0));
   
           // station. if the gatetype is a faregate, use all 3 lines, else, use the first line only.
-          String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? sign.getLine(1) : ChatColor.stripColor((gateType == GateType.FAREGATE) ? sign.getLine(1)+sign.getLine(2)+sign.getLine(3) : sign.getLine(0).split(" ", 2)[1])).replaceAll(" ", "").replace("]", "");
+          String station = ChatColor.stripColor((gateType == GateType.ENTRY || gateType == GateType.EXIT || gateType == GateType.VALIDATOR) ? parseComponent(sign.line(1)) : ChatColor.stripColor((gateType == GateType.FAREGATE) ? parseComponent(sign.line(1))+parseComponent(sign.line(2))+parseComponent(sign.line(3)) : parseComponent(sign.line(0)).split(" ", 2)[1])).replaceAll(" ", "").replace("]", "");
   
           // === Card ===
           if (item.getType() == Material.NAME_TAG && itemLore0.equals(lang.getString("serial-number"))) {
     
-            String serial = meta.getLore().get(1);
+            String serial = parseComponent(Objects.requireNonNull(meta.lore()).get(1));
             // If there is nothing in records, set gateAction to ENTRY. Else, set it to EXIT.
             gateAction = records.getString("station."+serial) == null ? GateType.ENTRY : GateType.EXIT;
     
@@ -233,14 +236,14 @@ public class FareGateListener implements Listener {
               gateType = gateAction;
           
             // Entry
-            if (gateType == GateType.ENTRY && !itemLore0.contains("•") && !meta.getLore().get(1).contains("•")) {
+            if (gateType == GateType.ENTRY && !itemLore0.contains("•") && !parseComponent(Objects.requireNonNull(meta.lore()).get(1)).contains("•")) {
             
               // check if the ticket is valid for that station
               if (itemLore0.equals(station) || itemLore0.equals(lang.getString("global-ticket"))) {
                 // punch hole
-                List<String> lore = meta.getLore();
-                lore.set(0, itemLore0+" •");
-                meta.setLore(lore);
+                List<Component> lore = meta.lore();
+                Objects.requireNonNull(lore).set(0, Component.text(itemLore0+" •"));
+                meta.lore(lore);
                 item.setItemMeta(meta);
     
                 player.sendMessage(String.format(lang.getString("ticket-in"), station));
@@ -253,7 +256,7 @@ public class FareGateListener implements Listener {
             }
           
             // Exit
-            else if (gateType == GateType.EXIT && itemLore0.contains("•") && !meta.getLore().get(1).contains("•")) {
+            else if (gateType == GateType.EXIT && itemLore0.contains("•") && !parseComponent(Objects.requireNonNull(meta.lore()).get(1)).contains("•")) {
   
               // check fare
               String entryStation = itemLore0.substring(0, itemLore0.length()-2);
@@ -263,23 +266,24 @@ public class FareGateListener implements Listener {
     
                 // get fare
                 double fare = fares.getFare(entryStation, station);
-                String itemLore1 = meta.getLore().get(1);
+                String itemLore1 = parseComponent(Objects.requireNonNull(meta.lore()).get(1));
     
                 // check if the station is the exit point, or if the fare works out
                 if (itemLore1.equals(station) || Double.parseDouble(itemLore1) >= fare) {
       
                   // Punch out (station ticket)
-                  List<String> lore = meta.getLore();
-                  lore.set(1, itemLore1+" •");
-                  meta.setLore(lore);
+                  List<Component> lore = meta.lore();
+                  Objects.requireNonNull(lore).set(1, Component.text(itemLore1+" •"));
+                  meta.lore(lore);
                   item.setItemMeta(meta);
                 }
               } else {
-              
-                // Punch out (global ticket)
-                List<String> lore = meta.getLore();
-                lore.set(1, meta.getLore().get(1)+" •");
-                meta.setLore(lore);
+                String itemLore1 = parseComponent(Objects.requireNonNull(meta.lore()).get(1));
+
+                // Punch out (station ticket)
+                List<Component> lore = meta.lore();
+                Objects.requireNonNull(lore).set(1, Component.text(itemLore1+" •"));
+                meta.lore(lore);
                 item.setItemMeta(meta);
               }
               player.sendMessage(String.format(lang.getString("ticket-out"), station));
@@ -307,12 +311,12 @@ public class FareGateListener implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
         ItemMeta meta = item.getItemMeta();
         Sign sign = state instanceof Sign ? (Sign) state : location.getBlock().getState() instanceof Sign ? (Sign) location.getBlock().getState() : null;
-        if (item.getType() == Material.NAME_TAG && meta != null && meta.hasLore() && meta.getLore() != null && meta.getLore().get(0).equals(lang.getString("serial-number"))) {
+        if (item.getType() == Material.NAME_TAG && meta != null && meta.hasLore() && meta.lore() != null && parseComponent(Objects.requireNonNull(meta.lore()).get(0)).equals(lang.getString("serial-number"))) {
     
-          String serial = meta.getLore().get(1);
+          String serial = parseComponent(Objects.requireNonNull(meta.lore()).get(1));
           Map<String, Long> discounts = cardSql.getAllDiscounts(serial);
     
-          if (sign != null && (discounts.containsKey(ChatColor.stripColor(sign.getLine(1))) || any(discounts.keySet(), owners.getOwners(ChatColor.stripColor(sign.getLine(1)) )) )) {
+          if (sign != null && (discounts.containsKey(ChatColor.stripColor(parseComponent(sign.line(1)))) || any(discounts.keySet(), owners.getOwners(ChatColor.stripColor(parseComponent(sign.line(1))) )) )) {
             player.sendMessage(lang.getString("member-gate"));
       
             // Open gates

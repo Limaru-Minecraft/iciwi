@@ -7,8 +7,8 @@ import java.util.function.Consumer;
 
 
 public class Clickable {
-  private ItemStack item;
-  private Consumer<InventoryClickEvent> consumer;
+  private final ItemStack item;
+  private final Consumer<InventoryClickEvent> consumer;
   
   private Clickable(ItemStack item, Consumer<InventoryClickEvent> consumer) {
     this.item = item;
