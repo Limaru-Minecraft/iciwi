@@ -12,40 +12,40 @@ import org.bukkit.event.block.SignChangeEvent;
 public class GateCreateListener implements Listener {
   Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   Lang lang = plugin.lang;
-  
+
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {
-    String[] lines = event.getLines();
+    List<String> lines = parseComponents(event.lines());
     Player player = event.getPlayer();
-  
+
     // Entry
-    if (ChatColor.stripColor(lines[0]).contains(lang.getString("entry"))) {
+    if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("entry"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-entry-sign"));
       } else event.setCancelled(true);
     }
 
     // Exit
-    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("exit"))) {
+    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("exit"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-exit-sign"));
       } else event.setCancelled(true);
     }
 
     // HL-style faregate
-    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("faregate"))) {
+    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("faregate"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-faregate-sign"));
       } else event.setCancelled(true);
     }
 
     // HL-style validator
-    else if (ChatColor.stripColor(lines[0]).contains(lang.getString("validator"))) {
+    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("validator"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
-  
-  
+
+
   }
 }
