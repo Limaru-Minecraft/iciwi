@@ -26,6 +26,11 @@ public class Fares extends CustomConfig {
   public double getFare(String from, String to) {
     return getFare(from, to, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));
   }
+
+  public void setFare(String from, String to, String fareClass, double price) {
+    super.set(from+"."+to+"."+fareClass, price);
+    super.save();
+  }
   
   public double getFare(String from, String to, String fareClass) {
     return this.getDouble(from+"."+to+"."+fareClass);

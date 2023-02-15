@@ -3,6 +3,7 @@
 # The format is <company>: <owner's username>
 Aliases:
   ExampleOperator: Mineshafter61
+  ExampleOperator1: Mineshafter62
 
 # This section provides rail passes to give free travel for a certain duration to a player between a given operator's stations.
 # The format is in:
@@ -42,6 +43,9 @@ RailPasses:
 Operators:
   ExampleStation:
   - ExampleOperator
+  - ExampleOperator1
+  ExampleStation1:
+  - ExampleOperator2
 
 # DO NOT TOUCH THIS SECTION unless you know what you are doing!
 Coffers:

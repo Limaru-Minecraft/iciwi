@@ -25,7 +25,7 @@ ticket-machine-type: STATION
 global-operator: ExampleOperator
 
 # default train class
-default-class: 'Second Class'
+default-class: Second
 
 # global ticket price
 global-ticket-price: 5.0
