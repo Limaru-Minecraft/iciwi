@@ -63,7 +63,7 @@ public class CustomMachine implements Machine {
         // Place each station the player's inventory
         if (stations != null) {
           for (int i = 9; i < 36; i++) {
-            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, Component.text(stations[i-9])));
+            player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, 0, Component.text(stations[i-9])));
           }
         }
       }
@@ -161,7 +161,7 @@ public class CustomMachine implements Machine {
     // Create inventory and create items
     TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
     Inventory inventory = plugin.getServer().createInventory(null, roundUp(fareClasses.size(), 9), Component.text(lang.getString("select-class")));
-    fareClasses.forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, Component.text(fareClass), Component.text(fare))));
+    fareClasses.forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, 0, Component.text(fareClass), Component.text(fare))));
     player.openInventory(inventory);
   }
   

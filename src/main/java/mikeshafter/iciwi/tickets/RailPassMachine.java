@@ -71,7 +71,7 @@ public class RailPassMachine implements Machine {
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
 
     // rail pass viewer
-    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, Component.text("View Rail Passes")),
+    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE,0, Component.text("View Rail Passes")),
         (event) -> {
           // print current rail passes
           // get current passes
@@ -100,7 +100,7 @@ public class RailPassMachine implements Machine {
 
     // create all rail pass buttons
     for (int i = 1; i <= railPassNames.size(); i++) {
-      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i))), (event) -> {
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE,0, Component.text(railPassNames.get(i))), (event) -> {
         String name = parseComponent(
             Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
         double price = this.owners.getRailPassPrice(name);

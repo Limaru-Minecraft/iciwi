@@ -7,12 +7,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.plugin.Plugin;
 
 
 public class GateCreateListener implements Listener {
-  Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  Lang lang = new Lang(plugin);
+  Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  Lang lang = plugin.lang;
   
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {

@@ -31,10 +31,10 @@ public class TicketMachine implements Machine {
   private boolean bottomInv;
 
   // Constant helper classes
-  private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners();
-  private final Lang lang = new Lang();
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  private final CardSql cardSql = new CardSql();
+  private final Owners owners = plugin.owners;
+  private final Lang lang = plugin.lang;
 
   // Constructor and Menu Display
   public TicketMachine(Player player) {
@@ -67,17 +67,15 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, Component.text("New Single Journey Ticket"),
+    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, Component.text("New Single Journey Ticket"),
         Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
-    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")),
+    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("New Iciwi Card")),
         (event) -> newCard());
-    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, Component.text("Insert Card")),
+    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, Component.text("Insert Card")),
         (event) -> selectCard());
 
     // Get operators
     operators = this.owners.getOwners(station);
-    //TODO: debug
-    System.out.println(operators.toString());
     // Set items
     inv = setItems(clickables, inv);
     // Start listening and open inventory
@@ -107,15 +105,15 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("New Iciwi Card")),
+    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("New Iciwi Card")),
         (event) -> newCard());
-    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, Component.text("Top Up Iciwi Card")),
+    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, Component.text("Top Up Iciwi Card")),
         (event) -> topUpCard(this.selectedItem)); // todo: fix this next
-    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, Component.text("Rail Passes")),
+    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, Component.text("Rail Passes")),
         (event) -> railPass(this.selectedItem)); // todo: fix this next
-    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, Component.text("Refund Card")),
+    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, Component.text("Refund Card")),
         (event) -> refundCard(this.selectedItem)); // todo: fix this next
-    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, Component.text("Select Another Card")),
+    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("Select Another Card")),
         (event) -> selectCard());
 
     // Set items
@@ -134,7 +132,7 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[priceArray.size()];
 
     for (int i = 0; i < priceArray.size(); i++) {
-      this.clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE,
+      this.clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE, 0,
           Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
             double value = Double
                 .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
@@ -192,7 +190,7 @@ public class TicketMachine implements Machine {
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
 
     for (int i = 0; i < priceArray.size(); i++) {
-      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE,
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0,
           Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
             double value = Double
                 .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
@@ -227,11 +225,6 @@ public class TicketMachine implements Machine {
     ArrayList<String> railPassNames = new ArrayList<>();
     this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
 
-    // TODO: debug
-    System.out.println(operators.toString());
-    // TODO: debug
-    System.out.println(railPassNames.toString());
-
     int invSize = (railPassNames.size() / 9 + 1) * 9;
     inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
     clickables = new Clickable[invSize];
@@ -240,7 +233,7 @@ public class TicketMachine implements Machine {
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
 
     // rail pass viewer
-    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, Component.text("View Rail Passes")),
+    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0, Component.text("View Rail Passes")),
         (event) -> {
           // print current rail passes
           // get current passes
@@ -272,7 +265,7 @@ public class TicketMachine implements Machine {
 
     // create all rail pass buttons
     for (int i = 1; i < railPassNames.size() + 1; i++) {
-      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, Component.text(railPassNames.get(i-1))),
+      clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i-1))),
           (event) -> {
             String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
             double price = this.owners.getRailPassPrice(name);

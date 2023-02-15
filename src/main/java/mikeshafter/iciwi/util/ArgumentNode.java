@@ -15,7 +15,7 @@ public class ArgumentNode {
   private final String literal;
   private final String name;
   private final Class<?> type;
-  private final int argumentType;
+  private final boolean isLiteral;
   private final ArrayList<String> nameList = new ArrayList<>();
   private ArgumentNode parent = null;
 
@@ -23,14 +23,14 @@ public class ArgumentNode {
     this.literal = literal;
     this.name = literal;
     this.type = null;
-    this.argumentType = -1;
+    this.isLiteral = true;
   }
 
   public ArgumentNode (final String name, final Class<?> type) {
     this.name = name;
     this.literal = null;
     this.type = type;
-    this.argumentType = 1;
+    this.isLiteral = false;
   }
 
   public static ArgumentNode of(final String literal) {return new ArgumentNode(literal);}
@@ -51,7 +51,7 @@ public class ArgumentNode {
       this.getParent().getNameList().add(argumentNode.getName());
     }
     children.put(argumentNode.getName(), argumentNode);
-    return getThis();
+    return this;
   }
 
   private String getArg(String[] args, String name) {
@@ -96,12 +96,17 @@ public class ArgumentNode {
 
   public ArgumentNode executes (CommandFunction<CommandSender, String[], ArgumentNode> commandFunction) {
     this.commandFunction = commandFunction;
-    return getThis();
+    return this;
   }
 
   public ArgumentNode suggestions (SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction) {
     this.suggestionFunction = suggestionFunction;
-    return getThis();
+    return this;
+  }
+
+  public ArgumentNode suggestions (List<String> suggestions) {
+    this.suggestionFunction = (CommandSender c, String[] a, ArgumentNode n) -> suggestions;
+    return this;
   }
 
   private ArgumentNode getChild(String name) {return children.get(name);}
@@ -154,7 +159,7 @@ public class ArgumentNode {
     if (parsedArgs.length == ++argPointer) {
       return this.commandFunction.apply(sender, parsedArgs, this);
     } else {
-      if (this.getArgumentType() < 0)
+      if (this.isLiteral)
         return this.getChild(parsedArgs[argPointer]).onCommand(sender, parsedArgs, argPointer);
       else {
         // The next argument is decided as the first instance in which the type check passes.
@@ -177,13 +182,21 @@ public class ArgumentNode {
 
   private @Nullable List<String> onTabComplete(CommandSender sender, String[] parsedArgs, int argPointer) {
     if (parsedArgs.length == ++argPointer) {
+      // final tab completion list
       ArrayList<String> completions = new ArrayList<>();
+      // this item's suggestions
       List<String> suggestions = suggestionFunction.apply(sender, parsedArgs, this);
-      suggestions.addAll(this.children.keySet());
+      // get all child literals
+      this.children.keySet().forEach(item -> {
+        if (this.getChild(item).isLiteral)
+        suggestions.add(this.getChild(item).getLiteral());
+      });
+      // copy matches
       StringUtil.copyPartialMatches(parsedArgs[argPointer-1], suggestions, completions);
+      // return
       return completions;
     } else {
-      if (this.getArgumentType() < 0)
+      if (this.isLiteral)
         return this.getChild(parsedArgs[argPointer]).onTabComplete(sender, parsedArgs, argPointer);
       else {
         // The next argument is decided as the first instance in which the type check
@@ -199,11 +212,10 @@ public class ArgumentNode {
     }
   }
 
-  private String getLiteral () {return literal;}
+  private String getLiteral () {return isLiteral ? literal : null;}
 
   private String getName () {return name;}
 
-  private Class<?> getType () {return type;}
+  // private Class<?> getType () {return type;}
 
-  private int getArgumentType () {return argumentType;}
 }

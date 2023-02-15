@@ -23,6 +23,10 @@ public class Owners extends CustomConfig {
     return super.get().getStringList("Operators."+station);
   }
 
+  /**
+   * Gets all registered TOCs
+   * @return Set of all TOCs
+   */
   public Set<String> getAllCompanies() {
     var aliases = this.get().getConfigurationSection("Aliases");
     return aliases == null ? new HashSet<>() : aliases.getKeys(false);
@@ -169,6 +173,15 @@ public class Owners extends CustomConfig {
       if (Objects.equals(railPassPrices.getString(pass+".operator"), operator))
         h.add(pass);
     return h;
+  }
+
+  /**
+   * Gets all the rail passes regardless of operator.
+   * @return Set of all rail passes
+   */
+  public Set<String> getAllRailPasses() {
+    var railPasses = this.get().getConfigurationSection("RailPasses");
+    return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
   }
   
   /**

@@ -37,10 +37,10 @@ import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 public class FareGateListener implements Listener {
   private final Iciwi plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
-  private final Lang lang = new Lang();
-  private final Records records = new Records();
-  private final Owners owners = new Owners();
-  private final Fares fares = new Fares();
+  private final Lang lang = plugin.lang;
+  private final Records records = plugin.records;
+  private final Owners owners = plugin.owners;
+  private final Fares fares = plugin.fares;
   private final LinkedList<FareGate> gates = new LinkedList<>();
   boolean canClick = true;
 
