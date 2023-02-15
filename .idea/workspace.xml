@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="remove deprecations">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachine$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/tickets/CustomMachine$EventListener.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/mikeshafter/iciwi/util/MachineUtil.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/FareGateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/FareGateListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/GateCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/GateCreateListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/Clickable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/Clickable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/MachineUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,6 +40,9 @@
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="2Iqb3AK1Z8UTc57tdNTUf3daq9k" />
   <component name="ProjectViewState">
@@ -159,7 +157,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672146162131</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="remove deprecations">
+      <created>1676290830703</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1676290830703</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
