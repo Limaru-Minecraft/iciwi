@@ -32,14 +32,14 @@ public class SignInteractListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void TicketMachineListener(final InventoryClickEvent event) {
-
-    final Inventory clickedInventory = event.getClickedInventory();
     final Player player = (Player) event.getWhoClicked();
-    if (!machineHashMap.containsKey(player)) return;
+    
+    if (machineHashMap.containsKey(player)) {
+      final Inventory clickedInventory = event.getClickedInventory();
     final Machine machine = machineHashMap.get(player);
 
     if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
-      event.setCancelled(true);
+      //event.setCancelled(true);
       // close the previous inventory
       // player.closeInventory();
       // player inventory item selection code
@@ -53,7 +53,7 @@ public class SignInteractListener implements Listener {
     }
 
     if (clickedInventory == player.getOpenInventory().getTopInventory()) {
-      event.setCancelled(true);
+      //event.setCancelled(true);
       // get contents of actual inventory
       final ItemStack[] contents = clickedInventory.getContents();
       // get slot
@@ -68,6 +68,7 @@ public class SignInteractListener implements Listener {
     }
     if (clickedInventory != null) {
       clickedInventory.close();
+    }
     }
 
   }
