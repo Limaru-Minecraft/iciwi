@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate;
-
+import java.util.List;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponents;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import org.bukkit.ChatColor;
