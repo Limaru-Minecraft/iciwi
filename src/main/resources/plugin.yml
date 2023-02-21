@@ -1,5 +1,5 @@
 name: Iciwi
-version: 1.19.3a1
+version: 1.19.3a2
 api-version: 1.17
 main: mikeshafter.iciwi.Iciwi
 depend:

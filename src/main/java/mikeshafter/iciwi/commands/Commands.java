@@ -5,6 +5,7 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
 import static mikeshafter.iciwi.util.ArgumentNode.*;
 import mikeshafter.iciwi.util.ArgumentNode;
+import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.ChatColor;
@@ -12,7 +13,10 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class Commands implements TabExecutor {
@@ -27,6 +31,7 @@ public class Commands implements TabExecutor {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Owners owners = plugin.owners;
   private final Fares fares = plugin.fares;
+  private final HashMap<Player, Odometer> odometer = new HashMap<>();
 
   private final ArgumentNode commandStructure = of("iciwi")
     .then(of("config")
@@ -100,8 +105,8 @@ public class Commands implements TabExecutor {
               }))))
         .then(of("unset")
           .suggestions((c, a, n) -> {
-            if (c instanceof Player p)
-              return owners.getOwnedCompanies(p.getName());
+            if (c instanceof Player player)
+              return owners.getOwnedCompanies(player.getName());
             else
               return owners.getAllCompanies().stream().toList();
           })
@@ -116,8 +121,8 @@ public class Commands implements TabExecutor {
         .then(of("station", String.class)
           .then(of("add")
             .suggestions((c, a, n) -> {
-              if (c instanceof Player p)
-                return owners.getOwnedCompanies(p.getName());
+              if (c instanceof Player player)
+                return owners.getOwnedCompanies(player.getName());
               else
                 return owners.getAllCompanies().stream().toList();
             })
@@ -129,8 +134,8 @@ public class Commands implements TabExecutor {
               })))
           .then(of("remove")
             .suggestions((c, a, n) -> {
-              if (c instanceof Player p)
-                return owners.getOwnedCompanies(p.getName());
+              if (c instanceof Player player)
+                return owners.getOwnedCompanies(player.getName());
               else
                 return owners.getAllCompanies().stream().toList();
             })
@@ -239,26 +244,26 @@ public class Commands implements TabExecutor {
     .then(of("coffers")
       .then(of("withdraw")
         .suggestions((c, a, n) -> {
-          if (c instanceof Player p)
-            return owners.getOwnedCompanies(p.getName());
+          if (c instanceof Player player)
+            return owners.getOwnedCompanies(player.getName());
           else
             return owners.getAllCompanies().stream().toList();
         })
         .then(of("company", String.class)
           .executes((c, a, n) -> {
             String company = n.getString(a, "company");
-            if (c instanceof Player p && owners.getOwnership(p.getName(), company)) {
-              plugin.economy.depositPlayer(p.getName(), owners.getCoffers(company));
+            if (c instanceof Player player && owners.getOwnership(player.getName(), company)) {
+              Iciwi.economy.depositPlayer(player, owners.getCoffers(company));
               owners.setCoffers(company, 0d);
             }
             return true;
           })))
       .then(of("withdrawall")
         .executes((c, a, n) -> {
-          if (c instanceof Player p) {
-            List<String> ownedCompanies = owners.getOwnedCompanies(p.getName());
+          if (c instanceof Player player) {
+            List<String> ownedCompanies = owners.getOwnedCompanies(player.getName());
             for (String company : ownedCompanies) {
-              plugin.economy.depositPlayer(p.getName(), owners.getCoffers(company));
+              Iciwi.economy.depositPlayer(player, owners.getCoffers(company));
               owners.setCoffers(company, 0d);
             }
           }
@@ -276,13 +281,60 @@ public class Commands implements TabExecutor {
           return true;
         })))
 
+    // Structure of the list: [1 bit recording status and 31 bit previous record, distances...]
     .then(of("odometer")
       .then(of("start-lap")
         .executes((c, a, n) -> {
+          if (c instanceof Player player) {
+            int distance = player.getStatistic(Statistic.MINECART_ONE_CM);
+            if (odometer.containsKey(player)) {
+              Odometer playerMeter = odometer.get(player);
+              if (playerMeter.recording) {
+                // lap
+                int displacement = distance - playerMeter.lastRecord + playerMeter.recorded;
+                playerMeter.recorded = 0;
+                playerMeter.distances.add(displacement);
+                playerMeter.lastRecord = distance;
+                player.sendMessage("Lap: " + displacement);
+              } else {
+                // start
+                playerMeter.lastRecord = distance;
+                playerMeter.recording = true;
+                player.sendMessage("Started recording!");
+              }
+            } else {
+              odometer.put(player, new Odometer(new ArrayList<>(), distance, true));
+              player.sendMessage("Started recording!");
+            }
+
+          }
           return true;
         }))
       .then(of("stop-reset")
         .executes((c, a, n) -> {
+          if (c instanceof Player player) {
+            int distance = player.getStatistic(Statistic.MINECART_ONE_CM);
+            if (odometer.containsKey(player)) {
+              Odometer playerMeter = odometer.get(player);
+              if (playerMeter.recording) {
+                // stop
+                playerMeter.recorded = distance - playerMeter.lastRecord;
+                playerMeter.recording = false;
+                player.sendMessage("Stopped recording!");
+                for (int i = 0; i < playerMeter.distances.size(); i++) {
+                  player.sendMessage(i + " - " + playerMeter.distances.get(i));
+                }
+              } else {
+                // reset
+                playerMeter.lastRecord = distance;
+                playerMeter.distances = new ArrayList<>();
+                playerMeter.recorded = 0;
+                player.sendMessage("Reset memory!");
+              }
+            } else {
+              odometer.put(player, new Odometer(new ArrayList<>(), distance, false));
+            }
+          }
           return true;
         })))         ;
 }
