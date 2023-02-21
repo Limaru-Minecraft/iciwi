@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.util;
 
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
@@ -8,10 +9,10 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class ArgumentNode {
-
+  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);  // todo: debug
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
   private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction;
-  private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction;
+  private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction = (c, a, n) -> new ArrayList<>();
   private final String literal;
   private final String name;
   private final Class<?> type;
@@ -37,8 +38,6 @@ public class ArgumentNode {
 
   public static ArgumentNode of(final String name, final Class<?> type) {return new ArgumentNode(name, type);}
 
-  protected ArgumentNode getThis() {return this;}
-
   private ArrayList<String> getNameList () {
     return this.nameList;
   }
@@ -55,6 +54,7 @@ public class ArgumentNode {
   }
 
   private String getArg(String[] args, String name) {
+    plugin.sendAll("getArg called: "+ name + " , " + args[this.nameList.indexOf(name)]);  // todo: debug
     return args[this.nameList.indexOf(name)];
   }
 
@@ -109,7 +109,10 @@ public class ArgumentNode {
     return this;
   }
 
-  private ArgumentNode getChild(String name) {return children.get(name);}
+  private ArgumentNode getChild(String name) {
+    //plugin.sendAll("getChild called: "+ name);  // todo: debug
+    return children.get(name);
+  }
 
   public boolean onCommand(CommandSender sender, String[] args) {return onCommand(sender, parseArgs(args), 0);}
 
@@ -159,8 +162,14 @@ public class ArgumentNode {
     if (parsedArgs.length == ++argPointer) {
       return this.commandFunction.apply(sender, parsedArgs, this);
     } else {
-      if (this.isLiteral)
-        return this.getChild(parsedArgs[argPointer]).onCommand(sender, parsedArgs, argPointer);
+      if (this.isLiteral) {
+        for (var childKey : this.getChildren().keySet()) {
+          if (childKey.startsWith(parsedArgs[argPointer - 1])) {
+            return this.getChild(childKey).onCommand(sender, parsedArgs, argPointer);
+          }
+        }
+        return false;
+      }
       else {
         // The next argument is decided as the first instance in which the type check passes.
         String nextArg = null;
@@ -181,6 +190,7 @@ public class ArgumentNode {
   private LinkedHashMap<String, ArgumentNode> getChildren () {return children;}
 
   private @Nullable List<String> onTabComplete(CommandSender sender, String[] parsedArgs, int argPointer) {
+    plugin.sendAll("ParsedArgs: " + String.join(" → ", parsedArgs) + "; argPointer: " + argPointer); // todo: debug
     if (parsedArgs.length == ++argPointer) {
       // final tab completion list
       ArrayList<String> completions = new ArrayList<>();
@@ -188,16 +198,24 @@ public class ArgumentNode {
       List<String> suggestions = suggestionFunction.apply(sender, parsedArgs, this);
       // get all child literals
       this.children.keySet().forEach(item -> {
-        if (this.getChild(item).isLiteral)
-        suggestions.add(this.getChild(item).getLiteral());
+        if (this.getChild(item).isLiteral) suggestions.add(this.getChild(item).getLiteral());
       });
       // copy matches
       StringUtil.copyPartialMatches(parsedArgs[argPointer-1], suggestions, completions);
       // return
       return completions;
     } else {
-      if (this.isLiteral)
-        return this.getChild(parsedArgs[argPointer]).onTabComplete(sender, parsedArgs, argPointer);
+      plugin.sendAll("argPointer: " + argPointer); // todo: debug
+      if (this.isLiteral) {
+        plugin.sendAll("Line 205: " + parsedArgs[argPointer-1]); // todo: debug
+        for (var childKey : this.getChildren().keySet()) {
+          if (childKey.startsWith(parsedArgs[argPointer-1])) {
+            plugin.sendAll("Line 207: " + childKey); // todo: debug
+            return this.getChild(childKey).onTabComplete(sender, parsedArgs, argPointer);
+          }
+        }
+        return null;
+      }
       else {
         // The next argument is decided as the first instance in which the type check
         // passes.

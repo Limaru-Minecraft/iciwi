@@ -32,6 +32,10 @@ public final class Iciwi extends JavaPlugin {
     reloadConfig();
     return true;
   }
+
+  public void sendAll(String message) {
+    getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));
+  }
   
   @Override
   public void onDisable() {
@@ -41,7 +45,6 @@ public final class Iciwi extends JavaPlugin {
   
   @Override
   public void onEnable() {
-    
     // === Economy ===
     boolean eco = setupEconomy();
     if (eco) getServer().getLogger().info(ChatColor.AQUA+"Iciwi has detected an Economy!");
