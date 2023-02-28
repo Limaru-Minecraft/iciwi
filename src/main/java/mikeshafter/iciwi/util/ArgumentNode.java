@@ -400,46 +400,45 @@ public class ArgumentNode {
    * @return True if the argument is of type clazz, false otherwise.
    */
   private boolean isType (String arg, Class<?> clazz) {
-    Map<Class<?>, Predicate<String>> canParse = new HashMap<>() {{
-      put(Integer.TYPE, s -> {
-        try {
-          Integer.parseInt(s);
-          return true;
-        }
-        catch (Exception e) {
-          return false;
-        }
-      });
-      put(Long.TYPE, s -> {
-        try {
-          Long.parseLong(s);
-          return true;
-        }
-        catch (Exception e) {
-          return false;
-        }
-      });
-      put(Float.TYPE, s -> {
-        try {
-          Float.parseFloat(s);
-          return true;
-        }
-        catch (Exception e) {
-          return false;
-        }
-      });
-      put(Double.TYPE, s -> {
-        try {
-          Double.parseDouble(s);
-          return true;
-        }
-        catch (Exception e) {
-          return false;
-        }
-      });
-      put(Boolean.TYPE, s -> s.equals("true") || s.equals("false"));
-    }};
-    return canParse.get(clazz).test(arg);
+    if (clazz == Integer.TYPE) {
+      try {
+        Integer.parseInt(arg);
+        return true;
+      } catch (Exception ignored) {
+        return false;
+      }
+    }
+    else if (clazz == Long.TYPE) {
+      try {
+        Long.parseLong(arg);
+        return true;
+      } catch (Exception ignored) {
+        return false;
+      }
+    }
+    else if (clazz == Float.TYPE) {
+      try {
+        Float.parseFloat(arg);
+        return true;
+      } catch (Exception ignored) {
+        return false;
+      }
+    }
+    else if (clazz == Double.TYPE) {
+      try {
+        Double.parseDouble(arg);
+        return true;
+      } catch (Exception ignored) {
+        return false;
+      }
+    }
+    else if (clazz == Boolean.TYPE) {
+      return arg.equals("true") || arg.equals("false");
+    }
+    else if (this.type == String.class) {
+      return true;
+    }
+    return false;
   }
 
   /**
