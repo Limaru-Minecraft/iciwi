@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.util;
 
-import mikeshafter.iciwi.Iciwi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
@@ -10,9 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ArgumentNode {
-  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);  // todo: debug
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
-  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction;
+  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction = (c, a, n) -> false;
   private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction = (c, a, n) -> new ArrayList<>();
   private final String literal;
   private final String name;
@@ -140,20 +138,17 @@ public class ArgumentNode {
    * @return true if a valid command, otherwise false
    */
   private boolean onCommand (CommandSender sender, String[] parsedArgs, int argPointer) {
-    plugin.sendAll("ParsedArgs: " + String.join(" → ", parsedArgs) + "; argPointer: " + argPointer); // todo: debug
     // last argument
     if (parsedArgs.length == ++argPointer) {
-      plugin.sendAll("argPointer: " + argPointer); // todo: debug
-      // todo: debug PROBLEM this.commandFunction is somehow null
-      return this.commandFunction.apply(sender, parsedArgs, this);
+      // while the pointer is incremented, the node has not been incremented!
+      // apply the CommandFunction at the next node
+      var next = this.getChild(parsedArgs[argPointer-1]);
+      return next.commandFunction.apply(sender, parsedArgs, next);
     }
     else {
-      plugin.sendAll("argPointer: " + argPointer); // todo: debug
       if (this.isLiteral) {
-        plugin.sendAll("Line 150: " + parsedArgs[argPointer-1]); // todo: debug
         for (var childKey : this.getChildren().keySet()) {
           if (childKey.startsWith(parsedArgs[argPointer - 1])) {
-            plugin.sendAll("Line 153: " + childKey); // todo: debug
             return this.getChild(childKey).onCommand(sender, parsedArgs, argPointer);
           }
         }
@@ -192,7 +187,6 @@ public class ArgumentNode {
    * @return A List of possible completions for the final argument, or null to default to the command executor
    */
   private @Nullable List<String> onTabComplete (CommandSender sender, String[] parsedArgs, int argPointer) {
-    plugin.sendAll("ParsedArgs: " + String.join(" → ", parsedArgs) + "; argPointer: " + argPointer); // todo: debug
     if (parsedArgs.length == ++argPointer) {
       // final tab completion list
       ArrayList<String> completions = new ArrayList<>();
@@ -207,12 +201,9 @@ public class ArgumentNode {
       // return
       return completions;
     } else {
-      plugin.sendAll("argPointer: " + argPointer); // todo: debug
       if (this.isLiteral) {
-        plugin.sendAll("Line 208: " + parsedArgs[argPointer-1]); // todo: debug
         for (var childKey : this.getChildren().keySet()) {
           if (childKey.startsWith(parsedArgs[argPointer-1])) {
-            plugin.sendAll("Line 211: " + childKey); // todo: debug
             return this.getChild(childKey).onTabComplete(sender, parsedArgs, argPointer);
           }
         }
@@ -242,7 +233,6 @@ public class ArgumentNode {
    * @return the argument's value
    */
   private String getArg (String[] args, String name) {
-    plugin.sendAll("getArg called: " + name + " , " + args[this.childrenNames.indexOf(name)]);  // todo: debug
     return args[this.childrenNames.indexOf(name)];
   }
 

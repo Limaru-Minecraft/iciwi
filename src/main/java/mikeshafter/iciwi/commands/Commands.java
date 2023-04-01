@@ -21,8 +21,12 @@ import java.util.List;
 import static mikeshafter.iciwi.util.ArgumentNode.of;
 
 public class Commands implements TabExecutor {
-  @Override public boolean onCommand (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) { return commandStructure.onCommand(sender, args); }
-  @Override public @Nullable List<String> onTabComplete (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) { return commandStructure.onTabComplete(sender, args); }
+  @Override public boolean onCommand (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    return commandStructure.onCommand(sender, args);
+  }
+  @Override public @Nullable List<String> onTabComplete (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+    return commandStructure.onTabComplete(sender, args);
+  }
 
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Owners owners = plugin.owners;
@@ -32,7 +36,11 @@ public class Commands implements TabExecutor {
   private final ArgumentNode commandStructure = of("iciwi")
     .then(of("config")
       .then(of("reload")
-        .executes((c, a, t) -> plugin.reloadAllConfig()))
+        .executes((c, a, t) -> {
+          plugin.reloadAllConfig();
+          c.sendMessage("Reloaded all config!");
+          return true;
+        }))
       .then(of("penalty")
         .then(of("amount", Float.class)
           .executes((c, a, n) -> {
