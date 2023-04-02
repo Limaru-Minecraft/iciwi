@@ -1,17 +1,16 @@
 package mikeshafter.iciwi.util;
 
-import mikeshafter.iciwi.Iciwi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class ArgumentNode {
-  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);  // todo: debug
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
-  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction;
+  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction = (c, a, n) -> false;
   private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction = (c, a, n) -> new ArrayList<>();
   private final String literal;
   private final String name;
@@ -141,7 +140,10 @@ public class ArgumentNode {
   private boolean onCommand (CommandSender sender, String[] parsedArgs, int argPointer) {
     // last argument
     if (parsedArgs.length == ++argPointer) {
-      return this.commandFunction.apply(sender, parsedArgs, this);
+      // while the pointer is incremented, the node has not been incremented!
+      // apply the CommandFunction at the next node
+      var next = this.getChild(parsedArgs[argPointer-1]);
+      return next.commandFunction.apply(sender, parsedArgs, next);
     }
     else {
       if (this.isLiteral) {
@@ -179,13 +181,12 @@ public class ArgumentNode {
   /**
    * Requests a list of possible completions for a command argument.
    *
-   * @param sender     Source of the command. For players tab-completing a command inside of a command block, this will be the player, not the command block.
+   * @param sender     Source of the command. For players tab-completing a command inside a command block, this will be the player, not the command block.
    * @param parsedArgs The arguments passed to the command, including final partial argument to be completed and command label, parsed using ArgumentNode#parseArgs
    * @param argPointer Pointer at which to parse the command
    * @return A List of possible completions for the final argument, or null to default to the command executor
    */
   private @Nullable List<String> onTabComplete (CommandSender sender, String[] parsedArgs, int argPointer) {
-    plugin.sendAll("ParsedArgs: " + String.join(" → ", parsedArgs) + "; argPointer: " + argPointer); // todo: debug
     if (parsedArgs.length == ++argPointer) {
       // final tab completion list
       ArrayList<String> completions = new ArrayList<>();
@@ -200,12 +201,9 @@ public class ArgumentNode {
       // return
       return completions;
     } else {
-      plugin.sendAll("argPointer: " + argPointer); // todo: debug
       if (this.isLiteral) {
-        plugin.sendAll("Line 205: " + parsedArgs[argPointer-1]); // todo: debug
         for (var childKey : this.getChildren().keySet()) {
           if (childKey.startsWith(parsedArgs[argPointer-1])) {
-            plugin.sendAll("Line 207: " + childKey); // todo: debug
             return this.getChild(childKey).onTabComplete(sender, parsedArgs, argPointer);
           }
         }
@@ -235,7 +233,6 @@ public class ArgumentNode {
    * @return the argument's value
    */
   private String getArg (String[] args, String name) {
-    plugin.sendAll("getArg called: " + name + " , " + args[this.childrenNames.indexOf(name)]);  // todo: debug
     return args[this.childrenNames.indexOf(name)];
   }
 
@@ -435,10 +432,7 @@ public class ArgumentNode {
     else if (clazz == Boolean.TYPE) {
       return arg.equals("true") || arg.equals("false");
     }
-    else if (this.type == String.class) {
-      return true;
-    }
-    return false;
+    else return this.type == String.class;
   }
 
   /**

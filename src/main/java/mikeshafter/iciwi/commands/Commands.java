@@ -3,12 +3,11 @@ package mikeshafter.iciwi.commands;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
-import static mikeshafter.iciwi.util.ArgumentNode.*;
 import mikeshafter.iciwi.util.ArgumentNode;
+import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.ChatColor;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,11 +18,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static mikeshafter.iciwi.util.ArgumentNode.of;
+
 public class Commands implements TabExecutor {
   @Override public boolean onCommand (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
     return commandStructure.onCommand(sender, args);
   }
-
   @Override public @Nullable List<String> onTabComplete (@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
     return commandStructure.onTabComplete(sender, args);
   }
@@ -36,7 +36,11 @@ public class Commands implements TabExecutor {
   private final ArgumentNode commandStructure = of("iciwi")
     .then(of("config")
       .then(of("reload")
-        .executes((c, a, t) -> plugin.reloadAllConfig()))
+        .executes((c, a, t) -> {
+          plugin.reloadAllConfig();
+          c.sendMessage("Reloaded all config!");
+          return true;
+        }))
       .then(of("penalty")
         .then(of("amount", Float.class)
           .executes((c, a, n) -> {
@@ -53,10 +57,10 @@ public class Commands implements TabExecutor {
           })))
       .then(of("initialcardvalues")
         .then(of("add")
-          .then(of("amount", Float.class)
+          .then(of("amount", Double.class)
             .executes((c, a, n) -> {
-              List<Float> priceArray = plugin.getConfig().getFloatList("price-array");
-              priceArray.add(Float.parseFloat(a[3]));
+              List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
+              priceArray.add(Double.parseDouble(a[3]));
               plugin.getConfig().set("price-array", priceArray);
               plugin.saveConfig();
               return true;
