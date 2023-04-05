@@ -10,8 +10,9 @@ import java.util.List;
 
 public class ArgumentNode {
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
-  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction = (c, a, n) -> false;
+  private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction = (c, a, n) -> onHelp(c, a);
   private SuggestionFunction<CommandSender, String[], ArgumentNode> suggestionFunction = (c, a, n) -> new ArrayList<>();
+  private String description;
   private final String literal;
   private final String name;
   private final Class<?> type;
@@ -116,7 +117,71 @@ public class ArgumentNode {
     return this;
   }
 
+  /**
+   * Sets the description shown when the help command is used. Usage should be generated automatically.
+   * 
+   * @param description Description of what the full command does
+   * @return this node
+   */
+  public ArgumentNode description (String description) {
+    this.description = description;
+    return this;
+  }
+
   // EXECUTION METHODS
+
+  /**
+   * Executes when onCommand returns false, or when the help command is executed
+   * 
+   * @param sender Source of the command
+   * @param args   Passed command arguments
+   * @return this method (or its helper method) should always return true
+   */
+
+  public boolean onHelp (CommandSender sender, String[] args) {
+    sender.sendMessage(helpMessage(sender, parseArgs(args), 0))
+  }
+
+  /**
+   * Executes when onCommand returns false, or when the help command is executed
+   * 
+   * @param sender Source of the command
+   * @param args   Parsed command arguments
+   * @return this method (or its helper method) should always return true
+   */
+
+  public String helpMessage (CommandSender sender, String[] parsedArgs, int argPointer) {
+    if (parserArgs.length == ++argPointer) {
+      // while the pointer is incremented, the node has not been incremented!
+      // apply the CommandFunction at the next node
+      var next = this.getChild(parsedArgs[argPointer-1]);
+      return description;
+    }
+    else {
+      if (this.isLiteral) {
+        for (var childKey : this.getChildren().keySet()) {
+          if (childKey.startsWith(parsedArgs[argPointer - 1])) {
+            return this.getChild(childKey).helpMessage(sender, parsedArgs, argPointer);
+          }
+        }
+        return "No description/usage was provided for this command.";
+      }
+      else {
+        // The next argument is decided as the first instance in which the type check passes.
+        String nextArg = null;
+        for (var childEntry : this.getChildren().entrySet()) {
+          if (childEntry.getValue().isType(parsedArgs[argPointer])) {
+            nextArg = childEntry.getKey();
+          }
+        }
+        if (nextArg == null) 
+          return "No description/usage was provided for this command.";
+        
+        return this.getChild(nextArg).helpMessage(sender, parsedArgs, argPointer);
+      }
+    }
+    
+  }
 
   /**
    * Executes the given command, returning its success. If false is returned, then the "usage" plugin.yml entry for this command (if defined) will be sent to the player.
