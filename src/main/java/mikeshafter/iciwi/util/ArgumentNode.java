@@ -139,7 +139,8 @@ public class ArgumentNode {
    */
 
   public boolean onHelp (CommandSender sender, String[] args) {
-    sender.sendMessage(helpMessage(sender, parseArgs(args), 0))
+    sender.sendMessage(helpMessage(sender, parseArgs(args), 0));
+    return true;
   }
 
   /**
@@ -151,7 +152,7 @@ public class ArgumentNode {
    */
 
   public String helpMessage (CommandSender sender, String[] parsedArgs, int argPointer) {
-    if (parserArgs.length == ++argPointer) {
+    if (parsedArgs.length == ++argPointer) {
       // while the pointer is incremented, the node has not been incremented!
       // apply the CommandFunction at the next node
       var next = this.getChild(parsedArgs[argPointer-1]);
