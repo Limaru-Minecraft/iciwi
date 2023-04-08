@@ -40,21 +40,29 @@ public class Commands implements TabExecutor {
           plugin.reloadAllConfig();
           c.sendMessage("Reloaded all config!");
           return true;
-        }))
+        })
+        .description("Reloads all config files")
+      )
       .then(of("penalty")
         .then(of("amount", Float.class)
           .executes((c, a, n) -> {
             plugin.getConfig().set("penalty", n.getFloat(a, "amount"));
             plugin.saveConfig();
             return true;
-          })))
+          })
+         .description("Sets the penalty given to fare evaders")
+          )
+        )
       .then(of("deposit")
         .then(of("amount", Float.class)
           .executes((c, a, n) -> {
             plugin.getConfig().set("deposit", n.getFloat(a, "amount"));
             plugin.saveConfig();
             return true;
-          })))
+          })
+          .description("Sets the deposit paid when buying a new card")
+          )
+        )
       .then(of("initialcardvalues")
         .then(of("add")
           .then(of("amount", Double.class)
@@ -64,37 +72,55 @@ public class Commands implements TabExecutor {
               plugin.getConfig().set("price-array", priceArray);
               plugin.saveConfig();
               return true;
-            })))
+            })
+            .description("Adds a new option to the choices of card values")
+            )
+          )
         .then(of("remove")
           .then(of("amount", Float.class)
+            .suggestions((c, a, n) -> plugin.getConfig().getFloatList("price-array"))
             .executes((c, a, n) -> {
               List<Float> priceArray = plugin.getConfig().getFloatList("price-array");
               priceArray.remove(Float.parseFloat(a[3]));
               plugin.getConfig().set("price-array", priceArray);
               plugin.saveConfig();
               return true;
-            }))))
+            })
+            .description("Removes an option to the choices of card values")
+            )
+          )
+        )
       .then(of("maxtransfertime")
         .then(of("amount", Long.class)
           .executes((c, a, n) -> {
             plugin.getConfig().set("max-transfer-time", Long.parseLong(a[2]));
             plugin.saveConfig();
             return true;
-          })))
+          })
+          .description("Sets the maximum time allowed for an out-of-station transfer to happen.")
+          )
+        )
       .then(of("gateclosedelay")
         .then(of("closedelay", Integer.class)
           .executes((c, a, n) -> {
             plugin.getConfig().set("gate-close-delay", n.getInteger(a, "closedelay"));
             plugin.saveConfig();
             return true;
-          })))
+          })
+          .description("Sets the duration of open fare gates.")
+          )
+        )
       .then(of("defaultclass")
         .then(of("classname", String.class)
           .executes((c, a, n) -> {
             plugin.getConfig().set("default-class", n.getString(a, "classname"));
             plugin.saveConfig();
             return true;
-          }))))
+          })
+          .description("Sets the fare class used by default when card payment is used.")
+          )
+        )
+      )
 
     .then(of("owners")
       .then(of("alias")
@@ -106,7 +132,11 @@ public class Commands implements TabExecutor {
                 owners.set("Aliases."+n.getString(a, "company"), n.getString(a,"username"));
                 owners.save();
                 return true;
-              }))))
+              })
+              .description("Sets the revenue collector for a company.")
+              )
+            )
+          )
         .then(of("unset")
           .suggestions((c, a, n) -> {
             if (c instanceof Player player)
@@ -119,7 +149,11 @@ public class Commands implements TabExecutor {
               owners.set("Aliases."+n.getString(a, "company"), null);
               owners.save();
               return true;
-            }))))
+            })
+            .description("Removes the revenue collector for a company.")
+            )
+          )
+        )
       .then(of("operator")
         .suggestions((c, a, n) -> fares.getAllStations().stream().toList())
         .then(of("station", String.class)
@@ -135,7 +169,10 @@ public class Commands implements TabExecutor {
                 owners.addOwner(n.getString(a, "station"), n.getString(a, "company"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Adds an owning company to a station.")
+              )
+            )
           .then(of("remove")
             .suggestions((c, a, n) -> {
               if (c instanceof Player player)
@@ -148,7 +185,10 @@ public class Commands implements TabExecutor {
                 owners.removeOwner(n.getString(a, "station"), n.getString(a, "company"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Removes an owning company from a station.")
+              )
+            )
           .then(of("set")
             .suggestions((c, a, n) -> {
               if (c instanceof Player p)
@@ -161,13 +201,20 @@ public class Commands implements TabExecutor {
                 owners.setOwners(n.getString(a, "station"), Collections.singletonList(n.getString(a, "company")));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Sets the owning company of a station.")
+              )
+            )
           .then(of("delete")
             .executes((c, a, n) -> {
               owners.set("Operators."+n.getString(a, "station"), null);
               owners.save();
               return true;
-            }))))
+            })
+            .description("Removes all owning companies of a station.")
+            )
+          )
+        )
       .then(of("railpass")
         .suggestions(owners.getAllRailPasses().stream().toList())
         .then(of("name", String.class)
@@ -178,34 +225,51 @@ public class Commands implements TabExecutor {
                 owners.set("RailPasses."+n.getString(a,"name")+".operator", n.getString(a, "company"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Sets the rail company that owns the given railpass.")
+              )
+            )
           .then(of("duration")
             .then(of("duration", Long.class)
               .executes((c, a, n) -> {
                 owners.set("RailPasses."+n.getString(a,"name")+".duration", n.getLong(a, "duration"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Sets the duration that the given railpass is active.")
+              )
+            )
           .then(of("price")
             .then(of("price", Float.class)
               .executes((c, a, n) -> {
                 owners.set("RailPasses."+n.getString(a,"name")+".price", n.getFloat(a, "price"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Sets the price of the given railpass.")    
+              )
+            )
           .then(of("percentage")
             .then(of("paidpercentage", Float.class)
               .executes((c, a, n) -> {
                 owners.set("RailPasses."+n.getString(a,"name")+".percentage", n.getFloat(a, "paidpercentage"));
                 owners.save();
                 return true;
-              })))
+              })
+              .description("Sets the percentage paid by the card holder when they use the railpass.")
+              )
+            )
           .then(of("delete")
             .executes((c, a, n) -> {
               owners.set("RailPasses."+n.getString(a,"name"), null);
               owners.save();
               return true;
-            })))))
+            })
+            .description("Deletes a railpass.")
+            )
+          )
+        )
+      )
 
     .then(of("fares")
       .then(of("set")
@@ -214,36 +278,59 @@ public class Commands implements TabExecutor {
         .suggestions(fares.getAllStations().stream().toList())
           .then(of("end", String.class)
             .then(of("class", String.class)
-              .then(of("price", Float.class).executes((c, a, n) -> {
-                fares.setFare(n.getString(a, "start"), n.getString(a, "end"), n.getString(a, "class"), n.getFloat(a, "price"));
-                return true;
-              }))))))
+              .then(of("price", Float.class)
+                .executes((c, a, n) -> {
+                  fares.setFare(n.getString(a, "start"), n.getString(a, "end"), n.getString(a, "class"), n.getFloat(a, "price"));
+                  return true;
+                })
+                .description("Creates a new fare.")
+                )
+              )
+            )
+          )
+        )
       .then(of("unset")
       .suggestions(fares.getAllStations().stream().toList())
         .then(of("start", String.class)
         .suggestions(fares.getAllStations().stream().toList())
           .then(of("end", String.class)
-            .then(of("class", String.class).executes((c, a, n) -> {
-              fares.set(n.getString(a, "start")+"."+n.getString(a, "end")+"."+n.getString(a, "class"), null);
-              fares.save();
-              return true;
-            })))))
+            .then(of("class", String.class)
+              .executes((c, a, n) -> {
+                fares.set(n.getString(a, "start")+"."+n.getString(a, "end")+"."+n.getString(a, "class"), null);
+                fares.save();
+                return true;
+              })
+              .description("Deletes a fare.")
+              )
+            )
+          )
+        )
       .then(of("deletejourney")
       .suggestions(fares.getAllStations().stream().toList())
         .then(of("start", String.class)
         .suggestions(fares.getAllStations().stream().toList())
-          .then(of("end", String.class).executes((c, a, n) -> {
-            fares.set(n.getString(a, "start")+"."+n.getString(a, "end"), null);
-            fares.save();
-            return true;
-          }))))
+          .then(of("end", String.class)
+            .executes((c, a, n) -> {
+              fares.set(n.getString(a, "start")+"."+n.getString(a, "end"), null);
+              fares.save();
+              return true;
+            })
+            .description("Deletes all fares between a start and end point.")
+            )
+          )
+        )
       .then(of("deletestation")
       .suggestions(fares.getAllStations().stream().toList())
-        .then(of("start", String.class).executes((c, a, n) -> {
-          fares.set(n.getString(a, "start"), null);
-          fares.save();
-          return true;
-        }))))
+        .then(of("start", String.class)
+          .executes((c, a, n) -> {
+            fares.set(n.getString(a, "start"), null);
+            fares.save();
+            return true;
+          })
+          .description("Removes a station and all its associated fares from the data.")
+          )
+        )
+      )
 
     .then(of("coffers")
       .then(of("withdraw")
@@ -261,7 +348,10 @@ public class Commands implements TabExecutor {
               owners.setCoffers(company, 0d);
             }
             return true;
-          })))
+          })
+          .description("Withdraws the coffers of a single company that you own.")    
+          )
+        )
       .then(of("withdrawall")
         .executes((c, a, n) -> {
           if (c instanceof Player player) {
@@ -272,7 +362,9 @@ public class Commands implements TabExecutor {
             }
           }
           return true;
-        }))
+        })
+        .description("Withdraws all company costs that you own.")    
+        )
       .then(of("view")
         .executes((c, a, n) -> {
           if (c instanceof Player p){
@@ -283,7 +375,10 @@ public class Commands implements TabExecutor {
             }
           }
           return true;
-        })))
+        })
+        .description("View how much each company earned.")
+        )
+      )
 
     // Structure of the list: [1 bit recording status and 31 bit previous record, distances...]
     .then(of("odometer")
@@ -313,7 +408,9 @@ public class Commands implements TabExecutor {
 
           }
           return true;
-        }))
+        })
+        .description("Starts or laps the train odometer.")
+        )
       .then(of("stop-reset")
         .executes((c, a, n) -> {
           if (c instanceof Player player) {
@@ -340,5 +437,8 @@ public class Commands implements TabExecutor {
             }
           }
           return true;
-        })))         ;
+        })
+        .description("Stops or reset the train odometer.")
+        )
+      );
 }
