@@ -4,6 +4,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
+import mikeshafter.iciwi.Iciwi; // TODO: debug
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +21,8 @@ public class ArgumentNode {
   private final boolean isLiteral;
   private final ArrayList<String> childrenNames = new ArrayList<>();
   private ArgumentNode parent = null;
+
+  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);  // TODO: debug
 
   // CONSTRUCTION METHODS
 
@@ -208,6 +212,7 @@ public class ArgumentNode {
     if (parsedArgs.length == ++argPointer) {
       // while the pointer is incremented, the node has not been incremented!
       // apply the CommandFunction at the next node
+      plugin.sendAll(parsedArgs[argPointer - 1]); // TODO: debug
       var next = this.getChild(parsedArgs[argPointer-1]);
       return next.commandFunction.apply(sender, parsedArgs, next);
     }

@@ -33,6 +33,14 @@ public class Commands implements TabExecutor {
   private final Fares fares = plugin.fares;
   private final HashMap<Player, Odometer> odometer = new HashMap<>();
 
+  private List<String> toStringList (List<Float> list) {
+    ArrayList<String> stringList = new ArrayList<String>(list.size());
+    for (int i = 0; i < list.size(); i++) {
+      stringList.set(i, String.valueOf(list.get(i)));
+    }
+    return stringList;
+  }
+
   private final ArgumentNode commandStructure = of("iciwi")
     .then(of("config")
       .then(of("reload")
@@ -78,7 +86,7 @@ public class Commands implements TabExecutor {
           )
         .then(of("remove")
           .then(of("amount", Float.class)
-            .suggestions((c, a, n) -> plugin.getConfig().getFloatList("price-array"))
+            .suggestions((c, a, n) -> toStringList(plugin.getConfig().getFloatList("price-array")))
             .executes((c, a, n) -> {
               List<Float> priceArray = plugin.getConfig().getFloatList("price-array");
               priceArray.remove(Float.parseFloat(a[3]));

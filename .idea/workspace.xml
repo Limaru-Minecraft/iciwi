@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="121bd838-92dd-4165-a6bd-49501d9726aa" name="変更" comment="add debug messages to onCommand">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/ArgumentNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/ArgumentNode.java" afterDir="false" />
-    </list>
+    <list default="true" id="121bd838-92dd-4165-a6bd-49501d9726aa" name="変更" comment="remove debug messages and fix onCommand" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -139,7 +135,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680308927593</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="remove debug messages and fix onCommand">
+      <created>1680324726545</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1680324726545</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -158,7 +161,8 @@
     <MESSAGE value="Fix TabComplete for literal chains, but will break after an argument is made" />
     <MESSAGE value="Write JavaDocs and rearrange code" />
     <MESSAGE value="add debug messages to onCommand" />
-    <option name="LAST_COMMIT_MESSAGE" value="add debug messages to onCommand" />
+    <MESSAGE value="remove debug messages and fix onCommand" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove debug messages and fix onCommand" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
