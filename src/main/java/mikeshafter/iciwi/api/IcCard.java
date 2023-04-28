@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.util;
+package mikeshafter.iciwi.api;
 import mikeshafter.iciwi.CardSql;
 
 import java.util.Map;

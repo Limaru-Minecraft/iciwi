@@ -9,7 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import java.util.List;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponents;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponents;
 
 
 public class GateCreateListener implements Listener {

@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
-import static mikeshafter.iciwi.util.MachineUtil.*;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class CustomMachine implements Machine {
 

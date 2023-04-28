@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.*;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 import java.util.ArrayList;
 import java.util.List;

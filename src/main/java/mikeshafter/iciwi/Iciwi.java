@@ -1,10 +1,12 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.tickets.TicketMachine;
+import mikeshafter.iciwi.util.IciwiCard;
 import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -24,7 +26,7 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
-public final class Iciwi extends JavaPlugin {
+public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   
   public static Economy economy = null;
   public Lang lang;
@@ -246,5 +248,10 @@ public final class Iciwi extends JavaPlugin {
       economy = economyProvider.getProvider();
     }
     return (economy != null);
+  }
+
+  // TODO: Create actual fare card implementation
+  @Override public Class<IciwiCard> getFareCardClass () {
+    return IciwiCard.class;
   }
 }

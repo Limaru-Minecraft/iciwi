@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.api.IcCard;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -11,7 +12,7 @@ public class IciwiCard implements IcCard {
   private final String serial;
   
   public IciwiCard (ItemStack item) {
-    serial = MachineUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+    serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
   }
   /**
    * Withdraws a certain amount;

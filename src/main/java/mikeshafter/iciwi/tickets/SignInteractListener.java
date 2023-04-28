@@ -3,7 +3,7 @@ package mikeshafter.iciwi.tickets;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.MachineUtil;
+import mikeshafter.iciwi.util.IciwiUtil;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
@@ -23,7 +23,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 
 public class SignInteractListener implements Listener {
@@ -127,7 +127,7 @@ public class SignInteractListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onSignClick(PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
-      String signLine0 = MachineUtil.parseComponent(sign.line(0));
+      String signLine0 = IciwiUtil.parseComponent(sign.line(0));
       Player player = event.getPlayer();
 
       // === Normal ticket machine ===
@@ -148,7 +148,7 @@ public class SignInteractListener implements Listener {
       // === Custom machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
       {
-        String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }
