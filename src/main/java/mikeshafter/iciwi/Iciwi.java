@@ -1,5 +1,13 @@
 package mikeshafter.iciwi;
 
+import cloud.commandframework.CommandTree;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.arguments.parser.ParserParameters;
+import cloud.commandframework.arguments.parser.StandardParameters;
+import cloud.commandframework.bukkit.CloudBukkitCapabilities;
+import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.meta.CommandMeta;
+import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -9,11 +17,15 @@ import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.logging.Level;
 
 
 public final class Iciwi extends JavaPlugin {
@@ -24,13 +36,12 @@ public final class Iciwi extends JavaPlugin {
   public Records records;
   public Fares fares;
 
-  public boolean reloadAllConfig(){
+  public void reloadAllConfig(){
     new Lang(this).reload();
     new Owners(this).reload();
     new Records(this).reload();
     new Fares(this).reload();
     reloadConfig();
-    return true;
   }
 
   public void sendAll(String message) {
@@ -69,12 +80,15 @@ public final class Iciwi extends JavaPlugin {
     fares.save();
 
     // === Register commands ===
-    var commands = new Commands();
-    var pluginCommand = this.getCommand("iciwi");
-    if (pluginCommand != null) {
-      pluginCommand.setExecutor(commands);
-      pluginCommand.setTabCompleter(commands);
-    }
+    Commands commands = new Commands();
+    registerCommands(commands);
+
+    // var commands = new OldCommands();
+    // var pluginCommand = this.getCommand("iciwi");
+    // if (pluginCommand != null) {
+    //   pluginCommand.setExecutor(commands);
+    //   pluginCommand.setTabCompleter(commands);
+    // }
 
 
 
@@ -112,4 +126,32 @@ public final class Iciwi extends JavaPlugin {
     }
     return (economy != null);
   }
+
+  public void registerCommands (Commands commands) {
+    final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
+    Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+    PaperCommandManager<CommandSender> manager;
+    try {
+      manager = new PaperCommandManager<>(plugin, executionCoordinatorFunction, Function.identity(), Function.identity());
+    } catch (Exception e) {
+      plugin.getLogger().log(Level.SEVERE, "Failed to create command manager:");
+      e.printStackTrace();
+      return;
+    }
+
+    // Register Brigadier mappings
+    if (manager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {
+      manager.registerBrigadier();}
+
+    // Create the annotation parser. This allows you to define commands using methods annotated with @CommandMethod
+    final Function<ParserParameters, CommandMeta> commandMetaFunction = p -> CommandMeta.simple()
+      // This will allow you to decorate commands with descriptions
+      .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "Description not specified."))
+      .build();
+    AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
+
+    // Parse all @CommandMethod-annotated methods
+    annotationParser.parse(commands);
+  }
+
 }

@@ -16,11 +16,6 @@ max-transfer-time: 300000
 # time to wait until a fare gate closes, in ticks
 gate-close-delay: 100
 
-# ticket machine type (STATION, COMPANY, GLOBAL)
-ticket-machine-type: STATION
-#ticket-machine-type: COMPANY
-#ticket-machine-type: GLOBAL
-
 # global operator name (if GLOBAL is selected above)
 global-operator: ExampleOperator
 
@@ -38,3 +33,4 @@ ticks-to-close: 20
 card:
   material: NAME_TAG
   custom-model-data: 0
+

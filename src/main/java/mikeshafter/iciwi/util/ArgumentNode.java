@@ -1,15 +1,15 @@
 package mikeshafter.iciwi.util;
 
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
-
-import mikeshafter.iciwi.Iciwi; // TODO: debug
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+@Deprecated
 public class ArgumentNode {
   private final LinkedHashMap<String, ArgumentNode> children = new LinkedHashMap<>();
   private CommandFunction<CommandSender, String[], ArgumentNode> commandFunction = (c, a, n) -> onHelp(c, a);
@@ -151,7 +151,8 @@ public class ArgumentNode {
    * Executes when onCommand returns false, or when the help command is executed
    * 
    * @param sender Source of the command
-   * @param args   Parsed command arguments
+   * @param parsedArgs   Parsed command arguments
+   * @param argPointer A pointer to the argument
    * @return this method (or its helper method) should always return true
    */
 
