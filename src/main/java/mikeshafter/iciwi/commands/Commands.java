@@ -1,13 +1,25 @@
 package mikeshafter.iciwi.commands;
 
-import cloud.commandframework.annotations.*;
+import cloud.commandframework.annotations.Argument;
+import cloud.commandframework.annotations.CommandDescription;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.CommandPermission;
+import cloud.commandframework.annotations.suggestions.Suggestions;
+import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.config.Fares;
+import mikeshafter.iciwi.config.Owners;
+import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import java.util.*;
 import org.bukkit.entity.Player;
-import cloud.commandframework.context.CommandContext;
+import org.checkerframework.checker.nullness.qual.NonNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Unused")
@@ -15,14 +27,16 @@ public class Commands {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Owners owners = plugin.owners;
   private final Fares fares = plugin.fares;
-  privatePaperCommandManager manager;
+  private PaperCommandManager<CommandSender> manager;
+  private final HashMap<Player, Odometer> odometer = new HashMap<>();
 
-  public void setManager(PaperCommandManager manager) {
+  public void setManager(PaperCommandManager<CommandSender> manager) {
     this.manager = manager;
   }
 
-  public formatString(String message, String... items) {
-
+  private String formatString(String message, String... items) {
+    message = ChatColor.GREEN+message.replace("%s", ChatColor.YELLOW+""+ChatColor.GREEN);
+    return String.format(message, (Object[]) items);
   }
 
   @CommandMethod("iciwi reload")
@@ -66,7 +80,7 @@ public class Commands {
     priceArray.add(amount);
     plugin.getConfig().set("price-array", priceArray);
     plugin.saveConfig();
-    sender.sendMessage("Added a new option to the price list.")
+    sender.sendMessage("Added a new option to the price list.");
   }
 
   // TODO: Test if the list changes while typing, if not alter code such that it does so.
@@ -85,7 +99,7 @@ public class Commands {
     priceArray.remove(amount);
     plugin.getConfig().set("price-array", priceArray);
     plugin.saveConfig();
-    sender.sendMessage("Removed a new option from the price list.")
+    sender.sendMessage("Removed a new option from the price list.");
   }
 
   // TODO: change this to a time format maybe?
@@ -97,7 +111,7 @@ public class Commands {
   {
     plugin.getConfig().set("max-transfer-time", amount);
     plugin.saveConfig();
-    sender.sendMessage("Set the maximum time allowed for an OSI.")
+    sender.sendMessage("Set the maximum time allowed for an OSI.");
   }
 
   @CommandMethod("iciwi gateclosedelay <amount>")
@@ -108,18 +122,18 @@ public class Commands {
   {
     plugin.getConfig().set("gate-close-delay", amount);
     plugin.saveConfig();
-    sender.sendMessage("Set the duration whereby fare gates open.")
+    sender.sendMessage("Set the duration whereby fare gates open.");
   }
 
-  @CommandMethod("iciwi defaultclass <classname>")
-  @CommandDescription("Sets the fare class used by default when card payment is used.")
-  @CommandPermission("iciwi.defaultclass")
-  public void defaultclass(final @NonNull CommandSender sender,
-      final @NonNull @Argument("classname") String classname)
+  @CommandMethod("iciwi defaultfareClass <fareClassname>")
+  @CommandDescription("Sets the fare fareClass used by default when card payment is used.")
+  @CommandPermission("iciwi.defaultfareClass")
+  public void defaultfareClass(final @NonNull CommandSender sender,
+      final @NonNull @Argument("fareClassname") String fareClassname)
   {
-    plugin.getConfig().set("default-class", classname);
+    plugin.getConfig().set("default-fareClass", fareClassname);
     plugin.saveConfig();
-    sender.sendMessage("Set the default train class.")
+    sender.sendMessage("Set the default train fareClass.");
   }
 
   @Suggestions("company_list")
@@ -247,27 +261,27 @@ public class Commands {
     owners.save();
   }
 
-  @CommandMethod("iciwi fares set <start> <end> <class> <price>")
+  @CommandMethod("iciwi fares set <start> <end> <fareClass> <price>")
   @CommandDescription("Creates a new fare.")
   @CommandPermission("iciwi.fares.set")
   public void fares_set(final @NonNull CommandSender sender,
     final @NonNull @Argument("start") String start,
     final @NonNull @Argument("end") String end,
-    final @NonNull @Argument("class") String class,
-    final @NonNull @Argument("price") String price)
+    final @NonNull @Argument("fareClass") String fareClass,
+    final @NonNull @Argument("price") Double price)
   {
-    fares.setFare(start, end, class, price);
+    fares.setFare(start, end, fareClass, price);
   }
 
-  @CommandMethod("iciwi fares unset <start> <end> <class>")
+  @CommandMethod("iciwi fares unset <start> <end> <fareClass>")
   @CommandDescription("Deletes a fare.")
   @CommandPermission("iciwi.fares.unset")
   public void fares_set(final @NonNull CommandSender sender,
     final @NonNull @Argument("start") String start,
     final @NonNull @Argument("end") String end,
-    final @NonNull @Argument("class") String class)
+    final @NonNull @Argument("fareClass") String fareClass)
   {
-    fares.unsetFare(start, end, class);
+    fares.unsetFare(start, end, fareClass);
   }
 
   @CommandMethod("iciwi fares deletejourney <start> <end>")
