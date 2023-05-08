@@ -31,6 +31,21 @@ public class Fares extends CustomConfig {
     super.set(from+"."+to+"."+fareClass, price);
     super.save();
   }
+
+  public void unsetFare(String from, String to, String fareClass) {
+    super.set(from+"."+to+"."+fareClass, null);
+    super.save();
+  }
+
+  public void deleteJourney(String from, String to) {
+    super.set(from+"."+to, null);
+    super.save();
+  }
+
+  public void deleteStation(String station) {
+    super.set(station, null);
+    super.save();
+  }
   
   public double getFare(String from, String to, String fareClass) {
     return this.getDouble(from+"."+to+"."+fareClass);

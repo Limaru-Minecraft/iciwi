@@ -150,6 +150,8 @@ public final class Iciwi extends JavaPlugin {
       .build();
     AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
 
+    // Let the commands class know which Command manager to use
+    commands.setManager(manager);
     // Parse all @CommandMethod-annotated methods
     annotationParser.parse(commands);
   }

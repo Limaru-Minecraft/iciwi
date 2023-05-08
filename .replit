@@ -1,5 +1,5 @@
-compile = "gradle build"
-run = ""
+compile = ""
+run = "gradle@8 build"
 hidden = ["**/*.class"]
 
 [packager]
