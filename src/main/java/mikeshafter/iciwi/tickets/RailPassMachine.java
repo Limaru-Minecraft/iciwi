@@ -1,5 +1,13 @@
 package mikeshafter.iciwi.tickets;
 
+import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.Clickable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -9,19 +17,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.util.Clickable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
+import static mikeshafter.iciwi.util.MachineUtil.makeItem;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
 
 public class RailPassMachine implements Machine {
 
@@ -29,7 +26,7 @@ public class RailPassMachine implements Machine {
   private Inventory inv;
   private Clickable[] clickables;
   private ItemStack selectedItem;
-  private List<String> operators;
+  private final List<String> operators;
   private final Player player;
   private boolean bottomInv;
 
@@ -39,9 +36,11 @@ public class RailPassMachine implements Machine {
   private final Lang lang = new Lang();
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
-  public RailPassMachine (Player player) { 
+  public RailPassMachine (Player player, List<String> operators) {
     bottomInv = true; 
-    this.player = player; 
+    this.player = player;
+    this.operators = operators;
+    selectCard();
   }
 
   // card selection menu. player clicks in their own inventory to select a card

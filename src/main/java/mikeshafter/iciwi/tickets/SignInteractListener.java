@@ -2,9 +2,9 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.MachineUtil;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -36,39 +36,39 @@ public class SignInteractListener implements Listener {
     
     if (machineHashMap.containsKey(player)) {
       final Inventory clickedInventory = event.getClickedInventory();
-    final Machine machine = machineHashMap.get(player);
+      final Machine machine = machineHashMap.get(player);
 
-    if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
-      //event.setCancelled(true);
-      // close the previous inventory
-      // player.closeInventory();
-      // player inventory item selection code
-      if (machine.useBottomInv()) {
-        machine.setSelectedItem(event.getCurrentItem());
-        // there can only be 1 action here, which is to open the card menu
-        machine.onCardSelection();
-        machine.setBottomInv(false);
+      if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
+        //event.setCancelled(true);
+        // close the previous inventory
+        // player.closeInventory();
+        // player inventory item selection code
+        if (machine.useBottomInv()) {
+          machine.setSelectedItem(event.getCurrentItem());
+          // there can only be 1 action here, which is to open the card menu
+          machine.onCardSelection();
+          machine.setBottomInv(false);
+        }
+        return;
       }
-      return;
-    }
 
-    if (clickedInventory == player.getOpenInventory().getTopInventory()) {
-      //event.setCancelled(true);
-      // get contents of actual inventory
-      final ItemStack[] contents = clickedInventory.getContents();
-      // get slot
-      final int clickedSlot = event.getRawSlot();
-      // get clicked item
-      final Clickable clickedItem = machine.getClickables()[clickedSlot];
-      // compare items and run
-      if (clickedItem.getItem().equals(contents[clickedSlot]))
-        clickedItem.run(event);
-      // don't need to test for more
-      return;
-    }
-    if (clickedInventory != null) {
-      clickedInventory.close();
-    }
+      if (clickedInventory == player.getOpenInventory().getTopInventory()) {
+        //event.setCancelled(true);
+        // get contents of actual inventory
+        final ItemStack[] contents = clickedInventory.getContents();
+        // get slot
+        final int clickedSlot = event.getRawSlot();
+        // get clicked item
+        final Clickable clickedItem = machine.getClickables()[clickedSlot];
+        // compare items and run
+        if (clickedItem.getItem().equals(contents[clickedSlot]))
+          clickedItem.run(event);
+        // don't need to test for more
+        return;
+      }
+      if (clickedInventory != null) {
+        clickedInventory.close();
+      }
     }
 
   }
@@ -110,7 +110,7 @@ public class SignInteractListener implements Listener {
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
-        final String station = ((TextComponent) sign.line(1)).content().replaceAll("\\s+", "");
+        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -119,14 +119,16 @@ public class SignInteractListener implements Listener {
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
       {
-        // future
+        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final RailPassMachine machine = new RailPassMachine(player, new Owners().getOwners(station));
+        machineHashMap.put(player, machine);
       }
 
       // === Custom machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
       {
-        String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
-        CustomMachine machine = new CustomMachine(player, station);
+        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }
     }

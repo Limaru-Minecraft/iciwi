@@ -68,6 +68,7 @@ public class Fares extends CustomConfig {
     ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
     if (section != null) {
       var fareMap = new TreeMap<String, Double>();
+
       section.getKeys(false).forEach(fareClass -> fareMap.put(fareClass, this.getDouble(from+"."+to+"."+fareClass)));
       return fareMap;
     } else return null;

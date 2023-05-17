@@ -20,11 +20,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.Function;
 
 import static mikeshafter.iciwi.util.MachineUtil.*;
 
@@ -108,7 +105,24 @@ public class CustomMachine implements Machine {
     Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
     return values;
   }
-  
+
+  /**
+   * Puts the items of a clickable[] into an inventory.
+   *
+   * @param clickables The clickable[] stated above.
+   * @param inventory  The inventory stated above.
+   */
+  private void setItems(Clickable[] clickables, Inventory inventory) {
+    Function<Clickable[], ItemStack[]> getItems = (c) -> {
+      ItemStack[] items = new ItemStack[c.length];
+      for (int i = 0; i < c.length; i++)
+        if (c[i] != null)
+          items[i] = c[i].getItem();
+      return items;
+    };
+    inventory.setStorageContents(getItems.apply(clickables));
+  }
+
   /**
    * Relevance function
    */
@@ -160,8 +174,18 @@ public class CustomMachine implements Machine {
   public void selectClass() {
     // Create inventory and create items
     TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
-    Inventory inventory = plugin.getServer().createInventory(null, roundUp(fareClasses.size(), 9), Component.text(lang.getString("select-class")));
-    fareClasses.forEach((fareClass, fare) -> inventory.addItem(makeItem(Material.PAPER, 0, Component.text(fareClass), Component.text(fare))));
+    Inventory inventory = plugin.getServer().createInventory(null, fareClasses.size() < 54 ? roundUp(fareClasses.size(), 9) : 54, Component.text(lang.getString("select-class")));
+    Clickable[] clickables = new Clickable[54];
+
+    var fareIterator = fareClasses.entrySet().iterator();
+
+    for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
+      var entry = fareIterator.next();
+      var item = makeItem(Material.PAPER, 0, Component.text(entry.getKey()), Component.text(entry.getValue()));
+      clickables[i] = Clickable.of(item,
+        (event) -> generateTicket(item));
+    }
+    setItems(clickables, inventory);
     player.openInventory(inventory);
   }
   
@@ -200,9 +224,9 @@ public class CustomMachine implements Machine {
         
         //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
         // Get ticket generator
-              Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-              int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
-              // Generate card
+        Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
+        int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
+        // Generate card
         player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
       } else player.sendMessage(lang.getString("not-enough-money"));
     }
@@ -220,7 +244,7 @@ public class CustomMachine implements Machine {
         Component itemName = item.getItemMeta().displayName();
         Component inventoryName = event.getView().title();
         
-        if (inventoryName.equals(Component.text(lang.getString("select-class")))) {
+        if (inventoryName.equals(lang.getComponent("select-class"))) {
           generateTicket(item);
           inventory.close();
           CommonUtil.unregisterListener(this);
@@ -251,20 +275,15 @@ public class CustomMachine implements Machine {
 
   @Override
   public void setSelectedItem(ItemStack selectedItem) {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override
   public ItemStack getSelectedItem() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override
   public void onCardSelection() {
-    // TODO Auto-generated method stub
-    
   }
 
   @Override

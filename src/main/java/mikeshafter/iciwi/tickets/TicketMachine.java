@@ -63,21 +63,21 @@ public class TicketMachine implements Machine {
   // initial menu
   public void init(String station) {
     // setup inventory
-    inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
+    inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, Component.text("New Single Journey Ticket"),
+    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"),
         Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
-    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("New Iciwi Card")),
+    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")),
         (event) -> newCard());
-    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, Component.text("Insert Card")),
+    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")),
         (event) -> selectCard());
 
     // Get operators
     operators = this.owners.getOwners(station);
     // Set items
-    inv = setItems(clickables, inv);
+    setItems(clickables, inv);
     // Start listening and open inventory
     player.openInventory(inv);
   }
@@ -86,7 +86,7 @@ public class TicketMachine implements Machine {
   public void selectCard() {
     // Setup listener for bottom inventory selection
     // Create inventory
-    inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
+    inv = this.plugin.getServer().createInventory(null, 9, lang.getComponent("select-card"));
     // Swap flag
     bottomInv = true;
     // Start listening and open inventory
@@ -105,19 +105,19 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("New Iciwi Card")),
+    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")),
         (event) -> newCard());
-    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, Component.text("Top Up Iciwi Card")),
+    this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")),
         (event) -> topUpCard(this.selectedItem)); // todo: fix this next
-    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, Component.text("Rail Passes")),
+    this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, lang.getComponent("menu-rail-pass")),
         (event) -> railPass(this.selectedItem)); // todo: fix this next
-    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, Component.text("Refund Card")),
-        (event) -> refundCard(this.selectedItem)); // todo: fix this next
-    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, Component.text("Select Another Card")),
+    this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")),
+        (event) -> refundCard(this.selectedItem));
+    this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-select-other-card")),
         (event) -> selectCard());
 
     // Set items
-    inv = setItems(this.clickables, inv);
+    setItems(this.clickables, inv);
     // Start listening and open inventory
     player.openInventory(inv);
   }
@@ -172,7 +172,7 @@ public class TicketMachine implements Machine {
     }
 
     // Set items
-    inv = setItems(this.clickables, inv);
+    setItems(this.clickables, inv);
     // Start listening and open inventory
     player.openInventory(inv);
   }
@@ -214,7 +214,7 @@ public class TicketMachine implements Machine {
     }
 
     // Set items
-    inv = setItems(this.clickables, inv);
+    setItems(this.clickables, inv);
     // Start listening and open inventory
     player.openInventory(inv);
   }
@@ -233,7 +233,7 @@ public class TicketMachine implements Machine {
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
 
     // rail pass viewer
-    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0, Component.text("View Rail Passes")),
+    clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0, lang.getComponent("menu-view-rail-pass")),
         (event) -> {
           // print current rail passes
           // get current passes
@@ -301,7 +301,7 @@ public class TicketMachine implements Machine {
     }
 
     // set items and open inventory
-    inv = setItems(clickables, inv);
+    setItems(clickables, inv);
     player.openInventory(inv);
 
   }
@@ -337,10 +337,14 @@ public class TicketMachine implements Machine {
       }
     }
   }
-  
 
-  // puts the items of a clickable[] into an inventory
-  public Inventory setItems(Clickable[] clickables, Inventory inventory) {
+  /**
+   * Puts the items of a clickable[] into an inventory.
+   *
+   * @param clickables The clickable[] stated above.
+   * @param inventory  The inventory stated above.
+   */
+  private void setItems(Clickable[] clickables, Inventory inventory) {
     Function<Clickable[], ItemStack[]> getItems = (c) -> {
       ItemStack[] items = new ItemStack[c.length];
       for (int i = 0; i < c.length; i++)
@@ -349,7 +353,6 @@ public class TicketMachine implements Machine {
       return items;
     };
     inventory.setStorageContents(getItems.apply(clickables));
-    return inventory;
   }
 
   @Override

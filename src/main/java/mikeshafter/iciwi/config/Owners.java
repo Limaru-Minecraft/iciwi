@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.config;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,8 +20,9 @@ public class Owners extends CustomConfig {
     super("owners.yml");
   }
   
-  public List<String> getOwners(String station) {
-    return super.get().getStringList("Operators."+station);
+  public @NotNull List<String> getOwners(String station) {
+    List<String> ownersList = super.get().getStringList("Operators."+station);
+    return ownersList.size() == 0 ? List.of("ExampleOperator") : ownersList;
   }
 
   /**
