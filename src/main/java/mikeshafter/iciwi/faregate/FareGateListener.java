@@ -194,6 +194,8 @@ public class FareGateListener implements Listener {
   
               // remove fare from discounts
               double half = fare/2;
+
+              // TODO: Use owners#getRailPassOperator(name) to get the operator instead
               if (discounts.containsKey(entryStationOwner)) fare -= half;
               if (discounts.containsKey(exitStationOwner)) fare -= half;
               owners.deposit(entryStationOwner, fare/2);

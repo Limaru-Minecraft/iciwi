@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
 
 import static mikeshafter.iciwi.util.MachineUtil.*;
 
@@ -67,12 +66,11 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"),
-        Component.text("Tickets are non-refundable")), (event) -> new CustomMachine(player, station));
-    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")),
-        (event) -> newCard());
-    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")),
-        (event) -> selectCard());
+    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) -> {
+        SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station));
+    });
+    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
+    this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
 
     // Get operators
     operators = this.owners.getOwners(station);
@@ -194,7 +192,7 @@ public class TicketMachine implements Machine {
           Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
             double value = Double
                 .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
-                    .replaceAll("[^\\d.]", ""));
+                .replaceAll("[^\\d.]", ""));
 
             if (Iciwi.economy.getBalance(player) >= value) {
               // Take money from player and send message
@@ -205,12 +203,12 @@ public class TicketMachine implements Machine {
               cardSql.addValueToCard(serial, value);
               player.closeInventory();
             } 
-            else 
-            {
+            else {
               player.closeInventory();
               player.sendMessage(lang.getString("not-enough-money"));
             }
-          });
+          }
+      );
     }
 
     // Set items
@@ -345,14 +343,10 @@ public class TicketMachine implements Machine {
    * @param inventory  The inventory stated above.
    */
   private void setItems(Clickable[] clickables, Inventory inventory) {
-    Function<Clickable[], ItemStack[]> getItems = (c) -> {
-      ItemStack[] items = new ItemStack[c.length];
-      for (int i = 0; i < c.length; i++)
-        if (c[i] != null)
-          items[i] = c[i].getItem();
-      return items;
-    };
-    inventory.setStorageContents(getItems.apply(clickables));
+    ItemStack[] items = new ItemStack[clickables.length];
+    for (int i = 0; i < clickables.length; i++)
+      if (clickables[i] != null) items[i] = clickables[i].getItem();
+    inventory.setStorageContents(items);
   }
 
   @Override

@@ -34,3 +34,6 @@ card:
   material: NAME_TAG
   custom-model-data: 0
 
+ticket:
+  material: PAPER
+  custom-model-data: 0

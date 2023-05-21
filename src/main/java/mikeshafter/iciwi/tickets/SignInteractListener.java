@@ -2,7 +2,6 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.MachineUtil;
 import org.bukkit.ChatColor;
@@ -36,7 +35,7 @@ public class SignInteractListener implements Listener {
     
     if (machineHashMap.containsKey(player)) {
       final Inventory clickedInventory = event.getClickedInventory();
-      final Machine machine = machineHashMap.get(player);
+      Machine machine = machineHashMap.get(player);
 
       if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
         //event.setCancelled(true);
@@ -60,6 +59,9 @@ public class SignInteractListener implements Listener {
         final int clickedSlot = event.getRawSlot();
         // get clicked item
         final Clickable clickedItem = machine.getClickables()[clickedSlot];
+for (Clickable clickable : machine.getClickables()) {// TODO: debug
+if (clickable != null) plugin.getServer().getLogger().info(clickable.toString());}// TODO: debug
+plugin.getServer().getLogger().info(String.valueOf(clickedSlot));// TODO: debug
         // compare items and run
         if (clickedItem.getItem().equals(contents[clickedSlot]))
           clickedItem.run(event);
@@ -120,7 +122,8 @@ public class SignInteractListener implements Listener {
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
       {
         final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
-        final RailPassMachine machine = new RailPassMachine(player, new Owners().getOwners(station));
+        final RailPassMachine machine = new RailPassMachine(player);
+        machine.init(station);
         machineHashMap.put(player, machine);
       }
 

@@ -21,7 +21,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
-import java.util.function.Function;
 
 import static mikeshafter.iciwi.util.MachineUtil.*;
 
@@ -33,7 +32,8 @@ public class CustomMachine implements Machine {
   private final Lang lang = new Lang(plugin);
   private final Fares fares = new Fares(plugin);
   private final Owners owners = new Owners(plugin);
-  private ItemStack[] items;
+  private ItemStack[] playerInv;
+  private Clickable[] clickables;
   private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
@@ -71,7 +71,7 @@ public class CustomMachine implements Machine {
         this.setDescription(lang.getString("enter-text-description"));
       
         // Save player's inventory
-        items = player.getInventory().getContents();
+        playerInv = player.getInventory().getContents();
       }
     
       @Override
@@ -86,8 +86,8 @@ public class CustomMachine implements Machine {
     
       @Override
       public void onClose() {
-        for (int i = 0; i < items.length; i++)
-          player.getInventory().setItem(i, items[i]);
+        for (int i = 0; i < playerInv.length; i++)
+          player.getInventory().setItem(i, playerInv[i]);
       }
     };
   
@@ -98,6 +98,89 @@ public class CustomMachine implements Machine {
     CommonUtil.nextTick(submitText::open);
   }
   
+  public void selectClass() {
+    // Create inventory and create clickables
+    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
+    int invSize = roundUp(fareClasses.size(), 9);
+    Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
+    this.clickables = new Clickable[invSize];
+
+    var fareIterator = fareClasses.entrySet().iterator();
+
+    for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
+      var entry = fareIterator.next();
+      var item = makeItem(Material.PAPER, 0, Component.text(entry.getKey()), Component.text(entry.getValue()));
+      this.clickables[i] = Clickable.of(item, (event) -> {
+          generateTicket(item);
+          event.setCancelled(true);
+          player.closeInventory();
+        }
+      );
+    }
+    setItems(this.clickables, inventory);
+    player.openInventory(inventory);
+  }
+  
+  public void generateTicket(ItemStack item) {  //TODO: Payment using Iciwi and bank cards
+    /*
+    ItemStack item format:
+      DisplayName: Class
+      Lore[0]: Price
+    Ticket format:
+      DisplayName: &aTrain Ticket
+      Lore[0]: From
+      Lore[1]: To
+      Lore[2]: Class
+     */
+    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
+      Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
+      double price = 0d;
+      if (priceComponent != null && isDouble(parseComponent(priceComponent)))
+        price = Double.parseDouble(parseComponent(priceComponent));
+      Component fareClass = item.getItemMeta().displayName();
+  
+      if (Iciwi.economy.getBalance(player) >= price) {
+        Iciwi.economy.withdrawPlayer(player, price);
+        
+        // find owners of the current station and deposit accordingly
+        List<String> ownersList = owners.getOwners(station);
+        int ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+  
+        // find owners of the station the ticket goes to and deposit accordingly
+        ownersList = owners.getOwners(parseComponent(terminal));
+        ownerCount = ownersList.size();
+        for (String owner : ownersList)
+          owners.deposit(owner, price/2/ownerCount);
+        
+        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
+        // Get ticket generator
+        Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
+        int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
+        // Generate ticket
+        player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
+      } else player.sendMessage(lang.getString("not-enough-money"));
+    }
+  }
+  
+  private class EventListener implements Listener {
+    
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onInventoryClick(InventoryClickEvent event) {
+      Inventory inventory = event.getClickedInventory();
+      ItemStack item = event.getCurrentItem();
+      if (inventory == null) return;
+      
+      if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
+        inventory.close();
+        setTerminal(item.getItemMeta().displayName());
+        CommonUtil.unregisterListener(this);
+        selectClass();
+      }
+    }
+  }
+
   /**
    * Sort an Iterable based on each string's relevance.
    */
@@ -113,14 +196,10 @@ public class CustomMachine implements Machine {
    * @param inventory  The inventory stated above.
    */
   private void setItems(Clickable[] clickables, Inventory inventory) {
-    Function<Clickable[], ItemStack[]> getItems = (c) -> {
-      ItemStack[] items = new ItemStack[c.length];
-      for (int i = 0; i < c.length; i++)
-        if (c[i] != null)
-          items[i] = c[i].getItem();
-      return items;
-    };
-    inventory.setStorageContents(getItems.apply(clickables));
+    ItemStack[] items = new ItemStack[clickables.length];
+    for (int i = 0; i < clickables.length; i++)
+      if (clickables[i] != null) items[i] = clickables[i].getItem();
+    inventory.setStorageContents(items);
   }
 
   /**
@@ -170,102 +249,10 @@ public class CustomMachine implements Machine {
   public void setTerminal(Component terminal) {
     this.terminal = terminal;
   }
-  
-  public void selectClass() {
-    // Create inventory and create items
-    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
-    Inventory inventory = plugin.getServer().createInventory(null, fareClasses.size() < 54 ? roundUp(fareClasses.size(), 9) : 54, Component.text(lang.getString("select-class")));
-    Clickable[] clickables = new Clickable[54];
-
-    var fareIterator = fareClasses.entrySet().iterator();
-
-    for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
-      var entry = fareIterator.next();
-      var item = makeItem(Material.PAPER, 0, Component.text(entry.getKey()), Component.text(entry.getValue()));
-      clickables[i] = Clickable.of(item,
-        (event) -> generateTicket(item));
-    }
-    setItems(clickables, inventory);
-    player.openInventory(inventory);
-  }
-  
-  public void generateTicket(ItemStack item) {  //TODO: Payment using Iciwi and bank cards
-    /*
-    ItemStack item format:
-      DisplayName: Class
-      Lore[0]: Price
-    Ticket format:
-      DisplayName: &aTrain Ticket
-      Lore[0]: From
-      Lore[1]: To
-      Lore[2]: Class
-     */
-    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
-      Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
-      double price = 0d;
-      if (priceComponent != null && isDouble(parseComponent(priceComponent)))
-        price = Double.parseDouble(parseComponent(priceComponent));
-      Component fareClass = item.getItemMeta().displayName();
-  
-      if (Iciwi.economy.getBalance(player) >= price) {
-        Iciwi.economy.withdrawPlayer(player, price);
-        
-        // find owners of the current station and deposit accordingly
-        List<String> ownersList = owners.getOwners(station);
-        int ownerCount = ownersList.size();
-        for (String owner : ownersList)
-          owners.deposit(owner, price/2/ownerCount);
-  
-        // find owners of the station the ticket goes to and deposit accordingly
-        ownersList = owners.getOwners(parseComponent(terminal));
-        ownerCount = ownersList.size();
-        for (String owner : ownersList)
-          owners.deposit(owner, price/2/ownerCount);
-        
-        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
-        // Get ticket generator
-        Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-        int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
-        // Generate card
-        player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
-      } else player.sendMessage(lang.getString("not-enough-money"));
-    }
-  }
-  
-  private class EventListener implements Listener {
-    
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onInventoryClick(InventoryClickEvent event) {
-      Inventory inventory = event.getClickedInventory();
-      ItemStack item = event.getCurrentItem();
-      if (inventory == null) return;
-      
-      if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
-        Component itemName = item.getItemMeta().displayName();
-        Component inventoryName = event.getView().title();
-        
-        if (inventoryName.equals(lang.getComponent("select-class"))) {
-          generateTicket(item);
-          inventory.close();
-          CommonUtil.unregisterListener(this);
-        } else {
-          inventory.close();
-          setTerminal(itemName);
-          selectClass();
-        }
-      }
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onInventoryClose(InventoryCloseEvent event) {
-      CommonUtil.unregisterListener(this);
-    }
-    
-  }
 
   @Override
   public Clickable[] getClickables() {
-    return null;
+    return clickables;
   }
 
   @Override
