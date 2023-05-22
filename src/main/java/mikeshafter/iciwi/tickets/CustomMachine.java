@@ -135,13 +135,13 @@ public class CustomMachine implements Machine {
 
       // find owners of the current station and deposit accordingly
       List<String> ownersList = owners.getOwners(from);
-      for (String owner : ownersList.size())
-        owners.deposit(owner, (price >> 1) / ownersList.size());
+      for (String owner : ownersList)
+        owners.deposit(owner, price / 2 / ownersList.size());
 
       // find owners of the station the ticket goes to and deposit accordingly
       ownersList = owners.getOwners(to);
-      for (String owner : ownersList.size())
-        owners.deposit(owner, (price >> 1) / ownersList.size());
+      for (String owner : ownersList)
+        owners.deposit(owner, price / 2 / ownersList.size());
       
       // Get ticket materials
       Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
@@ -176,7 +176,11 @@ public class CustomMachine implements Machine {
   }
 
   /**
-   * Sort an Iterable based on each string's relevance.
+   * Sort an array based on each string's relevance.
+   *
+   * @param pattern The pattern to compare relevance with
+   * @param values The array to sort
+   * @return Sorted array
    */
   public String[] relevanceSort(String pattern, String[] values) {
     Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
@@ -198,6 +202,10 @@ public class CustomMachine implements Machine {
 
   /**
    * Relevance function
+   *
+   * @param pattern The pattern (search) term
+   * @param term The term that contains the pattern term
+   * @return Relevance value
    */
   public float relevance(String pattern, String term) {
     // Ignore case
@@ -207,13 +215,6 @@ public class CustomMachine implements Machine {
     // Optimisation
     if (term.equals(pattern)) return 1f;
 
-    /*
-    Search = the pattern term
-    Match = a string containing the pattern term
-    term.length() >= pattern.length()
-    Relevance = percentage of letters equal to the sequence in searchResult.
-    */
-    
     // Required variables
     int searchLength = pattern.length();
     int matchLength = term.length();
