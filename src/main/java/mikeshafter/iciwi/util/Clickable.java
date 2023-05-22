@@ -26,4 +26,8 @@ public class Clickable {
   public void run (InventoryClickEvent e) { consumer.accept(e); }
   
   public ItemStack getItem() { return item; }
+
+  public String toString() {
+    return this.item.getAmount() + " " + this.item.getType().toString();
+  }
 }

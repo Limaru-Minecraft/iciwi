@@ -7,10 +7,11 @@ exit: Exit
 validator: Validator
 faregate: Faregate
 member: Member
+payment: Payment
 
 # Messages
 remaining: '§aRemaining value: §£%.2f'
-fare-evade: '§cYou have been caught fare evading! Fine: §e£8.00'
+fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
 
 # =====================================
 # These options control the ticket machines.
@@ -19,7 +20,7 @@ fare-evade: '§cYou have been caught fare evading! Fine: §e£8.00'
 tickets: Tickets  # ticket machine sign text
 passes: Passes  # rail pass machine sign text
 custom-tickets: CustomTickets  # custom paper ticket machine sign text
-plugin-name: '§aICIWI Card'  # Default card name
+plugin-name: '§aIciwi Card'  # Default card name
 currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
 serial-prefix: 'A'  # 1 char only!
@@ -32,9 +33,7 @@ ticket-machine: '§1Ticket Machine'
 
 # == Main page item names ==
 menu-new-ticket: '§aNew Single Journey Ticket'
-menu-adjust-fares: '§eAdjust Fares'
-card-operations: '§dICIWI Card Operations'
-check-fares: '§bCheck Fares'
+menu-insert-card: '§eInsert Card'
 
 # == Paper ticket subpage ==
 new-ticket: '§1New Ticket - '
@@ -43,52 +42,35 @@ enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
 generate-ticket-custom: '§aNew $s ticket from §e$s to §e$s generated.'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
-generate-ticket-global: '§aNew ticket for journeys costing up to §e£%1$.2f§a generated.'
 
 # Station name if the fare type is GLOBAL
 global-ticket: 'AllStations'  # must be CamelCase
 
-# == Fare Adjustment Subpage ==
-select-ticket: '§1Select Ticket...'
-adjust-fares: '§1Adjust Fare - '
-
-# Message if ticket adjustment cannot be done
-direct-ticket-invalid: '§cInvalid ticket! Direct tickets cannot be adjusted!'
-
 # == Card Operations Subpage ==
 select-card: '§1Select Card...'
-card-operation: '§1Select Option - '
-card-details: '§eCard Details'
-new-card: '§dNew ICIWI Card'
-top-up-card: '§bTop Up ICIWI Card'
-menu-rail-pass: '§aRail Pass'
-refund-card: '§6Refund Card'
-remaining-value: 'Remaining value: '
+menu-new-card: '§dNew Iciwi Card'
+menu-top-up-card: '§bTop Up Iciwi Card'
+menu-rail-pass: '§aRail Passes'
+menu-refund-card: '§6Refund Card'
+menu-select-other-card: '§aSelect Another Card'
 
 # Message when card is refunded.
 card-refunded: '§aRefunded card §e%1$s§a. Received §e£%2$.2f§a.'
 
 # == New card subpage ==
-select-value: '§1Select value...'
 new-card-created: '§aNew Card Created! Deposit: §e£%1$.2f§a, Card Value: §e£%2$.2f§a'
 
 # == Top up card subpage ==
 top-up: '§1Top Up - '
 card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
-# == Select card for rail pass subpage ==
-select-card-rail-pass: '§2Select Card...'
-
 # == Rail passes subpage ==
-add-rail-pass: '§1Rail passes - '
-card-discounts: '§aRail passes'
-days: ' Day(s)'
+menu-view-rail-pass: '§bView Rail Passes'
 added-rail-pass: '§aBought the rail pass §e%1$s§a for §e£%2$.2f§a.'
 extended-rail-pass: '§aExtended the rail pass §e%1$s§a for §e£%2$.2f§a.'
 
 # == Custom Ticket Machine ==
 enter-text-description: 'Key in the station name'
-select-station: 'Select station'
 select-class: 'Select class'
 
 # =====================================
@@ -105,7 +87,6 @@ invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the tic
 member-gate: 'Membership valid. Welcome!'
 
 # Payment sign
-payment: 'Payment'
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
 pay-success: '§aPaid §e£%.2f§a.'
 pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'

@@ -5,14 +5,13 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.util.Objects;
 
 
 public class Payment {
-  static Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  static Lang lang = new Lang(plugin);
+  private final static Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  private final static Lang lang = plugin.lang;
   
   public static void pay(String serial, Player player, double price) {
     CardSql app = new CardSql();

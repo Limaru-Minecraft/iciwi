@@ -1,6 +1,6 @@
 {pkgs}: {
   deps = [
     pkgs.gradle
-    pkgs.cowsay
+    pkgs.zulu
   ];
 }

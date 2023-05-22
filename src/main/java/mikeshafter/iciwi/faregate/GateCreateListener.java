@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate;
-
+import java.util.List;
+import static mikeshafter.iciwi.util.MachineUtil.parseComponents;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import org.bukkit.ChatColor;
@@ -7,20 +8,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.plugin.Plugin;
-import java.util.List;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponents;
 
 
 public class GateCreateListener implements Listener {
-  Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  Lang lang = new Lang(plugin);
-  
+  Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  Lang lang = plugin.lang;
+
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {
     List<String> lines = parseComponents(event.lines());
     Player player = event.getPlayer();
-  
+
     // Entry
     if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("entry"))) {
       if (player.hasPermission("iciwi.create")) {
@@ -48,7 +46,7 @@ public class GateCreateListener implements Listener {
         player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
-  
-  
+
+
   }
 }
