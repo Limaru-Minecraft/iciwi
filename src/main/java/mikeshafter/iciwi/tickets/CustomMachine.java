@@ -137,7 +137,6 @@ public class CustomMachine implements Machine {
 
       // find owners of the station the ticket goes to and deposit accordingly
       ownersList = owners.getOwners(to);
-      ownerCount = ownersList.size();
       for (String owner : ownersList)
         owners.deposit(owner, price / 2 / ownersList.size());
       
