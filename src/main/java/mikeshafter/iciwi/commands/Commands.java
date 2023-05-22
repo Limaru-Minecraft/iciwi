@@ -6,7 +6,6 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.suggestions.Suggestions;
 import cloud.commandframework.context.CommandContext;
-import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
@@ -15,12 +14,14 @@ import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
-
+import com.bergerkiller.bukkit.common.utils.TimeUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import cloud.commandframework.paper.PaperCommandManager;
+
 
 @SuppressWarnings("Unused")
 public class Commands {
@@ -83,7 +84,6 @@ public class Commands {
     sender.sendMessage("Added a new option to the price list.");
   }
 
-  // TODO: Test if the list changes while typing, if not alter code such that it does so.
   @Suggestions("card_price_list")
   public @NonNull List<String> suggestPriceList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
     return plugin.getConfig().getFloatList("price-array").stream().map(e -> String.format(".2f", e)).collect(Collectors.toList());
@@ -93,7 +93,7 @@ public class Commands {
   @CommandDescription("Adds an option to the choices of card values")
   @CommandPermission("iciwi.removepricelist")
   public void removepricelist(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Double amount)
+    final @NonNull @Argument(value="amount", suggestions = "card_price_list") Double amount)
   {
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     priceArray.remove(amount);
@@ -102,14 +102,13 @@ public class Commands {
     sender.sendMessage("Removed a new option from the price list.");
   }
 
-  // TODO: change this to a time format maybe?
   @CommandMethod("iciwi maxtransfertime <amount>")
   @CommandDescription("Sets the maximum time allowed for an out-of-station transfer to happen.")
   @CommandPermission("iciwi.maxtransfertime")
   public void maxtransfertime(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Long amount)
+    final @NonNull @Argument("amount") String amount)
   {
-    plugin.getConfig().set("max-transfer-time", amount);
+    plugin.getConfig().set("max-transfer-time", TimeUtil.getTime(amount));
     plugin.saveConfig();
     sender.sendMessage("Set the maximum time allowed for an OSI.");
   }
@@ -141,11 +140,21 @@ public class Commands {
     return owners.getAllCompanies().stream().toList();
   }
 
+  @Suggestions("station_list")
+  public List<String> suggestStationList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+    return fares.getAllStations().stream().toList();
+  }
+
+  @Suggestions("railpass_list")
+  public List<String> suggestRailPassList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+    return owners.getAllRailPasses().stream().toList();
+  }
+
   @CommandMethod("iciwi owners alias set <company> <username>")
   @CommandDescription("Sets the revenue collector for a company.")
   @CommandPermission("iciwi.owners.alias")
   public void owners_alias_set(final @NonNull CommandSender sender,
-      final @NonNull @Argument("company") String company,
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
       final @NonNull @Argument("username") String username)
   {
     owners.set("Aliases."+company, username);
@@ -157,7 +166,7 @@ public class Commands {
   @CommandDescription("Removes the revenue collector for a company.")
   @CommandPermission("iciwi.owners.alias")
   public void owners_alias_unset(final @NonNull CommandSender sender,
-      final @NonNull @Argument("company") String company)
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company)
   {
     owners.set("Aliases."+company, null);
     owners.save();
@@ -168,8 +177,8 @@ public class Commands {
   @CommandDescription("Adds an owning company to a station.")
   @CommandPermission("iciwi.owners.operator")
   public void owners_operator_add(final @NonNull CommandSender sender,
-      final @NonNull @Argument("station") String station,
-      final @NonNull @Argument("company") String company)
+      final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company)
   {
     owners.addOwner(station, company);
     owners.save();
@@ -179,8 +188,8 @@ public class Commands {
   @CommandDescription("Removes an owning company from a station.")
   @CommandPermission("iciwi.owners.operator")
   public void owners_operator_remove(final @NonNull CommandSender sender,
-      final @NonNull @Argument("station") String station,
-      final @NonNull @Argument("company") String company)
+      final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company)
   {
     owners.addOwner(station, company);
     owners.save();
@@ -190,8 +199,8 @@ public class Commands {
   @CommandDescription("Sets the owning company of a station.")
   @CommandPermission("iciwi.owners.operator")
   public void owners_operator_set(final @NonNull CommandSender sender,
-      final @NonNull @Argument("station") String station,
-      final @NonNull @Argument("company") String company)
+      final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company)
   {
     owners.setOwners(station, Collections.singletonList(company));
     owners.save();
@@ -201,7 +210,7 @@ public class Commands {
   @CommandDescription("Removes all owning companies of a station.")
   @CommandPermission("iciwi.owners.operator")
   public void owners_operator_delete(final @NonNull CommandSender sender,
-      final @NonNull @Argument("station") String station)
+      final @NonNull @Argument(value = "station", suggestions = "station_list") String station)
   {
     owners.set("Operators."+station, null);
     owners.save();
@@ -211,8 +220,8 @@ public class Commands {
   @CommandDescription("Sets the rail company that owns the given railpass.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_operator(final @NonNull CommandSender sender,
-      final @NonNull @Argument("name") String name,
-      final @NonNull @Argument("company") String company)
+      final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
+      final @NonNull @Argument(value = "company", suggestions = "company_list") String company)
   {
     owners.set("RailPasses."+name+".operator", company);
     owners.save();
@@ -222,7 +231,7 @@ public class Commands {
   @CommandDescription("Sets the duration that the given railpass is active.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_duration(final @NonNull CommandSender sender,
-      final @NonNull @Argument("name") String name,
+      final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
       final @NonNull @Argument("duration") Long duration)
   {
     owners.set("RailPasses."+name+".duration", duration);
@@ -233,7 +242,7 @@ public class Commands {
   @CommandDescription("Sets the price of the given railpass.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_price(final @NonNull CommandSender sender,
-      final @NonNull @Argument("name") String name,
+      final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
       final @NonNull @Argument("price") Double price)
   {
     owners.set("RailPasses."+name+".price", price);
@@ -244,7 +253,7 @@ public class Commands {
   @CommandDescription("Sets the percentage paid by the card holder when they use the railpass.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_percentage(final @NonNull CommandSender sender,
-      final @NonNull @Argument("name") String name,
+      final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
       final @NonNull @Argument("paidpercentage") Double paidpercentage)
   {
     owners.set("RailPasses."+name+".percentage", paidpercentage);
@@ -255,7 +264,7 @@ public class Commands {
   @CommandDescription("Deletes a railpass.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_delete(final @NonNull CommandSender sender,
-      final @NonNull @Argument("name") String name)
+      final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name)
   {
     owners.set("RailPasses."+name, null);
     owners.save();
@@ -265,8 +274,8 @@ public class Commands {
   @CommandDescription("Creates a new fare.")
   @CommandPermission("iciwi.fares.set")
   public void fares_set(final @NonNull CommandSender sender,
-    final @NonNull @Argument("start") String start,
-    final @NonNull @Argument("end") String end,
+    final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
+    final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
     final @NonNull @Argument("fareClass") String fareClass,
     final @NonNull @Argument("price") Double price)
   {
@@ -277,8 +286,8 @@ public class Commands {
   @CommandDescription("Deletes a fare.")
   @CommandPermission("iciwi.fares.unset")
   public void fares_set(final @NonNull CommandSender sender,
-    final @NonNull @Argument("start") String start,
-    final @NonNull @Argument("end") String end,
+    final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
+    final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
     final @NonNull @Argument("fareClass") String fareClass)
   {
     fares.unsetFare(start, end, fareClass);
@@ -288,8 +297,8 @@ public class Commands {
   @CommandDescription("Deletes all fares between a start and end point.")
   @CommandPermission("iciwi.fares.deletejourney")
   public void fares_set(final @NonNull CommandSender sender,
-    final @NonNull @Argument("start") String start,
-    final @NonNull @Argument("end") String end)
+    final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
+    final @NonNull @Argument(value = "end", suggestions = "station_list") String end)
   {
     fares.deleteJourney(start, end);
   }
@@ -298,7 +307,7 @@ public class Commands {
   @CommandDescription("Removes a station and all its associated fares from the data.")
   @CommandPermission("iciwi.fares.deletestation")
   public void fares_set(final @NonNull CommandSender sender,
-    final @NonNull @Argument("start") String start)
+    final @NonNull @Argument(value = "start", suggestions = "station_list") String start)
   {
     fares.deleteStation(start);
   }
@@ -354,6 +363,5 @@ public class Commands {
       odometer.put(player, new Odometer(new ArrayList<>(), distance, false));
     }
   }
-
 
 }

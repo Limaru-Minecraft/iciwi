@@ -59,9 +59,6 @@ public class SignInteractListener implements Listener {
         final int clickedSlot = event.getRawSlot();
         // get clicked item
         final Clickable clickedItem = machine.getClickables()[clickedSlot];
-for (Clickable clickable : machine.getClickables()) {// TODO: debug
-if (clickable != null) plugin.getServer().getLogger().info(clickable.toString());}// TODO: debug
-plugin.getServer().getLogger().info(String.valueOf(clickedSlot));// TODO: debug
         // compare items and run
         if (clickedItem.getItem().equals(contents[clickedSlot]))
           clickedItem.run(event);

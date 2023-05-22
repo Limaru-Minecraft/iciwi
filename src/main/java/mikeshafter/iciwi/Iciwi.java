@@ -13,7 +13,6 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
-import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,7 +50,7 @@ public final class Iciwi extends JavaPlugin {
   @Override
   public void onDisable() {
     records.save();
-    getServer().getLogger().info(ChatColor.AQUA+"ICIWI: Made by Mineshafter61. Thanks for using!");
+    getServer().getLogger().info(ChatColor.AQUA+"Iciwi: Made by Mineshafter61. Thanks for using!");
   }
   
   @Override
@@ -82,21 +81,7 @@ public final class Iciwi extends JavaPlugin {
     // === Register commands ===
     Commands commands = new Commands();
     registerCommands(commands);
-
-    // var commands = new OldCommands();
-    // var pluginCommand = this.getCommand("iciwi");
-    // if (pluginCommand != null) {
-    //   pluginCommand.setExecutor(commands);
-    //   pluginCommand.setTabCompleter(commands);
-    // }
-
-
-
-    // == START TEMP SECTON ==
-    JsonToYamlConverter.main();
-    // == END TEMP SECTION ==
-  
-  
+    
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
