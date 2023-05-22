@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+@Deprecated
 public class FareGate {
 
   private final Player player;

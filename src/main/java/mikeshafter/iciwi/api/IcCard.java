@@ -18,12 +18,14 @@ public interface IcCard {
   
   /**
    * Gets the serial number of the card
+   * 
    * @return Serial number
    */
   default String getSerial() {return serial;}
 
   /**
    * Deposits a certain amount
+   * 
    * @param amount The amount to deposit into the card
    * @return Whether the withdrawal is successful
    */
@@ -31,12 +33,15 @@ public interface IcCard {
 
   /**
    * Gets the amount in the card
-   * THIS SHOULD RETURN 0d IF THE CARD IS A DEBIT/CREDIT CARD
+   * THIS SHOULD RETURN Double.MAX_VALUE IF THE CARD IS A DEBIT/CREDIT CARD
+   * 
+   * @return the amount in the card
    */
-  double getValue();
+  default double getValue() {return Double.MAX_VALUE;}
 
   /**
    * Gets the railpasses on the card
+   * 
    * @return A map in the format of <name, start time>
    */
   default Map<String, Long> getRailPasses() {
@@ -56,7 +61,8 @@ public interface IcCard {
   /**
    * Gets the expiry time of a certain railpass belonging to a card
    *
-   * @param name   Name of the discount (include operator)
+   * @param name   Name of the rail pass
+   * @return       The expiry time
    */
   default long getExpiry(String name) {
     return cardSql.getExpiry(serial, name);

@@ -2,6 +2,8 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.api.IcCard;
+import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
@@ -25,18 +27,21 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static mikeshafter.iciwi.util.MachineUtil.any;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
+import static mikeshafter.iciwi.util.IciwiUtil.any;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 import static org.bukkit.plugin.java.JavaPlugin.getPlugin;
 
-
+@Deprecated
 public class FareGateListener implements Listener {
   private final Iciwi plugin = getPlugin(Iciwi.class);
   private final CardSql cardSql = new CardSql();
@@ -76,16 +81,36 @@ public class FareGateListener implements Listener {
                   item.hasItemMeta() &&
                   item.getItemMeta() != null &&
                   item.getItemMeta().hasLore() &&
-                  item.getItemMeta().lore() != null &&
-                  parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(0)).equals(lang.getString("serial-number"))) {
-            String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-      
-            // Pay using Iciwi card
-            Payment.pay(serial, player, price);
+                  item.getItemMeta().lore() != null) {
+
+            // Iciwi-compatible plugins' cards must state their plugin name in lore[0]
+            String cardPluginName = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(0));
+            PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+
+            // Get the plugin
+            Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
+
+            // check for plugin compatibility
+            if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
+
+              Class<?> icCardClass = iciwiPlugin.getFareCardClass();
+
+              try {
+
+                // Create new card instance using the provided constructor and the item
+                IcCard card = (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(item);
+
+                // Pay using Iciwi card
+                pay(card, player, price);
+                return;
+
+              } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+                pay(player, price);
+              }
+            }
       
             // If there is no card, pay with cash
-          } else {
-            Payment.pay(player, price);
+            pay(player, price);
           }
     
           return;
@@ -348,12 +373,40 @@ public class FareGateListener implements Listener {
       }
     }
   }
-  
+
+
+  // Util methods
+
   private boolean isDouble(String s) {
     final String Digits = "(\\p{Digit}+)";
     final String HexDigits = "(\\p{XDigit}+)";
     final String Exp = "[eE][+-]?"+Digits;
     final String fpRegex = ("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+"(\\."+Digits+"("+Exp+")?)|"+"(("+"(0[xX]"+HexDigits+"(\\.)?)|"+"(0[xX]"+HexDigits+"?(\\.)"+HexDigits+")"+")[pP][+-]?"+Digits+"))"+"[fFdD]?))"+"[\\x00-\\x20]*");
     return Pattern.matches(fpRegex, s);
+  }
+
+  public void pay(IcCard card, Player player, double price) {
+    if (card.getValue() >= price) {
+      card.withdraw(price);
+      double value = card.getValue();
+      player.sendMessage(String.format(lang.getString("pay-success-card"), price, value));
+
+//      if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
+//        Owners owners = new Owners(plugin);
+//        owners.deposit(plugin.getConfig().getString("global-operator"), price);
+//      }
+    }
+    else pay(player, price);
+  }
+
+  public void pay(Player player, double price) {
+    Iciwi.economy.withdrawPlayer(player, price);
+    player.sendMessage(lang.getString("cash-divert"));
+    player.sendMessage(String.format(lang.getString("pay-success"), price));
+
+//    if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
+//      Owners owners = new Owners(plugin);
+//      owners.deposit(plugin.getConfig().getString("global-operator"), price);
+//    }
   }
 }

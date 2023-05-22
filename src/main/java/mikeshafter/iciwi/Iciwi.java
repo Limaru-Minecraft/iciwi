@@ -226,10 +226,15 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   
   
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignEntry(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignExit(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignMember(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignPayment(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignValidator(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.OpenableBlock(), this);
+
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.util.GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
-    getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
   
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
