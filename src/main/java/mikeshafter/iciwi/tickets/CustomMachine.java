@@ -132,7 +132,6 @@ public class CustomMachine implements Machine {
 
       // find owners of the current station and deposit accordingly
       List<String> ownersList = owners.getOwners(from);
-      int ownerCount = ;
       for (String owner : ownersList)
         owners.deposit(owner, price / 2 / ownersList.size());
 
