@@ -19,10 +19,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.*;
-
 import static mikeshafter.iciwi.util.MachineUtil.*;
+
 
 public class CustomMachine implements Machine {
 
@@ -99,8 +98,10 @@ public class CustomMachine implements Machine {
   }
   
   public void selectClass() {
+    // End station as a String
+    String end = parseComponent(terminal);
     // Create inventory and create clickables
-    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, parseComponent(terminal));
+    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);
     int invSize = roundUp(fareClasses.size(), 9);
     Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
     this.clickables = new Clickable[invSize];
@@ -111,169 +112,48 @@ public class CustomMachine implements Machine {
       var entry = fareIterator.next();
       var item = makeItem(Material.PAPER, 0, Component.text(entry.getKey()), Component.text(entry.getValue()));
       this.clickables[i] = Clickable.of(item, (event) -> {
-          generateTicket(item);
-          event.setCancelled(true);
-          player.closeInventory();
-        }
-      );
+        ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
+        if (ticket != null) player.getInventory().addItem(generateTicket(station, end, parseComponent(item.getItemMeta().displayName()) ));
+        event.setCancelled(true);
+        player.closeInventory();
+      });
     }
     setItems(this.clickables, inventory);
     player.openInventory(inventory);
   }
-  
-  public void generateTicket(ItemStack item) {  //TODO: Payment using Iciwi and bank cards
-    /*
-    ItemStack item format:
-      DisplayName: Class
-      Lore[0]: Price
-    Ticket format:
-      DisplayName: &aTrain Ticket
-      Lore[0]: From
-      Lore[1]: To
-      Lore[2]: Class
-     */
-    if (item.hasItemMeta() && item.getItemMeta() != null && item.getItemMeta().hasLore() && item.getItemMeta().lore() != null) {
-      Component priceComponent = Objects.requireNonNull(item.getItemMeta().lore()).get(0);
-      double price = 0d;
-      if (priceComponent != null && isDouble(parseComponent(priceComponent)))
-        price = Double.parseDouble(parseComponent(priceComponent));
-      Component fareClass = item.getItemMeta().displayName();
-  
-      if (Iciwi.economy.getBalance(player) >= price) {
-        Iciwi.economy.withdrawPlayer(player, price);
-        
-        // find owners of the current station and deposit accordingly
-        List<String> ownersList = owners.getOwners(station);
-        int ownerCount = ownersList.size();
-        for (String owner : ownersList)
-          owners.deposit(owner, price/2/ownerCount);
-  
-        // find owners of the station the ticket goes to and deposit accordingly
-        ownersList = owners.getOwners(parseComponent(terminal));
-        ownerCount = ownersList.size();
-        for (String owner : ownersList)
-          owners.deposit(owner, price/2/ownerCount);
-        
-        //player.sendMessage(String.format(lang.getString("generate-ticket-custom"), parseComponent(fareClass), station, parseComponent(terminal)));
-        // Get ticket generator
-        Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-        int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
-        // Generate ticket
-        player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass));
-      } else player.sendMessage(lang.getString("not-enough-money"));
-    }
-  }
-  
-  private class EventListener implements Listener {
-    
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onInventoryClick(InventoryClickEvent event) {
-      Inventory inventory = event.getClickedInventory();
-      ItemStack item = event.getCurrentItem();
-      if (inventory == null) return;
+
+  protected ItemStack generateTicket(String from, String to, String fareClass) {
+    // Find the price
+    double price = fares.getFare(from, to, fareClass);
+
+    // Let the player pay for the ticket
+    if (Iciwi.economy.getBalance(this.player) >= price) {
+      Iciwi.economy.withdrawPlayer(this.player, price);
+
+      // find owners of the current station and deposit accordingly
+      List<String> ownersList = owners.getOwners(from);
+      int ownerCount = ;
+      for (String owner : ownersList)
+        owners.deposit(owner, price / 2 / ownersList.size());
+
+      // find owners of the station the ticket goes to and deposit accordingly
+      ownersList = owners.getOwners(to);
+      ownerCount = ownersList.size();
+      for (String owner : ownersList)
+        owners.deposit(owner, price / 2 / ownersList.size());
       
-      if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
-        inventory.close();
-        setTerminal(item.getItemMeta().displayName());
-        CommonUtil.unregisterListener(this);
-        selectClass();
-      }
+      // Get ticket materials
+      Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
+      int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
+      
+      // Generate ticket
+      return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(station), terminal, fareClass);
+    }
+
+    else {
+      // Not enough money
+      player.sendMessage(lang.getString("not-enough-money"));
+      return null;
     }
   }
-
-  /**
-   * Sort an Iterable based on each string's relevance.
-   */
-  public String[] relevanceSort(String pattern, String[] values) {
-    Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
-    return values;
-  }
-
-  /**
-   * Puts the items of a clickable[] into an inventory.
-   *
-   * @param clickables The clickable[] stated above.
-   * @param inventory  The inventory stated above.
-   */
-  private void setItems(Clickable[] clickables, Inventory inventory) {
-    ItemStack[] items = new ItemStack[clickables.length];
-    for (int i = 0; i < clickables.length; i++)
-      if (clickables[i] != null) items[i] = clickables[i].getItem();
-    inventory.setStorageContents(items);
-  }
-
-  /**
-   * Relevance function
-   */
-  public float relevance(String pattern, String term) {
-    // Ignore case
-    pattern = pattern.toLowerCase();
-    term = term.toLowerCase();
-    
-    // Optimisation
-    if (term.equals(pattern)) return 1f;
-
-    /*
-    Search = the pattern term
-    Match = a string containing the pattern term
-    term.length() >= pattern.length()
-    Relevance = percentage of letters equal to the sequence in searchResult.
-    */
-    
-    // Required variables
-    int searchLength = pattern.length();
-    int matchLength = term.length();
-    
-    // If the term contains the pattern term, it is relevant, thus we give a full score
-    if (term.contains(pattern)) return ((float) searchLength)/matchLength;
-    
-    // If the term does not contain the pattern term, but contains parts of it, we give a divided score
-    // The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
-    //   and m is the term length.
-    
-    /* At this point term does not contain pattern */
-    for (int i = searchLength; i >= 2; i--) { // i is length of substring
-      for (int j = 0; j+i <= searchLength; j++) {
-        String subSearch = pattern.substring(j, j+i);
-        if (term.contains(subSearch)) {
-          // found term, calculate relevance
-          return ((float) i)/(searchLength-i)/matchLength;
-        }
-      }
-    }
-    
-    // if no term found, return 0f (pattern failed)
-    return 0f;
-  }
   
-  public void setTerminal(Component terminal) {
-    this.terminal = terminal;
-  }
-
-  @Override
-  public Clickable[] getClickables() {
-    return clickables;
-  }
-
-  @Override
-  public boolean useBottomInv() {
-    return false;
-  }
-
-  @Override
-  public void setSelectedItem(ItemStack selectedItem) {
-  }
-
-  @Override
-  public ItemStack getSelectedItem() {
-    return null;
-  }
-
-  @Override
-  public void onCardSelection() {
-  }
-
-  @Override
-  public void setBottomInv(boolean b) {}
-  
-}
