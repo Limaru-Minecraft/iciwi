@@ -48,7 +48,5 @@ public class GateCreateListener implements Listener {
         player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
-
-
   }
 }

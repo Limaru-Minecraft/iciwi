@@ -16,7 +16,6 @@ import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.tickets.TicketMachine;
 import mikeshafter.iciwi.util.IciwiCard;
-import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -110,7 +110,7 @@ public class SignInteractListener implements Listener {
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
-        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -119,7 +119,7 @@ public class SignInteractListener implements Listener {
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
       {
-        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         final RailPassMachine machine = new RailPassMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
