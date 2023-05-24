@@ -13,8 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -33,99 +31,78 @@ public class SignInteractListener implements Listener {
 
 
   @EventHandler(priority = EventPriority.LOWEST)
-  public void TicketMachineListener(InventoryClickEvent event) {
+  public void TicketMachineListener(final InventoryClickEvent event) {
+    final Player player = (Player) event.getWhoClicked();
 
-    // Cancel unwanted clicks
-    // Restrict putting items from the bottom inventory into the top inventory
-    Inventory clickedInventory = event.getClickedInventory();
-    Player player = (Player) event.getWhoClicked();
+    if (machineHashMap.containsKey(player)) {
+      final Inventory clickedInventory = event.getClickedInventory();
+      Machine machine = machineHashMap.get(player);
 
-    // Get the ticket machine reference
-    Machine machine = machineHashMap.get(player);
-
-    if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR
-        || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-      event.setCancelled(true);
-      return;
-    }
-
-    if (event.getAction() == InventoryAction.NOTHING && event.getClick() != ClickType.MIDDLE) {
-      event.setCancelled(true);
-      return;
-    }
-
-    if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
-      event.setCancelled(true);
-      // close the previous inventory
-      // player.closeInventory();
-      // player inventory item selection code
-      if (machine.useBottomInv()) {
-        machine.setSelectedItem(event.getCurrentItem());
-        // there can only be 1 action here, which is to open the card menu
-        machine.onCardSelection();
-        machine.setBottomInv(false);
+      if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
+        //event.setCancelled(true);
+        // close the previous inventory
+        // player.closeInventory();
+        // player inventory item selection code
+        if (machine.useBottomInv()) {
+          machine.setSelectedItem(event.getCurrentItem());
+          // there can only be 1 action here, which is to open the card menu
+          machine.onCardSelection();
+          machine.setBottomInv(false);
+        }
+        return;
       }
-      return;
-    }
 
-    if (clickedInventory == player.getOpenInventory().getTopInventory()) {
-      event.setCancelled(true);
-      // close the previous inventory
-      // player.closeInventory();
-      // get contents of actual inventory
-      ItemStack[] contents = clickedInventory.getContents();
-      // get slot
-      int clickedSlot = event.getRawSlot();
-      // get clicked item
-      Clickable clickedItem = machine.getClickables()[clickedSlot];
-      // compare items and run
-      if (clickedItem.getItem().equals(contents[clickedSlot]))
-        clickedItem.run(event);
-      // don't need to test for more
-      return;
-    }
-    if (clickedInventory != null) {
-      clickedInventory.close();
+      if (clickedInventory == player.getOpenInventory().getTopInventory()) {
+        //event.setCancelled(true);
+        // get contents of actual inventory
+        final ItemStack[] contents = clickedInventory.getContents();
+        // get slot
+        final int clickedSlot = event.getRawSlot();
+        // get clicked item
+        final Clickable clickedItem = machine.getClickables()[clickedSlot];
+        // compare items and run
+        if (clickedItem.getItem().equals(contents[clickedSlot]))
+          clickedItem.run(event);
+        // don't need to test for more
+        return;
+      }
+      if (clickedInventory != null) {
+        clickedInventory.close();
+      }
     }
 
   }
 
-  // @EventHandler
-  // public void onInvClose(InventoryCloseEvent event) {
-  //   Player player = (Player) event.getPlayer();
-  //   machineHashMap.remove(player);
-  // }
-
   @EventHandler
-  public void onSignPlace(SignChangeEvent event) {
-    String line = parseComponent(event.line(0));
-    Player player = event.getPlayer();
-  
+  public void onSignPlace(final SignChangeEvent event) {
+    final String line = parseComponent(event.line(0));
+    final Player player = event.getPlayer();
+
     // General Ticket machine
     if (ChatColor.stripColor(line).contains(lang.getString("tickets"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-ticket-machine"));
       } else event.setCancelled(true);
     }
-  
+
     // Rail Pass machine
     if (ChatColor.stripColor(line).contains(lang.getString("passes"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-pass-machine"));
       } else event.setCancelled(true);
     }
-  
+
     // Direct Ticket machine
     if (ChatColor.stripColor(line).contains(lang.getString("custom-tickets"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-custom-machine"));
       } else event.setCancelled(true);
     }
-  
+
   }
-  
+
   @EventHandler(priority = EventPriority.LOWEST)
-  public void onSignClick(PlayerInteractEvent event) {
+  public void onSignClick(final PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = IciwiUtil.parseComponent(sign.line(0));
       Player player = event.getPlayer();
@@ -133,8 +110,8 @@ public class SignInteractListener implements Listener {
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
-        String station = ((TextComponent) sign.line(1)).content().replaceAll("\\s+", "");
-        TicketMachine machine = new TicketMachine(player);
+        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
       }
@@ -142,7 +119,10 @@ public class SignInteractListener implements Listener {
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
       {
-        // future
+        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        final RailPassMachine machine = new RailPassMachine(player);
+        machine.init(station);
+        machineHashMap.put(player, machine);
       }
 
       // === Custom machine ===

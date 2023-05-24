@@ -2,82 +2,98 @@
 Universal transportation ticket plugin.
 
 # Development
-1. Use JDK 17 & Gradle
-2. Download and run [BuildTools](https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar)
-3. Fork or clone this project locally
+1. Use JDK 17 & Gradle 8
+2. Fork or clone this project locally
+3. Wait for the project to boot up; Gradle may take some time
 4. Start developing!
 
-# Usage
-## Entry and Exit
-Normal entry sign for entering paid zone
-```
-[<Entry:Exit><V:S:L:D:R:E>]
-<station name>
-<anything>
-<anything>
-```
-### First line parameters
-1. Entry/Exit: Determines the action of the sign.
-2. V: Validator. Makes the sign into a validator. (This mode makes the sign not cause blocks to update)
-3. S: Sideways sign. Place this sign on the right-hand side block before the fare gate.
-4. L: Lefty sign. Place this sign on the LEFT of the fare gate.
-5. D: Double fare gate. Use 2 blocks for the fare gate.
-6. R: Redstone activator. Activates the lever placed below the block that the sign is attached to.
-7. E: Eye-level sign. Place this sign 1 block above where you would normally place it.
+# Terminology used in this README
+**Station**: A valid station defined in Iciwi's config.
+**TOC**: Train Operating Company. Iciwi is built to handle multiple competing companies, not just a single nationalised railway network (although it could do that as well). TOCs are the entities defined in Iciwi that collect the final fares from railways.
 
-## Harlon-style fare gate
-A Harlon-style fare gate. Used for BOTH entry and exit. Right click on the trapdoor to open.
-### Placement
+# Usage
+## Fare Gates
+
+Fare gates are the contraptions to let players in and out of a transit network. They form the bulk of the signs on a server. To use them as a player, simply right click on its sign or block, depending on the type of gate. However, for server admins, setting up may be a bit harder.
+
+### Flags
+Flags mostly determine which block the fare gate looks at for opening or closing. Here are the flags included with Iciwi:
+
+- V: Validator. Makes the sign into a validator. (This mode makes the sign not cause blocks to update)
+- S: Sideways sign. Place this sign on the right-hand side block before the fare gate.
+- L: Lefty sign. Place this sign on the LEFT of the fare gate.
+- D: Double fare gate. Use 2 blocks for the fare gate.
+- R: Redstone activator. Activates the lever placed below the block that the sign is attached to.
+- E: Eye-level sign. Place this sign 1 block above where you would normally place it.
+- F: Non-clickable fare gate. The fare gate will do nothing if the sign is clicked and should be activated in another way. [Future]
+
+**By default (i.e. no flags), Iciwi's fare gate signs are placed on the block directly to the right of a fare gate.**
+
+Flags may be combined in many combinations to give different results. For example, the flag combination `SLDE` creates a two block-wide faregate where its sign is placed on the left to the side, one block above where the fare gate is.
+
+### Sign Types
+Sign types tell the sign and the player using them (broadly) what to do. An entry sign allows a player to enter the network, an exit sign allows a player to exit the network, you get the idea. Like other plugins, the name of the sign type is denoted in [square brackets] as they are programmed to perform an action.
+
+- [Entry]: Lets the player enter the network through the defined station.
+- [Exit]: Lets the player exit the network from the defined station.
+- [Member]: Only lets a player pass if they have a rail pass for the TOC that operates the sign's defined station.
+- [Validator]: Both an [Entry] and [Exit] sign at once. This sign DOES NOT default to not opening anything despite its name, the sign that does that requires the V flag.
+- [Faregate]: Fare gate sign. A variant of the [Validator] sign that does nothing when clicked by default.
+- [Transfer]: Cuts a journey and starts a new one. Despite its name, in the code it does the opposite of what it says - it stops a transfer (explained below) from happening.
+
+### Syntax
+Each sign should follow the following syntax:
 ```
-(Iron trapdoor)
-(Block: Double slab for entry, full block for exit)
-(Sign: explained below)
+<Sign type><Flags>
+<Station Name>
+[anything]
+[anything]
 ```
-### Sign
+Mandatory fields are in <> while optional fields are in []. [anything] refers to literally anything.
+
+### Using fare gates
+
+For 'normal' signs (Entry, Exit, Member, and Validator signs without the F flag), right clicking the sign will open the desired block.
+
+For signs activated by other methods, players should right click on an openable block (i.e. fence gates and trapdoors) located two blocks above the sign. The plugin will check if the sign is valid and if the player fulfills all conditions to open the gate (things like whether the player has a valid ticket or card) before opening the gate. If there is no sign or if the sign is invalid, the second check will not happen and the handling will be passed back to the server; otherwise, the gate will continue to be closed. Below is an illustration of how the setup should look like:
 ```
-[Faregate]
-<station name...>
-<...station name...>
-<...station name>
+(Openable block)
+(Any block)
+(Sign)
 ```
 
 ## Ticket Machine
-A ticket machine
+Ticket machines form up the other half of Iciwi. 3 types of ticket machine are installed by default, namely, the normal ticket machine, the custom ticket machine, and the rail pass machine. All ticket machines come in the form of action signs.
+
+Syntax of all ticket machines:
 ```
-[Tickets]
-<station name>
-<anything>
-<anything>
+[Tickets|CustomTickets|Passes]
+<Station Name>
+[anything]
+[anything]
 ```
-# Commands
-`/checkfare <from> <to>` Checks the fare from one station to another. The fares are taken from fares.json.
 
-`/ticketmachine <station>` Opens up a ticket machine for the specified station.
+### Normal ticket machine
+The normal ticket machine (first line [Tickets]) allows you to do everything you need with tickets. You can buy tickets for any journey from the station the ticket machine is located, or get an Iciwi card and perform related functions. Most stations should have at least one of these.
 
-`/newdiscount <card serial number> <company name> <days till expiry>` Gives the card a rail pass (free journey from/to one company's stations)
+### Custom ticket machine
+The custom ticket machine (first line [CustomTickets]) only allows you to buy single paper tickets. This machine predates the current ticket machine, and should be found in larger stations with more rail lines to allow for more players to buy paper tickets at the same time.
 
-`/redeemcard <card serial number>` Redeems a card from the database.
+### Rail pass machine
+The rail pass machine (first line [Passes]) allows you to only check and buy rail passes. Currently, all rail passes must be linked to a card.
 
-`/coffers empty <company name>` Withdraws the money stored in your company's coffers.
-
-`/coffers view [company name]` View the money stored in your company's coffers.
-
-## Ticket Machine Usage
-`New Single Journey Ticket` Key in the price of the ticket using the keypad. This can be changed later to a higher price at another ticket machine (select `Adjust Fares`).
-
-`Iciwi Card Operations` Buy, top up, add a rail pass to, and refund cards. If you do not have a card in your inventory, this button automatically redirects you to the new card page.
-
-`Check Fares` View the auto-generated farecharts.
+## Ticket Machine Usage (Normal Ticket Machine)
+Ticket machines have been made more and more self-explanatory over the years of coding. You probably already know how to use one and just testing whether I'll actually teach you how to use one using the informative README that Iciwi has. Well, bad news, I won't because I am a very busy man.
 
 ## Transferring
-Exiting one station and entering another within a certain time counts as a transfer.
+Exiting one station and entering another within a certain time (changeable in config) counts as a transfer. Transferring will usually lead to lower fares as the two separate journeys made with a transfer in between is counted as a single journey.
+
+However, this may lead to errors in pricing if a journey from a single system to another is made, especially if the second journey is lower-priced than the first. In that case, place a [Transfer] sign in the middle; it cuts the first journey and starts a new fare for the second. [Transfer] signs can also be placed in the paid area, in which they act like an [Exit] followed directly by a [Transfer] outside the gate line and then an [Entry].
 
 # Admin usage
 
 ## fares.yml
-This file lists all the fares. USE CAMELCASE FOR THIS FILE.
-
-This file reloads automatically when someone uses a fare gate, so doing a reload is not required. This makes making a 3rd-party plugin to implement time-based fares easy. (TO BE RE-IMPLEMENTED)
+This file lists all the fares.
 
 Format:
 ```yml
@@ -95,7 +111,7 @@ FromStation:
 
 (And so on)
 ```
-You need to set a class as a default class to use when someone uses an Iciwi card to tap in/out. By default, the default class is `Second Class` (because metros aren't first class for obvious reasons)
+You need to set a class as a default class to use when someone uses an Iciwi card to tap in/out. By default, the default class is `Second` (because metros aren't first class for obvious reasons)
 
 ## owners.yml
 This file determines where money goes to when someone taps in/out.
@@ -122,3 +138,9 @@ RailPassPrices:
     '7': 25.0
     '30': 100.0
 ```
+
+## Commands
+Iciwi uses the Cloud Command Framework for its commands. Type /iciwi to see every command added.
+
+## Dependencies
+- BKCommonLib (you should already have this installed if you have TrainCarts installed.)

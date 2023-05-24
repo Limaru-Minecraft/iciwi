@@ -1,10 +1,10 @@
 plugins {
   id 'java'
-  id 'org.jetbrains.kotlin.jvm' version '1.8.21'
+  id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group 'net.limaru'
-version '1.19.4a2'
+group 'mikeshafter'
+version '1.19.4b1'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -12,6 +12,7 @@ repositories {
   maven { url 'https://papermc.io/repo/repository/maven-public/' }
   maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
   maven { url 'https://jitpack.io' }
+  maven { url 'https://oss.sonatype.org/content/groups/public/' }
   mavenLocal()
   mavenCentral()
 }
@@ -23,11 +24,24 @@ java {
 }
 
 dependencies {
-  implementation 'org.junit.jupiter:junit-jupiter:5.9.0'
   compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
-  compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+  compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
   compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19.4-v1'
-  implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-paper:1.8.0-SNAPSHOT'
+  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-annotations:1.8.0-SNAPSHOT'
+  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-minecraft-extras:1.8.0-SNAPSHOT'
+}
+
+shadowJar {
+  minimize {}
+  relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')
+  relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
+  relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
+}
+
+assemble {
+  dependsOn shadowJar
 }
 
 test {

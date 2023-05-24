@@ -1,6 +1,9 @@
 /target/
-/.idea/
-/.settings/
+.idea/
+.settings/
+.vscode/
+.idea
+.vscode
 build
 .gradle
 .DS_Store

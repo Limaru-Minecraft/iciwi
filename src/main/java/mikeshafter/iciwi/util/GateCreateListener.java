@@ -13,14 +13,14 @@ import static mikeshafter.iciwi.util.IciwiUtil.parseComponents;
 
 
 public class GateCreateListener implements Listener {
-  Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-  Lang lang = new Lang(plugin);
-  
+  Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  Lang lang = plugin.lang;
+
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {
     List<String> lines = parseComponents(event.lines());
     Player player = event.getPlayer();
-  
+
     // Entry
     if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("entry"))) {
       if (player.hasPermission("iciwi.create")) {
@@ -48,7 +48,7 @@ public class GateCreateListener implements Listener {
         player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
-  
-  
+
+
   }
 }

@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.config;
 
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -19,10 +20,20 @@ public class Owners extends CustomConfig {
     super("owners.yml");
   }
   
-  public List<String> getOwners(String station) {
-    return super.get().getStringList("Operators."+station);
+  public @NotNull List<String> getOwners(String station) {
+    List<String> ownersList = super.get().getStringList("Operators."+station);
+    return ownersList.size() == 0 ? List.of("ExampleOperator") : ownersList;
   }
-  
+
+  /**
+   * Gets all registered TOCs
+   * @return Set of all TOCs
+   */
+  public Set<String> getAllCompanies() {
+    var aliases = this.get().getConfigurationSection("Aliases");
+    return aliases == null ? new HashSet<>() : aliases.getKeys(false);
+  }
+
   /**
    * @param station  Station to set a TOC to
    * @param operators The TOCs
@@ -77,10 +88,10 @@ public class Owners extends CustomConfig {
    *                   Creates a rail pass using a long Unix time as its duration.
    */
   public void setRailPassInfo(String name, String operator, long duration, double price, double percentage) {
-    super.set("RailPassPrices."+name+"operator", operator);
-    super.set("RailPassPrices."+name+"duration", timeToString(duration));
-    super.set("RailPassPrices."+name+"price", price);
-    super.set("RailPassPrices."+name+"percentage", percentage);
+    super.set("RailPasses."+name+"operator", operator);
+    super.set("RailPasses."+name+"duration", timeToString(duration));
+    super.set("RailPasses."+name+"price", price);
+    super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
   
@@ -93,10 +104,10 @@ public class Owners extends CustomConfig {
    *                   Creates a rail pass using a timestring as its duration.
    */
   public void setRailPassInfo(String name, String operator, String duration, double price, double percentage) {
-    super.set("RailPassPrices."+name+"operator", operator);
-    super.set("RailPassPrices."+name+"duration", duration);
-    super.set("RailPassPrices."+name+"price", price);
-    super.set("RailPassPrices."+name+"percentage", percentage);
+    super.set("RailPasses."+name+"operator", operator);
+    super.set("RailPasses."+name+"duration", duration);
+    super.set("RailPasses."+name+"price", price);
+    super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
   
@@ -164,6 +175,15 @@ public class Owners extends CustomConfig {
       if (Objects.equals(railPassPrices.getString(pass+".operator"), operator))
         h.add(pass);
     return h;
+  }
+
+  /**
+   * Gets all the rail passes regardless of operator.
+   * @return Set of all rail passes
+   */
+  public Set<String> getAllRailPasses() {
+    var railPasses = this.get().getConfigurationSection("RailPasses");
+    return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
   }
   
   /**
