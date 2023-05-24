@@ -1,6 +1,5 @@
-package mikeshafter.iciwi.faregate;
-import java.util.List;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponents;
+package mikeshafter.iciwi.util;
+
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import org.bukkit.ChatColor;
@@ -8,6 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.plugin.Plugin;
+import java.util.List;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponents;
 
 
 public class GateCreateListener implements Listener {

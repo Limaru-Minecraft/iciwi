@@ -17,7 +17,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
 
-import static mikeshafter.iciwi.util.MachineUtil.*;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class TicketMachine implements Machine {
 

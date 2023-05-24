@@ -17,8 +17,19 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.makeItem;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.util.Clickable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class RailPassMachine implements Machine {
 
@@ -37,7 +48,7 @@ public class RailPassMachine implements Machine {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
   public RailPassMachine (Player player) {
-    bottomInv = true; 
+    bottomInv = true;
     this.player = player;
   }
 
@@ -113,7 +124,7 @@ public class RailPassMachine implements Machine {
             if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {
               // Extend by the duration of the rail pass (change start time to the current
               // expiry time)
-              
+
               this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
               player.sendMessage(this.lang.getString("added-rail-pass"));
             }
@@ -127,7 +138,7 @@ public class RailPassMachine implements Machine {
 
             // pay the TOC
             this.owners.deposit(this.owners.getRailPassOperator(name), price);
-          } 
+          }
           else
             player.sendMessage(this.lang.getString("not-enough-money"));
 

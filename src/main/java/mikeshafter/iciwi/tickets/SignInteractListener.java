@@ -3,7 +3,8 @@ package mikeshafter.iciwi.tickets;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.MachineUtil;
+import mikeshafter.iciwi.util.IciwiUtil;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -20,7 +21,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 
 public class SignInteractListener implements Listener {
@@ -32,7 +33,7 @@ public class SignInteractListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void TicketMachineListener(final InventoryClickEvent event) {
     final Player player = (Player) event.getWhoClicked();
-    
+
     if (machineHashMap.containsKey(player)) {
       final Inventory clickedInventory = event.getClickedInventory();
       Machine machine = machineHashMap.get(player);
@@ -76,35 +77,35 @@ public class SignInteractListener implements Listener {
   public void onSignPlace(final SignChangeEvent event) {
     final String line = parseComponent(event.line(0));
     final Player player = event.getPlayer();
-  
+
     // General Ticket machine
     if (ChatColor.stripColor(line).contains(lang.getString("tickets"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-ticket-machine"));
       } else event.setCancelled(true);
     }
-  
+
     // Rail Pass machine
     if (ChatColor.stripColor(line).contains(lang.getString("passes"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-pass-machine"));
       } else event.setCancelled(true);
     }
-  
+
     // Direct Ticket machine
     if (ChatColor.stripColor(line).contains(lang.getString("custom-tickets"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-custom-machine"));
       } else event.setCancelled(true);
     }
-  
+
   }
-  
+
   @EventHandler(priority = EventPriority.LOWEST)
   public void onSignClick(final PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
-      final String signLine0 = MachineUtil.parseComponent(sign.line(0));
-      final Player player = event.getPlayer();
+      String signLine0 = IciwiUtil.parseComponent(sign.line(0));
+      Player player = event.getPlayer();
 
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
@@ -127,8 +128,8 @@ public class SignInteractListener implements Listener {
       // === Custom machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
       {
-        final String station = MachineUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
-        final CustomMachine machine = new CustomMachine(player, station);
+        String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+        CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }
     }

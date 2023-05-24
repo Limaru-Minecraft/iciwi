@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.api.IciwiPlugin;
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.ParserParameters;
@@ -13,6 +14,9 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.tickets.TicketMachine;
+import mikeshafter.iciwi.util.IciwiCard;
+import mikeshafter.iciwi.util.JsonToYamlConverter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,8 +31,8 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 
-public final class Iciwi extends JavaPlugin {
-  
+public final class Iciwi extends JavaPlugin implements IciwiPlugin {
+
   public static Economy economy = null;
   public Lang lang;
   public Owners owners;
@@ -46,32 +50,32 @@ public final class Iciwi extends JavaPlugin {
   public void sendAll(String message) {
     getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));
   }
-  
+
   @Override
   public void onDisable() {
     records.save();
     getServer().getLogger().info(ChatColor.AQUA+"Iciwi: Made by Mineshafter61. Thanks for using!");
   }
-  
+
   @Override
   public void onEnable() {
     // === Economy ===
     boolean eco = setupEconomy();
     if (eco) getServer().getLogger().info(ChatColor.AQUA+"Iciwi has detected an Economy!");
-    
+
     // === Load config files ===
     lang = new Lang(this);
     owners = new Owners(this);
     records = new Records(this);
     fares = new Fares(this);
-  
+
     this.saveDefaultConfig();
     this.getConfig().options().copyDefaults(true);
     lang.get().options().copyDefaults(true);
     owners.get().options().copyDefaults(true);
     records.get().options().copyDefaults(true);
     fares.get().options().copyDefaults(true);
-  
+
     saveConfig();
     lang.save();
     owners.save();
@@ -81,18 +85,24 @@ public final class Iciwi extends JavaPlugin {
     // === Register commands ===
     Commands commands = new Commands();
     registerCommands(commands);
-    
+
     // === SQL ===
     CardSql app = new CardSql();
     app.initTables();
-  
-  
+
+
     // === Register events ===
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignEntry(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignExit(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignMember(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignPayment(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignValidator(), this);
+    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.OpenableBlock(), this);
+
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.util.GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
     //getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
-  
+
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> {
@@ -100,16 +110,22 @@ public final class Iciwi extends JavaPlugin {
     });
     owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
-  
+
     getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
   }
-  
+
   private boolean setupEconomy() {
     org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {
       economy = economyProvider.getProvider();
     }
     return (economy != null);
+  }
+
+
+  // TODO: Create actual fare card implementation
+  @Override public Class<IciwiCard> getFareCardClass () {
+    return IciwiCard.class;
   }
 
   public void registerCommands (Commands commands) {
@@ -140,5 +156,4 @@ public final class Iciwi extends JavaPlugin {
     // Parse all @CommandMethod-annotated methods
     annotationParser.parse(commands);
   }
-
 }
