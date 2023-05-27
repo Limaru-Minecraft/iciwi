@@ -1,7 +1,10 @@
 package mikeshafter.iciwi.util;
 
+import mikeshafter.iciwi.api.IcCard;
+import mikeshafter.iciwi.api.IciwiPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,6 +15,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -41,7 +46,7 @@ public class IciwiUtil {
   }
 
   /**
-   * Converts a list of Components componentList to a list of Strings. For the other way around, use {@link TextComponent#content(String)}.
+   * Converts a list of Components componentList to a list of Strings. For the other way around, use {@link IciwiUtil#toComponents(List)}.
    * @param cList The component to parse.
    * @return a list of Strings from the list of Components
    */
@@ -52,11 +57,22 @@ public class IciwiUtil {
   }
 
   /**
+   * Converts a list of Strings to a list of Components. For the other way around, use {@link IciwiUtil#parseComponents(List)}.
+   * @param sList The component to parse.
+   * @return a list of Components from the list of Strings
+   */
+  public static List<Component> toComponents(List<String> sList) {
+    List<Component> r = new ArrayList<>();
+    sList.forEach(c -> r.add(Component.text(c)));
+    return r;
+  }
+
+  /**
    * Checks if any element in Collection c is present in Collection k.
    * @param <E> Parameter to use.
    * @param c First collection
    * @param k Second collection
-   * @return
+   * @return whether any element in Collection c is present in Collection k.
    */
   public static <E> boolean any(Collection<E> c, Collection<E> k) {
     for (E e:k) if (c.contains(e)) return true;
@@ -97,74 +113,59 @@ public class IciwiUtil {
 
   /**
    * Checks if itemStack has lore.
-   * @param itemStack
+   * @param itemStack the item to check
    * @return true if itemStack has lore, else false.
    */
   public static boolean loreCheck(ItemStack itemStack) { return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null; }
 
   /**
    * Checks if itemStack has a displayName.
-   * @param itemStack
+   * @param itemStack the item to check
    * @return true if itemStack has displayName, else false.
    */
   public static boolean displayNameCheck(ItemStack itemStack) { return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasDisplayName() && itemStack.getItemMeta().displayName() != null; }
 
-  public static CheckedEvent qualifyEvent (PlayerInteractEvent event) {
-    return new CheckedEvent(event);
-  }
-
-  public static class CheckedEvent {
-    @Nullable private final ItemStack item;
-    private final Player player;
-    private final boolean cancel;
-    @Nullable private final BlockState state;
-    @Nullable private final BlockData data;
-    @Nullable private final Location location;
-
-    public CheckedEvent (PlayerInteractEvent event) {
-      this.item = event.getItem();
-      this.player = event.getPlayer();
-
-      @Nullable Block block = event.getClickedBlock();
-      this.cancel = block == null || this.item == null || event.getAction() != Action.RIGHT_CLICK_BLOCK;
-      if (!this.cancel) {
-        this.state = block.getState();
-        this.data = block.getBlockData();
-        this.location = block.getLocation();
-      } else {
-        this.state = null;
-        this.data = null;
-        this.location = null;
+  /**
+   * Punches a ticket
+   * @param ticket ticket to punch
+   * @param line line of lore to punch (starting from Line 0)
+   */
+  public static void punchTicket(ItemStack ticket, int line) {
+    if (loreCheck(ticket)) {
+      var meta = ticket.getItemMeta();
+      List<String> lore = parseComponents(Objects.requireNonNull(meta.lore()));
+      if (line < lore.size() && !lore.get(line).contains("•")) {
+        lore.set(line, lore.get(line) + " •");
+        meta.lore(toComponents(lore));
+        ticket.setItemMeta(meta);
       }
     }
+  }
 
-    public Player getPlayer () {
-      return this.player;
+  /**
+   * Gets an IcCard object from a compatible item.
+   * @param itemStack the item to convert
+   * @return an IcCard if convertible, null if an exception is reached.
+   */
+  public static @Nullable IcCard IcCardFromItem(ItemStack itemStack) {
+    // Iciwi-compatible plugins' cards must state their plugin name in lore[0]
+    if (!loreCheck(itemStack)) return null;
+    String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
+    PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+
+    // Get the plugin
+    Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
+    // check for plugin compatibility
+    try {
+      if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
+        Class<?> icCardClass = iciwiPlugin.getFareCardClass();
+        // Create new card instance using the provided constructor and the item
+        return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+
+      } return null;
     }
-
-    public ItemStack getItem () {
-      if (cancel) throw new NoSuchElementException();
-      return item;
+    catch (java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+      return null;
     }
-
-    public boolean isCancel () {
-      return cancel;
-    }
-
-    public BlockState getState () {
-      if (cancel) throw new NoSuchElementException();
-      return state;
-    }
-
-    public BlockData getData () {
-      if (cancel) throw new NoSuchElementException();
-      return data;
-    }
-
-    public Location getLocation () {
-      if (cancel) throw new NoSuchElementException();
-      return location;
-    }
-
   }
 }

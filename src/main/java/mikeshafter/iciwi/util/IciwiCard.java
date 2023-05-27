@@ -14,6 +14,7 @@ public class IciwiCard implements IcCard {
   public IciwiCard (ItemStack item) {
     serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
   }
+
   /**
    * Withdraws a certain amount;
    * @param amount The amount to withdraw from the card

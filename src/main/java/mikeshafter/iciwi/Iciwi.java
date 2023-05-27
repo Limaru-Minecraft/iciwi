@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 
-import mikeshafter.iciwi.api.IciwiPlugin;
 import cloud.commandframework.CommandTree;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.ParserParameters;
@@ -9,12 +8,13 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import mikeshafter.iciwi.api.FareGate;
+import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
-import mikeshafter.iciwi.tickets.TicketMachine;
 import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -23,7 +23,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -91,27 +90,27 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
 
     // === Register events ===
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignEntry(), this);
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignExit(), this);
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignMember(), this);
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignPayment(), this);
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.SignValidator(), this);
-    // getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.listener.OpenableBlock(), this);
+    registerFareGate(new mikeshafter.iciwi.faregate.Entry());
+    registerFareGate(new mikeshafter.iciwi.faregate.Exit());
+    registerFareGate(new mikeshafter.iciwi.faregate.Trapdoor());
+    registerFareGate(new mikeshafter.iciwi.faregate.Member());
+    registerFareGate(new mikeshafter.iciwi.faregate.Payment());
+    registerFareGate(new mikeshafter.iciwi.faregate.Validator());
 
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.util.GateCreateListener(), this);
     getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
-    //getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
 
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> {
-      if (owners.getOwners(station) == null) owners.setOwners(station, Collections.singletonList(getConfig().getString("global-operator")));
+      owners.getOwners(station);
     });
     owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
 
     getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
   }
+
 
   private boolean setupEconomy() {
     org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -123,9 +122,13 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
 
   // TODO: Create actual fare card implementation
-  @Override public Class<IciwiCard> getFareCardClass () {
-    return IciwiCard.class;
+  @Override public Class<IciwiCard> getFareCardClass () { return IciwiCard.class; }
+
+
+  private void registerFareGate (FareGate fareGate) {
+    getServer().getPluginManager().registerEvents(fareGate, this);
   }
+
 
   public void registerCommands (Commands commands) {
     final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();

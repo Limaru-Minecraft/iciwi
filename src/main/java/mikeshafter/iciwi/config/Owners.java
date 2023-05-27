@@ -12,17 +12,22 @@ import java.util.*;
 
 public class Owners extends CustomConfig {
   
-  public Owners(org.bukkit.plugin.Plugin plugin) {
-    super("owners.yml", plugin);
-  }
+  public Owners(org.bukkit.plugin.Plugin plugin) { super("owners.yml", plugin); }
   
-  public Owners() {
-    super("owners.yml");
-  }
-  
+  public Owners() { super("owners.yml"); }
+
+  /**
+   * Gets the owners of a station
+   * @param station the station to query
+   * @return the owners of the station
+   */
   public @NotNull List<String> getOwners(String station) {
     List<String> ownersList = super.get().getStringList("Operators."+station);
-    return ownersList.size() == 0 ? List.of("ExampleOperator") : ownersList;
+    if (ownersList.size() == 0) {
+      setOwners(station, List.of("ExampleOperator"));
+      return List.of("ExampleOperator");
+    }
+    else return ownersList;
   }
 
   /**

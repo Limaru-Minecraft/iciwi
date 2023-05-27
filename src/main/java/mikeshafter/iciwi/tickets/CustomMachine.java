@@ -33,9 +33,9 @@ public class CustomMachine implements Machine {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Player player;
   private final String station;
-  private final Lang lang = new Lang(plugin);
-  private final Fares fares = new Fares(plugin);
-  private final Owners owners = new Owners(plugin);
+  private final Lang lang = plugin.lang;
+  private final Fares fares = plugin.fares;
+  private final Owners owners = plugin.owners;
   private ItemStack[] playerInv;
   private Clickable[] clickables;
   private Component terminal;

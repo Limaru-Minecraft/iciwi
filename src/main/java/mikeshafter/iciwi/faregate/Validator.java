@@ -1,0 +1,77 @@
+package mikeshafter.iciwi.faregate;
+
+import mikeshafter.iciwi.api.FareGate;
+import mikeshafter.iciwi.api.IcCard;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.config.*;
+import mikeshafter.iciwi.util.IciwiUtil;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Objects;
+
+public class Validator extends FareGate {
+
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Lang lang = plugin.lang;
+
+	public Validator() {
+		super("");
+		super.setSignLine0(lang.getString("validator"));
+	}
+
+	@Override
+	public void onInteract(Player player, ItemStack item, String[] signText) {
+		// Get station
+		String station = ChatColor.stripColor(signText[1]);
+
+		// Paper ticket
+		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
+      List<String> lore    = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+      boolean entryPunched = lore.get(0).contains("•");
+      boolean exitPunched  = lore.get(1).contains("•");
+
+      // Invalid Ticket
+      if (entryPunched && exitPunched) {
+        player.sendMessage(lang.getString("invalid-ticket"));
+      }
+
+      // Exit
+      else if (entryPunched && lore.get(1).equals(station)) {
+        IciwiUtil.punchTicket(item, 1);
+        player.sendMessage(lang.getString(""));
+      }
+
+      // Entry
+      else if (lore.get(0).equals(station)) {
+        IciwiUtil.punchTicket(item, 0);
+        player.sendMessage(lang.getString(""));
+      }
+
+      else {
+        player.sendMessage(lang.getString("invalid-ticket"));
+      }
+		}
+
+
+    // Card
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+
+			// Get card from item
+			IcCard icCard = IciwiUtil.IcCardFromItem(item);
+			if (icCard == null) return;
+
+			// Vital information
+			String serial = icCard.getSerial();
+			Records records = plugin.records;
+
+			// Determine entry or exit
+			if (records.getString("station."+serial) == null) GateUtil.entry(player, icCard, station);
+      else GateUtil.exit(player, icCard, station);
+		}
+	}
+
+}

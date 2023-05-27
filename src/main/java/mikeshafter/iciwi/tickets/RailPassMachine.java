@@ -43,9 +43,9 @@ public class RailPassMachine implements Machine {
 
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners();
-  private final Lang lang = new Lang();
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Owners owners = plugin.owners;
+  private final Lang lang = plugin.lang;
 
   public RailPassMachine (Player player) {
     bottomInv = true;

@@ -10,7 +10,6 @@ public interface IcCard {
   
   /**
    * Withdraws a certain amount
-   *
    * @param amount The amount to withdraw from the card
    * @return Whether the withdrawal is successful
    */
@@ -18,14 +17,13 @@ public interface IcCard {
   
   /**
    * Gets the serial number of the card
-   * 
+   * NOTE: Iciwi-compatible plugins' cards must state their plugin name in lore[0]
    * @return Serial number
    */
-  default String getSerial() {return serial;}
+  default String getSerial() { return serial; }
 
   /**
    * Deposits a certain amount
-   * 
    * @param amount The amount to deposit into the card
    * @return Whether the withdrawal is successful
    */
@@ -34,37 +32,27 @@ public interface IcCard {
   /**
    * Gets the amount in the card
    * THIS SHOULD RETURN Double.MAX_VALUE IF THE CARD IS A DEBIT/CREDIT CARD
-   * 
    * @return the amount in the card
    */
-  default double getValue() {return Double.MAX_VALUE;}
+  default double getValue() { return Double.MAX_VALUE; }
 
   /**
    * Gets the railpasses on the card
-   * 
-   * @return A map in the format of <name, start time>
+   * @return A map in the format of [name, start time]
    */
-  default Map<String, Long> getRailPasses() {
-    return cardSql.getAllDiscounts(serial);
-  }
+  default Map<String, Long> getRailPasses() { return cardSql.getAllDiscounts(serial); }
 
   /**
    * Sets a rail pass for a certain card and operator
-   *
    * @param name   Name of the rail pass
    * @param start  Start time of the rail pass, as a long
    */
-  default void setRailPass(String name, long start) {
-    cardSql.setDiscount(serial, name, start);
-  }
+  default void setRailPass(String name, long start) { cardSql.setDiscount(serial, name, start); }
 
   /**
    * Gets the expiry time of a certain railpass belonging to a card
-   *
    * @param name   Name of the rail pass
    * @return       The expiry time
    */
-  default long getExpiry(String name) {
-    return cardSql.getExpiry(serial, name);
-  }
+  default long getExpiry(String name) { return cardSql.getExpiry(serial, name); }
 }

@@ -29,7 +29,8 @@ public class Payment extends FareGate {
 		double price = Double.parseDouble(signText[2]);
 
 		// Pay
-		if (item.getType() == Material.NAME_TAG && IciwiUtil.loreCheck(item)) {
+		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
+		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
 
 			// Try paying with card
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);

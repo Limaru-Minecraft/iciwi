@@ -18,11 +18,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-
 import java.util.HashMap;
-
 import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
-
 
 public class SignInteractListener implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
@@ -73,44 +70,18 @@ public class SignInteractListener implements Listener {
 
   }
 
-  @EventHandler
-  public void onSignPlace(final SignChangeEvent event) {
-    final String line = parseComponent(event.line(0));
-    final Player player = event.getPlayer();
-
-    // General Ticket machine
-    if (ChatColor.stripColor(line).contains(lang.getString("tickets"))) {
-      if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.getString("create-ticket-machine"));
-      } else event.setCancelled(true);
-    }
-
-    // Rail Pass machine
-    if (ChatColor.stripColor(line).contains(lang.getString("passes"))) {
-      if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.getString("create-pass-machine"));
-      } else event.setCancelled(true);
-    }
-
-    // Direct Ticket machine
-    if (ChatColor.stripColor(line).contains(lang.getString("custom-tickets"))) {
-      if (player.hasPermission("iciwi.create")) {
-        player.sendMessage(lang.getString("create-custom-machine"));
-      } else event.setCancelled(true);
-    }
-
-  }
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void onSignClick(final PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       String signLine0 = IciwiUtil.parseComponent(sign.line(0));
       Player player = event.getPlayer();
+      final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
 
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
       {
-        final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+
         final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -119,7 +90,6 @@ public class SignInteractListener implements Listener {
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
       {
-        final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         final RailPassMachine machine = new RailPassMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -128,7 +98,6 @@ public class SignInteractListener implements Listener {
       // === Custom machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
       {
-        String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
         CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }

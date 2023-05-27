@@ -10,43 +10,78 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.Plugin;
 import java.util.List;
 import static mikeshafter.iciwi.util.IciwiUtil.parseComponents;
-
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 public class GateCreateListener implements Listener {
-  Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  Lang lang = plugin.lang;
 
   @EventHandler
   public void onGateCreate(SignChangeEvent event) {
-    List<String> lines = parseComponents(event.lines());
-    Player player = event.getPlayer();
+    Lang lang = Iciwi.getPlugin(Iciwi.class).lang;
+    final String line = parseComponent(event.line(0));
+    final Player player = event.getPlayer();
 
     // Entry
-    if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("entry"))) {
+    if (ChatColor.stripColor(line).contains(lang.getString("entry"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-entry-sign"));
       } else event.setCancelled(true);
     }
 
     // Exit
-    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("exit"))) {
+    else if (ChatColor.stripColor(line).contains(lang.getString("exit"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-exit-sign"));
       } else event.setCancelled(true);
     }
 
+    // Member
+    else if (ChatColor.stripColor(line).contains(lang.getString("member"))) {
+      if (player.hasPermission("iciwi.create")) {
+        player.sendMessage(lang.getString("create-member-sign"));
+      } else event.setCancelled(true);
+    }
+
+    // Payment
+    else if (ChatColor.stripColor(line).contains(lang.getString("payment"))) {
+      if (player.hasPermission("iciwi.create")) {
+        player.sendMessage(lang.getString("create-payment-sign"));
+      } else event.setCancelled(true);
+    }
+
     // HL-style faregate
-    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("faregate"))) {
+    else if (ChatColor.stripColor(line).contains(lang.getString("faregate"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-faregate-sign"));
       } else event.setCancelled(true);
     }
 
     // HL-style validator
-    else if (ChatColor.stripColor(lines.get(0)).contains(lang.getString("validator"))) {
+    else if (ChatColor.stripColor(line).contains(lang.getString("validator"))) {
       if (player.hasPermission("iciwi.create")) {
         player.sendMessage(lang.getString("create-validator-sign"));
       } else event.setCancelled(true);
     }
+
+    // General Ticket machine
+    else if (ChatColor.stripColor(line).contains(lang.getString("tickets"))) {
+      if (player.hasPermission("iciwi.create")) {
+        player.sendMessage(lang.getString("create-ticket-machine"));
+      } else event.setCancelled(true);
+    }
+
+    // Rail Pass machine
+    else if (ChatColor.stripColor(line).contains(lang.getString("passes"))) {
+      if (player.hasPermission("iciwi.create")) {
+        player.sendMessage(lang.getString("create-pass-machine"));
+      } else event.setCancelled(true);
+    }
+
+    // Direct Ticket machine
+    else if (ChatColor.stripColor(line).contains(lang.getString("custom-tickets"))) {
+      if (player.hasPermission("iciwi.create")) {
+        player.sendMessage(lang.getString("create-custom-machine"));
+      } else event.setCancelled(true);
+    }
+
   }
 }
