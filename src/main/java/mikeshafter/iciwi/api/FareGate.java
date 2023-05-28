@@ -17,10 +17,9 @@ public abstract class FareGate implements Listener {
 
   private String signLine0;
   private Vector locationOffset = new Vector();
-  private BlockState signState;
 
   /**
-   * Constructor.
+   * Creates a new fare gate at the sign's location.
    * @param signLine0 First line (preferably without "[]")
    */
   public FareGate (String signLine0) {
@@ -28,7 +27,7 @@ public abstract class FareGate implements Listener {
   }
 
   /**
-   * Constructor.
+   * Creates a new fare gate with an offset from the sign's location.
    * @param signLine0 First line (preferably without "[]")
    * @param locationOffset Default offset sign location
    */
@@ -66,7 +65,7 @@ public abstract class FareGate implements Listener {
       signText[1] = parseComponent(sign.line(1));
       signText[2] = parseComponent(sign.line(2));
       signText[3] = parseComponent(sign.line(3));
-      onInteract(event.getPlayer(), event.getItem(), signText);
+      onInteract(event.getPlayer(), event.getItem(), signText, sign);
     }
   }
 
@@ -76,5 +75,5 @@ public abstract class FareGate implements Listener {
    * @param item Item used to interact
    * @param signText Text in the sign
    */
-  public abstract void onInteract(Player player, ItemStack item, String[] signText);
+  public abstract void onInteract(Player player, ItemStack item, String[] signText, Sign sign);
 }

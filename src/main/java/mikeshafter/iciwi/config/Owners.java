@@ -124,7 +124,6 @@ public class Owners extends CustomConfig {
   /**
    * @param name Name of the rail pass
    * @return How long the rail pass lasts
-   * This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public long getRailPassDuration(String name) {
     return timetoLong(super.getString("RailPassPrices."+name+"duration"));
@@ -139,33 +138,34 @@ public class Owners extends CustomConfig {
   }
   
   /**
+   * Get the percentage payable of the rail pass
    * @param name Name of the rail pass
    * @return Percentage payable by the commuter
-   * This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public double getRailPassPercentage(String name) {
     return super.getDouble("RailPassPrices."+name+"percentage");
   }
   
   /**
+   * Get the price of the rail pass
    * @param name Name of the rail pass
    * @return Price of the rail pass
-   *             This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public double getRailPassPrice(String name) {
     return super.getDouble("RailPassPrices."+name+"price");
   }
   
   /**
+   * Get the operator who sells the rail pass
    * @param name Name of the rail pass
    * @return The operator who sells the rail pass
-   *             This method should only be used to transfer data to the SQL. It should not be used to query the information of rail passes directly.
    */
   public String getRailPassOperator(String name) {
     return super.getString("RailPassPrices."+name+"operator");
   }
   
   /**
+   * Get the name of the rail pass that is sold by the operator
    * @param operator TOC to search up
    * @return Names of rail passes sold by the operator
    */
@@ -183,7 +183,7 @@ public class Owners extends CustomConfig {
   }
 
   /**
-   * Gets all the rail passes regardless of operator.
+   * Gets all the rail passes from all operators.
    * @return Set of all rail passes
    */
   public Set<String> getAllRailPasses() {

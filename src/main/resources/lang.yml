@@ -12,6 +12,8 @@ payment: Payment
 # Messages
 remaining: '§aRemaining value: §£%.2f'
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
+cannot-pass: '§cThere is a problem with your card/ticket, please approach the ticket counter.'
+value-low: '§cYour card has insufficient value! Please top up your card!'
 
 # =====================================
 # These options control the ticket machines.
@@ -76,12 +78,11 @@ select-class: 'Select class'
 # =====================================
 # These options control the fare gates.
 # =====================================
-tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 transfer: '§aOut-of-station interchange recorded.'
+tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
-invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the ticket machine!'
 
 # Member sign
 member-gate: 'Membership valid. Welcome!'

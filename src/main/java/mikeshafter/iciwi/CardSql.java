@@ -101,7 +101,7 @@ public class CardSql {
   
   
   /**
-   * Gets all the rail passes of a card
+   * Gets all the rail passes of a card. This method also deletes expired rail passes.
    * @param serial Serial number
    * @return Map in the format String name, Long start.
    */

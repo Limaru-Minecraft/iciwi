@@ -2,6 +2,7 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.api.ClosableFareGate;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.*;
@@ -20,7 +21,7 @@ private final Lang lang = plugin.lang;
 	}
 
 	@Override
-	public void onInteract(Player player, ItemStack item, String[] signText) {
+	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
 		// Get station
 		String station = ChatColor.stripColor(signText[1]);
 

@@ -3,6 +3,7 @@ package mikeshafter.iciwi.faregate;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import org.bukkit.ChatColor;
+import org.bukkit.block.Sign;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.Iciwi;
@@ -24,7 +25,7 @@ public class Validator extends FareGate {
 	}
 
 	@Override
-	public void onInteract(Player player, ItemStack item, String[] signText) {
+	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
 		// Get station
 		String station = ChatColor.stripColor(signText[1]);
 
@@ -42,13 +43,13 @@ public class Validator extends FareGate {
       // Exit
       else if (entryPunched && lore.get(1).equals(station)) {
         IciwiUtil.punchTicket(item, 1);
-        player.sendMessage(lang.getString(""));
+        player.sendMessage(String.format(lang.getString("ticket-out"), station));
       }
 
       // Entry
       else if (lore.get(0).equals(station)) {
         IciwiUtil.punchTicket(item, 0);
-        player.sendMessage(lang.getString(""));
+        player.sendMessage(String.format(lang.getString("ticket-in"), station));
       }
 
       else {
@@ -69,8 +70,8 @@ public class Validator extends FareGate {
 			Records records = plugin.records;
 
 			// Determine entry or exit
-			if (records.getString("station."+serial) == null) GateUtil.entry(player, icCard, station);
-      else GateUtil.exit(player, icCard, station);
+			if (records.getString("station."+serial) == null) CardUtil.entry(player, icCard, station);
+      else CardUtil.exit(player, icCard, station);
 		}
 	}
 
