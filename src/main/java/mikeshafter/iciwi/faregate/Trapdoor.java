@@ -27,7 +27,7 @@ private final Lang lang = plugin.lang;
 
 	}
 
-	@Override public void onPlayerInFareGate (Player player) {
+	@Override public void onPlayerInFareGate (int x, int y, int z) {
 
 	}
 }

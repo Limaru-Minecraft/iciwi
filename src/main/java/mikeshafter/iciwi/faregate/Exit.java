@@ -24,53 +24,53 @@ private final Lang lang = plugin.lang;
 		super.setSignLine0(lang.getString("exit"));
 	}
 
-  @Override
-  public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-    // Get station
-    String station = ChatColor.stripColor(signText[1]);
+	@Override
+	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+		// Get station
+		String station = ChatColor.stripColor(signText[1]);
 
-    // Paper ticket
-    if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-      List<String> lore    = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-      boolean entryPunched = lore.get(0).contains("•");
-      boolean exitPunched  = lore.get(1).contains("•");
+		// Paper ticket
+		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
+			List<String> lore		= IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+			boolean entryPunched = lore.get(0).contains("•");
+			boolean exitPunched	= lore.get(1).contains("•");
 
-      // Invalid Ticket
-      if (entryPunched && exitPunched) {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
+			// Invalid Ticket
+			if (entryPunched && exitPunched) {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
 
-      // Exit
-      else if (entryPunched && lore.get(1).equals(station)) {
-        IciwiUtil.punchTicket(item, 1);
-        player.sendMessage(String.format(lang.getString("ticket-out"), station));
-        GateUtil.openGate(signText, sign);
-      }
+			// Exit
+			else if (entryPunched && lore.get(1).equals(station)) {
+				IciwiUtil.punchTicket(item, 1);
+				player.sendMessage(String.format(lang.getString("ticket-out"), station));
+				CardUtil.openGate(signText, sign);
+			}
 
-      // Ticket not used
-      else if (!entryPunched) {
-        player.sendMessage(lang.getString("cannot-pass"));
-      }
+			// Ticket not used
+			else if (!entryPunched) {
+				player.sendMessage(lang.getString("cannot-pass"));
+			}
 
-      else {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
-    }
+			else {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
+		}
 
 
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+		// Card
+		else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
 
-      // Get card from item
-      IcCard icCard = IciwiUtil.IcCardFromItem(item);
-      if (icCard == null) return;
+			// Get card from item
+			IcCard icCard = IciwiUtil.IcCardFromItem(item);
+			if (icCard == null) return;
 
-      // Call entry, and if successful, open fare gate
-      if (CardUtil.exit(player, icCard, station)) GateUtil.openGate(signText, sign);
+			// Call entry, and if successful, open fare gate
+			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(signText, sign);
 
-    }
-  }
-	@Override public void onPlayerInFareGate (Player player) {
+		}
+	}
+	@Override public void onPlayerInFareGate (int x, int y, int z) {
 
 	}
 

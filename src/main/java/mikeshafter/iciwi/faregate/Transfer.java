@@ -14,14 +14,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Objects;
 
-public class Member extends ClosableFareGate {
+public class Transfer extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
 
-	public Member() {
+	public Transfer() {
 		super("");
-		super.setSignLine0(lang.getString("member"));
+		super.setSignLine0(lang.getString("trferans"));
 	}
 
 	@Override
@@ -31,7 +31,7 @@ private final Lang lang = plugin.lang;
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-			// FUTURE: Paper rail passes
+			// Paper tickets cannot be used for transfers
 			return;
 		}
 
@@ -43,7 +43,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(signText, sign);
+			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(signText, sign);
 
 		}
 	}

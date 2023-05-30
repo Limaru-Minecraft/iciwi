@@ -31,51 +31,51 @@ private final Lang lang = plugin.lang;
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-      List<String> lore    = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-      boolean entryPunched = lore.get(0).contains("•");
-      boolean exitPunched  = lore.get(1).contains("•");
+			List<String> lore		= IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+			boolean entryPunched = lore.get(0).contains("•");
+			boolean exitPunched	= lore.get(1).contains("•");
 
-      // Invalid Ticket
-      if (entryPunched && exitPunched) {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
+			// Invalid Ticket
+			if (entryPunched && exitPunched) {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
 
-      // Ticket already used
-      else if (entryPunched) {
-        player.sendMessage(lang.getString("cannot-pass"));
-        if (plugin.getConfig().getBoolean("open-on-penalty")) {
-          Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
-          player.sendMessage(lang.getString("fare-evade"));
-        } else return;
-      }
+			// Ticket already used
+			else if (entryPunched) {
+				player.sendMessage(lang.getString("cannot-pass"));
+				if (plugin.getConfig().getBoolean("open-on-penalty")) {
+					Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+					player.sendMessage(lang.getString("fare-evade"));
+				} else return;
+			}
 
-      // Entry
-      else if (lore.get(0).equals(station)) {
-        IciwiUtil.punchTicket(item, 0);
-        player.sendMessage(String.format(lang.getString("ticket-in"), station));
-        GateUtil.openGate(signText, sign);
-      }
+			// Entry
+			else if (lore.get(0).equals(station)) {
+				IciwiUtil.punchTicket(item, 0);
+				player.sendMessage(String.format(lang.getString("ticket-in"), station));
+				CardUtil.openGate(signText, sign);
+			}
 
-      else {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
+			else {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
 		}
 
 
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+		// Card
+		else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
 
 			// Get card from item
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-      if (CardUtil.entry(player, icCard, station)) GateUtil.openGate(signText, sign);
+			if (CardUtil.entry(player, icCard, station)) CardUtil.openGate(signText, sign);
 
 		}
 	}
 
-	@Override public void onPlayerInFareGate (Player player) {
+	@Override public void onPlayerInFareGate (int x, int y, int z) {
 
 	}
 }

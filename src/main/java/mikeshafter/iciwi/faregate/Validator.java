@@ -31,35 +31,35 @@ public class Validator extends FareGate {
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-      List<String> lore    = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-      boolean entryPunched = lore.get(0).contains("•");
-      boolean exitPunched  = lore.get(1).contains("•");
+			List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+			boolean entryPunched = lore.get(0).contains("•");
+			boolean exitPunched	= lore.get(1).contains("•");
 
-      // Invalid Ticket
-      if (entryPunched && exitPunched) {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
+			// Invalid Ticket
+			if (entryPunched && exitPunched) {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
 
-      // Exit
-      else if (entryPunched && lore.get(1).equals(station)) {
-        IciwiUtil.punchTicket(item, 1);
-        player.sendMessage(String.format(lang.getString("ticket-out"), station));
-      }
+			// Exit
+			else if (entryPunched && lore.get(1).equals(station)) {
+				IciwiUtil.punchTicket(item, 1);
+				player.sendMessage(String.format(lang.getString("ticket-out"), station));
+			}
 
-      // Entry
-      else if (lore.get(0).equals(station)) {
-        IciwiUtil.punchTicket(item, 0);
-        player.sendMessage(String.format(lang.getString("ticket-in"), station));
-      }
+			// Entry
+			else if (lore.get(0).equals(station)) {
+				IciwiUtil.punchTicket(item, 0);
+				player.sendMessage(String.format(lang.getString("ticket-in"), station));
+			}
 
-      else {
-        player.sendMessage(lang.getString("invalid-ticket"));
-      }
+			else {
+				player.sendMessage(lang.getString("invalid-ticket"));
+			}
 		}
 
 
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+		// Card
+		else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
 
 			// Get card from item
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
@@ -71,7 +71,7 @@ public class Validator extends FareGate {
 
 			// Determine entry or exit
 			if (records.getString("station."+serial) == null) CardUtil.entry(player, icCard, station);
-      else CardUtil.exit(player, icCard, station);
+			else CardUtil.exit(player, icCard, station);
 		}
 	}
 
