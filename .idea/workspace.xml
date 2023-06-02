@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="Write Payment.java">
+    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="write member and half of transfer signs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -170,7 +171,21 @@
       <option name="project" value="LOCAL" />
       <updated>1685158339036</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="write member and half of transfer signs">
+      <created>1685693054906</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1685693054906</updated>
+    </task>
+    <task id="LOCAL-00007" summary="write member and half of transfer signs">
+      <created>1685693074996</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1685693074996</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -202,7 +217,8 @@
     <MESSAGE value="bump" />
     <MESSAGE value="remove deprecations" />
     <MESSAGE value="Write Payment.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="Write Payment.java" />
+    <MESSAGE value="write member and half of transfer signs" />
+    <option name="LAST_COMMIT_MESSAGE" value="write member and half of transfer signs" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

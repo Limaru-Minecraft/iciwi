@@ -43,12 +43,14 @@ public abstract class ClosableFareGate extends FareGate {
 
 	/**
 	 * Called when the player moves into the defined gateLocation.
-	 * @param player Player in the defined gateLocation.
+	 * @param x gateLocation's x coordinate
+	 * @param y gateLocation's y coordinate
+	 * @param z gateLocation's z coordinate
 	 */
-	public abstract void onPlayerInFareGate(Player player);
+	public abstract void onPlayerInFareGate(int x, int y, int z);
 
 	/**
-	 * Set the gateLocation used in {@link ClosableFareGate#onPlayerInFareGate(Player)}
+	 * Set the gateLocation used in {@link ClosableFareGate#onPlayerInFareGate(int, int, int)}
 	 * @param gateLocation new gate location.
 	 */
 	public void setGateLocation(Location gateLocation) { this.gateLocation = gateLocation; }

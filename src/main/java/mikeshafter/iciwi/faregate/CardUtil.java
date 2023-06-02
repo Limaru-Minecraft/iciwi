@@ -180,7 +180,75 @@ public class CardUtil {
 		}
 
 		// Else perform normal exit, then entry sequence
+		String entryStation = records.getString("entry-station."+serial);
+		double value = icCard.getValue();
+		double fare = fares.getFare(entryStation, station, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
 
+		// is the card already in the network?
+		if (records.getString("station."+serial) == null) {
+			player.sendMessage(lang.getString("cannot-pass"));
+			if (plugin.getConfig().getBoolean("open-on-penalty")) {
+				Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+				player.sendMessage(lang.getString("fare-evade"));
+			} else return false;
+		}
+
+		// Get the owners of stations and rail passes
+		List<String> entryStationOwners = owners.getOwners(entryStation);
+		List<String> exitStationOwners	= owners.getOwners(station);
+		Set<String> railPasses = cardSql.getAllDiscounts(serial).keySet();
+		Set<String> railPassOwners = new HashSet<>();
+		railPasses.forEach(r -> railPassOwners.add(owners.getRailPassOperator(r)));
+
+		if (IciwiUtil.any(railPassOwners, entryStationOwners) && IciwiUtil.any(railPassOwners, exitStationOwners)) {
+			// Get cheapest discount
+			double payPercentage = 1d;
+			for (var r: railPasses) {
+				if (payPercentage > owners.getRailPassPercentage(r)) payPercentage = owners.getRailPassPercentage(r);
+			}
+
+			// Set final fare
+			fare *= payPercentage;
+		}
+
+		// check if card value is low
+		if (value < fare) {
+			player.sendMessage(lang.getString("value-low"));
+			return false;
+		}
+
+		icCard.withdraw(fare);
+
+		// set details for future transfer
+		records.set("timestamp."+serial, System.currentTimeMillis());
+		records.set("previous-entry-station."+serial, entryStation);
+		records.set("entry-station."+serial, null);
+		records.set("current-fare."+serial, fare);
+
+		// Perform entry sequence
+		// reject entry if card has less than the minimum value
+		if (value < plugin.getConfig().getDouble("min-amount")) return false;
+
+		// was the card already used to enter the network?
+		if (records.getString("station."+serial) == null) {
+			player.sendMessage(lang.getString("cannot-pass"));
+			if (plugin.getConfig().getBoolean("open-on-penalty")) {
+				Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+				player.sendMessage(lang.getString("fare-evade"));
+			} else return false;
+		}
+
+		// write the entry station to records
+		records.set("station." + serial, entryStation);
+
+		// check whether the player tapped out and in within the time limit
+		if (System.currentTimeMillis() - records.getLong("timestamp." + serial) < plugin.getConfig().getLong("max-transfer-time"))
+			records.set("has-transfer." + serial, true);
+		else
+			records.set("has-transfer." + serial, false);
+
+		// confirmation
+		player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
 		return true;
 	}
 
