@@ -6,10 +6,16 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.util.IciwiUtil;
+import org.bukkit.util.Vector;
 
 
 public class CardUtil {
@@ -49,7 +55,9 @@ public class CardUtil {
 
 		// check whether the player tapped out and in within the time limit
 		if (System.currentTimeMillis() - records.getLong("timestamp." + serial) < plugin.getConfig().getLong("max-transfer-time"))
-			records.set("has-transfer." + serial, entryStation);
+			records.set("has-transfer." + serial, true);
+		else
+			records.set("has-transfer." + serial, false);
 
 		// confirmation
 		player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
@@ -66,7 +74,7 @@ public class CardUtil {
 	*/
 	protected static boolean exit(Player player, IcCard icCard, String exitStation) {
 		String serial = icCard.getSerial();
-		String entryStation = records.getString("station."+serial);
+		String entryStation = records.getString("entry-station."+serial);
 		double value = icCard.getValue();
 		double fare = fares.getFare(entryStation, exitStation, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
 
@@ -79,11 +87,21 @@ public class CardUtil {
 			} else return false;
 		}
 
+		// If an OSI is applicable, use the fare from the first entry station until the exit station
+		if (records.getBoolean("has-transfer."+serial)) {
+			// fare if the player did not tap out
+			double longFare = fares.getFare(records.getString("previous-entry-station."+serial), exitStation);
+			// the previous charged fare
+			double previousFare = records.getDouble("current-fare."+serial);
+			// if the difference between the fares is less than the current fare, change the fare to that difference.
+			if (longFare-previousFare < fare) fare = longFare-previousFare;
+		}
+
 		// Get the owners of stations and rail passes
 		List<String> entryStationOwners = owners.getOwners(entryStation);
 		List<String> exitStationOwners	= owners.getOwners(exitStation);
 		Set<String> railPasses = cardSql.getAllDiscounts(serial).keySet();
-		List<String> railPassOwners = new ArrayList<>();
+		Set<String> railPassOwners = new HashSet<>();
 		railPasses.forEach(r -> railPassOwners.add(owners.getRailPassOperator(r)));
 
 		if (IciwiUtil.any(railPassOwners, entryStationOwners) && IciwiUtil.any(railPassOwners, exitStationOwners)) {
@@ -93,16 +111,24 @@ public class CardUtil {
 				if (payPercentage > owners.getRailPassPercentage(r)) payPercentage = owners.getRailPassPercentage(r);
 			}
 
-		// Set final fare
-		fare *= payPercentage;
+		  // Set final fare
+		  fare *= payPercentage;
 		}
 
+		// check if card value is low
 		if (value < fare) {
 			player.sendMessage(lang.getString("value-low"));
 			return false;
 		}
 
 		icCard.withdraw(fare);
+
+		// set details for future transfer
+		records.set("timestamp."+serial, System.currentTimeMillis());
+    records.set("previous-entry-station."+serial, entryStation);
+		records.set("entry-station."+serial, null);
+		records.set("current-fare."+serial, fare);
+
 		return true;
 	}
 
@@ -112,22 +138,51 @@ public class CardUtil {
 	 * @param player Player who used the card
 	 * @param icCard The card used
 	 * @param station The station at which the sign is placed
-	 * @return Whether entry was successful. If false, do not open the fare gate.
+	 * @return Whether checks were successful. If false, do not open the fare gate.
 	 */
 	protected static boolean member(Player player, IcCard icCard, String station) {
+		// Get the serial number of the card
+		String serial = icCard.getSerial();
 
+		// Get the owners of the station and the card's rail passes
+		List<String> stationOwners = owners.getOwners(station);
+
+		// Get the owners of the card's rail passes
+		Set<String> railPasses = cardSql.getAllDiscounts(serial).keySet();
+
+		// Check if the card has a rail pass belonging to the station's operator
+		for (String r : railPasses) {
+			if (stationOwners.contains(owners.getRailPassOperator(r))) {
+				player.sendMessage(lang.getString("member-gate"));
+				return true;
+			}
+		}
+
+		// If the player does not have such a rail pass, return false
+		return false;
 	}
 
 
 	/**
-	 * Check if a card has a railpass
+	 * Stops and starts a journey without allowing for an OSI
 	 * @param player Player who used the card
 	 * @param icCard The card used
 	 * @param station The station at which the sign is placed
-	 * @return Whether entry was successful. If false, do not open the fare gate.
+	 * @return Whether checks were successful. If false, do not open the fare gate.
 	 */
-	protected static boolean member(Player player, IcCard icCard, String station) {
-		
+	protected static boolean transfer(Player player, IcCard icCard, String station) {
+		String serial = icCard.getSerial();
+
+		// If an OSI was detected, cancel OSI capability
+		if (records.getBoolean("has-transfer." + serial)) {
+			records.set("has-transfer." + serial, false);
+			player.sendMessage(lang.getString("transfer-cancel-osi"));
+			return true;
+		}
+
+		// Else perform normal exit, then entry sequence
+
+		return true;
 	}
 
 
