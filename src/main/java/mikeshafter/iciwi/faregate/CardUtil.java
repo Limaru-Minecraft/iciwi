@@ -5,7 +5,6 @@ import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
