@@ -277,8 +277,8 @@ public class CardUtil {
 
 		int flags = 0;
 		flags |= args.contains("V") ? 1	: 0;	// Validator
-		flags |= args.contains("S") ? 2	: 0;	// Sideways
-		flags |= args.contains("L") ? 4	: 0;	// Lefty
+    flags |= args.contains("L") ? 2	: 0;	// Lefty
+		flags |= args.contains("S") ? 4	: 0;	// Sideways
 		flags |= args.contains("D") ? 8	: 0;	// Double
 		flags |= args.contains("R") ? 16 : 0;	// Redstone
 		flags |= args.contains("E") ? 32 : 0;	// Eye-level
@@ -288,11 +288,12 @@ public class CardUtil {
 		Vector buildDirection = toBuildDirection(signFacing, flags);
 
 		// Get the relative position(s) of the fare gate block(s).
-		Vector[] relativePositions = (flags & 8) != 0 ? new Vector[2] : new Vector[1];	// we need 2 blocks for a double gate
+		Vector[] relativePositions = toPos(signFacing, flags, buildDirection);
 		
-
-		// Get the absolute position(s) of the fare gate block(s).
-
+		// Get the absolute position(s) of the fare gate block(s) (reference block location + relative block vector).
+    Block fareGateBlock[] = new Block[];
+    for (int i = 0; i < relativePositions.length && i < 2; i++)
+      fareGateBlock[i] = referenceBlock.getLocation().clone().add(relativePositions[i])
 
 		// If openable, open it the Minecraft way
 
@@ -323,16 +324,45 @@ public class CardUtil {
 		} else return face;
 	}
 
+  /**
+   * Gets the relative positions of the fare gate blocks, with direction accounted for
+   * The length of the returned Vector[] can be of length 0, 1, or 2.
+   * @param flags the flags to be applied
+   * @param signFacing the sign's facing direction
+   * @return The positions of the fare gate blocks.
+   */
+  private static Vector[] toPos (BlockFace signDirection, int flags, Vector buildDirection) {
+    // length 0 if validator
+    if (flags & 1 != 0) return new Vector[0];
+
+    // initialise vector array and default position vector
+    Vector[] v = flags & 8 == 0 ? new Vector[1] : new Vector[2];
+    v[0] = signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));
+      
+    // parse default, S, E, R, F flags
+    if (flags &  4 != 0) v[0].add(signDirection.getDirection());
+    if (flags & 32 != 0) v[0].subtract(0, 1, 0);
+    if (flags & 16 != 0) v[0] = new Vector(0, -2, 0);
+    if (flags & 64 != 0) v[0] = new Vector(0, 2, 0);
+    // parse L flag
+    if (flags & 2 != 0 && signDirection == BlockFace.SOUTH || signDirection == BlockFace.NORTH) v[0].multiply(new Vector(-1, 1, 1));
+    if (flags & 2 != 0 && signDirection == BlockFace.EAST  || signDirection == BlockFace.WEST ) v[0].multiply(new Vector(1, 1, -1));
+
+    // parse D flag
+    if (flags & 8 != 0) v[1] = v[0].add(buildDirection);
+  }
+
 	/**
 	 * Gets the direction to build and animate fare gates in.
 	 * The animation direction should be the opposite direction to the build direction.
 	 * @param signDirection the direction of the sign
 	 * @param flags the flags to be applied
+   * @return the direction to build fare gates in.
 	 */
 	private static Vector toBuildDirection (BlockFace signDirection, int flags) {
 		if ((flags & 1 | flags & 16) != 0) return new Vector();	// Validator and Redstone: no animation/double gate allowed
-		else if ((flags & 2) != 0) return signDirection.getDirection();	// Sideways
-		else if ((flags & 4) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Lefty
+    else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Lefty
+		else if ((flags & 4) != 0) return signDirection.getDirection();	// Sideways
 		else return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Normal
 	}
 }
