@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="write member and half of transfer signs">
+      <change afterPath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/faregate/CardUtilTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,8 +24,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
         <option value="Interface" />
+        <option value="JUnit5 Test Class" />
         <option value="Class" />
       </list>
     </option>
@@ -57,9 +59,9 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
     &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi-faregates&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.18421052&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.40239522&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
 }</component>
@@ -71,10 +73,11 @@
       <recent name="$PROJECT_DIR$/build/libs" />
     </key>
     <key name="CreateTestDialog.RecentsKey">
+      <recent name="mikeshafter.iciwi.faregate" />
       <recent name="mikeshafter.iciwi.tickets" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.iciwi [build]">
+  <component name="RunManager" selected="JUnit.CardUtilTest.toCartesianTest (1)">
     <configuration name="iciwi [build]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -117,12 +120,71 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+    <configuration name="iciwi [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="dependencies" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="CardUtilTest.toCartesianTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Iciwi.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
+      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
+      <option name="METHOD_NAME" value="toCartesianTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CardUtilTest.toCartesianTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Iciwi.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
+      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
+      <option name="METHOD_NAME" value="toCartesianTest(org.bukkit.block.BlockFace,org.bukkit.block.BlockFace)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Gradle.iciwi [build]" />
+      <item itemvalue="Gradle.iciwi [dependencies]" />
       <item itemvalue="Gradle.iciwi [clean]" />
+      <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
+      <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
+        <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
+        <item itemvalue="Gradle.iciwi [dependencies]" />
         <item itemvalue="Gradle.iciwi [clean]" />
       </list>
     </recent_temporary>
@@ -223,5 +285,10 @@
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Iciwi$CardUtilTest_toCartesianTest__1_.ic" NAME="CardUtilTest.toCartesianTest (1) Coverage Results" MODIFIED="1686455932479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>mikeshafter.iciwi.faregate.*</FILTER>
+    </SUITE>
   </component>
 </project>
