@@ -1,7 +1,8 @@
 {pkgs}: {
   deps = [
-    pkgs.ed
+    pkgs.vim
     pkgs.gradle
     pkgs.zulu
   ];
 }
+
