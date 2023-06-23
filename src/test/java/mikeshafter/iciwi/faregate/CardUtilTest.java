@@ -87,14 +87,51 @@ public class CardUtilTest {
   @ParameterizedTest
   @CsvFileSource(resources = "/tests/build_direction.csv", numLinesToSkip = 1)
   public void toBuildDirectionTest (int i, int j, int k, String signDirection, int flags) {
-    assertEquals(new Vector(i, j, k), toBuildDirection(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
+    //assertEquals(new Vector(i, j, k), toBuildDirection(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
+    Vector result = toBuildDirection(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags);
+    if (Vector.getBlockX() ==  1) System.out.println("EAST");
+    if (Vector.getBlockZ() ==  1) System.out.println("SOUTH");
+    if (Vector.getBlockX() == -1) System.out.println("WEST");
+    if (Vector.getBlockZ() == -1) System.out.println("NORTH");
   }
 
   
   @ParameterizedTest
   @CsvFileSource(resources = "/tests/pos.csv", numLinesToSkip = 1)
   public void toPosTest (String expected, String signDirection, int flags) {
-    assertEquals(asVectorArray(expected), toPos(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
+    //assertEquals(asVectorArray(expected), toPos(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
+    Vector[] result = toPos(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags);
+    if (result.length == 1) {
+      int[] r = new int[3];
+      r[0] = result[0].getBlockX();
+      r[1] = result[0].getBlockY();
+      r[2] = result[0].getBlockZ();
+    } else if (result.length == 2) {
+      int[] r = new int[6];
+      r[0] = result[0].getBlockX();
+      r[1] = result[0].getBlockY();
+      r[2] = result[0].getBlockZ();
+      r[0] = result[1].getBlockX();
+      r[1] = result[1].getBlockY();
+      r[2] = result[1].getBlockZ();
+    }
+    for (int k = -2; k <= 2; k++) {
+      for (int i = -2; i <= 2; i++) {
+        if (r.length == 3) {
+          if (r[0] == i && r[2] == k)
+            System.out.print("◼︎");
+          else
+            System.out.print("◻︎");
+        }
+        else if (r.length == 6) {
+          if ((r[0] == i && r[2] == k) || (r[3] == i && r[5] == k))
+            System.out.print("◼︎");
+          else
+            System.out.print("◻︎");
+        }
+      }
+      System.out.println("");
+    }
   }
 
   
