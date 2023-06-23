@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="write member and half of transfer signs">
-      <change afterPath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/faregate/CardUtilTest.java" afterDir="false" />
+    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="test CardUtil.java">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/faregate/CardUtilTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/faregate/CardUtilTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/build_direction.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/build_direction.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/cartesian.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/cartesian.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/pos.csv" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/pos.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,21 +52,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi-faregates&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.18421052&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.40239522&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "create.test.in.the.same.root": "true",
+    "last_opened_file_path": "/Users/mikeshafteure/IdeaProjects/iciwi/src/test/resources",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.18421052",
+    "project.structure.side.proportion": "0.40239522",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources" />
+    </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
@@ -77,7 +81,7 @@
       <recent name="mikeshafter.iciwi.tickets" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CardUtilTest.toCartesianTest (1)">
+  <component name="RunManager" selected="JUnit.CardUtilTest">
     <configuration name="iciwi [build]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -99,47 +103,36 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="iciwi [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="clean" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
+    <configuration name="CardUtilTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Iciwi.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
+      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
-    <configuration name="iciwi [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="dependencies" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
+    <configuration name="CardUtilTest.toBuildDirectionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Iciwi.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
+      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
+      <option name="METHOD_NAME" value="toBuildDirectionTest(int,int,int,java.lang.String,int)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration name="CardUtilTest.toCartesianTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Iciwi.test" />
@@ -173,19 +166,37 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="CardUtilTest.toPosTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="Iciwi.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
+      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
+      <option name="METHOD_NAME" value="toPosTest(java.lang.String,java.lang.String,int)" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Gradle.iciwi [build]" />
-      <item itemvalue="Gradle.iciwi [dependencies]" />
-      <item itemvalue="Gradle.iciwi [clean]" />
+      <item itemvalue="JUnit.CardUtilTest" />
+      <item itemvalue="JUnit.CardUtilTest.toBuildDirectionTest" />
+      <item itemvalue="JUnit.CardUtilTest.toPosTest" />
       <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
       <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.CardUtilTest" />
+        <item itemvalue="JUnit.CardUtilTest.toBuildDirectionTest" />
+        <item itemvalue="JUnit.CardUtilTest.toPosTest" />
         <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
         <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
-        <item itemvalue="Gradle.iciwi [dependencies]" />
-        <item itemvalue="Gradle.iciwi [clean]" />
       </list>
     </recent_temporary>
   </component>
@@ -247,7 +258,14 @@
       <option name="project" value="LOCAL" />
       <updated>1685693074996</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="write test method (CI will fail)">
+      <created>1687263715225</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1687263715225</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -280,7 +298,9 @@
     <MESSAGE value="remove deprecations" />
     <MESSAGE value="Write Payment.java" />
     <MESSAGE value="write member and half of transfer signs" />
-    <option name="LAST_COMMIT_MESSAGE" value="write member and half of transfer signs" />
+    <MESSAGE value="write test method (CI will fail)" />
+    <MESSAGE value="test CardUtil.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="test CardUtil.java" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -12,7 +12,6 @@ import java.util.Set;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.util.Vector;
@@ -284,11 +283,8 @@ public class CardUtil {
     flags |= args.contains("E") ? 32 : 0;	// Eye-level
     flags |= args.contains("F") ? 64 : 0;	// Fare gate
 
-    // Get the direction to build double fare gates in.
-    Vector buildDirection = toBuildDirection(signFacing, flags);
-
     // Get the relative position(s) of the fare gate block(s).
-    Vector[] relativePositions = toPos(signFacing, flags, buildDirection);
+    Vector[] relativePositions = toPos(signFacing, flags);
     
     // Get the absolute position(s) of the fare gate block(s) (reference block location + relative block vector).
     Block[] fareGateBlock = new Block[relativePositions.length];
@@ -327,21 +323,34 @@ public class CardUtil {
   }
 
   /**
+   * Gets the direction to build and animate fare gates in.
+   * The animation direction should be the opposite direction to the build direction.
+   * @param signDirection the direction of the sign
+   * @param flags the flags to be applied
+   * @return the direction to build fare gates in.
+   */
+  public static Vector toBuildDirection (BlockFace signDirection, int flags) {
+    if ((flags & 1 | flags & 16) != 0) return new Vector();	// Validator and Redstone: no animation/double gate allowed
+    else if ((flags & 4) != 0) return signDirection.getDirection();	// Sideways
+    else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Lefty
+    else return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Normal
+  }
+
+  /**
    * Gets the relative positions of the fare gate blocks, with direction accounted for
    * The length of the returned Vector[] can be of length 0, 1, or 2.
    * @param signDirection the sign's facing direction
    * @param flags the flags to be applied
-   * @param buildDirection the direction to build fare gates in
    * @return The positions of the fare gate blocks.
    */
-  public static Vector[] toPos (BlockFace signDirection, int flags, Vector buildDirection) {
+  public static Vector[] toPos (BlockFace signDirection, int flags) {
     // length 0 if validator
     if ((flags & 1) != 0) return new Vector[0];
 
     // initialise vector array and default position vector
     Vector[] v = (flags & 8) == 0 ? new Vector[1] : new Vector[2];
-    v[0] = signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));
-      
+    v[0] = signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));
+
     // parse default, S, E, R, F flags
     if ((flags &  4) != 0) v[0].add(signDirection.getDirection());
     if ((flags & 32) != 0) v[0].subtract(new Vector(0, 1, 0));
@@ -352,24 +361,10 @@ public class CardUtil {
     if ((flags & 2) != 0 && (signDirection == BlockFace.EAST  || signDirection == BlockFace.WEST )) v[0].multiply(new Vector(1, 1, -1));
 
     // parse D flag
-    if ((flags & 8) != 0) v[1] = v[0].add(buildDirection);
+    if ((flags & 8) != 0) v[1] = v[0].clone().add(toBuildDirection(signDirection, flags));
 
     // return
     return v;
-  }
-
-  /**
-   * Gets the direction to build and animate fare gates in.
-   * The animation direction should be the opposite direction to the build direction.
-   * @param signDirection the direction of the sign
-   * @param flags the flags to be applied
-   * @return the direction to build fare gates in.
-   */
-  public static Vector toBuildDirection (BlockFace signDirection, int flags) {
-    if ((flags & 1 | flags & 16) != 0) return new Vector();	// Validator and Redstone: no animation/double gate allowed
-    else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Lefty
-    else if ((flags & 4) != 0) return signDirection.getDirection();	// Sideways
-    else return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Normal
   }
 
 // TESTABLE END

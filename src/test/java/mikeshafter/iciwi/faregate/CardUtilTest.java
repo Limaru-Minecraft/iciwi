@@ -37,9 +37,9 @@ public class CardUtilTest {
    */
   public static Vector toBuildDirection (BlockFace signDirection, int flags) {
     if ((flags & 1 | flags & 16) != 0) return new Vector();	// Validator and Redstone: no animation/double gate allowed
-    else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Lefty
     else if ((flags & 4) != 0) return signDirection.getDirection();	// Sideways
-    else return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Normal
+    else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Lefty
+    else return signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));	// Normal
   }
 
   /**
@@ -47,7 +47,6 @@ public class CardUtilTest {
    * The length of the returned Vector[] can be of length 0, 1, or 2.
    * @param signDirection the sign's facing direction
    * @param flags the flags to be applied
-   * @param buildDirection the direction to build fare gates in
    * @return The positions of the fare gate blocks.
    */
   public static Vector[] toPos (BlockFace signDirection, int flags) {
@@ -56,7 +55,7 @@ public class CardUtilTest {
 
     // initialise vector array and default position vector
     Vector[] v = (flags & 8) == 0 ? new Vector[1] : new Vector[2];
-    v[0] = signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));
+    v[0] = signDirection.getDirection().getCrossProduct(new Vector(0, 1, 0));
 
     // parse default, S, E, R, F flags
     if ((flags &  4) != 0) v[0].add(signDirection.getDirection());
@@ -68,7 +67,7 @@ public class CardUtilTest {
     if ((flags & 2) != 0 && (signDirection == BlockFace.EAST  || signDirection == BlockFace.WEST )) v[0].multiply(new Vector(1, 1, -1));
 
     // parse D flag
-    if ((flags & 8) != 0) v[1] = v[0].add(toBuildDirection(signDirection, flags));
+    if ((flags & 8) != 0) v[1] = v[0].clone().add(toBuildDirection(signDirection, flags));
 
     // return
     return v;
@@ -78,60 +77,61 @@ public class CardUtilTest {
 
   
   @ParameterizedTest
-  @CsvFileSource(resources = "/tests/cartesian.csv", numLinesToSkip = 1)
+  @CsvFileSource(resources = "/cartesian.csv")
   public void toCartesianTest (String expected, String face) {
     assertEquals(BlockFace.valueOf(expected.toUpperCase().strip()), toCartesian(BlockFace.valueOf(face.toUpperCase().strip())));  
   }
 
 
   @ParameterizedTest
-  @CsvFileSource(resources = "/tests/build_direction.csv", numLinesToSkip = 1)
+  @CsvFileSource(resources = "/build_direction.csv")
   public void toBuildDirectionTest (int i, int j, int k, String signDirection, int flags) {
     //assertEquals(new Vector(i, j, k), toBuildDirection(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
     Vector result = toBuildDirection(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags);
-    if (Vector.getBlockX() ==  1) System.out.println("EAST");
-    if (Vector.getBlockZ() ==  1) System.out.println("SOUTH");
-    if (Vector.getBlockX() == -1) System.out.println("WEST");
-    if (Vector.getBlockZ() == -1) System.out.println("NORTH");
+    if (result.getBlockX() ==  1) System.out.println("EAST");
+    if (result.getBlockZ() ==  1) System.out.println("SOUTH");
+    if (result.getBlockX() == -1) System.out.println("WEST");
+    if (result.getBlockZ() == -1) System.out.println("NORTH");
   }
 
   
   @ParameterizedTest
-  @CsvFileSource(resources = "/tests/pos.csv", numLinesToSkip = 1)
+  @CsvFileSource(resources = "/pos.csv")
   public void toPosTest (String expected, String signDirection, int flags) {
     //assertEquals(asVectorArray(expected), toPos(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags));
     Vector[] result = toPos(BlockFace.valueOf(signDirection.toUpperCase().strip()), flags);
+    int[] r;
     if (result.length == 1) {
-      int[] r = new int[3];
+      r = new int[3];
       r[0] = result[0].getBlockX();
       r[1] = result[0].getBlockY();
       r[2] = result[0].getBlockZ();
     } else if (result.length == 2) {
-      int[] r = new int[6];
+      r = new int[6];
       r[0] = result[0].getBlockX();
       r[1] = result[0].getBlockY();
       r[2] = result[0].getBlockZ();
-      r[0] = result[1].getBlockX();
-      r[1] = result[1].getBlockY();
-      r[2] = result[1].getBlockZ();
+      r[3] = result[1].getBlockX();
+      r[4] = result[1].getBlockY();
+      r[5] = result[1].getBlockZ();
+    } else {
+      r = new int[0];
     }
     for (int k = -2; k <= 2; k++) {
       for (int i = -2; i <= 2; i++) {
         if (r.length == 3) {
-          if (r[0] == i && r[2] == k)
-            System.out.print("◼︎");
-          else
-            System.out.print("◻︎");
+          if (r[0] == i && r[2] == k) System.out.print("◼︎");
+          else System.out.print("◻︎");
         }
         else if (r.length == 6) {
-          if ((r[0] == i && r[2] == k) || (r[3] == i && r[5] == k))
-            System.out.print("◼︎");
-          else
-            System.out.print("◻︎");
-        }
+          if ((r[0] == i && r[2] == k) || (r[3] == i && r[5] == k)) System.out.print("◼︎");
+          else System.out.print("◻︎");
+        } else System.out.print("◻︎");
       }
-      System.out.println("");
+      System.out.println();
     }
+    System.out.print(r[1]);
+    if (r.length == 6) System.out.print(" "); System.out.println(r[4]);
   }
 
   
