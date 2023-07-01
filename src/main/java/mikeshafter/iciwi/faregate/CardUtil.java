@@ -264,7 +264,7 @@ public class CardUtil {
    * @param signText Text on the sign for quick accessing
    * @param sign The sign itself
    */
-  protected static void openGate(String[] signText, Sign sign) {
+  protected static void openGate(String signAction, String[] signText, Sign sign) {
     String signLine0 = signText[0];
 
     // Get the sign's direction and reference block
@@ -278,7 +278,7 @@ public class CardUtil {
     signFacing = toCartesian(signFacing);
 
     // Get the fare gate flags
-    String args = signLine0.substring(lang.getString("entry").length() + 1, signLine0.length() - 1);
+    String args = signLine0.substring(signAction.length() + 1, signLine0.length() - 1);
 
     int flags = 0;
     flags |= args.contains("V") ? 1	: 0;	// Validator

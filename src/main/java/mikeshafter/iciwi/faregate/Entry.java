@@ -52,7 +52,7 @@ private final Lang lang = plugin.lang;
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				CardUtil.openGate(signText, sign);
+				CardUtil.openGate(signText[0], signText, sign);
 			}
 
 			else {
@@ -69,7 +69,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) CardUtil.openGate(signText, sign);
+			if (CardUtil.entry(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
 
 		}
 	}

@@ -40,7 +40,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(signText, sign);
+			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
 
 		}
 	}

@@ -43,7 +43,7 @@ private final Lang lang = plugin.lang;
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				CardUtil.openGate(signText, sign);
+				CardUtil.openGate(signText[0], signText, sign);
 			}
 
 			// Ticket not used
@@ -65,7 +65,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(signText, sign);
+			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
 
 		}
 	}

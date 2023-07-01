@@ -59,9 +59,7 @@ public class IciwiUtil {
    * @return A copy of the input string, without any coloring
    */
   public static String stripColor(final String input) {
-    if (input == null) {
-      return null;
-    }
+    if (input == null) return null;
     return input.replaceAll("(?i)§[0-9A-FK-ORX]", "");
   }
 

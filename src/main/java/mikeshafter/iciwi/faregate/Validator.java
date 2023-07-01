@@ -2,7 +2,6 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,7 +26,7 @@ public class Validator extends FareGate {
 	@Override
 	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
 		// Get station
-		String station = ChatColor.stripColor(signText[1]);
+		String station = IciwiUtil.stripColor(signText[1]);
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {

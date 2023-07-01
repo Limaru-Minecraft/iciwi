@@ -17,7 +17,7 @@ private final Lang lang = plugin.lang;
 
 	public Transfer() {
 		super("");
-		super.setSignLine0(lang.getString("trferans"));
+		super.setSignLine0(lang.getString("transfer"));
 	}
 
 	@Override
@@ -39,7 +39,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(signText, sign);
+			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
 
 		}
 	}
