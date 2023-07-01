@@ -7,11 +7,17 @@ import mikeshafter.iciwi.api.IcCard;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
+import mikeshafter.iciwi.util.FareGateBlock;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Openable;
+import org.bukkit.block.data.Powerable;
+import org.bukkit.block.data.type.Fence;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.util.Vector;
@@ -285,24 +291,70 @@ public class CardUtil {
 
     // Get the relative position(s) of the fare gate block(s).
     Vector[] relativePositions = toPos(signFacing, flags);
-    
+
     // Get the absolute position(s) of the fare gate block(s) (reference block location + relative block vector).
-    Block[] fareGateBlock = new Block[relativePositions.length];
-    for (int i = 0; i < relativePositions.length && i < 2; i++)
-      fareGateBlock[i] = referenceBlock.getLocation().clone().add(relativePositions[i]).getBlock();
+    for (int i = 0; i < relativePositions.length && i < 2; i++) {
+      Block currentBlock = referenceBlock.getLocation().clone().add(relativePositions[i]).getBlock();
 
-    // If openable, open it the Minecraft way
+      // Gate close function
+      Runnable closeGate;
 
+      // If openable, open it!
+      if (currentBlock.getBlockData() instanceof Openable openable) {
+        openable.setOpen(true);
+        currentBlock.setBlockData(openable);
 
-    // If glass pane, create a FareGateBlock object and open
+        closeGate = () -> {
+          openable.setOpen(false);
+          currentBlock.setBlockData(openable);
+        };
 
+      }
 
-    // Otherwise, set to air
+      // If powerable, power it!
+      else if (currentBlock.getBlockData() instanceof Powerable powerable) {
+        powerable.setPowered(true);
+        currentBlock.setBlockData(powerable);
 
+        closeGate = () -> {
+          powerable.setPowered(false);
+          currentBlock.setBlockData(powerable);
+        };
 
+      }
+
+      // If glass pane, create a FareGateBlock object and open
+      else if (currentBlock.getBlockData() instanceof Fence) {
+        BlockFace direction = i == 0 ? toFace(toBuildDirection(signFacing, flags)).getOppositeFace() : toFace(toBuildDirection(signFacing, flags));
+        FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
+        fgBlock.openGate();
+
+        closeGate = fgBlock::closeGate;
+
+      }
+
+      // Otherwise, set to air
+      else {
+        var data = currentBlock.getBlockData();
+        currentBlock.setType(Material.AIR);
+
+        closeGate = () -> currentBlock.setBlockData(data);
+      }
+
+      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, closeGate, plugin.getConfig().getLong("gate-close-delay"));
+
+    }
   }
 
 // TESTABLE BEGIN
+
+  private static BlockFace toFace(Vector vector) {
+    if (Objects.equals(vector, BlockFace.EAST.getDirection()) ) return BlockFace.EAST;
+    if (Objects.equals(vector, BlockFace.SOUTH.getDirection())) return BlockFace.SOUTH;
+    if (Objects.equals(vector, BlockFace.WEST.getDirection()) ) return BlockFace.WEST;
+    if (Objects.equals(vector, BlockFace.NORTH.getDirection())) return BlockFace.NORTH;
+    else return BlockFace.SELF;
+  }
 
   /**
    * Changes arbitrary sign directions into cartesian (one cardinal direction only) directions.

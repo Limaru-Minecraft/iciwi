@@ -5,14 +5,11 @@ import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Objects;
 
 public class Member extends ClosableFareGate {
 
@@ -27,7 +24,7 @@ private final Lang lang = plugin.lang;
 	@Override
 	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
 		// Get station
-		String station = ChatColor.stripColor(signText[1]);
+		String station = IciwiUtil.stripColor(signText[1]);
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {

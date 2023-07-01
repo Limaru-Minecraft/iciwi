@@ -22,15 +22,6 @@ import static mikeshafter.iciwi.util.IciwiUtil.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.util.Clickable;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
-
 public class RailPassMachine implements Machine {
 
   // Attributes

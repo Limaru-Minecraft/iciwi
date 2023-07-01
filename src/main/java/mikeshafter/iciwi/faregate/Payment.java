@@ -5,7 +5,6 @@ import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -24,7 +23,7 @@ public class Payment extends FareGate {
 	@Override
 	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
 		// Get station
-		String station = ChatColor.stripColor(signText[1]);
+		String station = IciwiUtil.stripColor(signText[1]);
 
 		// Get price
 		double price = Double.parseDouble(signText[2]);
