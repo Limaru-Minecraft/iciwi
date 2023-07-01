@@ -4,22 +4,19 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.IciwiUtil;
-import net.kyori.adventure.text.TextComponent;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
-import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 public class SignInteractListener implements Listener {
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
@@ -74,9 +71,10 @@ public class SignInteractListener implements Listener {
   @EventHandler(priority = EventPriority.LOWEST)
   public void onSignClick(final PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
-      String signLine0 = IciwiUtil.parseComponent(sign.line(0));
       Player player = event.getPlayer();
-      final String station = IciwiUtil.parseComponent(sign.line(1)).replaceAll("\\s+", "");
+      SignSide side = IciwiUtil.getClickedSide(sign, player);
+      String signLine0 = side.getLine(0);
+      final String station = side.getLine(1).replaceAll("\\s+", "");
 
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))

@@ -16,7 +16,6 @@ import com.bergerkiller.generated.net.minecraft.world.inventory.ContainerHandle;
 import com.bergerkiller.mountiplex.reflection.ClassHook;
 import mikeshafter.iciwi.Iciwi;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -84,7 +83,7 @@ public class InputDialogAnvil {
         MIDDLE_BUTTON.setMaterial(null);
       } else {
         MIDDLE_BUTTON.setMaterial(Material.PAPER);
-        MIDDLE_BUTTON.setTitle(ChatColor.YELLOW + "About");
+        MIDDLE_BUTTON.setTitle("§eAbout");
         MIDDLE_BUTTON.setDescription(text);
       }
       return this;
@@ -318,7 +317,7 @@ public class InputDialogAnvil {
                 ItemUtil.getMetaTag(item).putValue("RepairCost", 0);
                 if (this.getDescription() != null && !this.getDescription().isEmpty()) {
                     for (String line : this.getDescription().split("\n")) {
-                        ItemUtil.addLoreName(item, ChatColor.RESET+line);
+                        ItemUtil.addLoreName(item, "§r"+line);
                     }
                 }
                 return item;

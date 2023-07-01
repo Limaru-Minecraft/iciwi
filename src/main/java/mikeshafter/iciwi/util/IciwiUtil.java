@@ -6,15 +6,18 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.Sign;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.*;
 import java.util.regex.Pattern;
-
+import java.lang.Math;
 
 public class IciwiUtil {
 
@@ -25,6 +28,41 @@ public class IciwiUtil {
    */
   public static boolean isDouble(String s) {
     return Pattern.matches(("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|"+"(\\.(\\d+)([eE][+-]?(\\d+))?)|"+"(("+"(0[xX](\\p{XDigit}+)(\\.)?)|"+"(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))"+")[pP][+-]?(\\d+)))"+"[fFdD]?))"+"[\\x00-\\x20]*"), s);
+  }
+
+  /**
+   * Get the side of the sign that was clicked.
+   * @param sign Sign to get the side of
+   * @param player The player who clicked the sign
+   * @return
+   */
+  public static SignSide getClickedSide(Sign sign, Player player) {
+    if (player == null) return sign.getSide(Side.FRONT);
+
+    float yaw = player.getLocation().getYaw();
+    int x = 0, z = 0;
+    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
+      x = w.getFacing().getDirection().getBlockX();
+      z = w.getFacing().getDirection().getBlockZ();
+    } else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) {
+      x = s.getRotation().getDirection().getBlockX();
+      z = s.getRotation().getDirection().getBlockZ();
+    }
+    double signRot = -57.29577951308232 * Math.atan2(z, x) + 450;
+    while (signRot > 360) signRot -= 360;
+    return Math.abs(signRot - yaw) > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
+  }
+
+  /**
+   * Strips the given message of all color codes
+   * @param input String to strip of color
+   * @return A copy of the input string, without any coloring
+   */
+  public static String stripColor(final String input) {
+    if (input == null) {
+      return null;
+    }
+    return input.replaceAll("(?i)§[0-9A-FK-ORX]", "");
   }
 
   /**

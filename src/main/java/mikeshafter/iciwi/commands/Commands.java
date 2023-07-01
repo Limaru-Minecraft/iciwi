@@ -9,7 +9,7 @@ import cloud.commandframework.context.CommandContext;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
-import org.bukkit.ChatColor;
+
 import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,15 +28,15 @@ public class Commands {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Owners owners = plugin.owners;
   private final Fares fares = plugin.fares;
-  private PaperCommandManager<CommandSender> manager;
+  //private PaperCommandManager<CommandSender> manager;
   private final HashMap<Player, Odometer> odometer = new HashMap<>();
 
   public void setManager(PaperCommandManager<CommandSender> manager) {
-    this.manager = manager;
+    //this.manager = manager;
   }
 
   private String formatString(String message, String... items) {
-    message = ChatColor.GREEN+message.replace("%s", ChatColor.YELLOW+""+ChatColor.GREEN);
+    message = "§a" + message.replace("%s", "§e%s§a");
     return String.format(message, (Object[]) items);
   }
 

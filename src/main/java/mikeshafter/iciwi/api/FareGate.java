@@ -5,12 +5,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import mikeshafter.iciwi.util.IciwiUtil;
+
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.block.sign.SignSide;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 
 public abstract class FareGate implements Listener {
@@ -59,13 +61,13 @@ public abstract class FareGate implements Listener {
 		Location clickedLocation = block.getLocation();
 		clickedLocation.add(this.locationOffset);
 		BlockState signState = clickedLocation.getBlock().getState();
-		if (signState instanceof Sign sign && parseComponent(sign.line(0)).contains(signLine0)) {
-			String[] signText = new String[4];
-			signText[0] = parseComponent(sign.line(0));
-			signText[1] = parseComponent(sign.line(1));
-			signText[2] = parseComponent(sign.line(2));
-			signText[3] = parseComponent(sign.line(3));
-			onInteract(event.getPlayer(), event.getItem(), signText, sign);
+		if (signState instanceof Sign sign){
+			SignSide side = IciwiUtil.getClickedSide(sign, event.getPlayer());
+			if (side.getLine(0).contains(signLine0)){
+				String[] signText = new String[4];
+		   	for (int i = 0; i < 4; i++) signText[i] = side.getLine(i);
+		   	onInteract(event.getPlayer(), event.getItem(), signText, sign);
+			}
 		}
 	}
 

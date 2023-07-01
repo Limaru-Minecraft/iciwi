@@ -18,7 +18,6 @@ import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -52,14 +51,14 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   @Override
   public void onDisable() {
     records.save();
-    getServer().getLogger().info(ChatColor.AQUA+"Iciwi: Made by Mineshafter61. Thanks for using!");
+    getServer().getLogger().info("§aIciwi: Made by Mineshafter61. Thanks for using!");
   }
 
   @Override
   public void onEnable() {
     // === Economy ===
     boolean eco = setupEconomy();
-    if (eco) getServer().getLogger().info(ChatColor.AQUA+"Iciwi has detected an Economy!");
+    if (eco) getServer().getLogger().info("§aIciwi has detected an Economy!");
 
     // === Load config files ===
     lang = new Lang(this);
@@ -108,7 +107,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
 
-    getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
+    getServer().getLogger().info("§bIciwi Plugin has been enabled!");
   }
 
 
