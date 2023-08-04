@@ -205,7 +205,7 @@ public class Owners extends CustomConfig {
    */
   public void setCoffers(String operator, double amt) {
     super.set("Coffers."+operator, amt);
-    save();
+    super.save();
   }
 
   /**

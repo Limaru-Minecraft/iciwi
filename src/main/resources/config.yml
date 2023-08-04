@@ -22,7 +22,7 @@ max-transfer-time: 300000
 # time to wait until a fare gate closes, in ticks
 gate-close-delay: 100
 
-# global operator name (if GLOBAL is selected above)
+# global operator name
 global-operator: ExampleOperator
 
 # default train class
@@ -43,3 +43,9 @@ card:
 ticket:
   material: PAPER
   custom-model-data: 0
+
+# usage passwords
+a: password
+b: password
+c: password
+d: password

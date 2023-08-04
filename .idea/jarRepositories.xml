@@ -106,5 +106,10 @@
       <option name="name" value="maven4" />
       <option name="url" value="https://oss.sonatype.org/content/groups/public/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven5" />
+      <option name="name" value="maven5" />
+      <option name="url" value="https://repo.mrivanplays.com/repository/maven-all/" />
+    </remote-repository>
   </component>
 </project>

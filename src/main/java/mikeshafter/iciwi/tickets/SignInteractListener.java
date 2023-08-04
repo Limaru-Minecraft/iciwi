@@ -73,29 +73,25 @@ public class SignInteractListener implements Listener {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       Player player = event.getPlayer();
       SignSide side = IciwiUtil.getClickedSide(sign, player);
-      String signLine0 = side.getLine(0);
-      final String station = side.getLine(1).replaceAll("\\s+", "");
+      String signLine0 = IciwiUtil.stripColor(side.getLine(0));
+      final String station = IciwiUtil.stripColor(side.getLine(1)).replaceAll("\\s+", "");
 
       // === Normal ticket machine ===
-      if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]"))
-      {
-
+      if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]")) {
         final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
       }
 
       // === Rail pass machine ===
-      else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]"))
-      {
+      else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
         final RailPassMachine machine = new RailPassMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
       }
 
       // === Custom machine ===
-      else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]"))
-      {
+      else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
         CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }

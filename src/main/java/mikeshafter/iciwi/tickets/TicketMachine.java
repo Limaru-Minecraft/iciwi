@@ -157,7 +157,7 @@ public class TicketMachine implements Machine {
               // Generate card
               cardSql.newCard(serial, value);
               player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"),
-                  lang.getComponent("serial-number"), Component.text(serial)));
+                  Component.text(plugin.getName()), Component.text(serial)));
 
               // Send confirmation message
               player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
@@ -312,7 +312,7 @@ public class TicketMachine implements Machine {
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
     for (ItemStack itemStack : player.getInventory().getContents()) {
       // check if the lore matches
-      if (loreCheck(itemStack) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0).equals(lang.getComponent("serial-number")) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
+      if (loreCheck(itemStack) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
 
         // return remaining value to the player
         double remainingValue = this.cardSql.getCardValue(serial);

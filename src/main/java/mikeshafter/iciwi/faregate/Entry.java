@@ -17,6 +17,7 @@ public class Entry extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
+private Runnable[] gateClosers;
 
 	public Entry() {
 		super("");
@@ -45,14 +46,14 @@ private final Lang lang = plugin.lang;
 				if (plugin.getConfig().getBoolean("open-on-penalty")) {
 					Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 					player.sendMessage(lang.getString("fare-evade"));
-				} else return;
+				}
 			}
 
 			// Entry
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				CardUtil.openGate(signText[0], signText, sign);
+				CardUtil.openGate(lang.getString("entry"), signText, sign);
 			}
 
 			else {
@@ -69,12 +70,14 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
+			if (CardUtil.entry(player, icCard, station)) gateClosers = CardUtil.openGate(lang.getString("entry"), signText, sign);
 
 		}
 	}
 
 	@Override public void onPlayerInFareGate (int x, int y, int z) {
-
+		for (Runnable runnable : gateClosers) {
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, runnable, 5);
+		}
 	}
 }

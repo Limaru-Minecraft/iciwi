@@ -39,7 +39,7 @@ public class IciwiUtil {
   public static SignSide getClickedSide(Sign sign, Player player) {
     if (player == null) return sign.getSide(Side.FRONT);
 
-    float yaw = player.getLocation().getYaw();
+    float yaw = player.getLocation().getYaw() + 180;
     int x = 0, z = 0;
     if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
       x = w.getFacing().getDirection().getBlockX();
@@ -48,10 +48,20 @@ public class IciwiUtil {
       x = s.getRotation().getDirection().getBlockX();
       z = s.getRotation().getDirection().getBlockZ();
     }
-    double signRot = -57.29577951308232 * Math.atan2(z, x) + 450;
-    while (signRot > 360) signRot -= 360;
-    return Math.abs(signRot - yaw) > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
+    // yaw: E = -90, S = 0, W = +90, N = ±180
+    // signRot: E = 0, S = +90, W = ±180, N = -90
+    // -1: E = 0, S = -90, W = ±180, N = +90
+    // +90: E = 90, S = 0, W = +270, N = ±180
+    double signRot = 57.29577951308232 * Math.atan2(z, x) + 90;
+    double diff = Math.abs(signRot - yaw) % 360;
+    diff = 360 - diff < diff ? 360 - diff : diff;
+    // player.sendMessage(String.valueOf(yaw));  // todo: debug
+    // player.sendMessage(String.valueOf(signRot));  // todo: debug
+    // player.sendMessage(String.valueOf(diff));  // todo: debug
+    // player.sendMessage(diff > 90 ? "front" : "back");  // todo: debug
+    return diff > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
   }
+
 
   /**
    * Strips the given message of all color codes

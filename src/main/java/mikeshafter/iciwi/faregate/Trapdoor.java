@@ -2,10 +2,8 @@ package mikeshafter.iciwi.faregate;
 
 import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
-
 import java.util.List;
 import java.util.Objects;
-
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -48,14 +46,14 @@ private final Lang lang = plugin.lang;
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				CardUtil.openGate(signText[0], signText, sign);
+				CardUtil.openGate(lang.getString("faregate"), signText, sign);
 			}
 
 			// Entry
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				CardUtil.openGate(signText[0], signText, sign);
+				CardUtil.openGate(lang.getString("faregate"), signText, sign);
 			}
 
 			else {
@@ -80,7 +78,7 @@ private final Lang lang = plugin.lang;
 			else CardUtil.exit(player, icCard, station);
 
 			// Open the fare gate in both cases
-			CardUtil.openGate(signText[0], signText, sign);
+			CardUtil.openGate(lang.getString("faregate"), signText, sign);
 		}
 	}
 

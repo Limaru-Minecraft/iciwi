@@ -5,10 +5,7 @@ import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import mikeshafter.iciwi.util.FareGateBlock;
 import org.bukkit.Material;
@@ -31,6 +28,19 @@ public class CardUtil {
   private static final Owners owners = new Owners();
   private static final CardSql cardSql = new CardSql();
 
+  private static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
+
+
+  /**
+   * Prevent code from registering multiple accidental clicks
+   * @param player Player who clicked
+   * @return true if the player has clicked within the last 10 ticks, false otherwise
+   */
+  private static boolean onClick (Player player) {
+    plugin.getServer().getScheduler().runTaskLater(plugin, () -> clickBuffer.remove(player), 10);
+    return !clickBuffer.add(player);
+  }
+
 
   /**
    * Register entry from a card
@@ -40,14 +50,22 @@ public class CardUtil {
    * @return Whether entry was successful. If false, do not open the fare gate.
    */
   protected static boolean entry(Player player, IcCard icCard, String entryStation) {
+    if (onClick(player)) return false;
+
     double value = icCard.getValue();
     String serial = icCard.getSerial();
 
+    // don't parse if there is no serial
+    if (serial == null || serial.equals("") || serial.isBlank()) return false;
+
     // reject entry if card has less than the minimum value
-    if (value < plugin.getConfig().getDouble("min-amount")) return false;
+    if (value < plugin.getConfig().getDouble("min-amount")) {
+      // TODO: low amount message
+      return false;
+    }
 
     // was the card already used to enter the network?
-    if (records.getString("station."+serial) == null) {
+    if (records.getStation(serial) != null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -55,14 +73,11 @@ public class CardUtil {
       } else return false;
     }
 
-    // write the entry station to records
-    records.set("station." + serial, entryStation);
+    // write the entry station
+    records.setStation(serial, entryStation);
 
-    // check whether the player tapped out and in within the time limit
-    if (System.currentTimeMillis() - records.getLong("timestamp." + serial) < plugin.getConfig().getLong("max-transfer-time"))
-      records.set("has-transfer." + serial, true);
-    else
-      records.set("has-transfer." + serial, false);
+    // player has a transfer discount when they tap out and in within the time limit
+    records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
@@ -78,13 +93,19 @@ public class CardUtil {
   * @return Whether exit was successful. If false, do not open the fare gate.
   */
   protected static boolean exit(Player player, IcCard icCard, String exitStation) {
+    if (onClick(player)) return false;
+
     String serial = icCard.getSerial();
-    String entryStation = records.getString("entry-station."+serial);
+
+    // don't parse if there is no serial
+    if (serial == null || serial.equals("") || serial.isBlank()) return false;
+
+    String entryStation = records.getStation(serial);
     double value = icCard.getValue();
     double fare = fares.getFare(entryStation, exitStation, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
 
     // is the card already in the network?
-    if (records.getString("station."+serial) == null) {
+    if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -93,11 +114,11 @@ public class CardUtil {
     }
 
     // If an OSI is applicable, use the fare from the first entry station until the exit station
-    if (records.getBoolean("has-transfer."+serial)) {
+    if (records.getTransfer(serial)) {
       // fare if the player did not tap out
-      double longFare = fares.getFare(records.getString("previous-entry-station."+serial), exitStation);
+      double longFare = fares.getFare(records.getPreviousStation(serial), exitStation);
       // the previous charged fare
-      double previousFare = records.getDouble("current-fare."+serial);
+      double previousFare = records.getCurrentFare(serial);
       // if the difference between the fares is less than the current fare, change the fare to that difference.
       if (longFare-previousFare < fare) fare = longFare-previousFare;
     }
@@ -129,11 +150,12 @@ public class CardUtil {
     icCard.withdraw(fare);
 
     // set details for future transfer
-    records.set("timestamp."+serial, System.currentTimeMillis());
-    records.set("previous-entry-station."+serial, entryStation);
-    records.set("entry-station."+serial, null);
-    records.set("current-fare."+serial, fare);
+    records.setTimestamp(serial, System.currentTimeMillis());
+    records.setPreviousStation(serial, entryStation);
+    records.setStation(serial, null);
+    records.setCurrentFare(serial, fare);
 
+    player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value));
     return true;
   }
 
@@ -146,6 +168,8 @@ public class CardUtil {
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
   protected static boolean member(Player player, IcCard icCard, String station) {
+    if (onClick(player)) return false;
+
     // Get the serial number of the card
     String serial = icCard.getSerial();
 
@@ -176,22 +200,24 @@ public class CardUtil {
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
   protected static boolean transfer(Player player, IcCard icCard, String station) {
+    if (onClick(player)) return false;
+
     String serial = icCard.getSerial();
 
     // If an OSI was detected, cancel OSI capability
-    if (records.getBoolean("has-transfer." + serial)) {
-      records.set("has-transfer." + serial, false);
+    if (records.getTransfer(serial)) {
+      records.setTransfer(serial, false);
       player.sendMessage(lang.getString("transfer-cancel-osi"));
       return true;
     }
 
     // Else perform normal exit, then entry sequence
-    String entryStation = records.getString("entry-station."+serial);
+    String entryStation = records.getStation(serial);
     double value = icCard.getValue();
     double fare = fares.getFare(entryStation, station, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
 
     // is the card already in the network?
-    if (records.getString("station."+serial) == null) {
+    if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -226,17 +252,17 @@ public class CardUtil {
     icCard.withdraw(fare);
 
     // set details for future transfer
-    records.set("timestamp."+serial, System.currentTimeMillis());
-    records.set("previous-entry-station."+serial, entryStation);
-    records.set("entry-station."+serial, null);
-    records.set("current-fare."+serial, fare);
+    records.setTimestamp(serial, System.currentTimeMillis());
+    records.setPreviousStation(serial, entryStation);
+    records.setStation(serial, null);
+    records.setCurrentFare(serial, fare);
 
     // Perform entry sequence
     // reject entry if card has less than the minimum value
     if (value < plugin.getConfig().getDouble("min-amount")) return false;
 
     // was the card already used to enter the network?
-    if (records.getString("station."+serial) == null) {
+    if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -244,27 +270,25 @@ public class CardUtil {
       } else return false;
     }
 
-    // write the entry station to records
-    records.set("station." + serial, entryStation);
+    // write the entry station
+    records.setStation(serial, entryStation);
 
-    // check whether the player tapped out and in within the time limit
-    if (System.currentTimeMillis() - records.getLong("timestamp." + serial) < plugin.getConfig().getLong("max-transfer-time"))
-      records.set("has-transfer." + serial, true);
-    else
-      records.set("has-transfer." + serial, false);
+    // player has a transfer discount when they tap out and in within the time limit
+    records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
     // confirmation
-    player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
+    player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
     return true;
   }
 
 
   /**
    * Opens a fare gate
+   * @param signAction Main action of the sign, without any flags
    * @param signText Text on the sign for quick accessing
    * @param sign The sign itself
    */
-  protected static void openGate(String signAction, String[] signText, Sign sign) {
+  protected static Runnable[] openGate(String signAction, String[] signText, Sign sign) {
     String signLine0 = signText[0];
 
     // Get the sign's direction and reference block
@@ -277,8 +301,8 @@ public class CardUtil {
     else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) signFacing = s.getRotation();
     signFacing = toCartesian(signFacing);
 
-    // Get the fare gate flags
-    String args = signLine0.substring(signAction.length() + 1, signLine0.length() - 1);
+    // Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string. 
+    String args = signAction.length() == signLine0.length() ? "" : signLine0.substring(signAction.length());
 
     int flags = 0;
     flags |= args.contains("V") ? 1	: 0;	// Validator
@@ -292,19 +316,19 @@ public class CardUtil {
     // Get the relative position(s) of the fare gate block(s).
     Vector[] relativePositions = toPos(signFacing, flags);
 
+    // Gate close functions
+    Runnable[] closeGate = new Runnable[relativePositions.length];
+
     // Get the absolute position(s) of the fare gate block(s) (reference block location + relative block vector).
     for (int i = 0; i < relativePositions.length && i < 2; i++) {
       Block currentBlock = referenceBlock.getLocation().clone().add(relativePositions[i]).getBlock();
-
-      // Gate close function
-      Runnable closeGate;
 
       // If openable, open it!
       if (currentBlock.getBlockData() instanceof Openable openable) {
         openable.setOpen(true);
         currentBlock.setBlockData(openable);
 
-        closeGate = () -> {
+        closeGate[i] = () -> {
           openable.setOpen(false);
           currentBlock.setBlockData(openable);
         };
@@ -316,11 +340,10 @@ public class CardUtil {
         powerable.setPowered(true);
         currentBlock.setBlockData(powerable);
 
-        closeGate = () -> {
+        closeGate[i] = () -> {
           powerable.setPowered(false);
           currentBlock.setBlockData(powerable);
         };
-
       }
 
       // If glass pane, create a FareGateBlock object and open
@@ -329,8 +352,7 @@ public class CardUtil {
         FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
         fgBlock.openGate();
 
-        closeGate = fgBlock::closeGate;
-
+        closeGate[i] = fgBlock::closeGate;
       }
 
       // Otherwise, set to air
@@ -338,15 +360,14 @@ public class CardUtil {
         var data = currentBlock.getBlockData();
         currentBlock.setType(Material.AIR);
 
-        closeGate = () -> currentBlock.setBlockData(data);
+        closeGate[i] = () -> currentBlock.setBlockData(data);
       }
 
-      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, closeGate, plugin.getConfig().getLong("gate-close-delay"));
-
+      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, closeGate[i], plugin.getConfig().getLong("gate-close-delay"));
     }
+    return closeGate;
   }
 
-// TESTABLE BEGIN
 
   private static BlockFace toFace(Vector vector) {
     if (Objects.equals(vector, BlockFace.EAST.getDirection()) ) return BlockFace.EAST;
@@ -418,7 +439,5 @@ public class CardUtil {
     // return
     return v;
   }
-
-// TESTABLE END
 
 }

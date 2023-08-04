@@ -17,6 +17,7 @@ public class Exit extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
+private Runnable[] gateClosers;
 
 	public Exit() {
 		super("");
@@ -30,7 +31,7 @@ private final Lang lang = plugin.lang;
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-			List<String> lore		= IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+			List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 			boolean entryPunched = lore.get(0).contains("•");
 			boolean exitPunched	= lore.get(1).contains("•");
 
@@ -43,7 +44,7 @@ private final Lang lang = plugin.lang;
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				CardUtil.openGate(signText[0], signText, sign);
+				CardUtil.openGate(lang.getString("exit"), signText, sign);
 			}
 
 			// Ticket not used
@@ -65,12 +66,14 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
+			if (CardUtil.exit(player, icCard, station)) gateClosers = CardUtil.openGate(lang.getString("exit"), signText, sign);
 
 		}
 	}
 	@Override public void onPlayerInFareGate (int x, int y, int z) {
-
+		for (Runnable runnable : gateClosers) {
+			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, runnable, 5);
+		}
 	}
 
 }

@@ -29,7 +29,6 @@ private final Lang lang = plugin.lang;
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
 			// FUTURE: Paper rail passes
-			return;
 		}
 
 		// Card
@@ -40,7 +39,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
+			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(lang.getString("Member"), signText, sign);
 
 		}
 	}

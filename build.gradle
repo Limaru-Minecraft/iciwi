@@ -25,9 +25,6 @@ java {
 }
 
 dependencies {
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
-  testCompileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
-
   compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
   compileOnly 'me.lokka30:treasury-api:1.2.1'

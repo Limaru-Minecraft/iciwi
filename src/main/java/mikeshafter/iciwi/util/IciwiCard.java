@@ -12,7 +12,18 @@ public class IciwiCard implements IcCard {
   private final String serial;
   
   public IciwiCard (ItemStack item) {
-    serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+    this.serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+    System.out.println("Iciwi card created with serial: " + this.serial);  // TODO: debug
+  }
+
+  /**
+   * Gets the serial number of the card
+   * NOTE: Iciwi-compatible plugins' cards must state their plugin name in lore[0]
+   * @return Serial number
+   */
+  @Override
+  public String getSerial() {
+    return this.serial;
   }
 
   /**

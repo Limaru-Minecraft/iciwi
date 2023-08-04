@@ -29,15 +29,16 @@ public abstract class ClosableFareGate extends FareGate {
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
-		Player player = event.getPlayer();
-		Location location = player.getLocation();
-		int x = this.gateLocation.getBlockX();
-		int y = this.gateLocation.getBlockY();
-		int z = this.gateLocation.getBlockZ();
-		if (location.getBlockX() == x
-		&&	location.getBlockY() == y
-		&&	location.getBlockZ() == z) {
-			onPlayerInFareGate(x, y, z);
+		if (this.gateLocation != null) {
+			Location location = event.getPlayer().getLocation();
+			int x = this.gateLocation.getBlockX();
+			int y = this.gateLocation.getBlockY();
+			int z = this.gateLocation.getBlockZ();
+			if (location.getBlockX() == x
+			&&	location.getBlockY() == y
+			&&	location.getBlockZ() == z) {
+				onPlayerInFareGate(x, y, z);
+			}
 		}
 	}
 

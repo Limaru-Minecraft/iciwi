@@ -27,8 +27,8 @@ private final Lang lang = plugin.lang;
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-			// Paper tickets cannot be used for transfers
-			return;
+			// Tickets are not valid at transfer signs
+			player.sendMessage(lang.getString("tickets-not-valid"));
 		}
 
 		// Card
@@ -39,7 +39,7 @@ private final Lang lang = plugin.lang;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(signText[0], signText, sign);
+			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(lang.getString("transfer"), signText, sign);
 
 		}
 	}
