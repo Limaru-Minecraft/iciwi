@@ -55,7 +55,7 @@ public class SignInteractListener implements Listener {
         // get clicked item
         final Clickable clickedItem = machine.getClickables()[clickedSlot];
         // compare items and run
-        if (clickedItem.getItem().equals(contents[clickedSlot]))
+        if (clickedItem != null && clickedItem.getItem().equals(contents[clickedSlot]))
           clickedItem.run(event);
         // don't need to test for more
         return;

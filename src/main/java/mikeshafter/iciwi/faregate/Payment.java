@@ -13,10 +13,10 @@ import org.bukkit.inventory.ItemStack;
 public class Payment extends FareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = plugin.lang;
+	private final Lang lang = new Lang();
 
 	public Payment() {
-		super("");
+		super();
 		super.setSignLine0(lang.getString("payment"));
 	}
 

@@ -4,10 +4,9 @@ import mikeshafter.iciwi.config.*;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
-
 import java.util.*;
-
 import mikeshafter.iciwi.util.FareGateBlock;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -24,7 +23,6 @@ public class CardUtil {
   private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private static final Records records = new Records();
   private static final Lang lang = new Lang();
-  private static final Fares fares = new Fares();
   private static final Owners owners = new Owners();
   private static final CardSql cardSql = new CardSql();
 
@@ -95,6 +93,7 @@ public class CardUtil {
   protected static boolean exit(Player player, IcCard icCard, String exitStation) {
     if (onClick(player)) return false;
 
+	Fares fares = new Fares();
     String serial = icCard.getSerial();
 
     // don't parse if there is no serial
@@ -202,6 +201,7 @@ public class CardUtil {
   protected static boolean transfer(Player player, IcCard icCard, String station) {
     if (onClick(player)) return false;
 
+	Fares fares = new Fares();
     String serial = icCard.getSerial();
 
     // If an OSI was detected, cancel OSI capability
@@ -287,8 +287,9 @@ public class CardUtil {
    * @param signAction Main action of the sign, without any flags
    * @param signText Text on the sign for quick accessing
    * @param sign The sign itself
+   * @return the Location and Runnable to close the fare gate
    */
-  protected static Runnable[] openGate(String signAction, String[] signText, Sign sign) {
+  protected static Object[] openGate (String signAction, String[] signText, Sign sign) {
     String signLine0 = signText[0];
 
     // Get the sign's direction and reference block
@@ -317,18 +318,19 @@ public class CardUtil {
     Vector[] relativePositions = toPos(signFacing, flags);
 
     // Gate close functions
-    Runnable[] closeGate = new Runnable[relativePositions.length];
+    Object[] closeGate = {new Location[relativePositions.length], new Runnable[relativePositions.length]};
 
     // Get the absolute position(s) of the fare gate block(s) (reference block location + relative block vector).
     for (int i = 0; i < relativePositions.length && i < 2; i++) {
-      Block currentBlock = referenceBlock.getLocation().clone().add(relativePositions[i]).getBlock();
+      ((Location[]) closeGate[0])[i] = referenceBlock.getLocation().clone().add(relativePositions[i]);
+      Block currentBlock = ((Location[]) closeGate[0])[i].getBlock();
 
       // If openable, open it!
       if (currentBlock.getBlockData() instanceof Openable openable) {
         openable.setOpen(true);
         currentBlock.setBlockData(openable);
 
-        closeGate[i] = () -> {
+        ((Runnable[]) closeGate[1])[i] = () -> {
           openable.setOpen(false);
           currentBlock.setBlockData(openable);
         };
@@ -340,7 +342,7 @@ public class CardUtil {
         powerable.setPowered(true);
         currentBlock.setBlockData(powerable);
 
-        closeGate[i] = () -> {
+        ((Runnable[]) closeGate[1])[i] = () -> {
           powerable.setPowered(false);
           currentBlock.setBlockData(powerable);
         };
@@ -352,7 +354,7 @@ public class CardUtil {
         FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
         fgBlock.openGate();
 
-        closeGate[i] = fgBlock::closeGate;
+        ((Runnable[]) closeGate[1])[i] = fgBlock::closeGate;
       }
 
       // Otherwise, set to air
@@ -360,10 +362,10 @@ public class CardUtil {
         var data = currentBlock.getBlockData();
         currentBlock.setType(Material.AIR);
 
-        closeGate[i] = () -> currentBlock.setBlockData(data);
+        ((Runnable[]) closeGate[1])[i] = () -> currentBlock.setBlockData(data);
       }
 
-      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, closeGate[i], plugin.getConfig().getLong("gate-close-delay"));
+      plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, ((Runnable[]) closeGate[1])[i], plugin.getConfig().getLong("gate-close-delay"));
     }
     return closeGate;
   }

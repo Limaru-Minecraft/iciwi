@@ -50,7 +50,6 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
   @Override
   public void onDisable() {
-    records.save();
     getServer().getLogger().info("\u00A7aIciwi: Made by Mineshafter61. Thanks for using!");
   }
 

@@ -22,23 +22,19 @@ public abstract class FareGate implements Listener {
 
 	/**
 	 * Creates a new fare gate at the sign's location.
-	 * @param signLine0 First line (preferably without "[]")
 	 */
-	public FareGate (String signLine0) {
-		this.signLine0 = signLine0;
+	public FareGate () {
 	}
 
 	/**
 	 * Creates a new fare gate with an offset from the sign's location.
-	 * @param signLine0 First line (preferably without "[]")
 	 * @param locationOffset Default offset sign location
 	 */
-	public FareGate(String signLine0, Vector locationOffset) {
-		this.signLine0 = signLine0;
+	public FareGate(Vector locationOffset) {
 		this.locationOffset = locationOffset;
 	}
 
-	/**
+  /**
 	 * Gets the first line to be used in the sign
 	 * @return first line in sign
 	 */

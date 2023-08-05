@@ -15,12 +15,11 @@ import java.util.Objects;
 
 public class Exit extends ClosableFareGate {
 
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = plugin.lang;
-private Runnable[] gateClosers;
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Lang lang = new Lang();
 
 	public Exit() {
-		super("");
+		super();
 		super.setSignLine0(lang.getString("exit"));
 	}
 
@@ -66,13 +65,8 @@ private Runnable[] gateClosers;
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.exit(player, icCard, station)) gateClosers = CardUtil.openGate(lang.getString("exit"), signText, sign);
+			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(lang.getString("exit"), signText, sign);
 
-		}
-	}
-	@Override public void onPlayerInFareGate (int x, int y, int z) {
-		for (Runnable runnable : gateClosers) {
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, runnable, 5);
 		}
 	}
 

@@ -16,10 +16,10 @@ import java.util.Objects;
 public class Validator extends FareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = plugin.lang;
+	private final Lang lang = new Lang(); 
 
 	public Validator() {
-		super("");
+		super();
 		super.setSignLine0(lang.getString("validator"));
 	}
 
@@ -66,10 +66,10 @@ public class Validator extends FareGate {
 
 			// Vital information
 			String serial = icCard.getSerial();
-			Records records = plugin.records;
+			Records records = new Records();
 
 			// Determine entry or exit
-			if (records.getString("station."+serial) == null) CardUtil.entry(player, icCard, station);
+			if (records.getStation(serial) == null) CardUtil.entry(player, icCard, station);
 			else CardUtil.exit(player, icCard, station);
 		}
 	}

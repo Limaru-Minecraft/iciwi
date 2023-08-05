@@ -13,7 +13,6 @@ public class IciwiCard implements IcCard {
   
   public IciwiCard (ItemStack item) {
     this.serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-    System.out.println("Iciwi card created with serial: " + this.serial);  // TODO: debug
   }
 
   /**

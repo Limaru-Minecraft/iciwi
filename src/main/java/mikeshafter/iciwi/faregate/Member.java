@@ -13,11 +13,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class Member extends ClosableFareGate {
 
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = plugin.lang;
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Lang lang = new Lang();
 
 	public Member() {
-		super("");
+		super();
 		super.setSignLine0(lang.getString("member"));
 	}
 
@@ -44,6 +44,4 @@ private final Lang lang = plugin.lang;
 		}
 	}
 
-	@Override public void onPlayerInFareGate (int x, int y, int z) {
-	}
 }

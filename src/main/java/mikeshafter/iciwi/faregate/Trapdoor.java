@@ -15,11 +15,11 @@ import mikeshafter.iciwi.util.IciwiUtil;
 
 public class Trapdoor extends ClosableFareGate {
 
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = plugin.lang;
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Lang lang = new Lang();
 
 	public Trapdoor() {
-		super("", new Vector(0, -2, 0));
+		super(new Vector(0, -2, 0));
 		super.setSignLine0(lang.getString("faregate"));
 	}
 
@@ -46,14 +46,14 @@ private final Lang lang = plugin.lang;
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				CardUtil.openGate(lang.getString("faregate"), signText, sign);
+				super.setGateCloseMap(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
 
 			// Entry
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				CardUtil.openGate(lang.getString("faregate"), signText, sign);
+				super.setGateCloseMap(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
 
 			else {
@@ -71,10 +71,10 @@ private final Lang lang = plugin.lang;
 
 			// Vital information
 			String serial = icCard.getSerial();
-			Records records = plugin.records;
+			Records records = new Records();
 
 			// Determine entry or exit
-			if (records.getString("station."+serial) == null) CardUtil.entry(player, icCard, station);
+			if (records.getStation(serial) == null) CardUtil.entry(player, icCard, station);
 			else CardUtil.exit(player, icCard, station);
 
 			// Open the fare gate in both cases
@@ -82,7 +82,4 @@ private final Lang lang = plugin.lang;
 		}
 	}
 
-	@Override public void onPlayerInFareGate (int x, int y, int z) {
-
-	}
 }

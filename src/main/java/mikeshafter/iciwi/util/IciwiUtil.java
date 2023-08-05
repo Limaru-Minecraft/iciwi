@@ -34,7 +34,7 @@ public class IciwiUtil {
    * Get the side of the sign that was clicked.
    * @param sign Sign to get the side of
    * @param player The player who clicked the sign
-   * @return
+   * @return the side of the sign that was clicked.
    */
   public static SignSide getClickedSide(Sign sign, Player player) {
     if (player == null) return sign.getSide(Side.FRONT);
@@ -54,11 +54,7 @@ public class IciwiUtil {
     // +90: E = 90, S = 0, W = +270, N = ±180
     double signRot = 57.29577951308232 * Math.atan2(z, x) + 90;
     double diff = Math.abs(signRot - yaw) % 360;
-    diff = 360 - diff < diff ? 360 - diff : diff;
-    // player.sendMessage(String.valueOf(yaw));  // todo: debug
-    // player.sendMessage(String.valueOf(signRot));  // todo: debug
-    // player.sendMessage(String.valueOf(diff));  // todo: debug
-    // player.sendMessage(diff > 90 ? "front" : "back");  // todo: debug
+    diff = Math.min(360 - diff, diff);
     return diff > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
   }
 
