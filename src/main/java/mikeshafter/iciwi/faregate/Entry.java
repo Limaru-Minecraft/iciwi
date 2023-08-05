@@ -52,7 +52,7 @@ public class Entry extends ClosableFareGate {
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				CardUtil.openGate(lang.getString("entry"), signText, sign);
+				super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
 			}
 
 			else {
@@ -69,7 +69,7 @@ public class Entry extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) CardUtil.openGate(lang.getString("entry"), signText, sign);
+			if (CardUtil.entry(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
 
 		}
 	}

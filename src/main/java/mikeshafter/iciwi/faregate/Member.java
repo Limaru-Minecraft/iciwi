@@ -39,7 +39,7 @@ public class Member extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station)) CardUtil.openGate(lang.getString("Member"), signText, sign);
+			if (CardUtil.member(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
 
 		}
 	}

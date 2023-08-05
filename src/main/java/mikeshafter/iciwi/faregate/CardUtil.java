@@ -154,7 +154,8 @@ public class CardUtil {
     records.setStation(serial, null);
     records.setCurrentFare(serial, fare);
 
-    player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value));
+    // send (value - fare) as the value variable is not updated
+    player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
     return true;
   }
 
@@ -302,7 +303,7 @@ public class CardUtil {
     else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) signFacing = s.getRotation();
     signFacing = toCartesian(signFacing);
 
-    // Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string. 
+    // Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string.
     String args = signAction.length() == signLine0.length() ? "" : signLine0.substring(signAction.length());
 
     int flags = 0;

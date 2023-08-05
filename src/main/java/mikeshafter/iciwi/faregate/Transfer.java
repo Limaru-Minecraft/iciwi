@@ -38,10 +38,8 @@ public class Transfer extends ClosableFareGate {
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
 			if (icCard == null) return;
 
-			// Call entry, and if successful, open fare gate
-			if (CardUtil.transfer(player, icCard, station)) CardUtil.openGate(lang.getString("transfer"), signText, sign);
-
+			// Call transfer, and if successful, open fare gate
+			if (CardUtil.transfer(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
 		}
 	}
-
 }

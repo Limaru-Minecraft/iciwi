@@ -46,14 +46,14 @@ public class Trapdoor extends ClosableFareGate {
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				super.setGateCloseMap(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+				super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
 
 			// Entry
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
-				super.setGateCloseMap(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+				super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
 
 			else {
@@ -78,7 +78,7 @@ public class Trapdoor extends ClosableFareGate {
 			else CardUtil.exit(player, icCard, station);
 
 			// Open the fare gate in both cases
-			CardUtil.openGate(lang.getString("faregate"), signText, sign);
+			super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 		}
 	}
 

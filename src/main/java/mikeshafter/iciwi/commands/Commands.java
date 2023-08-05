@@ -117,11 +117,22 @@ public class Commands {
   @CommandDescription("Sets the duration whereby fare gates open.")
   @CommandPermission("iciwi.gateclosedelay")
   public void gateclosedelay(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Integer amount)
+    final @NonNull @Argument("amount") Long amount)
   {
     plugin.getConfig().set("gate-close-delay", amount);
     plugin.saveConfig();
     sender.sendMessage("Set the duration whereby fare gates open.");
+  }
+
+  @CommandMethod("iciwi closeafterpass <amount>")
+  @CommandDescription("Sets the duration for which the gates are still open after a player walks through.")
+  @CommandPermission("iciwi.closeafterpass")
+  public void closeafterpass(final @NonNull CommandSender sender,
+    final @NonNull @Argument("amount") Long amount)
+  {
+    plugin.getConfig().set("close-after-pass", amount);
+    plugin.saveConfig();
+    sender.sendMessage("Set the duration for which the gates are still open after a player walks through.");
   }
 
   @CommandMethod("iciwi defaultfareClass <fareClassname>")

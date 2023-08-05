@@ -43,7 +43,7 @@ public class Exit extends ClosableFareGate {
 			else if (entryPunched && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
-				CardUtil.openGate(lang.getString("exit"), signText, sign);
+				super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
 			}
 
 			// Ticket not used
@@ -65,7 +65,7 @@ public class Exit extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.exit(player, icCard, station)) CardUtil.openGate(lang.getString("exit"), signText, sign);
+			if (CardUtil.exit(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
 
 		}
 	}

@@ -22,6 +22,9 @@ max-transfer-time: 300000
 # time to wait until a fare gate closes, in ticks
 gate-close-delay: 100
 
+# time to wait until a fare gate closes after a player walks through, in ticks
+close-after-pass: 5
+
 # global operator name
 global-operator: ExampleOperator
 
