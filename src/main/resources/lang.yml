@@ -14,18 +14,20 @@ remaining: '§aRemaining value: §£%.2f'
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
 cannot-pass: '§cThere is a problem with your card/ticket, please approach the ticket counter.'
 value-low: '§cYour card has insufficient value! Please top up your card!'
+invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
 
 # =====================================
 # These options control the ticket machines.
 # =====================================
 # Global variables
 tickets: Tickets  # ticket machine sign text
+cards: Cards  # card vending machine sign text
 passes: Passes  # rail pass machine sign text
 custom-tickets: CustomTickets  # custom paper ticket machine sign text
 plugin-name: '§aIciwi Card'  # Default card name
 currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
-serial-prefix: 'A'  # 1 char only!
+serial-prefix: 'B'  # 1 char only!
 
 # Messages
 not-enough-money: §cYou do not have enough money!

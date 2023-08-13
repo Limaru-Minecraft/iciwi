@@ -1,4 +1,3 @@
-
 package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
@@ -18,12 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
+import java.util.*;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 
@@ -37,7 +31,7 @@ public class CustomMachine implements Machine {
   private final Owners owners = plugin.owners;
   private ItemStack[] playerInv;
   private Clickable[] clickables;
-  private Component terminal;
+  //private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
@@ -101,9 +95,9 @@ public class CustomMachine implements Machine {
     CommonUtil.nextTick(submitText::open);
   }
 
-  public void selectClass() {
+  public void selectClass(String end) {
     // End station as a String
-    String end = parseComponent(terminal);
+    //String end = parseComponent(terminal);
     // Create inventory and create clickables
     TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);
     int invSize = roundUp(fareClasses.size(), 9);
@@ -113,8 +107,11 @@ public class CustomMachine implements Machine {
     var fareIterator = fareClasses.entrySet().iterator();
 
     for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
-      var entry = fareIterator.next();
-      var item = makeItem(Material.PAPER, 0, Component.text(entry.getKey()), Component.text(entry.getValue()));
+      var fareClass = fareIterator.next();
+      // ignore card-only classes
+      if (fareClass.getKey().startsWith("_")) continue;
+      // make clickable item
+      var item = makeItem(Material.PAPER, 0, Component.text(fareClass.getKey()), Component.text(fareClass.getValue()));
       this.clickables[i] = Clickable.of(item, (event) -> {
         // generate ticket
         ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
@@ -152,7 +149,7 @@ public class CustomMachine implements Machine {
       int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
       // Generate ticket
-      return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(from), Component.text(fareClass));
+      return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
     }
 
     else {
@@ -172,9 +169,9 @@ public class CustomMachine implements Machine {
 
       if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
         inventory.close();
-        setTerminal(item.getItemMeta().displayName());
+        //setTerminal(item.getItemMeta().displayName());
         CommonUtil.unregisterListener(this);
-        selectClass();
+        selectClass(parseComponent(item.getItemMeta().displayName()));
       }
     }
   }
@@ -245,32 +242,22 @@ public class CustomMachine implements Machine {
     return 0f;
   }
 
-  public void setTerminal(Component terminal) {
-    this.terminal = terminal;
-  }
+  //public void setTerminal(Component terminal) { this.terminal = terminal; }
 
   @Override
-  public Clickable[] getClickables() {
-    return clickables;
-  }
+  public Clickable[] getClickables() { return clickables; }
 
   @Override
-  public boolean useBottomInv() {
-    return false;
-  }
+  public boolean useBottomInv() { return false; }
 
   @Override
-  public void setSelectedItem(ItemStack selectedItem) {
-  }
+  public void setSelectedItem(ItemStack selectedItem) {}
 
   @Override
-  public ItemStack getSelectedItem() {
-    return null;
-  }
+  public ItemStack getSelectedItem() { return null; }
 
   @Override
-  public void onCardSelection() {
-  }
+  public void onCardSelection() {}
 
   @Override
   public void setBottomInv(boolean b) {}

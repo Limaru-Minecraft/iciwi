@@ -25,11 +25,11 @@ gate-close-delay: 100
 # time to wait until a fare gate closes after a player walks through, in ticks
 close-after-pass: 5
 
-# global operator name
+# default operator's name
 global-operator: ExampleOperator
 
-# default train class
-default-class: Second
+# default train class. An underscore prefix makes the train class only accessible by card
+default-class: _Second
 
 # global ticket price
 global-ticket-price: 5.0

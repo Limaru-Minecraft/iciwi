@@ -83,6 +83,13 @@ public class SignInteractListener implements Listener {
         machineHashMap.put(player, machine);
       }
 
+      // === Card vending machine ===
+      if (signLine0.equalsIgnoreCase("["+lang.getString("cards")+"]")) {
+        final CardMachine machine = new CardMachine(player);
+        machine.init(station);
+        machineHashMap.put(player, machine);
+      }
+
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
         final RailPassMachine machine = new RailPassMachine(player);

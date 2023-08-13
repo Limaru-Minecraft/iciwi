@@ -2,7 +2,7 @@ package mikeshafter.iciwi.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
-
+import org.bukkit.plugin.Plugin;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,9 +11,9 @@ import java.util.*;
 
 
 public class Owners extends CustomConfig {
-  
+
   public Owners(org.bukkit.plugin.Plugin plugin) { super("owners.yml", plugin); }
-  
+
   public Owners() { super("owners.yml"); }
 
   /**
@@ -24,8 +24,9 @@ public class Owners extends CustomConfig {
   public @NotNull List<String> getOwners(String station) {
     List<String> ownersList = super.get().getStringList("Operators."+station);
     if (ownersList.size() == 0) {
-      setOwners(station, List.of("ExampleOperator"));
-      return List.of("ExampleOperator");
+      String s = super.getConfigPlugin().getConfig().getString("global-operator")
+      setOwners(station, List.of(s));
+      return List.of(s));
     }
     else return ownersList;
   }
@@ -44,7 +45,7 @@ public class Owners extends CustomConfig {
    * @param operators The TOCs
    */
   public void setOwners(String station, List<String> operators) { super.set("Operators."+station, operators); }
-  
+
   /**
    * @param station  Station to add a TOC to
    * @param operator The TOC
@@ -54,7 +55,7 @@ public class Owners extends CustomConfig {
     operators.add(operator);
     setOwners(station, operators);
   }
-  
+
   /**
    * @param station  Station to remove a TOC from
    * @param operator The TOC
@@ -64,7 +65,7 @@ public class Owners extends CustomConfig {
     operators.remove(operator);
     setOwners(station, operators);
   }
-  
+
   /**
    * @param operator TOC to search up
    * @param amt      Amount of money to give to the operator
@@ -73,7 +74,7 @@ public class Owners extends CustomConfig {
     super.set("Coffers."+operator, super.getDouble("Coffers."+operator)+amt);
     super.save();
   }
-  
+
   /**
    * @param operator TOC to search up
    * @param amt      Amount of money to remove from the operator
@@ -83,7 +84,7 @@ public class Owners extends CustomConfig {
     super.set("Coffers."+operator, super.getDouble("Coffers."+operator)-amt);
     super.save();
   }
-  
+
   /**
    * @param name       Name of the rail pass
    * @param operator   The operator who sells the rail pass
@@ -99,7 +100,7 @@ public class Owners extends CustomConfig {
     super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
-  
+
   /**
    * @param name       Name of the rail pass
    * @param operator   The operator who sells the rail pass
@@ -115,12 +116,12 @@ public class Owners extends CustomConfig {
     super.set("RailPasses."+name+"percentage", percentage);
     super.save();
   }
-  
+
   private String timeToString(long time) {
     DateFormat df = new SimpleDateFormat("dd:hh:mm:ss");
     return df.format(Date.from(Instant.ofEpochMilli(time)));
   }
-  
+
   /**
    * @param name Name of the rail pass
    * @return How long the rail pass lasts
@@ -128,7 +129,7 @@ public class Owners extends CustomConfig {
   public long getRailPassDuration(String name) {
     return timetoLong(super.getString("RailPassPrices."+name+"duration"));
   }
-  
+
   private long timetoLong(String time) {
     try {
       return new SimpleDateFormat("dd:hh:mm:ss").parse(time).getTime();
@@ -136,7 +137,7 @@ public class Owners extends CustomConfig {
       return 0L;
     }
   }
-  
+
   /**
    * Get the percentage payable of the rail pass
    * @param name Name of the rail pass
@@ -145,7 +146,7 @@ public class Owners extends CustomConfig {
   public double getRailPassPercentage(String name) {
     return super.getDouble("RailPassPrices."+name+"percentage");
   }
-  
+
   /**
    * Get the price of the rail pass
    * @param name Name of the rail pass
@@ -154,7 +155,7 @@ public class Owners extends CustomConfig {
   public double getRailPassPrice(String name) {
     return super.getDouble("RailPassPrices."+name+"price");
   }
-  
+
   /**
    * Get the operator who sells the rail pass
    * @param name Name of the rail pass
@@ -163,7 +164,7 @@ public class Owners extends CustomConfig {
   public String getRailPassOperator(String name) {
     return super.getString("RailPassPrices."+name+"operator");
   }
-  
+
   /**
    * Get the name of the rail pass that is sold by the operator
    * @param operator TOC to search up
@@ -190,7 +191,7 @@ public class Owners extends CustomConfig {
     var railPasses = this.get().getConfigurationSection("RailPasses");
     return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
   }
-  
+
   /**
    * @param operator TOC to search up
    * @return Total amount of money earned by the operator since its last /coffers empty
@@ -198,7 +199,7 @@ public class Owners extends CustomConfig {
   public double getCoffers(String operator) {
     return super.getDouble("Coffers."+operator);
   }
-  
+
   /**
    * @param operator TOC to search up
    * @param amt      Amount of money to set the operator's coffers to
@@ -225,5 +226,5 @@ public class Owners extends CustomConfig {
   public boolean getOwnership(String player, String operator) {
     return player.equalsIgnoreCase(super.getString("Aliases."+operator));
   }
-  
+
 }
