@@ -1,8 +1,5 @@
-{pkgs}: {
-  deps = [
-    pkgs.vim
-    pkgs.gradle
-    pkgs.zulu
-  ];
-}
-
+{ pkgs }: {
+    deps = [
+        pkgs.gradle
+    ];
+} 

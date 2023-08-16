@@ -12,6 +12,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import mikeshafter.iciwi.experimental.EconomyHandler;
+
 
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -139,9 +141,9 @@ public class TicketMachine implements Machine {
 
             event.setCancelled(true);
 
-            if (Iciwi.economy.getBalance(player) >= deposit + value) {
+            if (EconomyHandler.getBalance(player) >= deposit + value) {
               // Take money from player and send message
-              Iciwi.economy.withdrawPlayer(player, deposit + value);
+              EconomyHandler.withdrawPlayer(player, deposit + value);
 
               // Prepare card
               int s = new SecureRandom().nextInt(100000);
@@ -194,9 +196,9 @@ public class TicketMachine implements Machine {
                 .parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName())
                 .replaceAll("[^\\d.]", ""));
 
-            if (Iciwi.economy.getBalance(player) >= value) {
+            if (EconomyHandler.getBalance(player) >= value) {
               // Take money from player and send message
-              Iciwi.economy.withdrawPlayer(player, value);
+              EconomyHandler.withdrawPlayer(player, value);
               player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 
               // Update value in SQL
@@ -268,9 +270,9 @@ public class TicketMachine implements Machine {
             String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
             double price = this.owners.getRailPassPrice(name);
 
-            if (Iciwi.economy.getBalance(player) >= price) {
+            if (EconomyHandler.getBalance(player) >= price) {
               // take money from player
-              Iciwi.economy.withdrawPlayer(player, price);
+              EconomyHandler.withdrawPlayer(player, price);
 
               // check if the card already has the rail pass
               if (this.cardSql.getAllDiscounts(serial).containsKey(name))
@@ -316,11 +318,11 @@ public class TicketMachine implements Machine {
 
         // return remaining value to the player
         double remainingValue = this.cardSql.getCardValue(serial);
-        Iciwi.economy.depositPlayer(player, remainingValue);
+        EconomyHandler.depositPlayer(player, remainingValue);
 
         // return the deposit to the player
         double deposit = this.plugin.getConfig().getDouble("deposit");
-        Iciwi.economy.depositPlayer(player, deposit);
+        EconomyHandler.depositPlayer(player, deposit);
 
         // remove card from the inventory and from the database
         player.getInventory().remove(itemStack);
