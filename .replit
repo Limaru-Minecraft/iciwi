@@ -1,5 +1,5 @@
-compile = ""
-run = "gradle build --no-daemon"
+compile = "gradle compilejava"
+run = "gradle build"
 hidden = ["**/*.class"]
 
 [packager]
