@@ -105,16 +105,14 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
-    if (stations != null) stations.forEach(station -> {
-      owners.getOwners(station);
-    });
+    if (stations != null) stations.forEach(station -> owners.getOwners(station));
     owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
 
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 
-
+  // TODO: Treasury compatibility
   private boolean setupEconomy() {
     org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {
@@ -123,15 +121,9 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     return (economy != null);
   }
 
-
-  // TODO: Create actual fare card implementation
   @Override public Class<IciwiCard> getFareCardClass () { return IciwiCard.class; }
 
-
-  private void registerFareGate (FareGate fareGate) {
-    getServer().getPluginManager().registerEvents(fareGate, this);
-  }
-
+  private void registerFareGate (FareGate fareGate) { getServer().getPluginManager().registerEvents(fareGate, this); }
 
   public void registerCommands (Commands commands) {
     final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();

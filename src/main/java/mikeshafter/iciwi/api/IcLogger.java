@@ -2,13 +2,13 @@ package mikeshafter.iciwi.api;
 
 import mikeshafter.iciwi.Iciwi;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.Objects;
 
 public class IcLogger {
 
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  private final Path file = Paths.get(plugin.getConfig().getString("logger-file"));
+  private final Path file = Paths.get(Objects.requireNonNull(plugin.getConfig().getString("logger-file")));
 
   public IcLogger() {
     try {
@@ -23,8 +23,7 @@ public class IcLogger {
   public void record (String... data) {
     try {
       String finalString = String.join(",", data);
-      byte[] bytes = finalString.getBytes(StandardCharsets.UTF_8);
-      Files.write(file, bytes, StandardOpenOption.APPEND);
+      Files.writeString(file, finalString, StandardOpenOption.APPEND);
     } catch (IOException e) {
       plugin.getLogger().warning(file + " is not writable, please check permissions!");
     }
