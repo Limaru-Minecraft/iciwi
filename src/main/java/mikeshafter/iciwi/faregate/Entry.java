@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 
 import java.util.List;
 import java.util.Objects;
@@ -44,7 +43,7 @@ public class Entry extends ClosableFareGate {
 			else if (entryPunched) {
 				player.sendMessage(lang.getString("cannot-pass"));
 				if (plugin.getConfig().getBoolean("open-on-penalty")) {
-					EconomyHandler.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+					Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 					player.sendMessage(lang.getString("fare-evade"));
 				}
 			}

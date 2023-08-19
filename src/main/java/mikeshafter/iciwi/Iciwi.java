@@ -9,15 +9,14 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.api.FareGate;
-import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.api.IcLogger;
+import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.util.IciwiCard;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -59,8 +58,8 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   @Override
   public void onEnable() {
     // === Economy ===
-    EconomyHandler eHandler = new EconomyHandler();
-    if (eHandler.hasEconomy()) getServer().getLogger().info("\u00A7aIciwi has detected an Economy!");
+    boolean eco = setupEconomy();
+    if (eco) getServer().getLogger().info("\u00A7aIciwi has detected an Economy!");
 
     // === Load config files ===
     lang = new Lang(this);
@@ -89,8 +88,8 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     CardSql app = new CardSql();
     app.initTables();
 
-    // === Iciwi Logger ===
-    icLogger = new IcLogger();
+    // === Logger ===
+    this.icLogger = new IcLogger();
 
     // === Register events ===
     registerFareGate(new mikeshafter.iciwi.faregate.Entry());

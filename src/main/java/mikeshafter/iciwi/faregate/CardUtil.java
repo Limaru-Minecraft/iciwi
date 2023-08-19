@@ -17,7 +17,6 @@ import org.bukkit.block.data.type.Fence;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.util.Vector;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 
 public class CardUtil {
   private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -66,7 +65,7 @@ public class CardUtil {
     if (records.getStation(serial) != null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
-        EconomyHandler.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+        Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
       } else return false;
     }
@@ -107,7 +106,7 @@ public class CardUtil {
     if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
-        EconomyHandler.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+        Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
       } else return false;
     }
@@ -221,7 +220,7 @@ public class CardUtil {
     if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
-        EconomyHandler.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+        Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
       } else return false;
     }
@@ -266,7 +265,7 @@ public class CardUtil {
     if (records.getStation(serial) == null) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
-        EconomyHandler.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
+        Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
       } else return false;
     }

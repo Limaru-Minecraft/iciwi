@@ -7,7 +7,6 @@ import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.block.Sign;
 import org.bukkit.Material;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -54,7 +53,7 @@ public class Payment extends FareGate {
 	}
 
 	public void payCash(Player player, double price) {
-		EconomyHandler.withdrawPlayer(player, price);
+		Iciwi.economy.withdrawPlayer(player, price);
 		player.sendMessage(lang.getString("cash-divert"));
 		player.sendMessage(String.format(lang.getString("pay-success"), price));
 	}

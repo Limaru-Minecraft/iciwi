@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 
 import java.time.Instant;
 import java.util.*;
@@ -108,9 +107,9 @@ public class RailPassMachine implements Machine {
               Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
           double price = this.owners.getRailPassPrice(name);
 
-          if (EconomyHandler.getBalance(player) >= price) {
+          if (Iciwi.economy.getBalance(player) >= price) {
             // take money from player
-            EconomyHandler.withdrawPlayer(player, price);
+            Iciwi.economy.withdrawPlayer(player, price);
 
             // check if the card already has the rail pass
             if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {

@@ -19,7 +19,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
-import mikeshafter.iciwi.experimental.EconomyHandler;
 
 
 public class CustomMachine implements Machine {
@@ -132,8 +131,8 @@ public class CustomMachine implements Machine {
     double price = fares.getFare(from, to, fareClass);
 
     // Let the player pay for the ticket
-    if (EconomyHandler.getBalance(this.player) >= price) {
-      EconomyHandler.withdrawPlayer(this.player, price);
+    if (Iciwi.economy.getBalance(this.player) >= price) {
+      Iciwi.economy.withdrawPlayer(this.player, price);
 
       // find owners of the current station and deposit accordingly
       List<String> ownersList = owners.getOwners(from);
