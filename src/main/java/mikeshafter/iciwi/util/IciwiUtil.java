@@ -39,6 +39,8 @@ public class IciwiUtil {
   public static SignSide getClickedSide(Sign sign, Player player) {
     if (player == null) return sign.getSide(Side.FRONT);
 
+    return sign.getSide(sign.getInteractableSideFor(player));
+    /*
     float yaw = player.getLocation().getYaw() + 180;
     int x = 0, z = 0;
     if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
@@ -56,6 +58,7 @@ public class IciwiUtil {
     double diff = Math.abs(signRot - yaw) % 360;
     diff = Math.min(360 - diff, diff);
     return diff > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
+    */
   }
 
 
