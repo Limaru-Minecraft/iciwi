@@ -59,7 +59,18 @@ public abstract class FareGate implements Listener {
 		BlockState signState = clickedLocation.getBlock().getState();
 		if (signState instanceof Sign sign) {
 			SignSide side = IciwiUtil.getClickedSide(sign, event.getPlayer());
-			if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
+      
+      System.out.print("CONST side >");  //TODO: debug
+      System.out.println(side.toString());  //TODO: debug
+      
+      if (side == null) {
+        // fallback method
+        String[] signText = new String[4];
+				for (int i = 0; i < 4; i++) signText[i] = sign.getLine(i).replace("[","").replace("]", "");
+				onInteract(event.getPlayer(), event.getItem(), signText, sign);
+      }
+        
+			else if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
 				String[] signText = new String[4];
 				for (int i = 0; i < 4; i++) signText[i] = side.getLine(i).replace("[","").replace("]", "");
 				onInteract(event.getPlayer(), event.getItem(), signText, sign);

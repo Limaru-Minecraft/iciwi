@@ -1,5 +1,5 @@
 compile = "gradle compilejava"
-run = "gradle build"
+run = "gradle clean build"
 hidden = ["**/*.class"]
 
 [packager]
