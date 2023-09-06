@@ -292,12 +292,10 @@ public class CardUtil {
   protected static Object[] openGate (String signAction, String[] signText, Sign sign) {
     String signLine0 = signText[0];
 
-    System.out.print("VAR signLine0 >");  //TODO: debug
-    System.out.println(signLine0);  //TODO: debug
+    System.out.println("VAR signLine0 >" + signLine0);  //TODO: debug
 
-    System.out.print("PARAM signAction >");  //TODO: debug
-    System.out.println(signAction);  //TODO: debug
-    
+    System.out.print("PARAM signAction >" + signAction);  //TODO: debug
+
     // Get the sign's direction and reference block
     BlockFace signFacing = BlockFace.SOUTH;
     Block referenceBlock = sign.getBlock();
@@ -308,15 +306,15 @@ public class CardUtil {
     else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) signFacing = s.getRotation();
     signFacing = toCartesian(signFacing);
 
-    System.out.print("VAR signFacing >");  //TODO: debug
-    System.out.println(signFacing.toString());  //TODO: debug
+    System.out.print("VAR signFacing >" + signFacing.toString());  //TODO: debug
 
     // Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string.
-    final String args = signAction.length() == signLine0.length() ? "" : signLine0.substring(signAction.length());
+    String args;
+    if (signAction.length() == signLine0.length()) args = "";
+    else args = signLine0.substring(signAction.length());
 
-    System.out.print("CONST args >");  //TODO: debug
-    System.out.println(args);  //TODO: debug
-    
+    System.out.print("CONST args >" + args);  //TODO: debug
+
     int flags = 0;
     flags |= args.contains("V") ? 1	: 0;	// Validator
     flags |= args.contains("L") ? 2	: 0;	// Lefty
@@ -326,15 +324,13 @@ public class CardUtil {
     flags |= args.contains("E") ? 32 : 0;	// Eye-level
     flags |= args.contains("F") ? 64 : 0;	// Fare gate
 
-    System.out.print("VAR flags >");  //TODO: debug
-    System.out.println(flags);  //TODO: debug
+    System.out.print("VAR flags >" + flags);  //TODO: debug
 
     // Get the relative position(s) of the fare gate block(s).
     Vector[] relativePositions = toPos(signFacing, flags);
     
-    System.out.print("VAR relativePositions >");  //TODO: debug
-    System.out.println(Arrays.deepToString(relativePositions));  //TODO: debug
-    
+    System.out.print("VAR relativePositions >" + Arrays.deepToString(relativePositions));  //TODO: debug
+
     // Gate close functions
     Object[] closeGate = {new Location[relativePositions.length], new Runnable[relativePositions.length]};
 
@@ -369,8 +365,7 @@ public class CardUtil {
       // If glass pane, create a FareGateBlock object and open
       else if (currentBlock.getBlockData() instanceof Fence) {
         BlockFace direction = i == 0 ? toFace(toBuildDirection(signFacing, flags)).getOppositeFace() : toFace(toBuildDirection(signFacing, flags));
-        System.out.print("CONST direction >");  //TODO: debug
-        System.out.println(direction.toString());  //TODO: debug
+        System.out.println("CONST direction >" + direction.toString());  //TODO: debug
         FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
         fgBlock.openGate();
 
@@ -458,6 +453,7 @@ public class CardUtil {
     // parse D flag
     if ((flags & 8) != 0) v[1] = v[0].clone().add(toBuildDirection(signDirection, flags));
 
+    System.out.println("VAR positionVector >" + Arrays.toString(v));  // TODO: debug
     // return
     return v;
   }

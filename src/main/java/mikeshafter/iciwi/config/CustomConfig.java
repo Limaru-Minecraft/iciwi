@@ -69,32 +69,21 @@ public class CustomConfig {
   }
 
   public String getString(String path) {
-    return this.config.getString(path);
+    var s = this.config.getString(path);
+    return s == null ? "" : s;
   }
 
-  public boolean getBoolean(String path) {
-    return this.config.getBoolean(path);
-  }
+  public boolean getBoolean(String path) { return this.config.getBoolean(path); }
 
-  public int getInt(String path) {
-    return this.config.getInt(path);
-  }
+  public int getInt(String path) { return this.config.getInt(path); }
 
-  public double getDouble(String path) {
-    return this.config.getDouble(path);
-  }
+  public double getDouble(String path) { return this.config.getDouble(path); }
 
-  public long getLong(String path) {
-    return this.config.getLong(path);
-  }
+  public long getLong(String path) { return this.config.getLong(path); }
 
-  public ConfigurationSection getConfigurationSection(String path) {
-    return this.config.getConfigurationSection(path);
-  }
+  public ConfigurationSection getConfigurationSection(String path) { return this.config.getConfigurationSection(path); }
 
-  public void set(String path, Object value) {
-    this.config.set(path, value);
-  }
+  public void set(String path, Object value) { this.config.set(path, value); }
 
   public void reload() {
     file = new File(plugin.getDataFolder(), name);

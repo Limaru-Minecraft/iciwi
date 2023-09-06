@@ -62,6 +62,8 @@ public class RailPassMachine implements Machine {
 
   // rail pass menu
   public void railPass (ItemStack item) {
+    if (!loreCheck(item)) return;
+
     // get available railpasses
     ArrayList<String> railPassNames = new ArrayList<>();
     this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));

@@ -102,5 +102,6 @@ create-payment-sign: '§aYou created a member sign! This sign is used to get a o
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
 create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
 create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'
+create-card-machine: '§aYou created a card vending machine! This sign is used to buy stored value cards.'
 create-pass-machine: '§aYou created a rail pass machine! This sign is used to buy rail passes.'
 create-custom-machine: '§aYou created a custom ticket machine! This sign is used to buy custom paper tickets.'

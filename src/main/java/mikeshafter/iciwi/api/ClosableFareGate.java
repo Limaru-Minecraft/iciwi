@@ -1,12 +1,11 @@
 package mikeshafter.iciwi.api;
 
-import mikeshafter.iciwi.util.IciwiUtil;
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
-import mikeshafter.iciwi.Iciwi;
-import java.util.Arrays;
 
 public abstract class ClosableFareGate extends FareGate {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -29,16 +28,17 @@ public abstract class ClosableFareGate extends FareGate {
    */
   public ClosableFareGate (Vector locationOffset) { super(locationOffset); }
 
-  @EventHandler
+  @EventHandler(priority = EventPriority.LOWEST)
   public void onPlayerMove(PlayerMoveEvent event) {
     if (this.closeGateArray == null) return;
-    Location location = event.getPlayer().getLocation();
-    Location[] gateLocs = ((Location[]) closeGateArray[0]);
-    for (Location gateLoc : gateLocs) {
-      if (gateLoc.getBlockX() == location.getBlockX() && gateLoc.getBlockY() == location.getBlockY() && gateLoc.getBlockZ() == location.getBlockZ()) {
-        for (Runnable runnable : ((Runnable[]) closeGateArray[1]))
-          plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, runnable, plugin.getConfig().getLong("close-after-pass"));
-        break;
+    Location ploc = event.getPlayer().getLocation();
+    Location[] glocs = ((Location[]) closeGateArray[0]);
+    label0:
+    for (Location gloc : glocs) {
+      if (gloc.getBlockX() == ploc.getBlockX() && gloc.getBlockY() == ploc.getBlockY() && gloc.getBlockZ() == ploc.getBlockZ()) {
+        for (Runnable r : ((Runnable[]) closeGateArray[1]))
+          plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, r, plugin.getConfig().getLong("close-after-pass"));
+        break label0;
       }
     }
   }

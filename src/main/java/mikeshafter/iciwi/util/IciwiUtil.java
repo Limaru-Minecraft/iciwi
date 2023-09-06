@@ -30,37 +30,6 @@ public class IciwiUtil {
     return Pattern.matches(("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|"+"(\\.(\\d+)([eE][+-]?(\\d+))?)|"+"(("+"(0[xX](\\p{XDigit}+)(\\.)?)|"+"(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))"+")[pP][+-]?(\\d+)))"+"[fFdD]?))"+"[\\x00-\\x20]*"), s);
   }
 
-  /**
-   * Get the side of the sign that was clicked.
-   * @param sign Sign to get the side of
-   * @param player The player who clicked the sign
-   * @return the side of the sign that was clicked.
-   */
-  public static SignSide getClickedSide(Sign sign, Player player) {
-    if (player == null) return sign.getSide(Side.FRONT);
-
-    return sign.getSide(sign.getInteractableSideFor(player));
-    /*
-    float yaw = player.getLocation().getYaw() + 180;
-    int x = 0, z = 0;
-    if (sign.getBlockData() instanceof org.bukkit.block.data.type.WallSign w) {
-      x = w.getFacing().getDirection().getBlockX();
-      z = w.getFacing().getDirection().getBlockZ();
-    } else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) {
-      x = s.getRotation().getDirection().getBlockX();
-      z = s.getRotation().getDirection().getBlockZ();
-    }
-    // yaw: E = -90, S = 0, W = +90, N = ±180
-    // signRot: E = 0, S = +90, W = ±180, N = -90
-    // -1: E = 0, S = -90, W = ±180, N = +90
-    // +90: E = 90, S = 0, W = +270, N = ±180
-    double signRot = 57.29577951308232 * Math.atan2(z, x) + 90;
-    double diff = Math.abs(signRot - yaw) % 360;
-    diff = Math.min(360 - diff, diff);
-    return diff > 90 ? sign.getSide(Side.FRONT) : sign.getSide(Side.BACK);
-    */
-  }
-
 
   /**
    * Strips the given message of all color codes
@@ -198,7 +167,6 @@ public class IciwiUtil {
         Class<?> icCardClass = iciwiPlugin.getFareCardClass();
         // Create new card instance using the provided constructor and the item
         return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
-
       } return null;
     }
     catch (java.lang.NoSuchMethodException | java.lang.InstantiationException | java.lang.IllegalAccessException | java.lang.reflect.InvocationTargetException e) {

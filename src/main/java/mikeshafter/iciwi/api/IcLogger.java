@@ -8,7 +8,7 @@ import java.util.Objects;
 public class IcLogger {
 
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  private final Path file = Paths.get(Objects.requireNonNull(plugin.getConfig().getString("logger-file")));
+  private final Path file = Paths.get("log.csv");
 
   public IcLogger() {
     try {
