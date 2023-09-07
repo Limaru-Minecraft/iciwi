@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.api;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -45,7 +46,6 @@ public abstract class FareGate implements Listener {
 		Location clickedLocation = block.getLocation();
 		clickedLocation.add(this.locationOffset);
 		BlockState signState = clickedLocation.getBlock().getState();
-		System.out.println("BOOL signState instanceof Sign >" + (signState instanceof Sign));  //TODO: debug
 		if (signState instanceof Sign sign) {
 			SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
 
@@ -58,10 +58,13 @@ public abstract class FareGate implements Listener {
 			if (IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(signLine0)) {
 				// get sign text
 				String[] signText = new String[4];
-				for (int i = 0; i < 4; i++) signText[i] = IciwiUtil.parseComponent(side.line(i)).replace("[", "").replace("]", "");
+				for (int i = 0; i < 4; i++) {
+					side.line(i, Component.text(side.getLine(i)));
+					signText[i] = side.getLine(i).replace("[", "").replace("]", "");
+				}
 				// wax sign again
 				sign.setWaxed(true);
-				sign.update();
+				sign.update(true);
 				// call onInteract
 				onInteract(event.getPlayer(), event.getItem(), signText, sign);
 			}

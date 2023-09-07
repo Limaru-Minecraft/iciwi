@@ -47,9 +47,6 @@ train-ticket: '§aTrain Ticket'
 generate-ticket-custom: '§aNew $s ticket from §e$s to §e$s generated.'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
 
-# Station name if the fare type is GLOBAL
-global-ticket: 'AllStations'  # must be CamelCase
-
 # == Card Operations Subpage ==
 select-card: '§1Select Card...'
 menu-new-card: '§dNew Iciwi Card'
