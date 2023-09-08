@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 import static mikeshafter.iciwi.util.IciwiUtil.stripColor;
-
+import static mikeshafter.iciwi.util.IciwiUtil.containsMany;
 
 public class GateCreateListener implements Listener {
 
@@ -20,45 +20,44 @@ public class GateCreateListener implements Listener {
     final String line = parseComponent(event.line(0));
     final Player player = event.getPlayer();
 
-    // Wax sign
     if (!player.hasPermission("iciwi.create")) {
       event.setCancelled(true);
       return;
     }
+
+    int createdSign = containsMany(stripColor(line), lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
     
+    // stop processing if containsMany doesn't output a valid value
+    if (createdSign == -1) return;
+    
+    switch (createdSign) {
+      case 0: 
+        player.sendMessage(lang.getString("create-entry-sign"));break;
+      case 1:
+        player.sendMessage(lang.getString("create-exit-sign"));break;
+      case 2: 
+        player.sendMessage(lang.getString("create-member-sign"));break;
+      case 3:
+        player.sendMessage(lang.getString("create-payment-sign"));break;
+      case 4:
+        player.sendMessage(lang.getString("create-faregate-sign"));break;
+      case 5:
+        player.sendMessage(lang.getString("create-validator-sign"));break;
+      case 6:
+        player.sendMessage(lang.getString("create-ticket-machine"));break;
+      case 7:
+        player.sendMessage(lang.getString("create-card-machine"));break;
+      case 8:
+        player.sendMessage(lang.getString("create-pass-machine"));break;
+      case 9:
+        player.sendMessage(lang.getString("create-custom-machine"));break;
+      default: 
+        break;
+    }
+    
+    // wax sign
     final Sign sign = (Sign) event.getBlock().getState();
     sign.setWaxed(true);
-    sign.update();
-
-    // Entry
-    if (stripColor(line).contains(lang.getString("entry"))) player.sendMessage(lang.getString("create-entry-sign"));
-
-    // Exit
-    else if (stripColor(line).contains(lang.getString("exit"))) player.sendMessage(lang.getString("create-exit-sign"));
-
-    // Member
-    else if (stripColor(line).contains(lang.getString("member"))) player.sendMessage(lang.getString("create-member-sign"));
-
-    // Payment
-    else if (stripColor(line).contains(lang.getString("payment"))) player.sendMessage(lang.getString("create-payment-sign"));
-
-    // HL-style faregate
-    else if (stripColor(line).contains(lang.getString("faregate"))) player.sendMessage(lang.getString("create-faregate-sign"));
-
-    // HL-style validator
-    else if (stripColor(line).contains(lang.getString("validator"))) player.sendMessage(lang.getString("create-validator-sign"));
-
-    // General Ticket machine
-    else if (stripColor(line).contains(lang.getString("tickets"))) player.sendMessage(lang.getString("create-ticket-machine"));
-
-    // Card machine
-    else if (stripColor(line).contains(lang.getString("cards"))) player.sendMessage(lang.getString("create-card-machine"));
-
-    // Rail Pass machine
-    else if (stripColor(line).contains(lang.getString("passes"))) player.sendMessage(lang.getString("create-pass-machine"));
-
-    // Direct Ticket machine
-    else if (stripColor(line).contains(lang.getString("custom-tickets"))) player.sendMessage(lang.getString("create-custom-machine"));
-
+    sign.update(true);
   }
 }

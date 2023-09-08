@@ -26,11 +26,23 @@ public class IciwiUtil {
    * @param s The string to check.
    * @return Whether the string is parseable as a double.
    */
-  public static boolean isDouble(String s) {
+  public static boolean isDouble(final String s) {
     return Pattern.matches(("[\\x00-\\x20]*"+"[+-]?("+"NaN|"+"Infinity|"+"((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|"+"(\\.(\\d+)([eE][+-]?(\\d+))?)|"+"(("+"(0[xX](\\p{XDigit}+)(\\.)?)|"+"(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))"+")[pP][+-]?(\\d+)))"+"[fFdD]?))"+"[\\x00-\\x20]*"), s);
   }
 
-
+  /**
+   * Check if any of the elements in a given array is a substring of another string.
+   * @param s The string which contains a substring from checkArray
+   * @param checkArray The array of strings in which a substring of s lies.
+   * @return -1 if no string from checkArray is a substring of s, otherwise the index of the substring.
+  */
+  public static int containsMany (final String s, final String... checkArray) {
+    // loop through array
+    for (int i = 0; i < checkArray.length; i++) if (s.contains(checkArray[i])) return i;
+    // if nothing found output -1
+    return -1;
+  }
+                                  
   /**
    * Strips the given message of all color codes
    * @param input String to strip of color
@@ -46,7 +58,7 @@ public class IciwiUtil {
    * @param c The component to parse.
    * @return the Component in String format
    */
-  public static String parseComponent(Component c) {
+  public static String parseComponent(final Component c) {
     if (c instanceof TextComponent) return ((TextComponent) c).content();
     else return c.examinableName();
   }

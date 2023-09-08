@@ -55,16 +55,12 @@ public abstract class FareGate implements Listener {
 			event.getPlayer().sendMessage(side.getLine(2));  //TODO: debug
 			event.getPlayer().sendMessage(side.getLine(3));  //TODO: debug
 
-			if (IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(signLine0)) {
+			if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
 				// get sign text
 				String[] signText = new String[4];
 				for (int i = 0; i < 4; i++) {
-					side.line(i, Component.text(side.getLine(i)));
 					signText[i] = side.getLine(i).replace("[", "").replace("]", "");
 				}
-				// wax sign again
-				sign.setWaxed(true);
-				sign.update(true);
 				// call onInteract
 				onInteract(event.getPlayer(), event.getItem(), signText, sign);
 			}

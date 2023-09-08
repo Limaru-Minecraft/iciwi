@@ -73,8 +73,8 @@ public class SignInteractListener implements Listener {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       Player player = event.getPlayer();
       SignSide side = sign.getSide(sign.getInteractableSideFor(player));
-      String signLine0 = IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0)));
-      final String station = IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(1))).replaceAll("\\s+", "");
+      final String signLine0 = IciwiUtil.stripColor(side.getLine(0));
+      final String station = IciwiUtil.stripColor(side.getLine(1)).replaceAll("\\s+", "");
 
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]")) {
