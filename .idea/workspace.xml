@@ -5,8 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="Remove EconomyHandler.java">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/removeDebug.py" beforeDir="false" afterPath="$PROJECT_DIR$/removeDebug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Odometer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Trapdoor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Trapdoor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Validator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Validator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignInteractListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignInteractListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/GateCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/GateCreateListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +85,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
     &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi/src/test/resources&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.18421052&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.40239522&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
@@ -89,7 +107,7 @@
       <recent name="mikeshafter.iciwi.tickets" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.iciwi [build]">
+  <component name="RunManager">
     <configuration name="iciwi [build]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -111,102 +129,6 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="CardUtilTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Iciwi.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
-      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CardUtilTest.toBuildDirectionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Iciwi.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
-      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
-      <option name="METHOD_NAME" value="toBuildDirectionTest(int,int,int,java.lang.String,int)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CardUtilTest.toCartesianTest (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Iciwi.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
-      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
-      <option name="METHOD_NAME" value="toCartesianTest" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CardUtilTest.toCartesianTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Iciwi.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
-      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
-      <option name="METHOD_NAME" value="toCartesianTest(org.bukkit.block.BlockFace,org.bukkit.block.BlockFace)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="CardUtilTest.toPosTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Iciwi.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="mikeshafter.iciwi.faregate.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="mikeshafter.iciwi.faregate" />
-      <option name="MAIN_CLASS_NAME" value="mikeshafter.iciwi.faregate.CardUtilTest" />
-      <option name="METHOD_NAME" value="toPosTest(java.lang.String,java.lang.String,int)" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Gradle.iciwi [build]" />
-      <item itemvalue="JUnit.CardUtilTest" />
-      <item itemvalue="JUnit.CardUtilTest.toBuildDirectionTest" />
-      <item itemvalue="JUnit.CardUtilTest.toPosTest" />
-      <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
-      <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="JUnit.CardUtilTest" />
-        <item itemvalue="JUnit.CardUtilTest.toBuildDirectionTest" />
-        <item itemvalue="JUnit.CardUtilTest.toPosTest" />
-        <item itemvalue="JUnit.CardUtilTest.toCartesianTest (1)" />
-        <item itemvalue="JUnit.CardUtilTest.toCartesianTest" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">

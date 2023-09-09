@@ -46,9 +46,11 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     reloadConfig();
   }
 
+  /* UNUSED
   public void sendAll(String message) {
     getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));
   }
+  */
 
   @Override
   public void onDisable() {
@@ -147,8 +149,6 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
       .build();
     AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
 
-    // Let the commands class know which Command manager to use
-    commands.setManager(manager);
     // Parse all @CommandMethod-annotated methods
     annotationParser.parse(commands);
   }

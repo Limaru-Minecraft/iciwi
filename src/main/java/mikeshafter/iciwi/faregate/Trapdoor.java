@@ -28,6 +28,10 @@ public class Trapdoor extends ClosableFareGate {
 		// Get station
 		String station = IciwiUtil.stripColor(signText[1]);
 
+		// Wax sign
+		sign.setWaxed(true);
+		sign.update(true);
+
 		// Force fare gate
 		signText[0] = signText[0] + "F";
 

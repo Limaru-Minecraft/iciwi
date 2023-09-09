@@ -36,8 +36,8 @@ dependencies {
 shadowJar {
   minimize {}
   relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')
-  relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
-  relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
+  //relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
+  //relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
 }
 
 assemble {

@@ -28,12 +28,6 @@ public class Commands {
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Owners owners = plugin.owners;
   private final Fares fares = plugin.fares;
-  //private PaperCommandManager<CommandSender> manager;
-  private final HashMap<Player, Odometer> odometer = new HashMap<>();
-
-  public void setManager(PaperCommandManager<CommandSender> manager) {
-    //this.manager = manager;
-  }
 
   private String formatString(String message, String... items) {
     message = "§a" + message.replace("%s", "§e%s§a");
@@ -86,7 +80,7 @@ public class Commands {
 
   @Suggestions("card_price_list")
   public @NonNull List<String> suggestPriceList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
-    return plugin.getConfig().getFloatList("price-array").stream().map(e -> String.format(".2f", e)).collect(Collectors.toList());
+    return plugin.getConfig().getFloatList("price-array").stream().map(e -> String.format("%.2f", e)).collect(Collectors.toList());
   }
 
   @CommandMethod("iciwi removepricelist <amount>")
@@ -322,57 +316,4 @@ public class Commands {
   {
     fares.deleteStation(start);
   }
-
-  @CommandMethod("odometer start-lap")
-  @CommandDescription("Starts/laps an odometer, like a stopwatch.")
-  public void odometerStart(final @NonNull Player player) {
-    int distance = player.getStatistic(Statistic.MINECART_ONE_CM);
-    if (odometer.containsKey(player)) {
-      Odometer playerMeter = odometer.get(player);
-      if (playerMeter.recording) {
-        // stop
-        playerMeter.recorded = distance - playerMeter.lastRecord;
-        playerMeter.recording = false;
-        player.sendMessage("Stopped recording!");
-        for (int i = 0; i < playerMeter.distances.size(); i++) {
-          player.sendMessage(i + " - " + playerMeter.distances.get(i));
-        }
-      } else {
-        // reset
-        playerMeter.lastRecord = distance;
-        playerMeter.distances = new ArrayList<>();
-        playerMeter.recorded = 0;
-        player.sendMessage("Reset memory!");
-      }
-    } else {
-      odometer.put(player, new Odometer(new ArrayList<>(), distance, false));
-    }
-  }
-
-  @CommandMethod("odometer stop-reset")
-  @CommandDescription("Stops/resets an odometer, like a stopwatch.")
-  public void odometerStop(final @NonNull Player player) {
-    int distance = player.getStatistic(Statistic.MINECART_ONE_CM);
-    if (odometer.containsKey(player)) {
-      Odometer playerMeter = odometer.get(player);
-      if (playerMeter.recording) {
-        // stop
-        playerMeter.recorded = distance - playerMeter.lastRecord;
-        playerMeter.recording = false;
-        player.sendMessage("Stopped recording!");
-        for (int i = 0; i < playerMeter.distances.size(); i++) {
-          player.sendMessage(i + " - " + playerMeter.distances.get(i));
-        }
-      } else {
-        // reset
-        playerMeter.lastRecord = distance;
-        playerMeter.distances = new ArrayList<>();
-        playerMeter.recorded = 0;
-        player.sendMessage("Reset memory!");
-      }
-    } else {
-      odometer.put(player, new Odometer(new ArrayList<>(), distance, false));
-    }
-  }
-
 }

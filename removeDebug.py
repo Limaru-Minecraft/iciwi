@@ -4,7 +4,7 @@ def removeDebug(file):
   file_lines = [line for line in file]
   for i in range(len(file_lines)):
     if "todo: debug" in file_lines[i].lower():
-      file_lines[i] = ""
+      file_lines[i] = "//" + file_lines[i]
   return file_lines
 
 root_dir = '.'

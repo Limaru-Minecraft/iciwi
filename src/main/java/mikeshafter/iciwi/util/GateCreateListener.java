@@ -9,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
-import static mikeshafter.iciwi.util.IciwiUtil.stripColor;
 import static mikeshafter.iciwi.util.IciwiUtil.containsMany;
 
 public class GateCreateListener implements Listener {
@@ -25,34 +24,21 @@ public class GateCreateListener implements Listener {
       return;
     }
 
-    int createdSign = containsMany(stripColor(line), lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
-    
-    // stop processing if containsMany doesn't output a valid value
-    if (createdSign == -1) return;
-    
+    int createdSign = containsMany(line, lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
+
     switch (createdSign) {
-      case 0: 
-        player.sendMessage(lang.getString("create-entry-sign"));break;
-      case 1:
-        player.sendMessage(lang.getString("create-exit-sign"));break;
-      case 2: 
-        player.sendMessage(lang.getString("create-member-sign"));break;
-      case 3:
-        player.sendMessage(lang.getString("create-payment-sign"));break;
-      case 4:
-        player.sendMessage(lang.getString("create-faregate-sign"));break;
-      case 5:
-        player.sendMessage(lang.getString("create-validator-sign"));break;
-      case 6:
-        player.sendMessage(lang.getString("create-ticket-machine"));break;
-      case 7:
-        player.sendMessage(lang.getString("create-card-machine"));break;
-      case 8:
-        player.sendMessage(lang.getString("create-pass-machine"));break;
-      case 9:
-        player.sendMessage(lang.getString("create-custom-machine"));break;
-      default: 
-        break;
+      case 0 -> player.sendMessage(lang.getString("create-entry-sign"));
+      case 1 -> player.sendMessage(lang.getString("create-exit-sign"));
+      case 2 -> player.sendMessage(lang.getString("create-member-sign"));
+      case 3 -> player.sendMessage(lang.getString("create-payment-sign"));
+      case 4 -> player.sendMessage(lang.getString("create-faregate-sign"));
+      case 5 -> player.sendMessage(lang.getString("create-validator-sign"));
+      case 6 -> player.sendMessage(lang.getString("create-ticket-machine"));
+      case 7 -> player.sendMessage(lang.getString("create-card-machine"));
+      case 8 -> player.sendMessage(lang.getString("create-pass-machine"));
+      case 9 -> player.sendMessage(lang.getString("create-custom-machine"));
+      // stop processing if containsMany outputs a "not found"
+      default -> {return;}
     }
     
     // wax sign

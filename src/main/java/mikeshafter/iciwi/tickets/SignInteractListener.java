@@ -78,6 +78,8 @@ public class SignInteractListener implements Listener {
 
       // === Normal ticket machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("tickets")+"]")) {
+        sign.setWaxed(true);
+        sign.update(true);
         final TicketMachine machine = new TicketMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -85,6 +87,8 @@ public class SignInteractListener implements Listener {
 
       // === Card vending machine ===
       if (signLine0.equalsIgnoreCase("["+lang.getString("cards")+"]")) {
+        sign.setWaxed(true);
+        sign.update(true);
         final CardMachine machine = new CardMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -92,6 +96,8 @@ public class SignInteractListener implements Listener {
 
       // === Rail pass machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("passes")+"]")) {
+        sign.setWaxed(true);
+        sign.update(true);
         final RailPassMachine machine = new RailPassMachine(player);
         machine.init(station);
         machineHashMap.put(player, machine);
@@ -99,6 +105,8 @@ public class SignInteractListener implements Listener {
 
       // === Custom machine ===
       else if (signLine0.equalsIgnoreCase("["+lang.getString("custom-tickets")+"]")) {
+        sign.setWaxed(true);
+        sign.update(true);
         CustomMachine machine = new CustomMachine(player, station);
         machineHashMap.put(player, machine);
       }
