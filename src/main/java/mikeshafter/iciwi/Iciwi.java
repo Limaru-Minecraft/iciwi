@@ -19,7 +19,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import com.google.common.hash;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
@@ -99,8 +99,8 @@ public final class Iciwi extends JavaPlugin {
       if (owners.getOwners(station) == null) owners.setOwners(station, Collections.singletonList(getConfig().getString("global-operator")));
     });
     owners.save();
-    if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
-  
+    if (Hashing.sha256().hashString(this.getConfig().getString("b"), StandardCharsets.UTF_8).toString() != "NEW PASSCODE HERE") Bukkit.shutdown();
+    
     getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
   }
   
