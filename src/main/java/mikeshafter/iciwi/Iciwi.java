@@ -76,12 +76,6 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     records.get().options().copyDefaults(true);
     fares.get().options().copyDefaults(true);
 
-    saveConfig();
-    lang.save();
-    owners.save();
-    records.save();
-    fares.save();
-
     // === Register commands ===
     Commands commands = new Commands();
     registerCommands(commands);
@@ -107,13 +101,17 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> owners.getOwners(station));
-    owners.save();
     if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
+
+    saveConfig();
+    lang.save();
+    owners.save();
+    records.save();
+    fares.save();
 
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 
-  // TODO: Treasury compatibility
   private boolean setupEconomy() {
     org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {
