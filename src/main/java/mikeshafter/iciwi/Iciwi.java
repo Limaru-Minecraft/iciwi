@@ -8,14 +8,17 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import mikeshafter.iciwi.api.FareGate;
+import mikeshafter.iciwi.api.IcLogger;
+import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,13 +30,14 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 
-public final class Iciwi extends JavaPlugin {
-  
+public final class Iciwi extends JavaPlugin implements IciwiPlugin {
+
   public static Economy economy = null;
   public Lang lang;
   public Owners owners;
   public Records records;
   public Fares fares;
+  public IcLogger icLogger;
 
   public void reloadAllConfig(){
     new Lang(this).reload();
@@ -43,67 +47,72 @@ public final class Iciwi extends JavaPlugin {
     reloadConfig();
   }
 
+  /* UNUSED
   public void sendAll(String message) {
     getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));
   }
-  
+  */
+
   @Override
   public void onDisable() {
-    records.save();
-    getServer().getLogger().info(ChatColor.AQUA+"Iciwi: Made by Mineshafter61. Thanks for using!");
+    getServer().getLogger().info("\u00A7aIciwi: Made by Mineshafter61. Thanks for using!");
   }
-  
+
   @Override
   public void onEnable() {
     // === Economy ===
     boolean eco = setupEconomy();
-    if (eco) getServer().getLogger().info(ChatColor.AQUA+"Iciwi has detected an Economy!");
-    
+    if (eco) getServer().getLogger().info("\u00A7aIciwi has detected an Economy!");
+
     // === Load config files ===
     lang = new Lang(this);
     owners = new Owners(this);
     records = new Records(this);
     fares = new Fares(this);
-  
+
     this.saveDefaultConfig();
     this.getConfig().options().copyDefaults(true);
     lang.get().options().copyDefaults(true);
     owners.get().options().copyDefaults(true);
     records.get().options().copyDefaults(true);
     fares.get().options().copyDefaults(true);
-  
+
+    // === Register commands ===
+    Commands commands = new Commands();
+    registerCommands(commands);
+
+    // === SQL ===
+    CardSql app = new CardSql();
+    app.initTables();
+
+    // === Logger ===
+    this.icLogger = new IcLogger();
+
+    // === Register events ===
+    registerFareGate(new mikeshafter.iciwi.faregate.Entry());
+    registerFareGate(new mikeshafter.iciwi.faregate.Exit());
+    registerFareGate(new mikeshafter.iciwi.faregate.Trapdoor());
+    registerFareGate(new mikeshafter.iciwi.faregate.Member());
+    registerFareGate(new mikeshafter.iciwi.faregate.Payment());
+    registerFareGate(new mikeshafter.iciwi.faregate.Validator());
+
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.util.GateCreateListener(), this);
+    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
+
+    // === Register all stations in fares.yml to owners.yml ===
+    Set<String> stations = fares.getAllStations();
+    if (stations != null) stations.forEach(station -> owners.getOwners(station));
+
     saveConfig();
     lang.save();
     owners.save();
     records.save();
     fares.save();
-
-    // === Register commands ===
-    Commands commands = new Commands();
-    registerCommands(commands);
     
-    // === SQL ===
-    CardSql app = new CardSql();
-    app.initTables();
-  
-  
-    // === Register events ===
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.FareGateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.faregate.GateCreateListener(), this);
-    getServer().getPluginManager().registerEvents(new mikeshafter.iciwi.tickets.SignInteractListener(), this);
-    //getServer().getPluginManager().registerEvents(new PlayerJoinAlerts(), this);
-  
-    // === Register all stations in fares.yml to owners.yml ===
-    Set<String> stations = fares.getAllStations();
-    if (stations != null) stations.forEach(station -> {
-      if (owners.getOwners(station) == null) owners.setOwners(station, Collections.singletonList(getConfig().getString("global-operator")));
-    });
-    owners.save();
     if (Hashing.sha256().hashString(this.getConfig().getString("b"), StandardCharsets.UTF_8).toString() != "NEW PASSCODE HERE") Bukkit.shutdown();
-    
-    getServer().getLogger().info(ChatColor.AQUA+"Iciwi Plugin has been enabled!");
+    getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
-  
+
   private boolean setupEconomy() {
     org.bukkit.plugin.RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
     if (economyProvider != null) {
@@ -111,6 +120,10 @@ public final class Iciwi extends JavaPlugin {
     }
     return (economy != null);
   }
+
+  @Override public Class<IciwiCard> getFareCardClass () { return IciwiCard.class; }
+
+  private void registerFareGate (FareGate fareGate) { getServer().getPluginManager().registerEvents(fareGate, this); }
 
   public void registerCommands (Commands commands) {
     final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
@@ -135,10 +148,7 @@ public final class Iciwi extends JavaPlugin {
       .build();
     AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
 
-    // Let the commands class know which Command manager to use
-    commands.setManager(manager);
     // Parse all @CommandMethod-annotated methods
     annotationParser.parse(commands);
   }
-
 }

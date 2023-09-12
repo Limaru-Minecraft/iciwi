@@ -17,8 +17,10 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
-import static mikeshafter.iciwi.util.MachineUtil.makeItem;
-import static mikeshafter.iciwi.util.MachineUtil.parseComponent;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RailPassMachine implements Machine {
 
@@ -32,12 +34,12 @@ public class RailPassMachine implements Machine {
 
   // Constant helper classes
   private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners();
-  private final Lang lang = new Lang();
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Owners owners = plugin.owners;
+  private final Lang lang = plugin.lang;
 
   public RailPassMachine (Player player) {
-    bottomInv = true; 
+    bottomInv = true;
     this.player = player;
   }
 
@@ -60,6 +62,8 @@ public class RailPassMachine implements Machine {
 
   // rail pass menu
   public void railPass (ItemStack item) {
+    if (!loreCheck(item)) return;
+
     // get available railpasses
     ArrayList<String> railPassNames = new ArrayList<>();
     this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
@@ -113,7 +117,7 @@ public class RailPassMachine implements Machine {
             if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {
               // Extend by the duration of the rail pass (change start time to the current
               // expiry time)
-              
+
               this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
               player.sendMessage(this.lang.getString("added-rail-pass"));
             }
@@ -127,7 +131,7 @@ public class RailPassMachine implements Machine {
 
             // pay the TOC
             this.owners.deposit(this.owners.getRailPassOperator(name), price);
-          } 
+          }
           else
             player.sendMessage(this.lang.getString("not-enough-money"));
 

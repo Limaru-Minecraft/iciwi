@@ -2,7 +2,6 @@ package mikeshafter.iciwi.util;
 
 import com.bergerkiller.bukkit.common.wrappers.ChatText;
 import mikeshafter.iciwi.Iciwi;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -21,9 +20,9 @@ public class InputDialogSubmitText extends InputDialogAnvil {
   public InputDialogSubmitText(Iciwi plugin, Player player) {
     super(plugin, player);
     LEFT_BUTTON.setMaterial(Material.BARRIER);
-    LEFT_BUTTON.setDescription(ChatColor.RED+"Cancel");
+    LEFT_BUTTON.setDescription("§4Cancel");
     RIGHT_BUTTON.setMaterial(Material.EMERALD);
-    RIGHT_BUTTON.setDescription(ChatColor.GREEN+"Accept");
+    RIGHT_BUTTON.setDescription("§aAccept");
   }
   
   /**
@@ -53,7 +52,7 @@ public class InputDialogSubmitText extends InputDialogAnvil {
             MIDDLE_BUTTON.setMaterial(null);
         } else {
             MIDDLE_BUTTON.setMaterial(Material.PAPER);
-            MIDDLE_BUTTON.setTitle(ChatColor.YELLOW + "About");
+            MIDDLE_BUTTON.setTitle("§eAbout");
             MIDDLE_BUTTON.setDescription(text);
         }
         return this;

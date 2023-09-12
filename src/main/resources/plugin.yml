@@ -1,64 +1,11 @@
 name: Iciwi
-version: 1.19.4b1
-api-version: 1.17
+version: 2.20.1
+api-version: "1.20"
 main: mikeshafter.iciwi.Iciwi
 depend:
-  - Vault
   - BKCommonLib
+softdepend:
+  - Vault
+  - Treasury
 description: Iciwi plugin for Limaru
 prefix: Iciwi
-#commands:
-#  iciwi:
-#    usage: /<command>
-#    description: Main Iciwi command
-#permissions:
-#  iciwi.*:
-#    description: Gives access to all Iciwi commands
-#    children:
-#      iciwi.checkfare: true
-#      iciwi.farechart: true
-#      iciwi.ticketmachine: true
-#      iciwi.newdiscount: true
-#      iciwi.reload: true
-#      iciwi.coffers: true
-#      iciwi.odometer: true
-#    default: op
-#  iciwi.checkfare:
-#    description: Allows the use of /checkfare
-#    default: true
-#  iciwi.ticketmachine:
-#    description: Allows the use of /ticketmachine
-#    default: op
-#  iciwi.newdiscount:
-#    description: Allows the use of /railpass
-#    default: op
-#  iciwi.getticket:
-#    description: Allows the use of /getticket
-#    default: op
-#  iciwi.redeemcard:
-#    description: Allows the use of /redeemcard
-#    default: op
-#  iciwi.reload:
-#    description: Allows the use of all reload commands
-#    default: op
-#  iciwi.coffers:
-#    description: Allows the use of /coffers
-#    default: op
-#  iciwi.coffers.viewall:
-#    description: Makes /coffers view show all companies
-#    default: false
-#  iciwi.odometer:
-#    description: Allows the use of /odometer
-#    default: op
-#  iciwi.create:
-#    description: Create fare gates and ticket machines
-#    default: op
-#    children:
-#      iciwi.create.faregates: true
-#      iciwi.create.ticketmachines: true
-#  iciwi.create.faregates:
-#    description: Create fare gates
-#    default: op
-#  iciwi.create.ticketmachines:
-#    description: Create ticket machines
-#    default: op

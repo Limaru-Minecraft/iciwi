@@ -1,5 +1,5 @@
-compile = ""
-run = "gradle@8 build"
+compile = "gradle compilejava"
+run = "gradle clean build"
 hidden = ["**/*.class"]
 
 [packager]
@@ -18,7 +18,7 @@ start = ["jdt-language-server"]
 language = "java"
 
 [nix]
-channel = "stable-21_11"
+channel = "unstable"
 
 [debugger]
 support = true

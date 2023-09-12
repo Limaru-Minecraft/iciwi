@@ -3,8 +3,8 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group 'org.mikeshafter'
-version '1.19.4b1'
+group 'mikeshafter'
+version '2.20.1'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -19,14 +19,14 @@ repositories {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(16)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
 dependencies {
-  compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+  compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.19.4-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.1-v1'
 
   compileOnly 'org.bergerhealer.cloud.commandframework:cloud-paper:1.8.0-SNAPSHOT'
   compileOnly 'org.bergerhealer.cloud.commandframework:cloud-annotations:1.8.0-SNAPSHOT'
@@ -36,8 +36,8 @@ dependencies {
 shadowJar {
   minimize {}
   relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')
-  relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
-  relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
+  //relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
+  //relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
 }
 
 assemble {

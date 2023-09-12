@@ -4,19 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="121bd838-92dd-4165-a6bd-49501d9726aa" name="変更" comment="Fix a few bugs">
-      <change afterPath="$PROJECT_DIR$/.vscode/tasks.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/langchecker.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/usedNames.txt" afterDir="false" />
+    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="Remove EconomyHandler.java">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Fares.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Fares.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Lang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Lang.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Owners.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Owners.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/CustomMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/removeDebug.py" beforeDir="false" afterPath="$PROJECT_DIR$/removeDebug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/Iciwi.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Commands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/commands/Odometer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Trapdoor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Trapdoor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Validator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Validator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignInteractListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/SignInteractListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/TicketMachine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/lang.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/GateCreateListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/GateCreateListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiCard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiCard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,35 +42,22 @@
         <task path="$PROJECT_DIR$">
           <activation />
         </task>
-        <projects_view>
-          <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Iciwi" type="f1a62948:ProjectNode" />
-              </path>
-            </expand>
-            <select />
-          </tree_state>
-        </projects_view>
+        <projects_view />
       </state>
     </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Record" />
+        <option value="Interface" />
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="PREVIOUS_COMMIT_AUTHORS">
-      <list>
-        <option value="Mike Shafter &lt;32269257+mineshafter61@users.noreply.github.com&gt;" />
-      </list>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="SIGN_OFF_COMMIT" value="true" />
+    <option name="RESET_MODE" value="HARD" />
   </component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
@@ -74,7 +69,10 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2M1nlRGHJfZKvJN1A2VjJMxyZmx" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2Iqb3AK1Z8UTc57tdNTUf3daq9k" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -83,21 +81,34 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.28529412&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
+    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
+    &quot;create.test.in.the.same.root&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/mikeshafteure/IdeaProjects/iciwi/src/test/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.18421052&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.40239522&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/resources" />
+    </key>
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/bin" />
+      <recent name="$PROJECT_DIR$/build/libs" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="mikeshafter.iciwi.faregate" />
+      <recent name="mikeshafter.iciwi.tickets" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.iciwi build">
-    <configuration name="iciwi build" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager">
+    <configuration name="iciwi [build]" type="GradleRunConfiguration" factoryName="Gradle" nameIsGenerated="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -118,123 +129,106 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="iciwi-commands [dependencies]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="dependencies" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="iciwi-commands [shadowJar]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="shadowJar" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Gradle.iciwi build" />
-        <item itemvalue="Gradle.iciwi-commands [shadowJar]" />
-        <item itemvalue="Gradle.iciwi-commands [dependencies]" />
-      </list>
-    </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="アプリケーションレベル" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="デフォルトタスク">
-      <changelist id="121bd838-92dd-4165-a6bd-49501d9726aa" name="変更" comment="" />
-      <created>1676944106998</created>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="" />
+      <created>1670911867784</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1676944106998</updated>
+      <updated>1670911867784</updated>
     </task>
-    <task id="LOCAL-00001" summary="write Odometer.java">
-      <created>1676963409463</created>
+    <task id="LOCAL-00001" summary="add rail pass menu">
+      <created>1670941491749</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1676963409463</updated>
+      <updated>1670941491749</updated>
     </task>
-    <task id="LOCAL-00002" summary="Fix TabComplete for literal chains, but will break after an argument is made">
-      <created>1676971270478</created>
+    <task id="LOCAL-00002" summary="no idea what i did but ok">
+      <created>1672064105801</created>
       <option name="number" value="00002" />
       <option name="presentableId" value="LOCAL-00002" />
       <option name="project" value="LOCAL" />
-      <updated>1676971270478</updated>
+      <updated>1672064105801</updated>
     </task>
-    <task id="LOCAL-00003" summary="Fix TabComplete for literal chains, but will break after an argument is made">
-      <created>1676972804049</created>
+    <task id="LOCAL-00003" summary="made ticket machine work (top inventory only)">
+      <created>1672146162131</created>
       <option name="number" value="00003" />
       <option name="presentableId" value="LOCAL-00003" />
       <option name="project" value="LOCAL" />
-      <updated>1676972804049</updated>
+      <updated>1672146162131</updated>
     </task>
-    <task id="LOCAL-00004" summary="Write JavaDocs and rearrange code">
-      <created>1676983300586</created>
+    <task id="LOCAL-00004" summary="remove deprecations">
+      <created>1676290830703</created>
       <option name="number" value="00004" />
       <option name="presentableId" value="LOCAL-00004" />
       <option name="project" value="LOCAL" />
-      <updated>1676983300586</updated>
+      <updated>1676290830703</updated>
     </task>
-    <task id="LOCAL-00005" summary="add debug messages to onCommand">
-      <created>1680308927593</created>
+    <task id="LOCAL-00005" summary="Write Payment.java">
+      <created>1685158339036</created>
       <option name="number" value="00005" />
       <option name="presentableId" value="LOCAL-00005" />
       <option name="project" value="LOCAL" />
-      <updated>1680308927593</updated>
+      <updated>1685158339036</updated>
     </task>
-    <task id="LOCAL-00006" summary="remove debug messages and fix onCommand">
-      <created>1680324726545</created>
+    <task id="LOCAL-00006" summary="write member and half of transfer signs">
+      <created>1685693054906</created>
       <option name="number" value="00006" />
       <option name="presentableId" value="LOCAL-00006" />
       <option name="project" value="LOCAL" />
-      <updated>1680324726545</updated>
+      <updated>1685693054906</updated>
     </task>
-    <task id="LOCAL-00007" summary="**IMPORTANT** Use Cloud Command Framework instead of meddling around with ArgumentNode">
-      <created>1683460860736</created>
+    <task id="LOCAL-00007" summary="write member and half of transfer signs">
+      <created>1685693074996</created>
       <option name="number" value="00007" />
       <option name="presentableId" value="LOCAL-00007" />
       <option name="project" value="LOCAL" />
-      <updated>1683460860736</updated>
+      <updated>1685693074996</updated>
     </task>
-    <task id="LOCAL-00008" summary="fix wrong imports and delete unneeded files">
-      <created>1683556217988</created>
+    <task id="LOCAL-00008" summary="write test method (CI will fail)">
+      <created>1687263715225</created>
       <option name="number" value="00008" />
       <option name="presentableId" value="LOCAL-00008" />
       <option name="project" value="LOCAL" />
-      <updated>1683556217988</updated>
+      <updated>1687263715225</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="test CardUtil.java">
+      <created>1687507012278</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1687507012278</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Create logger class">
+      <created>1692413881351</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1692413881351</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Remove EconomyHandler.java">
+      <created>1692415156973</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1692415156974</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -248,19 +242,25 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="write Odometer.java" />
-    <MESSAGE value="Fix TabComplete for literal chains, but will break after an argument is made" />
-    <MESSAGE value="Write JavaDocs and rearrange code" />
-    <MESSAGE value="add debug messages to onCommand" />
-    <MESSAGE value="remove debug messages and fix onCommand" />
-    <MESSAGE value="**IMPORTANT** Use Cloud Command Framework instead of meddling around with ArgumentNode" />
-    <MESSAGE value="fix wrong imports and delete unneeded files" />
-    <MESSAGE value="Fix a few bugs" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix a few bugs" />
-    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <MESSAGE value="add rail pass menu" />
+    <MESSAGE value="no idea what i did but ok" />
+    <MESSAGE value="made ticket machine work (top inventory only)" />
+    <MESSAGE value="bump" />
+    <MESSAGE value="remove deprecations" />
+    <MESSAGE value="Write Payment.java" />
+    <MESSAGE value="write member and half of transfer signs" />
+    <MESSAGE value="write test method (CI will fail)" />
+    <MESSAGE value="test CardUtil.java" />
+    <MESSAGE value="Remove EconomyHandler.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove EconomyHandler.java" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Iciwi$CardUtilTest_toCartesianTest__1_.ic" NAME="CardUtilTest.toCartesianTest (1) Coverage Results" MODIFIED="1686455932479" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>mikeshafter.iciwi.faregate.*</FILTER>
+    </SUITE>
   </component>
 </project>

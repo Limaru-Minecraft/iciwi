@@ -13,14 +13,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
 
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
-public class TicketMachine implements Machine {
+public class CardMachine implements Machine {
 
   // Attributes
   private Inventory inv;
@@ -37,7 +36,7 @@ public class TicketMachine implements Machine {
   private final Lang lang = plugin.lang;
 
   // Constructor and Menu Display
-  public TicketMachine(Player player) {
+  public CardMachine(Player player) {
     this.player = player;
   }
 
@@ -67,8 +66,7 @@ public class TicketMachine implements Machine {
     this.clickables = new Clickable[9];
 
     // Create buttons
-    this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) -> SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station)));
-    this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
+    this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
     this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
 
     // Get operators
@@ -201,7 +199,7 @@ public class TicketMachine implements Machine {
               // Update value in SQL
               cardSql.addValueToCard(serial, value);
               player.closeInventory();
-            } 
+            }
             else {
               player.closeInventory();
               player.sendMessage(lang.getString("not-enough-money"));
@@ -305,8 +303,8 @@ public class TicketMachine implements Machine {
 
 
   // refunds the card
-  public void refundCard(ItemStack item) 
-  {  
+  public void refundCard(ItemStack item)
+  {
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
     for (ItemStack itemStack : player.getInventory().getContents()) {

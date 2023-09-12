@@ -1,6 +1,5 @@
-{pkgs}: {
-  deps = [
-    pkgs.gradle
-    pkgs.zulu
-  ];
-}
+{ pkgs }: {
+    deps = [
+        pkgs.gradle
+    ];
+} 

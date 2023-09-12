@@ -1,4 +1,4 @@
-package mikeshafter.iciwi.faregate;
+package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.Iciwi;
 import org.bukkit.Bukkit;

@@ -12,18 +12,22 @@ payment: Payment
 # Messages
 remaining: '§aRemaining value: §£%.2f'
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
+cannot-pass: '§cThere is a problem with your card/ticket, please approach the ticket counter.'
+value-low: '§cYour card has insufficient value! Please top up your card!'
+invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
 
 # =====================================
 # These options control the ticket machines.
 # =====================================
 # Global variables
 tickets: Tickets  # ticket machine sign text
+cards: Cards  # card vending machine sign text
 passes: Passes  # rail pass machine sign text
 custom-tickets: CustomTickets  # custom paper ticket machine sign text
 plugin-name: '§aIciwi Card'  # Default card name
 currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
-serial-prefix: 'A'  # 1 char only!
+serial-prefix: 'B'  # 1 char only!
 
 # Messages
 not-enough-money: §cYou do not have enough money!
@@ -42,9 +46,6 @@ enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
 generate-ticket-custom: '§aNew $s ticket from §e$s to §e$s generated.'
 generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from §e%1$s§a generated.'
-
-# Station name if the fare type is GLOBAL
-global-ticket: 'AllStations'  # must be CamelCase
 
 # == Card Operations Subpage ==
 select-card: '§1Select Card...'
@@ -76,12 +77,11 @@ select-class: 'Select class'
 # =====================================
 # These options control the fare gates.
 # =====================================
-tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 transfer: '§aOut-of-station interchange recorded.'
+tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
-invalid-ticket: '§cYour ticket is invalid! Please get another ticket at the ticket machine!'
 
 # Member sign
 member-gate: 'Membership valid. Welcome!'
@@ -94,8 +94,11 @@ pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
 # Sign creation messages
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
 create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
+create-member-sign: '§aYou created a member sign! This sign is used to only allow passage to pass holders.'
+create-payment-sign: '§aYou created a member sign! This sign is used to get a one-time payment.'
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
 create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
 create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'
+create-card-machine: '§aYou created a card vending machine! This sign is used to buy stored value cards.'
 create-pass-machine: '§aYou created a rail pass machine! This sign is used to buy rail passes.'
 create-custom-machine: '§aYou created a custom ticket machine! This sign is used to buy custom paper tickets.'

@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.api.IcCard;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
@@ -10,9 +11,16 @@ public class IciwiCard implements IcCard {
   private final CardSql cardSql = new CardSql();
   private final String serial;
   
-  public IciwiCard (ItemStack item) {
-    serial = MachineUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-  }
+  public IciwiCard (ItemStack item) { this.serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1)); }
+
+  /**
+   * Gets the serial number of the card
+   * NOTE: Iciwi-compatible plugins' cards must state their plugin name in lore[0]
+   * @return Serial number
+   */
+  @Override
+  public String getSerial() { return this.serial; }
+
   /**
    * Withdraws a certain amount;
    * @param amount The amount to withdraw from the card
@@ -41,7 +49,5 @@ public class IciwiCard implements IcCard {
    * THIS SHOULD RETURN 0d IF THE CARD IS A DEBIT/CREDIT CARD
    */
   @Override
-  public double getValue() {
-    return cardSql.getCardValue(serial);
-  }
+  public double getValue() { return cardSql.getCardValue(serial); }
 }

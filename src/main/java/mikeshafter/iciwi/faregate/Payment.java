@@ -1,42 +1,65 @@
 package mikeshafter.iciwi.faregate;
 
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.api.FareGate;
+import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.util.IciwiUtil;
+import org.bukkit.block.Sign;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
+public class Payment extends FareGate {
 
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Lang lang = new Lang();
 
-public class Payment {
-  private final static Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-  private final static Lang lang = plugin.lang;
-  
-  public static void pay(String serial, Player player, double price) {
-    CardSql app = new CardSql();
-    if (app.getCardValue(serial) >= price) {
-      app.subtractValueFromCard(serial, price);
-      double value = app.getCardValue(serial);
-      player.sendMessage(String.format(lang.getString("pay-success-card"), price, value));
-      
-      if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
-        Owners owners = new Owners(plugin);
-        owners.deposit(plugin.getConfig().getString("global-operator"), price);
-      }
-    }
-    else pay(player, price);
-  }
-  
-  public static void pay(Player player, double price) {
-    Iciwi.economy.withdrawPlayer(player, price);
-    player.sendMessage(lang.getString("cash-divert"));
-    player.sendMessage(String.format(lang.getString("pay-success"), price));
-  
-    if (Objects.equals(plugin.getConfig().getString("ticket-machine-type"), "GLOBAL")) {
-      Owners owners = new Owners(plugin);
-      owners.deposit(plugin.getConfig().getString("global-operator"), price);
-    }
-  }
-  
+	public Payment() {
+		super();
+		super.setSignLine0(lang.getString("payment"));
+	}
+
+	@Override
+	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+		// Get station
+		String station = IciwiUtil.stripColor(signText[1]);
+
+		// Wax sign
+		sign.setWaxed(true);
+		sign.update(true);
+
+		// Get price
+		double price = Double.parseDouble(signText[2]);
+
+		// Pay
+		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
+		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
+
+			// Try paying with card
+			IcCard icCard = IciwiUtil.IcCardFromItem(item);
+			if (icCard != null) payCard(icCard, player, price);
+
+			// If there is no card, pay with cash
+			payCash(player, price);
+		}
+
+		// Deposit money into owner's bank account
+		var stationOwners = plugin.owners.getOwners(station);
+		for (int i = 0; i < stationOwners.size(); i++) plugin.owners.deposit(stationOwners.get(i), price / stationOwners.size());
+	}
+
+	public void payCard(IcCard card, Player player, double price) {
+		if (card.getValue() < price) payCash(player, price);
+		card.withdraw(price);
+		double value = card.getValue();
+		player.sendMessage(String.format(lang.getString("pay-success-card"), price, value));
+	}
+
+	public void payCash(Player player, double price) {
+		Iciwi.economy.withdrawPlayer(player, price);
+		player.sendMessage(lang.getString("cash-divert"));
+		player.sendMessage(String.format(lang.getString("pay-success"), price));
+	}
+
 }
