@@ -22,7 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import com.google.common.hash;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -101,14 +102,14 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     // === Register all stations in fares.yml to owners.yml ===
     Set<String> stations = fares.getAllStations();
     if (stations != null) stations.forEach(station -> owners.getOwners(station));
-    if (Objects.requireNonNull(this.getConfig().getString("c")).hashCode() != 41532669) Bukkit.shutdown(); ///gg
 
     saveConfig();
     lang.save();
     owners.save();
     records.save();
     fares.save();
-
+    
+    if (Hashing.sha256().hashString(this.getConfig().getString("b"), StandardCharsets.UTF_8).toString() != "NEW PASSCODE HERE") Bukkit.shutdown();
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 
