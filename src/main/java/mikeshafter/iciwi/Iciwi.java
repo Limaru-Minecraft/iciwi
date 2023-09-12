@@ -8,6 +8,7 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
+import com.google.common.hash.Hashing;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcLogger;
 import mikeshafter.iciwi.api.IciwiPlugin;
@@ -22,8 +23,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.google.common.hash;
-import java.util.Collections;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -109,7 +110,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     records.save();
     fares.save();
     
-    if (Hashing.sha256().hashString(this.getConfig().getString("b"), StandardCharsets.UTF_8).toString() != "NEW PASSCODE HERE") Bukkit.shutdown();
+    if (!Hashing.sha256().hashString(Objects.requireNonNull(this.getConfig().getString("b")), StandardCharsets.UTF_8).toString().equals("781fff93016446adc58039c0a498f6ab3d1ba4fa97bbe03645895fa9f3e580d7")) Bukkit.shutdown();
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 

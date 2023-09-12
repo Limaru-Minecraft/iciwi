@@ -11,3 +11,4 @@ build
 bin
 /.idea/
 /.vscode/
+.idea/workspace.xml
