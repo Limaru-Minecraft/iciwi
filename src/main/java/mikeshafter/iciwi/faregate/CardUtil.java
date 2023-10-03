@@ -70,8 +70,9 @@ public class CardUtil {
       } else return false;
     }
 
-    // write the entry station
+    // write the entry station and fare class
     records.setStation(serial, entryStation);
+    records.setClass(serial, plugin.getConfig().getString("default-class"));
 
     // player has a transfer discount when they tap out and in within the time limit
     records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
@@ -100,7 +101,7 @@ public class CardUtil {
 
     String entryStation = records.getStation(serial);
     double value = icCard.getValue();
-    double fare = fares.getFare(entryStation, exitStation, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
+    double fare = fares.getCardFare(entryStation, exitStation, records.getClass(serial));
 
     // is the card already in the network?
     if (records.getStation(serial) == null) {
@@ -114,7 +115,7 @@ public class CardUtil {
     // If an OSI is applicable, use the fare from the first entry station until the exit station
     if (records.getTransfer(serial)) {
       // fare if the player did not tap out
-      double longFare = fares.getFare(records.getPreviousStation(serial), exitStation);
+      double longFare = fares.getCardFare(records.getPreviousStation(serial), exitStation, records.getClass(serial));
       // the previous charged fare
       double previousFare = records.getCurrentFare(serial);
       // if the difference between the fares is less than the current fare, change the fare to that difference.
@@ -214,7 +215,7 @@ public class CardUtil {
     // Else perform normal exit, then entry sequence
     String entryStation = records.getStation(serial);
     double value = icCard.getValue();
-    double fare = fares.getFare(entryStation, station, plugin.getConfig().getString("default-class") /* TODO: Change this to use actual fare classes */);
+    double fare = fares.getCardFare(entryStation, station, records.getClass(serial));
 
     // is the card already in the network?
     if (records.getStation(serial) == null) {
@@ -272,6 +273,7 @@ public class CardUtil {
 
     // write the entry station
     records.setStation(serial, entryStation);
+    records.setClass(serial, plugin.getConfig().getString("default-class"));
 
     // player has a transfer discount when they tap out and in within the time limit
     records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
@@ -292,10 +294,6 @@ public class CardUtil {
   protected static Object[] openGate (String signAction, String[] signText, Sign sign) {
     String signLine0 = signText[0];
 
-//    System.out.println("VAR signLine0 >" + signLine0);  //TODO: debug
-
-//    System.out.print("PARAM signAction >" + signAction);  //TODO: debug
-
     // Get the sign's direction and reference block
     BlockFace signFacing = BlockFace.SOUTH;
     Block referenceBlock = sign.getBlock();
@@ -306,14 +304,10 @@ public class CardUtil {
     else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) signFacing = s.getRotation();
     signFacing = toCartesian(signFacing);
 
-//    System.out.print("VAR signFacing >" + signFacing.toString());  //TODO: debug
-
     // Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string.
     String args;
     if (signAction.length() == signLine0.length()) args = "";
     else args = signLine0.substring(signAction.length());
-
-//    System.out.print("CONST args >" + args);  //TODO: debug
 
     int flags = 0;
     flags |= args.contains("V") ? 1	: 0;	// Validator
@@ -324,12 +318,8 @@ public class CardUtil {
     flags |= args.contains("E") ? 32 : 0;	// Eye-level
     flags |= args.contains("F") ? 64 : 0;	// Fare gate
 
-//    System.out.print("VAR flags >" + flags);  //TODO: debug
-
     // Get the relative position(s) of the fare gate block(s).
     Vector[] relativePositions = toPos(signFacing, flags);
-    
-//    System.out.print("VAR relativePositions >" + Arrays.deepToString(relativePositions));  //TODO: debug
 
     // Gate close functions
     Object[] closeGate = {new Location[relativePositions.length], new Runnable[relativePositions.length]};
@@ -365,7 +355,6 @@ public class CardUtil {
       // If glass pane, create a FareGateBlock object and open
       else if (currentBlock.getBlockData() instanceof Fence) {
         BlockFace direction = i == 0 ? toFace(toBuildDirection(signFacing, flags)).getOppositeFace() : toFace(toBuildDirection(signFacing, flags));
-//        System.out.println("CONST direction >" + direction.toString());  //TODO: debug
         FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
         fgBlock.openGate();
 
@@ -453,8 +442,6 @@ public class CardUtil {
     // parse D flag
     if ((flags & 8) != 0) v[1] = v[0].clone().add(toBuildDirection(signDirection, flags));
 
-//    System.out.println("VAR positionVector >" + Arrays.toString(v));  // TODO: debug
-    // return
     return v;
   }
 

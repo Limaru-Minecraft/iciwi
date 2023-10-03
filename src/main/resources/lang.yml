@@ -8,6 +8,7 @@ validator: Validator
 faregate: Faregate
 member: Member
 payment: Payment
+classchange: Class
 
 # Messages
 remaining: '§aRemaining value: §£%.2f'
@@ -84,7 +85,10 @@ ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
 
 # Member sign
-member-gate: 'Membership valid. Welcome!'
+member-gate: '§aMembership valid. Welcome!'
+
+# ClassChange sign
+member-gate: '§aChanged fare class to §e%s§a!'
 
 # Payment sign
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'

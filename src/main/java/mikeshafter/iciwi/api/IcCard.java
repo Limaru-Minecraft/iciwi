@@ -16,11 +16,11 @@ public interface IcCard {
 	boolean withdraw(double amount);
 
 	/**
-	 * Gets the serial number of the card
+	 * Gets the serial number of the card (REQUIRED)
 	 * NOTE: Iciwi-compatible plugins' cards must state their plugin name in lore[0]
 	 * @return Serial number
 	 */
-	default String getSerial() { return serial; }
+  String getSerial();
 
 	/**
 	 * Deposits a certain amount

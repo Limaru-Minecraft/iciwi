@@ -48,12 +48,6 @@ public abstract class FareGate implements Listener {
 		if (signState instanceof Sign sign) {
 			SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
 
-//			event.getPlayer().sendMessage("CONST sideLines >");  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(0));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(1));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(2));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(3));  //TODO: debug
-
 			if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
 				// get sign text
 				String[] signText = new String[4];

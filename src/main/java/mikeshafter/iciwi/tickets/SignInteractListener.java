@@ -69,6 +69,7 @@ public class SignInteractListener implements Listener {
 
 
   @EventHandler(priority = EventPriority.LOWEST)
+  @SuppressWarnings("Deprecation")  // SignSide#getLine required for some older signs to work!
   public void onSignClick(final PlayerInteractEvent event) {
     if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
       Player player = event.getPlayer();

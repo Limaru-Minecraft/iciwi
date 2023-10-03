@@ -19,6 +19,17 @@ public class Records extends CustomConfig {
     super.save();
   }
 
+  public String getClass (String serial) {
+    String c = super.getString(serial + ".fareclass"); 
+    if (c == "") return plugin.getConfig().getString("default-class");
+    else return c;
+  }
+
+  public void setClass (String serial, String fareClass) {
+    super.set(serial + ".fareclass", fareClass);
+    super.save();
+  }
+
   public String getPreviousStation (String serial) {
     return super.getString(serial + ".previous-station");
   }
