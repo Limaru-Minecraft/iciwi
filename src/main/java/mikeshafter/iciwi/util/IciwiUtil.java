@@ -60,6 +60,7 @@ public class IciwiUtil {
    */
   public static String parseComponent(final Component c) {
     if (c instanceof TextComponent) return ((TextComponent) c).content();
+    else if (c == null) return "";
     else return c.examinableName();
   }
 
@@ -118,9 +119,9 @@ public class IciwiUtil {
   /**
    * @param n Numerator
    * @param d Denominator
-   * @return (n/d) if n is divisible by d, else (n/d)+1.
+   * @return d if n is 0, (n/d) if n is divisible by d, else (n/d)+1.
    */
-  public static int ceilDiv(final int n, final int d) { return (n + d - 1) / d; }
+  public static int ceilDiv(final int n, final int d) { return n == 0 ? d : (n + d - 1) / d; }
 
   /**
    * @param n Number

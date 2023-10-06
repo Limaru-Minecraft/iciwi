@@ -14,6 +14,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.data.Openable;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.Fence;
+import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.Player;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.util.Vector;
@@ -353,7 +354,7 @@ public class CardUtil {
       }
 
       // If glass pane, create a FareGateBlock object and open
-      else if (currentBlock.getBlockData() instanceof Fence) {
+      else if (currentBlock.getBlockData() instanceof Fence || currentBlock.getBlockData() instanceof GlassPane) {
         BlockFace direction = i == 0 ? toFace(toBuildDirection(signFacing, flags)).getOppositeFace() : toFace(toBuildDirection(signFacing, flags));
         FareGateBlock fgBlock = new FareGateBlock(currentBlock, direction, 100);
         fgBlock.openGate();
