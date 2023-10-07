@@ -17,7 +17,7 @@ public class IcLogger {
 
   private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Path file = Paths.get("iciwi.dat");
-  private IcData icData  = new IcData();
+  private IcData icData;
 
   public IcLogger() {
     try {
@@ -27,7 +27,9 @@ public class IcLogger {
     } catch (IOException e) {
       plugin.getLogger().warning("Unable to create a file: " + file + ", check permissions!");
     }
+  }
 
+  public void read() {
     // read icData from file
     try {
       FileInputStream fis = new FileInputStream(file.toString());
@@ -42,14 +44,18 @@ public class IcLogger {
   
   public void record (Map<String, Object> map) {
     // get unique key
-    if (map.get("uuid") instanceof String uuid && map.get("timestamp") instanceof String timestamp) {
+    if (map.containsKey("uuid") && map.containsKey("timestamp") 
+        && map.get("uuid") instanceof String uuid && map.get("timestamp") instanceof String timestamp)
+    {
       String ukey = uuid + timestamp;
       // remove unneeded fields as they are part of the unique key
       map.remove("uuid");
       map.remove("timestamp");
-      // set to data
-      this.icData.set(ukey, map);
+      // read current data and put value to icData
+      this.read();
+      this.icData.put(ukey, map);
     }
+    this.save();
   }
 
   public List<Map<String, Object>> get (String category, Object value) {
@@ -90,7 +96,7 @@ public class IcLogger {
       return dataKeys.stream().map(k -> data.get(k)).toList();
     }
 
-    public void set (String key, Map<String, Object> map) {
+    public void put (String key, Map<String, Object> map) {
       // loop through every key in map
       for (String mapKey : map.keySet()) {
         this.accessors.putIfAbsent( new Pair<String, Object>(mapKey, map.get(mapKey)) , new LinkedList<>() );

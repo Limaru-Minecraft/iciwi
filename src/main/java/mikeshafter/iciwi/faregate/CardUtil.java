@@ -94,7 +94,7 @@ public class CardUtil {
   protected static boolean exit(Player player, IcCard icCard, String exitStation) {
     if (onClick(player)) return false;
 
-	Fares fares = new Fares();
+	  Fares fares = new Fares();
     String serial = icCard.getSerial();
 
     // don't parse if there is no serial
@@ -106,11 +106,14 @@ public class CardUtil {
 
     // is the card already in the network?
     if (records.getStation(serial) == null) {
-      player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
-      } else return false;
+      }
+      else {
+        player.sendMessage(lang.getString("cannot-pass"));
+        return false;
+      }
     }
 
     // If an OSI is applicable, use the fare from the first entry station until the exit station
@@ -147,6 +150,7 @@ public class CardUtil {
       return false;
     }
 
+    // withdraw fare from card
     icCard.withdraw(fare);
 
     // set details for future transfer

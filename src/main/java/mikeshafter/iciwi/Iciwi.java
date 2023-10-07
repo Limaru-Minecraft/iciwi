@@ -38,7 +38,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   public Owners owners;
   public Records records;
   public Fares fares;
-  public IcLogger icLogger;
+  public static IcLogger icLogger = null;
 
   public void reloadAllConfig(){
     new Lang(this).reload();
@@ -47,6 +47,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     new Fares(this).reload();
     reloadConfig();
   }
+
 
   /* UNUSED
   public void sendAll(String message) {
@@ -126,7 +127,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
   private void registerFareGate (FareGate fareGate) { getServer().getPluginManager().registerEvents(fareGate, this); }
 
-  public void registerCommands (Commands commands) {
+  private void registerCommands (Commands commands) {
     final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
     Plugin plugin = Iciwi.getPlugin(Iciwi.class);
     PaperCommandManager<CommandSender> manager;

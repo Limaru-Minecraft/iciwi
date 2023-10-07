@@ -10,8 +10,10 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Objects;
+import static java.util.Map.entry;    
 
 public class Entry extends ClosableFareGate {
 
@@ -73,7 +75,22 @@ public class Entry extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+			if (CardUtil.entry(player, icCard, station)) {
+        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+
+        // log in Iciwi.icLogger
+        Map<String, Object> logMap = Map.ofEntries(
+          entry("timestamp", System.currentTimeMillis()),
+          entry("uuid", player.getUniqueId().toString()),
+          entry("function", "entry_card_normal")
+          entry("signloc", new int[] {sign.getLocation().getX(), sign.getLocation().getY(), sign.getLocation().getZ()}),
+          entry("station", station)
+          // TODO: just realised there's currently no way to determine whether a player entered with a transfer in place or not, that's only handled on the exit side.
+          // Maybe put quick access methods in IcLogger?
+        );
+      
+        Iciwi.icLogger.record(logMap);
+      }
 
 		}
 	}
