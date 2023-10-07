@@ -10,17 +10,12 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
 
-import org.bukkit.Statistic;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import com.bergerkiller.bukkit.common.utils.TimeUtil;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import cloud.commandframework.paper.PaperCommandManager;
 
 
 @SuppressWarnings("Unused")

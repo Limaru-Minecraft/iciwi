@@ -2,7 +2,6 @@ package mikeshafter.iciwi.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
-import org.bukkit.plugin.Plugin;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
