@@ -135,6 +135,29 @@ public class CardSql {
     
     return returnValue;
   }
+
+
+  /**
+   * Gets the start time of a certain railpass belonging to a card
+   *
+   * @param serial Serial number
+   * @param name   Name of the discount (include operator)
+   */
+  public long getStart(String serial, String name) {
+    String sql = "SELECT start FROM discounts WHERE serial = ? AND name = ?";
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, serial);
+      statement.setString(2, name);
+      ResultSet rs = statement.executeQuery();
+      
+      // Get the start date
+      return rs.getLong(1);
+      
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return 0L;
+    }
+  }
   
   
   /**
