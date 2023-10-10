@@ -47,7 +47,7 @@ public class CardUtil {
    * @param entryStation The station at which to enter
    * @return Whether entry was successful. If false, do not open the fare gate.
    */
-  protected static boolean entry(Player player, IcCard icCard, String entryStation) {
+  protected static boolean entry(Player player, IcCard icCard, String entryStation, Vector signLocationVector) {
     if (onClick(player)) return false;
 
     double value = icCard.getValue();
@@ -91,7 +91,7 @@ public class CardUtil {
   * @param exitStation The station at which to exit
   * @return Whether exit was successful. If false, do not open the fare gate.
   */
-  protected static boolean exit(Player player, IcCard icCard, String exitStation) {
+  protected static boolean exit(Player player, IcCard icCard, String exitStation, Vector signLocationVector) {
     if (onClick(player)) return false;
 
 	  Fares fares = new Fares();
@@ -104,7 +104,7 @@ public class CardUtil {
     double value = icCard.getValue();
     double fare = fares.getCardFare(entryStation, exitStation, records.getClass(serial));
 
-    // is the card already in the network?
+    // is the card not in the network?
     if (records.getStation(serial) == null) {
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));

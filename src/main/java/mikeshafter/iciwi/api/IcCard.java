@@ -9,6 +9,12 @@ public interface IcCard {
 	CardSql cardSql = new CardSql();
 
 	/**
+	 * Converts this card's details into an Iciwi-loggable map
+	 * @return This card in a loggable state
+	 */
+	Map<String, Object> toMap();
+
+	/**
 	 * Withdraws a certain amount
 	 * @param amount The amount to withdraw from the card
 	 * @return Whether the withdrawal is successful

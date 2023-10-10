@@ -4,7 +4,9 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.util.IciwiUtil;
+
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -13,12 +15,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 import java.util.List;
 import java.util.Objects;
-import static java.util.Map.entry;    
 
 public class Entry extends ClosableFareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 	private final Lang lang = new Lang();
+	private final Records records = new Records();
 
 	public Entry() {
 		super();
@@ -75,21 +77,36 @@ public class Entry extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) {
+			if (CardUtil.entry(player, icCard, station, sign.getLocation().toVector())) {
         super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
 
         // log in Iciwi.icLogger
+				// TODO: move this to CardUtil.entry
+				String ukey = System.currentTimeMillis()+"_"+player.getUniqueId().toString();
         Map<String, Object> logMap = Map.ofEntries(
-          entry("timestamp", System.currentTimeMillis()),
-          entry("uuid", player.getUniqueId().toString()),
-          entry("function", "entry_card_normal")
-          entry("signloc", new int[] {sign.getLocation().getX(), sign.getLocation().getY(), sign.getLocation().getZ()}),
-          entry("station", station)
-          // TODO: just realised there's currently no way to determine whether a player entered with a transfer in place or not, that's only handled on the exit side.
-          // Maybe put quick access methods in IcLogger?
+          Map.entry("timestamp", System.currentTimeMillis()),
+          Map.entry("uuid", player.getUniqueId().toString()),
+          Map.entry("function", "entry_card"),
+          Map.entry("signloc", sign.getLocation().toVector()),
+          Map.entry("station", station)
         );
-      
-        Iciwi.icLogger.record(logMap);
+				// check if we need to access Records to get OSI data if there is one
+				if (records.getTransfer(icCard.getSerial())) {
+					String serial = icCard.getSerial();
+					Map<String, Object> previousJourneyMap = Map.ofEntries(
+						Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
+						Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
+						Map.entry("prevjourney_class", records.getClass(serial)),
+						Map.entry("prevjourney_exittime", records.getTimestamp(serial))
+					);
+					logMap.putAll(previousJourneyMap);
+				}
+
+				// store IC Card details
+				logMap.putAll(icCard.toMap());
+
+				// record in logger
+        Iciwi.icLogger.record(ukey, logMap);
       }
 
 		}

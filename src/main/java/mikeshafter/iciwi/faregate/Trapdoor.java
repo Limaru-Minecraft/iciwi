@@ -78,8 +78,8 @@ public class Trapdoor extends ClosableFareGate {
 			Records records = new Records();
 
 			// Determine entry or exit
-			if (records.getStation(serial) == null) CardUtil.entry(player, icCard, station);
-			else CardUtil.exit(player, icCard, station);
+			if (records.getStation(serial) == null) CardUtil.entry(player, icCard, station, sign.getLocation().toVector());
+			else CardUtil.exit(player, icCard, station, sign.getLocation().toVector());
 
 			// Open the fare gate in both cases
 			super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));

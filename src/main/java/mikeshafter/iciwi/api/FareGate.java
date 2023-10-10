@@ -38,6 +38,7 @@ public abstract class FareGate implements Listener {
 	 */
 	public void setSignLine0 (String signLine0) { this.signLine0 = signLine0; }
 
+	@SuppressWarnings("Deprecation")  // SignSide#getLine required for some older signs to work!
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();

@@ -42,32 +42,38 @@ public class IcLogger {
     }
   }
   
-  public void record (Map<String, Object> map) {
-    // get unique key
-    if (map.containsKey("uuid") && map.containsKey("timestamp") 
-        && map.get("uuid") instanceof String uuid && map.get("timestamp") instanceof String timestamp)
-    {
-      String ukey = uuid + timestamp;
-      // remove unneeded fields as they are part of the unique key
-      map.remove("uuid");
-      map.remove("timestamp");
-      // read current data and put value to icData
-      this.read();
-      this.icData.put(ukey, map);
-    }
+  /**
+   * Records a new entry to the data map
+   * Also works for editing
+   * @param ukey Unique key to associate with map
+   * @param map Map to record
+   */
+  public void record (String ukey, Map<String, Object> map) {
+    this.read();
+    this.icData.put(ukey, map);
     this.save();
   }
 
+  /**
+   * Gets all entries with the specified category-value pair.
+   * @param category Category to look into
+   * @param value Value to check for
+   * @return List of the map objects that are the entries.
+   */
   public List<Map<String, Object>> get (String category, Object value) {
-    return this.icData.get(new Pair<>(category, value));
+    this.read();
+    return this.icData.get(new Pair(category, value));
   }
 
+  /**
+   * Saves the data to the file.
+   */
   public void save() {
     // output icData to file
     try {
       FileOutputStream fos = new FileOutputStream(file.toString());
       ObjectOutputStream oos = new ObjectOutputStream(fos);
-      oos.writeObject(icData);
+      oos.writeObject(this.icData);
       oos.close();
     } catch (IOException e) {
       e.printStackTrace();
@@ -75,23 +81,14 @@ public class IcLogger {
   }
 
 
-  private class Pair<K, V> {
-    private K k;
-    private V v;
-    public Pair (K k, V v) {
-      this.k = k;
-      this.v = v;
-    }
-    public K getK() { return k; }
-    public V getV() { return v; }
-  }
+  private record Pair(String k, Object v) {}
 
 
   private class IcData {
-    private HashMap<Pair<String, Object>, LinkedList<String>> accessors;
+    private HashMap<Pair, LinkedList<String>> accessors;
     private HashMap<String, Map<String, Object>> data;
 
-    public List<Map<String, Object>> get (Pair<String, Object> accessor) {
+    public List<Map<String, Object>> get (Pair accessor) {
       LinkedList<String> dataKeys = accessors.get(accessor);
       return dataKeys.stream().map(k -> data.get(k)).toList();
     }
@@ -99,8 +96,8 @@ public class IcLogger {
     public void put (String key, Map<String, Object> map) {
       // loop through every key in map
       for (String mapKey : map.keySet()) {
-        this.accessors.putIfAbsent( new Pair<String, Object>(mapKey, map.get(mapKey)) , new LinkedList<>() );
-        this.accessors.get( new Pair<String, Object>(mapKey, map.get(mapKey)) ).add(key);
+        this.accessors.putIfAbsent( new Pair(mapKey, map.get(mapKey)) , new LinkedList<>() );
+        this.accessors.get( new Pair(mapKey, map.get(mapKey)) ).add(key);
       }
       this.data.put(key, map);
     }

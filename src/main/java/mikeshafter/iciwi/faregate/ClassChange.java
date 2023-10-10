@@ -33,7 +33,6 @@ public class ClassChange extends FareGate {
 		// Check if card
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
 
-			// TODO: if card, access records.yml and change the class to newClass
       IcCard icCard = IciwiUtil.IcCardFromItem(item);
       if (icCard != null) {
         String serial = icCard.getSerial();

@@ -88,7 +88,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     app.initTables();
 
     // === Logger ===
-    this.icLogger = new IcLogger();
+    Iciwi.icLogger = new IcLogger();
 
     // === Register events ===
     registerFareGate(new mikeshafter.iciwi.faregate.Entry());
