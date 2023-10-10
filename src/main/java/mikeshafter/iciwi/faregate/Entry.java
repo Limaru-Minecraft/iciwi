@@ -12,7 +12,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,6 @@ public class Entry extends ClosableFareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 	private final Lang lang = new Lang();
-	private final Records records = new Records();
 
 	public Entry() {
 		super();
@@ -81,32 +79,6 @@ public class Entry extends ClosableFareGate {
         super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
 
         // log in Iciwi.icLogger
-				// TODO: move this to CardUtil.entry
-				String ukey = System.currentTimeMillis()+"_"+player.getUniqueId().toString();
-        Map<String, Object> logMap = Map.ofEntries(
-          Map.entry("timestamp", System.currentTimeMillis()),
-          Map.entry("uuid", player.getUniqueId().toString()),
-          Map.entry("function", "entry_card"),
-          Map.entry("signloc", sign.getLocation().toVector()),
-          Map.entry("station", station)
-        );
-				// check if we need to access Records to get OSI data if there is one
-				if (records.getTransfer(icCard.getSerial())) {
-					String serial = icCard.getSerial();
-					Map<String, Object> previousJourneyMap = Map.ofEntries(
-						Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
-						Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
-						Map.entry("prevjourney_class", records.getClass(serial)),
-						Map.entry("prevjourney_exittime", records.getTimestamp(serial))
-					);
-					logMap.putAll(previousJourneyMap);
-				}
-
-				// store IC Card details
-				logMap.putAll(icCard.toMap());
-
-				// record in logger
-        Iciwi.icLogger.record(ukey, logMap);
       }
 
 		}

@@ -80,7 +80,34 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
-    return true;
+				
+    // logger
+    String ukey = System.currentTimeMillis()+"_"+player.getUniqueId().toString();
+    Map<String, Object> logMap = Map.ofEntries(
+    Map.entry("timestamp", System.currentTimeMillis()),
+    Map.entry("uuid", player.getUniqueId().toString()),
+    Map.entry("function", "entry_card"),
+    Map.entry("signloc", signLocationVector),
+    Map.entry("station", entryStation)
+    );
+    // check if we need to access Records to get OSI data if there is one
+    if (records.getTransfer(icCard.getSerial())) {
+    Map<String, Object> previousJourneyMap = Map.ofEntries(
+    Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
+    Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
+    Map.entry("prevjourney_class", records.getClass(serial)),
+    Map.entry("prevjourney_exittime", records.getTimestamp(serial))
+    );
+    logMap.putAll(previousJourneyMap);
+    }
+
+    // store IC Card details
+    logMap.putAll(icCard.toMap());
+
+    // record in logger
+    Iciwi.icLogger.record(ukey, logMap);
+    
+return true;
   }
 
 
