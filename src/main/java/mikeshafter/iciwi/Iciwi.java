@@ -49,11 +49,9 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   }
 
 
-  /* UNUSED
   public void sendAll(String message) {
     getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));
   }
-  */
 
   @Override
   public void onDisable() {
@@ -91,8 +89,10 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     Iciwi.icLogger = new IcLogger();
 
     // === Register events ===
+    registerFareGate(new mikeshafter.iciwi.faregate.ClassChange());
     registerFareGate(new mikeshafter.iciwi.faregate.Entry());
     registerFareGate(new mikeshafter.iciwi.faregate.Exit());
+    registerFareGate(new mikeshafter.iciwi.faregate.Transfer());
     registerFareGate(new mikeshafter.iciwi.faregate.Trapdoor());
     registerFareGate(new mikeshafter.iciwi.faregate.Member());
     registerFareGate(new mikeshafter.iciwi.faregate.Payment());

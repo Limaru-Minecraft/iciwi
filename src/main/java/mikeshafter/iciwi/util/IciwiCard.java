@@ -74,10 +74,10 @@ public class IciwiCard implements IcCard {
     }
 
     // Get card details
-    Map<String, Object> map = Map.ofEntries(
+    Map<String, Object> map = new HashMap<>(Map.ofEntries(
       Map.entry("card_serial", this.serial),
       Map.entry("card_value", cardSql.getCardValue(serial))
-    );
+    ));
     map.putAll(railPassMap);
 
     return map;

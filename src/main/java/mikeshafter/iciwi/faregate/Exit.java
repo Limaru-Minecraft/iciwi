@@ -11,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class Exit extends ClosableFareGate {
@@ -72,18 +71,6 @@ public class Exit extends ClosableFareGate {
 			// Call entry, and if successful, open fare gate
 			if (CardUtil.exit(player, icCard, station, sign.getLocation().toVector())) {
 				 super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
-
-				 	// log in Iciwi.icLogger
-					String ukey = System.currentTimeMillis() + "_" + player.getUniqueId().toString();
-					Map<String, Object> logMap = Map.ofEntries(
-          Map.entry("timestamp", System.currentTimeMillis()),
-          Map.entry("uuid", player.getUniqueId().toString()),
-          Map.entry("function", "exit_card"),
-          Map.entry("signloc", new int[] {sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ()}),
-          Map.entry("station", station)
-        );
-				logMap.putAll(icCard.toMap());
-        Iciwi.icLogger.record(ukey, logMap);
       }
 		}
 	}

@@ -15,11 +15,11 @@ import java.util.List;
 
 public class IcLogger {
 
-  private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
   private final Path file = Paths.get("iciwi.dat");
   private IcData icData;
 
   public IcLogger() {
+    Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
     try {
       Files.createFile(file);
     } catch (FileAlreadyExistsException e) {
@@ -84,13 +84,13 @@ public class IcLogger {
   private record Pair(String k, Object v) {}
 
 
-  private class IcData {
-    private HashMap<Pair, LinkedList<String>> accessors;
-    private HashMap<String, Map<String, Object>> data;
+  private static class IcData {
+    private final HashMap<Pair, LinkedList<String>> accessors = new HashMap<>();
+    private final HashMap<String, Map<String, Object>> data = new HashMap<>();
 
     public List<Map<String, Object>> get (Pair accessor) {
       LinkedList<String> dataKeys = accessors.get(accessor);
-      return dataKeys.stream().map(k -> data.get(k)).toList();
+      return dataKeys.stream().map(data::get).toList();
     }
 
     public void put (String key, Map<String, Object> map) {

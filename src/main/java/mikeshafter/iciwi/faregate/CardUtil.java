@@ -16,7 +16,6 @@ import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.GlassPane;
 import org.bukkit.entity.Player;
-import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.util.Vector;
 
 public class CardUtil {
@@ -82,14 +81,14 @@ public class CardUtil {
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
 				
     // logger
-    String ukey = System.currentTimeMillis()+"_"+player.getUniqueId().toString();
-    Map<String, Object> logMap = Map.ofEntries(
+    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
+    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
     Map.entry("timestamp", System.currentTimeMillis()),
     Map.entry("uuid", player.getUniqueId().toString()),
     Map.entry("function", "entry_card"),
     Map.entry("signloc", signLocationVector),
     Map.entry("station", entryStation)
-    );
+    ));
     // check if we need to access Records to get OSI data if there is one
     if (records.getTransfer(icCard.getSerial())) {
     Map<String, Object> previousJourneyMap = Map.ofEntries(
@@ -107,7 +106,7 @@ public class CardUtil {
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
     
-return true;
+  return true;
   }
 
 
@@ -191,8 +190,8 @@ return true;
     player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
 
     // log in IcLogger
-    String ukey = System.currentTimeMillis()+"_"+player.getUniqueId().toString();
-    Map<String, Object> logMap = Map.ofEntries(
+    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
+    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
       Map.entry("timestamp", System.currentTimeMillis()),
       Map.entry("uuid", player.getUniqueId().toString()),
       Map.entry("function", "exit_card"),
@@ -202,7 +201,7 @@ return true;
       Map.entry("journey_finalfare", fare),
       Map.entry("journey_originalfare", fares.getCardFare(entryStation, exitStation, records.getClass(serial))),
       Map.entry("journey_class", records.getClass(serial))
-    );
+    ));
     
     // check if a railpass is used, and if so, add the railpass to the log
     if (finalRailPass != null) {
@@ -244,7 +243,7 @@ return true;
    * @param station The station at which the sign is placed
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
-  protected static boolean member(Player player, IcCard icCard, String station) {
+  protected static boolean member(Player player, IcCard icCard, String station, Vector signLocationVector) {
     if (onClick(player)) return false;
 
     // Get the serial number of the card
@@ -260,6 +259,24 @@ return true;
     for (String r : railPasses) {
       if (stationOwners.contains(owners.getRailPassOperator(r))) {
         player.sendMessage(lang.getString("member-gate"));
+
+        // logger
+        String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
+        Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
+          Map.entry("timestamp", System.currentTimeMillis()),
+          Map.entry("uuid", player.getUniqueId().toString()),
+          Map.entry("function", "member_card"),
+          Map.entry("signloc", signLocationVector),
+          Map.entry("station", station),
+          Map.entry("pass", r)
+        ));
+
+        // store IC Card details
+        logMap.putAll(icCard.toMap());
+
+        // record in logger
+        Iciwi.icLogger.record(ukey, logMap);
+
         return true;
       }
     }
@@ -276,7 +293,7 @@ return true;
    * @param station The station at which the sign is placed
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
-  protected static boolean transfer(Player player, IcCard icCard, String station) {
+  protected static boolean transfer(Player player, IcCard icCard, String station, Vector signLocationVector) {
     if (onClick(player)) return false;
 
 	Fares fares = new Fares();
@@ -306,20 +323,21 @@ return true;
     // Get the owners of stations and rail passes
     List<String> entryStationOwners = owners.getOwners(entryStation);
     List<String> exitStationOwners	= owners.getOwners(station);
-    Set<String> railPasses = cardSql.getAllDiscounts(serial).keySet();
-    Set<String> railPassOwners = new HashSet<>();
-    railPasses.forEach(r -> railPassOwners.add(owners.getRailPassOperator(r)));
+    String finalRailPass = null;
+    double payPercentage = 1d;
 
-    if (IciwiUtil.any(railPassOwners, entryStationOwners) && IciwiUtil.any(railPassOwners, exitStationOwners)) {
-      // Get cheapest discount
-      double payPercentage = 1d;
-      for (var r: railPasses) {
-        if (payPercentage > owners.getRailPassPercentage(r)) payPercentage = owners.getRailPassPercentage(r);
+    // Get cheapest discount
+    for (var r : cardSql.getAllDiscounts(serial).keySet()) {
+      if (( entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r)) ) &&
+        owners.getRailPassPercentage(r) < payPercentage )
+      {
+        finalRailPass = r;
+        payPercentage = owners.getRailPassPercentage(r);
       }
-
-      // Set final fare
-      fare *= payPercentage;
     }
+
+    // Set final fare
+    fare *= payPercentage;
 
     // check if card value is low
     if (value < fare) {
@@ -357,6 +375,51 @@ return true;
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
+
+    // log in IcLogger
+    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
+    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
+      Map.entry("timestamp", System.currentTimeMillis()),
+      Map.entry("uuid", player.getUniqueId().toString()),
+      Map.entry("function", "transfer_card"),
+      Map.entry("signloc", signLocationVector),
+      Map.entry("entry_station", entryStation),
+      Map.entry("transfer_station", station),
+      Map.entry("journey_finalfare", fare),
+      Map.entry("journey_originalfare", fares.getCardFare(entryStation, station, records.getClass(serial))),
+      Map.entry("journey_class", records.getClass(serial))
+    ));
+
+    // check if a railpass is used, and if so, add the railpass to the log
+    if (finalRailPass != null) {
+      Map<String, Object> railPassMap = Map.ofEntries(
+        Map.entry("journey_railpass_used", finalRailPass),
+        Map.entry("journey_railpass_price", owners.getRailPassPrice(finalRailPass)),
+        Map.entry("journey_railpass_percentage", owners.getRailPassPercentage(finalRailPass)),
+        Map.entry("journey_railpass_start", cardSql.getStart(serial, finalRailPass)),
+        Map.entry("journey_railpass_duration", owners.getRailPassDuration(finalRailPass)),
+        Map.entry("journey_railpass_operator", owners.getRailPassOperator(finalRailPass))
+      );
+      logMap.putAll(railPassMap);
+    }
+
+    // check if we need to access Records to get OSI data if there is one
+    if (records.getTransfer(icCard.getSerial())) {
+      Map<String, Object> previousJourneyMap = Map.ofEntries(
+        Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
+        Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
+        Map.entry("prevjourney_class", records.getClass(serial)),
+        Map.entry("prevjourney_exittime", records.getTimestamp(serial))
+      );
+      logMap.putAll(previousJourneyMap);
+    }
+
+    // store IC Card details
+    logMap.putAll(icCard.toMap());
+
+    // record in logger
+    Iciwi.icLogger.record(ukey, logMap);
+
     return true;
   }
 
@@ -466,7 +529,7 @@ return true;
    * @param face the original direction
    * @return the altered direction
    */
-  public static BlockFace toCartesian (BlockFace face) {
+  private static BlockFace toCartesian (BlockFace face) {
     if (!face.isCartesian()) {
       return switch (face) {
         case NORTH_WEST, NORTH_NORTH_WEST, NORTH_NORTH_EAST -> BlockFace.NORTH;
@@ -485,7 +548,7 @@ return true;
    * @param flags the flags to be applied
    * @return the direction to build fare gates in.
    */
-  public static Vector toBuildDirection (BlockFace signDirection, int flags) {
+  private static Vector toBuildDirection (BlockFace signDirection, int flags) {
     if ((flags & 1 | flags & 16) != 0) return new Vector();	// Validator and Redstone: no animation/double gate allowed
     else if ((flags & 4) != 0) return signDirection.getDirection();	// Sideways
     else if ((flags & 2) != 0) return signDirection.getDirection().getCrossProduct(new Vector(0, -1, 0));	// Lefty
@@ -499,7 +562,7 @@ return true;
    * @param flags the flags to be applied
    * @return The positions of the fare gate blocks.
    */
-  public static Vector[] toPos (BlockFace signDirection, int flags) {
+  private static Vector[] toPos (BlockFace signDirection, int flags) {
     // length 0 if validator
     if ((flags & 1) != 0) return new Vector[0];
 

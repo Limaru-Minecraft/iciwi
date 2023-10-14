@@ -32,6 +32,7 @@ public class Member extends ClosableFareGate {
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
+			plugin.sendAll("(☞ ͡° ͜ʖ ͡°)☞ dude tried to use a feature from the future! (ง ͡ʘ ͜ʖ ͡ʘ)ง FUTURE FEATURE FUTURE FEATURE (ง ͡ʘ ͜ʖ ͡ʘ)ง");
 			// FUTURE: Paper rail passes
 		}
 
@@ -43,7 +44,7 @@ public class Member extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
+			if (CardUtil.member(player, icCard, station, sign.getLocation().toVector())) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
 
 		}
 	}
