@@ -30,7 +30,7 @@ public class Payment extends FareGate {
 		sign.update(true);
 
 		// Get price
-		double price = Double.parseDouble(Iciwi.stripColor(signText[2]));
+		double price = Double.parseDouble(IciwiUtil.stripColor(signText[2]));
 
 		// Pay
 		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
