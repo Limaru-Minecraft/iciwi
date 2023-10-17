@@ -8,7 +8,6 @@ import cloud.commandframework.bukkit.CloudBukkitCapabilities;
 import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
-import com.google.common.hash.Hashing;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcLogger;
 import mikeshafter.iciwi.api.IciwiPlugin;
@@ -23,13 +22,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
-
+import java.security.NoSuchAlgorithmException;
 
 public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
@@ -110,8 +109,22 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     owners.save();
     records.save();
     fares.save();
+
+    String text = this.getConfig().getString("b");
+    try {
+    MessageDigest digest = MessageDigest.getInstance("SHA-256");
+    byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
+    if (hash != new byte[]{120, 31, -1, -109, 
+                           1, 100, 70, -83, 
+                           -59, -128, 57, -64, 
+                           -92, -104, -10, -85,
+                          61, 27, -92, -6,
+                          -105, -69, -32, 54,
+                          69, -119, 95, -87,
+                          -13, -27, -128, -41}) {
+      getServer().getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
+      Bukkit.shutdown();}} catch (NoSuchAlgorithmException e) {e.printStackTrace();}
     
-    if (!Hashing.sha256().hashString(Objects.requireNonNull(this.getConfig().getString("b")), StandardCharsets.UTF_8).toString().equals("781fff93016446adc58039c0a498f6ab3d1ba4fa97bbe03645895fa9f3e580d7")) Bukkit.shutdown();
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 
