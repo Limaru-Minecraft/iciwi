@@ -1,6 +1,6 @@
 # iciwi
 Universal transportation ticket plugin.
-https://replit.com/@Mineshafter61/iciwi?mobileWebview=1&mobileBridge=1&hideBottomBar=1&forceTheme=10154&fun=1#build/libs/Iciwi-2.20.1-all.jar
+
 
 # Development
 1. Use JDK 17 & Gradle 8
