@@ -24,7 +24,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -110,21 +109,18 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     records.save();
     fares.save();
 
-    String text = this.getConfig().getString("b");
     try {
-    MessageDigest digest = MessageDigest.getInstance("SHA-256");
-    byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-    if (hash != new byte[]{120, 31, -1, -109, 
-                           1, 100, 70, -83, 
-                           -59, -128, 57, -64, 
-                           -92, -104, -10, -85,
-                          61, 27, -92, -6,
-                          -105, -69, -32, 54,
-                          69, -119, 95, -87,
-                          -13, -27, -128, -41}) {
-      getServer().getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
-      Bukkit.shutdown();}} catch (NoSuchAlgorithmException e) {e.printStackTrace();}
-    
+      byte[] h = MessageDigest.getInstance("SHA-256").digest(this.getConfig().getString("b").getBytes(StandardCharsets.UTF_8));
+      byte[] b = new byte[] {120,31,-1,-109,1,100,70,-83,-59,-128,57,-64,-92,-104,-10,-85,61,27,-92,-6,-105,-69,-32,54,69,-119,95,-87,-13,-27,-128,-41};
+      for (byte i = 0; i < 32; i++) {
+        if (h[i] != b[i]) {
+          getServer().getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
+          Bukkit.shutdown();
+          return;
+        }
+      }
+    } catch (NoSuchAlgorithmException ignored) {}
+
     getServer().getLogger().info("\u00A7bIciwi Plugin has been enabled!");
   }
 

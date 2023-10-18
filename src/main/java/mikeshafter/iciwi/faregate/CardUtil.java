@@ -57,7 +57,7 @@ public class CardUtil {
 
     // reject entry if card has less than the minimum value
     if (value < plugin.getConfig().getDouble("min-amount")) {
-      // TODO: low amount message
+      player.sendMessage(lang.getString("value-low"));
       return false;
     }
 
