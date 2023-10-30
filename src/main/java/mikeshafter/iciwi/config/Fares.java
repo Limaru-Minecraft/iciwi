@@ -10,26 +10,17 @@ import java.util.TreeMap;
 
 
 public class Fares extends CustomConfig {
-  
+
   public Fares(org.bukkit.plugin.Plugin plugin) {
     super("fares.yml", plugin);
   }
-  
+
   public Fares () {
     super("fares.yml");
   }
-  
+
   public Set<String> getAllStations() {
     return this.get().getKeys(false);
-  }
-  
-  public double getFare(String from, String to) {
-    return getFare(from, to, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));
-  }
-
-  public void setFare(String from, String to, String fareClass, double price) {
-    super.set(from+"."+to+"."+fareClass, price);
-    super.save();
   }
 
   public void unsetFare(String from, String to, String fareClass) {
@@ -46,15 +37,32 @@ public class Fares extends CustomConfig {
     super.set(station, null);
     super.save();
   }
-  
+
+  public void setFare(String from, String to, String fareClass, double price) {
+    super.set(from+"."+to+"."+fareClass, price);
+    super.save();
+  }
+
+  public double getCardFare(String from, String to, String fareClassNoUnderscore) {
+    if (fareClassNoUnderscore.indexOf("_") == 0) fareClassNoUnderscore = fareClassNoUnderscore.substring(1);
+    final double fare = this.getDouble(from+"."+to+"._"+fareClassNoUnderscore);
+    if (fare == 0d) return this.getDouble(from+"."+to+"."+fareClassNoUnderscore);
+    else return fare;
+  }
+
   public double getFare(String from, String to, String fareClass) {
     return this.getDouble(from+"."+to+"."+fareClass);
   }
-  
+
+  @Deprecated
+  public double getFare(String from, String to) {
+    return getFare(from, to, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));
+  }
+
   public Map<String, Double> getFares(String station) {
     return getFares(station, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));
   }
-  
+
   public Map<String, Double> getFares(String from, String fareClass) {
     ConfigurationSection section = this.get().getConfigurationSection(from);
     if (section != null) {
@@ -63,7 +71,7 @@ public class Fares extends CustomConfig {
       return fareMap;
     } else return null;
   }
-  
+
   public TreeMap<String, Double> getFaresFromDestinations(String from, String to) {
     ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
     if (section != null) {
@@ -73,7 +81,7 @@ public class Fares extends CustomConfig {
       return fareMap;
     } else return null;
   }
-  
+
   public Set<String> getClasses(String from, String to) {
     ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
     return section == null ? null : section.getKeys(false);

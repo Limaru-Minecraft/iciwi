@@ -38,6 +38,7 @@ public abstract class FareGate implements Listener {
 	 */
 	public void setSignLine0 (String signLine0) { this.signLine0 = signLine0; }
 
+	@SuppressWarnings("Deprecation")  // SignSide#getLine required for some older signs to work!
 	@EventHandler(priority = EventPriority.LOWEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Block block = event.getClickedBlock();
@@ -47,12 +48,6 @@ public abstract class FareGate implements Listener {
 		BlockState signState = clickedLocation.getBlock().getState();
 		if (signState instanceof Sign sign) {
 			SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
-
-//			event.getPlayer().sendMessage("CONST sideLines >");  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(0));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(1));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(2));  //TODO: debug
-//			event.getPlayer().sendMessage(side.getLine(3));  //TODO: debug
 
 			if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
 				// get sign text

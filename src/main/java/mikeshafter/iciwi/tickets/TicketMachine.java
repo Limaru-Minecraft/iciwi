@@ -37,22 +37,22 @@ public class TicketMachine implements Machine {
   private final Lang lang = plugin.lang;
 
   // Constructor and Menu Display
-  public TicketMachine(Player player) {
-    this.player = player;
-  }
+public TicketMachine(Player player) { this.player = player; }
+
+
 
   // getters
-  public Clickable[] getClickables() {
-    return clickables;
-  }
+public Clickable[] getClickables() { return clickables; }
 
-  public ItemStack getSelectedItem() {
-    return selectedItem;
-  }
 
-  public boolean useBottomInv() {
-    return bottomInv;
-  }
+public ItemStack getSelectedItem() { return selectedItem; }
+public boolean useBottomInv() { return bottomInv; }
+
+
+
+
+
+
 
   // setters
   @Override
@@ -91,9 +91,9 @@ public class TicketMachine implements Machine {
   }
 
   @Override
-  public void onCardSelection() {
-    cardMenu();
-  }
+public void onCardSelection() { cardMenu(); }
+
+
 
   // main menu after inserting iciwi card
   public void cardMenu() {
@@ -159,9 +159,11 @@ public class TicketMachine implements Machine {
                   Component.text(plugin.getName()), Component.text(serial)));
 
               // Send confirmation message
+// TODO: log into IcLogger
               player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
               player.closeInventory();
-            } else {
+}
+else {
               player.closeInventory();
               player.sendMessage(lang.getString("not-enough-money"));
             }
@@ -200,8 +202,9 @@ public class TicketMachine implements Machine {
 
               // Update value in SQL
               cardSql.addValueToCard(serial, value);
+// TODO: log into IcLogger
               player.closeInventory();
-            } 
+            }
             else {
               player.closeInventory();
               player.sendMessage(lang.getString("not-enough-money"));
@@ -277,12 +280,14 @@ public class TicketMachine implements Machine {
                 // expiry time)
               {
                 this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
+// TODO: log into IcLogger
                 player.sendMessage(this.lang.getString("added-rail-pass"));
               }
               else
                 // New rail pass
               {
                 this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
+// TODO: log into IcLogger
                 player.sendMessage(this.lang.getString("extended-rail-pass"));
               }
 
@@ -305,8 +310,8 @@ public class TicketMachine implements Machine {
 
 
   // refunds the card
-  public void refundCard(ItemStack item) 
-  {  
+  public void refundCard(ItemStack item)
+  {
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
     for (ItemStack itemStack : player.getInventory().getContents()) {
@@ -329,6 +334,7 @@ public class TicketMachine implements Machine {
         player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
         // close inventory
+// TODO: log into IcLogger
         player.closeInventory();
         break;
       }

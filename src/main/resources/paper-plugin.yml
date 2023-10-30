@@ -2,8 +2,11 @@ name: Iciwi
 version: 2.20.1
 api-version: "1.20"
 main: mikeshafter.iciwi.Iciwi
-depend:
-  - BKCommonLib
-  - Vault
+dependencies:
+  server:
+    Vault:
+      required: false
+    BKCommonLib:
+      required: true
 description: Iciwi plugin for Limaru
 prefix: Iciwi

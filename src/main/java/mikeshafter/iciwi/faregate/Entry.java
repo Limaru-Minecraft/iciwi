@@ -5,6 +5,7 @@ import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
+
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -73,7 +74,9 @@ public class Entry extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station)) super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+			if (CardUtil.entry(player, icCard, station, sign.getLocation().toVector())) {
+        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+			}
 
 		}
 	}

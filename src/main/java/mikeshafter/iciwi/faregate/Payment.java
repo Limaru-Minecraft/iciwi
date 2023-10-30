@@ -30,7 +30,7 @@ public class Payment extends FareGate {
 		sign.update(true);
 
 		// Get price
-		double price = Double.parseDouble(signText[2]);
+		double price = Double.parseDouble(IciwiUtil.stripColor(signText[2]));
 
 		// Pay
 		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
@@ -41,7 +41,7 @@ public class Payment extends FareGate {
 			if (icCard != null) payCard(icCard, player, price);
 
 			// If there is no card, pay with cash
-			payCash(player, price);
+			else payCash(player, price);
 		}
 
 		// Deposit money into owner's bank account

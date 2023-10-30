@@ -14,12 +14,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class FareGateBlock {
-  private static final List<FareGateBlock> activeGates = new ArrayList<>();
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
   private final Block block;
   private final BlockData blockData;
@@ -38,10 +34,6 @@ public class FareGateBlock {
     this.blockLoc = block.getLocation();
     this.openDirection = openDirection;
     this.blockData = block.getBlockData();
-  }
-  
-  public static List<FareGateBlock> getActiveGates() {
-    return activeGates;
   }
   
   private BlockFace getOpenDirection() {
@@ -91,7 +83,6 @@ public class FareGateBlock {
       this.killFallingSand();
       this.getBlock().setBlockData(this.blockData);
     }, (ticksToClose+5-this.remainCount));
-    activeGates.remove(this);
   }
   
   private void teleportFallingSand(Entity entity, Vector direction, int count, boolean canCancel) {
@@ -114,7 +105,6 @@ public class FareGateBlock {
   
   public void openGate() {
     int ticksToOpen = plugin.getConfig().getInt("ticks-to-open");
-    activeGates.add(this);
     this.spawnFallingBlock();
     Bukkit.getScheduler().runTaskLater(plugin, () -> this.getBlock().setType(Material.AIR), 5L);
     this.task = Bukkit.getScheduler().runTaskLater(plugin, () -> {

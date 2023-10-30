@@ -29,7 +29,7 @@ close-after-pass: 5
 global-operator: ExampleOperator
 
 # default train class. An underscore prefix makes the train class only accessible by card
-default-class: _Second
+default-class: Second
 
 # global ticket price
 global-ticket-price: 5.0

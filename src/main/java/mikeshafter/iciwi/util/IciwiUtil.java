@@ -6,18 +6,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.block.Sign;
-import org.bukkit.block.sign.Side;
-import org.bukkit.block.sign.SignSide;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 import java.util.regex.Pattern;
-import java.lang.Math;
 
 public class IciwiUtil {
 
@@ -60,6 +56,7 @@ public class IciwiUtil {
    */
   public static String parseComponent(final Component c) {
     if (c instanceof TextComponent) return ((TextComponent) c).content();
+    else if (c == null) return "";
     else return c.examinableName();
   }
 
@@ -118,9 +115,9 @@ public class IciwiUtil {
   /**
    * @param n Numerator
    * @param d Denominator
-   * @return (n/d) if n is divisible by d, else (n/d)+1.
+   * @return d if n is 0, (n/d) if n is divisible by d, else (n/d)+1.
    */
-  public static int ceilDiv(final int n, final int d) { return (n + d - 1) / d; }
+  public static int ceilDiv(final int n, final int d) { return n == 0 ? d : (n + d - 1) / d; }
 
   /**
    * @param n Number
