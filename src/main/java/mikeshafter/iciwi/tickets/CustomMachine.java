@@ -99,7 +99,15 @@ public class CustomMachine implements Machine {
     // End station as a String
     //String end = parseComponent(terminal);
     // Create inventory and create clickables
-    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);
+    TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);    
+   
+    // BUGFIX #53
+    if (fareClasses == null) {
+      player.sendMessage(lang.getString("no-tickets-found"));
+      return;
+    }
+    // END BUGFIX
+
     int invSize = roundUp(fareClasses.size(), 9);
     Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
     this.clickables = new Clickable[invSize];
@@ -149,6 +157,7 @@ public class CustomMachine implements Machine {
       int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
       // Generate ticket
+// TODO: log into IcLogger
       return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
     }
 

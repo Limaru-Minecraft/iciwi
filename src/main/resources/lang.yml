@@ -10,12 +10,30 @@ member: Member
 payment: Payment
 classchange: Class
 
-# Messages
-remaining: '§aRemaining value: §£%.2f'
+# Error Messages
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
 cannot-pass: '§cThere is a problem with your card/ticket, please approach the ticket counter.'
 value-low: '§cYour card has insufficient value! Please top up your card!'
 invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
+
+# Success messages
+remaining: '§aRemaining value: §£%.2f'
+transfer: '§aOut-of-station interchange recorded.'
+tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
+tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
+ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
+ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
+
+# Member sign
+member-gate: '§aMembership valid. Welcome!'
+
+# ClassChange sign
+member-gate: '§aChanged fare class to §e%s§a!'
+
+# Payment sign
+cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
+pay-success: '§aPaid §e£%.2f§a.'
+pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
 
 # =====================================
 # These options control the ticket machines.
@@ -30,8 +48,9 @@ currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
 serial-prefix: 'B'  # 1 char only!
 
-# Messages
-not-enough-money: §cYou do not have enough money!
+# Error Messages
+not-enough-money: '§cYou do not have enough money!'
+no-tickets-found: '§cNo tickets were found for your selected journey!'
 
 # Ticket Machine's menu text
 ticket-machine: '§1Ticket Machine'
@@ -75,27 +94,9 @@ extended-rail-pass: '§aExtended the rail pass §e%1$s§a for §e£%2$.2f§a.'
 enter-text-description: 'Key in the station name'
 select-class: 'Select class'
 
-# =====================================
-# These options control the fare gates.
-# =====================================
-transfer: '§aOut-of-station interchange recorded.'
-tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
-tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
-ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
-ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
-
-# Member sign
-member-gate: '§aMembership valid. Welcome!'
-
-# ClassChange sign
-member-gate: '§aChanged fare class to §e%s§a!'
-
-# Payment sign
-cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
-pay-success: '§aPaid §e£%.2f§a.'
-pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
-
+# ====================================
 # Sign creation messages
+# ====================================
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
 create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
 create-member-sign: '§aYou created a member sign! This sign is used to only allow passage to pass holders.'
