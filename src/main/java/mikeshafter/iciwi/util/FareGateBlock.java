@@ -7,7 +7,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
@@ -27,8 +26,8 @@ public class FareGateBlock {
   private final Location blockLoc;
   private final BlockFace openDirection;
   private final long openTime;
-  private ArmorStand armorStand;
-  private FallingBlock fallingBlock;
+  private Entity armorStand;
+  private Entity fallingBlock;
   private BukkitTask task = null;
   private boolean gateClosing = false;
   private int remainCount = 0;
@@ -62,18 +61,18 @@ public class FareGateBlock {
   }
   
   private void spawnFallingBlock() {
-    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), ArmorStand.class, (stand) -> {
+    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), org.bukkit.entity.ArmorStand.class, (stand) -> {
       stand.setVisible(false);
       stand.setGravity(false);
       stand.setInvulnerable(true);
     });
-    this.fallingBlock = this.block.getWorld().spawn(this.blockLoc, FallingBlock.class);
-    this.fallingBlock.setBlockData(this.blockData);
+    this.fallingBlock = this.block.getWorld().spawnFallingBlock(this.blockLoc, this.blockData);
     this.armorStand.addPassenger(this.fallingBlock);
     this.fallingBlock.setInvulnerable(true);
     this.fallingBlock.setGravity(false);
     this.resetCountdown();
-    this.fallingBlock.setDropItem(false);
+    FallingBlock fallingBlock = (FallingBlock) this.fallingBlock;
+    fallingBlock.setDropItem(false);
   }
   
   private void killFallingSand() {
