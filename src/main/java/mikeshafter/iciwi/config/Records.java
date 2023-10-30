@@ -40,7 +40,7 @@ public class Records extends CustomConfig {
    */
   public String getClass (String serial) {
     String c = super.getString(serial + ".fareclass"); 
-    if (c == "") return plugin.getConfig().getString("default-class");
+    if (c.equals("")) return plugin.getConfig().getString("default-class");
     else return c;
   }
 

@@ -1,7 +1,6 @@
 package mikeshafter.iciwi.api;
 
 import mikeshafter.iciwi.Iciwi;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,19 +26,22 @@ public class IcLogger {
     } catch (IOException e) {
       plugin.getLogger().warning("Unable to create a file: " + file + ", check permissions!");
     }
+    try {
+      this.icData = this.read();
+    } catch (IOException | ClassNotFoundException e) {
+      this.icData = new IcData();
+      save();
+      plugin.getLogger().info("No previous icData was found, creating one...");
+    }
   }
 
-  public void read() {
+  public IcData read() throws IOException, ClassNotFoundException {
     // read icData from file
-    try {
-      FileInputStream fis = new FileInputStream(file.toString());
-      ObjectInputStream ois = new ObjectInputStream(fis);
-      Object o = ois.readObject();
-      if (o instanceof IcData) this.icData = (IcData) o;
-      ois.close();
-    } catch (IOException | ClassNotFoundException e) {
-      e.printStackTrace();
-    }
+    FileInputStream fis = new FileInputStream(file.toString());
+    ObjectInputStream ois = new ObjectInputStream(fis);
+    Object o = ois.readObject();
+    ois.close();
+    if (o instanceof IcData) return (IcData) o; else throw new ClassNotFoundException("The object in the IcData file is not of type IcData!");
   }
   
   /**
@@ -49,7 +51,6 @@ public class IcLogger {
    * @param map Map to record
    */
   public void record (String ukey, Map<String, Object> map) {
-    this.read();
     this.icData.put(ukey, map);
     this.save();
   }
@@ -61,7 +62,6 @@ public class IcLogger {
    * @return List of the map objects that are the entries.
    */
   public List<Map<String, Object>> get (String category, Object value) {
-    this.read();
     return this.icData.get(new Pair(category, value));
   }
 

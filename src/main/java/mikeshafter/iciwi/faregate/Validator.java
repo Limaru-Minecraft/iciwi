@@ -73,7 +73,7 @@ public class Validator extends FareGate {
 			Records records = new Records();
 
 			// Determine entry or exit
-			if (records.getStation(serial) == null) CardUtil.entry(player, icCard, station, sign.getLocation().toVector());
+			if (records.getStation(serial).equals("")) CardUtil.entry(player, icCard, station, sign.getLocation().toVector());
 			else CardUtil.exit(player, icCard, station, sign.getLocation().toVector());
 		}
 	}

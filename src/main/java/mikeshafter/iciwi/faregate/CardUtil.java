@@ -62,7 +62,7 @@ public class CardUtil {
     }
 
     // was the card already used to enter the network?
-    if (records.getStation(serial) != null) {
+    if (!records.getStation(serial).equals("")) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -79,7 +79,7 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
-				
+/*
     // logger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -105,7 +105,7 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
-    
+*/
   return true;
   }
 
@@ -131,7 +131,7 @@ public class CardUtil {
     double fare = fares.getCardFare(entryStation, exitStation, records.getClass(serial));
 
     // is the card not in the network?
-    if (records.getStation(serial) == null) {
+    if (records.getStation(serial).equals("")) {
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
@@ -161,7 +161,7 @@ public class CardUtil {
     // Get cheapest discount
     for (var r : cardSql.getAllDiscounts(serial).keySet()) {
       if (( entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r)) ) &&
-            owners.getRailPassPercentage(r) < payPercentage ) 
+            owners.getRailPassPercentage(r) < payPercentage )
       {
         finalRailPass = r;
         payPercentage = owners.getRailPassPercentage(r);
@@ -188,7 +188,7 @@ public class CardUtil {
 
     // send (value - fare) as the value variable is not updated
     player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
-
+/*
     // log in IcLogger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -202,7 +202,7 @@ public class CardUtil {
       Map.entry("journey_originalfare", fares.getCardFare(entryStation, exitStation, records.getClass(serial))),
       Map.entry("journey_class", records.getClass(serial))
     ));
-    
+
     // check if a railpass is used, and if so, add the railpass to the log
     if (finalRailPass != null) {
       Map<String, Object> railPassMap = Map.ofEntries(
@@ -232,6 +232,8 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
+*/
+
     return true;
   }
 
@@ -259,7 +261,7 @@ public class CardUtil {
     for (String r : railPasses) {
       if (stationOwners.contains(owners.getRailPassOperator(r))) {
         player.sendMessage(lang.getString("member-gate"));
-
+/*
         // logger
         String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
         Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -276,7 +278,7 @@ public class CardUtil {
 
         // record in logger
         Iciwi.icLogger.record(ukey, logMap);
-
+*/
         return true;
       }
     }
@@ -312,7 +314,7 @@ public class CardUtil {
     double fare = fares.getCardFare(entryStation, station, records.getClass(serial));
 
     // is the card already in the network?
-    if (records.getStation(serial) == null) {
+    if (records.getStation(serial).equals("")) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -358,7 +360,7 @@ public class CardUtil {
     if (value < plugin.getConfig().getDouble("min-amount")) return false;
 
     // was the card already used to enter the network?
-    if (records.getStation(serial) == null) {
+    if (records.getStation(serial).equals("")) {
       player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -375,7 +377,7 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
-
+/*
     // log in IcLogger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -419,7 +421,7 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
-
+*/
     return true;
   }
 
