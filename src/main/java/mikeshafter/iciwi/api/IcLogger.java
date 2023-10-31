@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
+import java.io.Serializable;
 
 public class IcLogger {
 
@@ -39,9 +40,11 @@ public class IcLogger {
     // read icData from file
     FileInputStream fis = new FileInputStream(file.toString());
     ObjectInputStream ois = new ObjectInputStream(fis);
-    Object o = ois.readObject();
+    //Object o = ois.readObject();
+    this.icData.readObject(ois);
     ois.close();
-    if (o instanceof IcData) return (IcData) o; else throw new ClassNotFoundException("The object in the IcData file is not of type IcData!");
+    return this.icData;
+    //if (o instanceof IcData) return (IcData) o; else throw new ClassNotFoundException("The object in the IcData file is not of type IcData!");
   }
   
   /**
@@ -73,7 +76,8 @@ public class IcLogger {
     try {
       FileOutputStream fos = new FileOutputStream(file.toString());
       ObjectOutputStream oos = new ObjectOutputStream(fos);
-      oos.writeObject(this.icData);
+      this.icData.writeObject(oos);
+      //oos.writeObject(this.icData);
       oos.close();
     } catch (IOException e) {
       e.printStackTrace();
@@ -84,9 +88,21 @@ public class IcLogger {
   private record Pair(String k, Object v) {}
 
 
-  private static class IcData {
-    private final HashMap<Pair, LinkedList<String>> accessors = new HashMap<>();
-    private final HashMap<String, Map<String, Object>> data = new HashMap<>();
+  private static class IcData implements Serializable {
+    private HashMap<Pair, LinkedList<String>> accessors = new HashMap<>();
+    private HashMap<String, Map<String, Object>> data = new HashMap<>();
+
+    // Serializer
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.writeObject(accessors);
+        out.writeObject(data);
+    }
+
+    // Deserializer
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        accessors = (HashMap<Pair, LinkedList<String>>) in.readObject();
+        data = (HashMap<String, Map<String, Object>>) in.readObject();
+    }
 
     public List<Map<String, Object>> get (Pair accessor) {
       LinkedList<String> dataKeys = accessors.get(accessor);
