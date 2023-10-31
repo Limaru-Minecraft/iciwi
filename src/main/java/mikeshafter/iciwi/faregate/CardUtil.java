@@ -150,6 +150,8 @@ public class CardUtil {
       double previousFare = records.getCurrentFare(serial);
       // if the difference between the fares is less than the current fare, change the fare to that difference.
       if (longFare-previousFare < fare) fare = longFare-previousFare;
+      // send confirmation
+      player.sendMessage(lang.getString("osi"));
     }
 
     // Get the owners of stations and rail passes
