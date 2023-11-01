@@ -63,11 +63,13 @@ public class CardUtil {
 
     // was the card already used to enter the network?
     if (!records.getStation(serial).equals("")) {
-      player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
-      } else return false;
+      } else {
+        player.sendMessage(lang.getString("cannot-pass"));
+        return false;
+      }
     }
 
     // write the entry station and fare class
@@ -106,7 +108,7 @@ public class CardUtil {
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
 */
-  return true;
+    return true;
   }
 
 
@@ -135,8 +137,7 @@ public class CardUtil {
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
-      }
-      else {
+      } else {
         player.sendMessage(lang.getString("cannot-pass"));
         return false;
       }
