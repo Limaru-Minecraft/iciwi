@@ -10,6 +10,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
@@ -22,7 +23,7 @@ public class FareGateBlock {
   private final Location blockLoc;
   private final BlockFace openDirection;
   private final long openTime;
-  private Entity armorStand;
+  private ArmorStand armorStand;
   private Entity fallingBlock;
   private BukkitTask task = null;
   private boolean gateClosing = false;
@@ -53,11 +54,11 @@ public class FareGateBlock {
   }
   
   private void spawnFallingBlock() {
-    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), org.bukkit.entity.ArmorStand.class, (stand) -> {
-      stand.setVisible(false);
-      stand.setGravity(false);
-      stand.setInvulnerable(true);
-    });
+    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), ArmorStand.class);
+    this.armorStand.setVisible(false);
+    this.armorStand.setGravity(false);
+    this.armorStand.setInvulnerable(true);
+
     this.fallingBlock = this.block.getWorld().spawnFallingBlock(this.blockLoc, this.blockData);
     this.armorStand.addPassenger(this.fallingBlock);
     this.fallingBlock.setInvulnerable(true);
