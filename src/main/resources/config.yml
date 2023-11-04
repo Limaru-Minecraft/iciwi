@@ -1,19 +1,19 @@
-# This sets whether the plugin should open the fare gate when someone forgets to tap in/out
+# should the plugin open the fare gate when someone forgets to tap in/out?
 open-on-penalty: true
 
-# This sets the penalty amount when someone forgets to tap in/out
+# penalty amount when someone did not tap in/out
 penalty: 8.0
 
-# This sets the deposit that a player pays when they buy a new card
+# new card deposit
 deposit: 5.0
 
-# This sets the minimum amount that a card can have to enter the network.
+# minimum amount that a card can have to enter the network.
 min-amount: 3.0
 
-# Prices listed when buying a new Iciwi card
+# prices listed when buying a new Iciwi card
 price-array: [10.0, 20.0, 30.0, 50.0, 100.0]
 
-# Database
+# database
 database: jdbc:sqlite:IciwiCards.db
 
 # max time allowed for transfer
@@ -30,6 +30,9 @@ global-operator: ExampleOperator
 
 # default train class. An underscore prefix makes the train class only accessible by card
 default-class: Second
+
+# should the plugin require validated paper tickets?
+require-entry-punch: false
 
 # global ticket price
 global-ticket-price: 5.0

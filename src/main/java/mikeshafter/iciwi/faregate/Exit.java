@@ -37,6 +37,7 @@ public class Exit extends ClosableFareGate {
 			List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 			boolean entryPunched = lore.get(0).contains("•");
 			boolean exitPunched	= lore.get(1).contains("•");
+			boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
 
 			// Invalid Ticket
 			if (entryPunched && exitPunched) {
@@ -44,14 +45,14 @@ public class Exit extends ClosableFareGate {
 			}
 
 			// Exit
-			else if (entryPunched && lore.get(1).equals(station)) {
+			else if ((entryPunched || !entryPunchRequired) && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
 				super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
 			}
 
 			// Ticket not used
-			else if (!entryPunched) {
+			else if (!entryPunched && entryPunchRequired) {
 				player.sendMessage(lang.getString("cannot-pass"));
 			}
 
