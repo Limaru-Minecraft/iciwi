@@ -518,7 +518,12 @@ public class CardUtil {
     return closeGate;
   }
 
-
+  /**
+   * Changes vectors into BlockFace directions.
+   * This method does not work with non-cartesian directions.
+   * @param vector vector to change
+   * @return corresponding BlockFace
+   */
   private static BlockFace toFace(Vector vector) {
     if (Objects.equals(vector, BlockFace.EAST.getDirection()) ) return BlockFace.EAST;
     if (Objects.equals(vector, BlockFace.SOUTH.getDirection())) return BlockFace.SOUTH;
