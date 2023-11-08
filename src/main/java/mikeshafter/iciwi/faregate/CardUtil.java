@@ -81,7 +81,7 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
-/*
+    
     // logger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -107,7 +107,7 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
-*/
+
     return true;
   }
 
@@ -191,7 +191,7 @@ public class CardUtil {
 
     // send (value - fare) as the value variable is not updated
     player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
-/*
+
     // log in IcLogger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -235,7 +235,6 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
-*/
 
     return true;
   }
@@ -264,7 +263,7 @@ public class CardUtil {
     for (String r : railPasses) {
       if (stationOwners.contains(owners.getRailPassOperator(r))) {
         player.sendMessage(lang.getString("member-gate"));
-/*
+
         // logger
         String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
         Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
@@ -281,7 +280,7 @@ public class CardUtil {
 
         // record in logger
         Iciwi.icLogger.record(ukey, logMap);
-*/
+
         return true;
       }
     }
@@ -301,7 +300,7 @@ public class CardUtil {
   protected static boolean transfer(Player player, IcCard icCard, String station, Vector signLocationVector) {
     if (onClick(player)) return false;
 
-	Fares fares = new Fares();
+	  Fares fares = new Fares();
     String serial = icCard.getSerial();
 
     // If an OSI was detected, cancel OSI capability
@@ -380,8 +379,8 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
-/*
-    // log in IcLogger
+
+    // == log in IcLogger
     String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
     Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
       Map.entry("timestamp", System.currentTimeMillis()),
@@ -424,7 +423,7 @@ public class CardUtil {
 
     // record in logger
     Iciwi.icLogger.record(ukey, logMap);
-*/
+
     return true;
   }
 

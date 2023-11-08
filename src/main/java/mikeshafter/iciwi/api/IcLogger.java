@@ -1,17 +1,13 @@
 package mikeshafter.iciwi.api;
 
 import mikeshafter.iciwi.Iciwi;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
+import java.io.*;
 import java.nio.file.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
-import java.io.Serializable;
 
 public class IcLogger {
 
@@ -93,15 +89,17 @@ public class IcLogger {
     private HashMap<String, Map<String, Object>> data = new HashMap<>();
 
     // Serializer
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        out.writeObject(accessors);
-        out.writeObject(data);
+    @Serial private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+      out.writeObject(this);
     }
 
     // Deserializer
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-        accessors = (HashMap<Pair, LinkedList<String>>) in.readObject();
-        data = (HashMap<String, Map<String, Object>>) in.readObject();
+    @Serial private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+      Object i = in.readObject();
+      if (i instanceof IcData j) {
+        this.accessors = j.accessors;
+        this.data = j.data;
+      }
     }
 
     public List<Map<String, Object>> get (Pair accessor) {

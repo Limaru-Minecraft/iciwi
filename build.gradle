@@ -31,6 +31,11 @@ dependencies {
   compileOnly 'org.bergerhealer.cloud.commandframework:cloud-minecraft-extras:1.8.0-SNAPSHOT'
 }
 
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    //options.deprecation = true
+}
+
 shadowJar {
   minimize {}
   relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')

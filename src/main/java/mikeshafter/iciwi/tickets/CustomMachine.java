@@ -156,8 +156,19 @@ public class CustomMachine implements Machine {
       Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
       int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
+      // log into IcLogger
+      String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
+      Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
+        Map.entry("timestamp", System.currentTimeMillis()),
+        Map.entry("uuid", player.getUniqueId().toString()),
+        Map.entry("function", "new_ticket"),
+        Map.entry("ticket_to", to),
+        Map.entry("ticket_from", from),
+        Map.entry("ticket_fareclass", fareClass)
+      ));
+      Iciwi.icLogger.record(ukey, logMap);
+
       // Generate ticket
-// TODO: log into IcLogger
       return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
     }
 
