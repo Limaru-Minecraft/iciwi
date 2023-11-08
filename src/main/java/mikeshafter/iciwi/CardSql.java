@@ -39,22 +39,23 @@ public class CardSql {
     sql.add("CREATE TABLE IF NOT EXISTS railpasses (name TEXT, operator TEXT, duration INTEGER, percentage REAL, price REAL, PRIMARY KEY (name) ); ");
     
     // Logger tables
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_master' ('id'	INTEGER NOT NULL UNIQUE,'timestamp'	INTEGER NOT NULL,'username'	TEXT NOT NULL,PRIMARY KEY('id' AUTOINCREMENT));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_entry' ('signloc'	BLOB,'entry'	TEXT,'id'	INTEGER NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_prevjourney' ('id'	INTEGER NOT NULL,'entry'	TEXT,'fare'	NUMERIC,'class'	text,'exittime'	INT,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_railpass_store' ('id'	INTEGER NOT NULL,'name'	TEXT NOT NULL,'price'	NUMERIC NOT NULL,'percentage'	NUMERIC NOT NULL,'start'	INTEGER NOT NULL,'duration'	INTEGER NOT NULL,'operator'	TEXT NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_card_use'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_exit' ('id'	INTEGER NOT NULL,'signloc'	BLOB,'entry'	TEXT NOT NULL,'exit'	text NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_journey' ('id'	INTEGER NOT NULL,'subtotal'	real NOT NULL,'total'	real NOT NULL,'class'	text NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_railpass_use' ('id'	INTEGER NOT NULL,'name'	text NOT NULL,'price'	NUMERIC NOT NULL,'percentage'	NUMERIC NOT NULL,'start'	INTEGER NOT NULL,'duration'	INTEGER NOT NULL,'operator'	TEXT NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_member' ('id'	INTEGER NOT NULL,'signloc'	BLOB,'station'	TEXT,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_transfer' ('id'	INTEGER NOT NULL,'signloc'	BLOB,'entry'	TEXT NOT NULL,'transfer'	text NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_ticket_use' ('id'	INTEGER NOT NULL,'from'	TEXT NOT NULL,'to'	text NOT NULL,'class'	text NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_card_use' ('id'	INTEGER NOT NULL,'serial'	TEXT NOT NULL,'value'	NUMERIC,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_ticket_create' ('id'	INTEGER NOT NULL,'from'	TEXT NOT NULL,'to'	text NOT NULL,'class'	text NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_card_create' ('id'	INTEGER NOT NULL,'serial'	TEXT NOT NULL,'value'	NUMERIC,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_card_topup' ('id'	INTEGER NOT NULL,'serial'	TEXT NOT NULL,'old_value'	NUMERIC,'added_value'	NUMERIC,'new_value'	NUMERIC,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_railpass_extend' ('id'	INTEGER NOT NULL,'new'	INTEGER NOT NULL,'name'	text NOT NULL,'price'	NUMERIC NOT NULL,'percentage'	NUMERIC NOT NULL,'start'	INTEGER NOT NULL,'duration'	INTEGER NOT NULL,'operator'	TEXT NOT NULL,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
-    sql.add("CREATE TABLE IF NOT EXISTS 'log_card_refund' ('id'	INTEGER NOT NULL,'serial'	TEXT NOT NULL,'value'	NUMERIC,PRIMARY KEY('id'),FOREIGN KEY('id') REFERENCES 'log_master'('id'));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_counts (count INTEGER PRIMARY KEY)");
+    sql.add("CREATE TABLE IF NOT EXISTS log_master (id	INTEGER NOT NULL UNIQUE,timestamp	INTEGER NOT NULL,player_uuid	TEXT NOT NULL,PRIMARY KEY(id), FOREIGN KEY(id) REFERENCES log_counts(id)));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_entry (id	INTEGER NOT NULL,signloc	BLOB,entry	TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_prevjourney (id	INTEGER NOT NULL,entry	TEXT,fare	NUMERIC,class	text,exittime	INT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_railpass_store (id	INTEGER NOT NULL,name	TEXT NOT NULL,price	NUMERIC NOT NULL,percentage	NUMERIC NOT NULL,start	INTEGER NOT NULL,duration	INTEGER NOT NULL,operator	TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_card_use(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_exit (id	INTEGER NOT NULL,signloc	BLOB,entry	TEXT NOT NULL,exit	text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_journey (id	INTEGER NOT NULL,subtotal	real NOT NULL,total	real NOT NULL,class	text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_railpass_use (id	INTEGER NOT NULL,name	text NOT NULL,price	NUMERIC NOT NULL,percentage	NUMERIC NOT NULL,start	INTEGER NOT NULL,duration	INTEGER NOT NULL,operator	TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_member (id	INTEGER NOT NULL,signloc	BLOB,station	TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_transfer (id	INTEGER NOT NULL,signloc	BLOB,entry	TEXT NOT NULL,transfer	text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_ticket_use (id	INTEGER NOT NULL,from	TEXT NOT NULL,to	text NOT NULL,class	text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_card_use (id	INTEGER NOT NULL,serial	TEXT NOT NULL,value	NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_ticket_create (id	INTEGER NOT NULL,from	TEXT NOT NULL,to	text NOT NULL,class	text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_card_create (id	INTEGER NOT NULL,serial	TEXT NOT NULL,value	NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_card_topup (id	INTEGER NOT NULL,serial	TEXT NOT NULL,old_value	NUMERIC,added_value	NUMERIC,new_value	NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_railpass_extend (id	INTEGER NOT NULL,new	INTEGER NOT NULL,name	text NOT NULL,price	NUMERIC NOT NULL,percentage	NUMERIC NOT NULL,start	INTEGER NOT NULL,duration	INTEGER NOT NULL,operator	TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_card_refund (id	INTEGER NOT NULL,serial	TEXT NOT NULL,value	NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
       for (String s : sql) {
@@ -288,11 +289,6 @@ public class CardSql {
   }
 
 
-  /**
-   * Logs data into Iciwi's logger
-   * @param player Player that executed action
-   * @param timestamp Timestamp of the action
-   * 
-   */
+
   
 }

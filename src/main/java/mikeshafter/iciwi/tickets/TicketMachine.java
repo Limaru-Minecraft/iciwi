@@ -142,7 +142,7 @@ public class TicketMachine implements Machine {
             Map.entry("uuid", player.getUniqueId().toString()),
             Map.entry("function", "new_card"),
             Map.entry("card_serial", serial),
-            Map.entry("card_newvalue", value),
+            Map.entry("card_newvalue", value)
           ));
           Iciwi.icLogger.record(ukey, logMap);
 
@@ -174,7 +174,7 @@ public class TicketMachine implements Machine {
 
     // get serial number
     String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
-    double oldValue = getCardValue(serial);
+    double oldValue = this.cardSql.getCardValue(serial);
 
     for (int i = 0; i < priceArray.size(); i++) 
     {
@@ -200,7 +200,7 @@ public class TicketMachine implements Machine {
             Map.entry("card_serial", serial),
             Map.entry("card_oldvalue", oldValue),
             Map.entry("card_added_value", value),
-            Map.entry("card_newvalue", getCardValue(serial))
+            Map.entry("card_newvalue", this.cardSql.getCardValue(serial))
           ));
           Iciwi.icLogger.record(ukey, logMap);
 
@@ -364,7 +364,7 @@ public class TicketMachine implements Machine {
           Map.entry("uuid", player.getUniqueId().toString()),
           Map.entry("function", "refund_card"),
           Map.entry("card_serial", serial),
-          Map.entry("card_value", value),
+          Map.entry("card_value", value)
         ));
         Iciwi.icLogger.record(ukey, logMap);
 
