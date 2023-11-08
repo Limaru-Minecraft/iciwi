@@ -90,9 +90,9 @@ public class TicketMachine implements Machine {
     this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")),
         (event) -> newCard());
     this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")),
-        (event) -> topUpCard(this.selectedItem)); // todo: fix this next
+        (event) -> topUpCard(this.selectedItem));
     this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, lang.getComponent("menu-rail-pass")),
-        (event) -> railPass(this.selectedItem)); // todo: fix this next
+        (event) -> railPass(this.selectedItem));
     this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")),
         (event) -> refundCard(this.selectedItem));
     this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-select-other-card")),
