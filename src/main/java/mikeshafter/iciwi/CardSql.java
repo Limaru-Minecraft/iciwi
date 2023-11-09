@@ -537,5 +537,129 @@ public class CardSql {
       }
   }
 
-  
+  public void logRailpassStore(int id, String name, double price, double percentage, long start, long duration, String operator) {
+      String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, name);
+          statement.setDouble(3, price);
+          statement.setDouble(4, percentage);
+          statement.setLong(5, start);
+          statement.setLong(6, duration);
+          statement.setString(7, operator);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logRailpassUse(int id, String name, double price, double percentage, long start, long duration, String operator) {
+      String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, name);
+          statement.setDouble(3, price);
+          statement.setDouble(4, percentage);
+          statement.setLong(5, start);
+          statement.setLong(6, duration);
+          statement.setString(7, operator);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logTicketUse(int id, String from, String to, String travelClass) {
+      String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES (?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, from);
+          statement.setString(3, to);
+          statement.setString(4, travelClass);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logCardUse(int id, String serial, double value) {
+      String sql = "INSERT INTO log_card_use (id, serial, value) VALUES (?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, serial);
+          statement.setDouble(3, value);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logTicketCreate(int id, String from, String to, String travelClass) {
+      String sql = "INSERT INTO log_ticket_create (id, from, to, class) VALUES (?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, from);
+          statement.setString(3, to);
+          statement.setString(4, travelClass);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logCardCreate(int id, String serial, double value) {
+      String sql = "INSERT INTO log_card_create (id, serial, value) VALUES (?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, serial);
+          statement.setDouble(3, value);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logCardTopup(int id, String serial, double oldValue, double addedValue, double newValue) {
+      String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES (?, ?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, serial);
+          statement.setDouble(3, oldValue);
+          statement.setDouble(4, addedValue);
+          statement.setDouble(5, newValue);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logRailpassExtend(int id, int newDuration, String name, double price, double percentage, long start, long duration, String operator) {
+      String sql = "INSERT INTO log_railpass_extend (id, new, name, price, percentage, start, duration, operator) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setInt(2, newDuration);
+          statement.setString(3, name);
+          statement.setDouble(4, price);
+          statement.setDouble(5, percentage);
+          statement.setLong(6, start);
+          statement.setLong(7, duration);
+          statement.setString(8, operator);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logCardRefund(int id, String serial, double value) {
+      String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES (?, ?, ?)";
+      try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+          statement.setInt(1, id);
+          statement.setString(2, serial);
+          statement.setDouble(3, value);
+          statement.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
 }
