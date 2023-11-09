@@ -39,8 +39,8 @@ public class CardSql {
     sql.add("CREATE TABLE IF NOT EXISTS railpasses (name TEXT, operator TEXT, duration INTEGER, percentage REAL, price REAL, PRIMARY KEY (name) ); ");
     
     // Logger tables
-    sql.add("CREATE TABLE IF NOT EXISTS log_counts (count INTEGER PRIMARY KEY)");
-    sql.add("CREATE TABLE IF NOT EXISTS log_master (id	INTEGER NOT NULL UNIQUE,timestamp	INTEGER NOT NULL,player_uuid	TEXT NOT NULL,PRIMARY KEY(id), FOREIGN KEY(id) REFERENCES log_counts(id)));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_counts (id INTEGER PRIMARY KEY)");
+    sql.add("CREATE TABLE IF NOT EXISTS log_master (id	INTEGER NOT NULL UNIQUE,timestamp	INTEGER NOT NULL,player_uuid	TEXT NOT NULL,PRIMARY KEY(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_entry (id	INTEGER NOT NULL,signloc	BLOB,entry	TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_prevjourney (id	INTEGER NOT NULL,entry	TEXT,fare	NUMERIC,class	text,exittime	INT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_railpass_store (id	INTEGER NOT NULL,name	TEXT NOT NULL,price	NUMERIC NOT NULL,percentage	NUMERIC NOT NULL,start	INTEGER NOT NULL,duration	INTEGER NOT NULL,operator	TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_card_use(id));");
@@ -288,7 +288,254 @@ public class CardSql {
     }
   }
 
+  public void logEntry(String player_uuid, Vector signloc, String entry) {
+    long timestamp = System.currentTimeMillis();
+    
+    String incrCountSql = "UPDATE log_counts SET id = id + 1";
+    String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String logEntrySql = "INSERT INTO log_entry (id, signloc, entry) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    
+    try (Connection conn = this.connect(); 
+      PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+      PreparedStatement logEntryStmt = conn.prepareStatement(logEntrySql);
+      PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
 
+      logMasterStmt.setInt(1, id);
+      logMasterStmt.setLong(2, timestamp);
+      logMasterStmt.setString(3, player_uuid);
+      logMasterStmt.executeUpdate();
+
+      logEntryStmt.setInt(1, id);
+      logEntryStmt.setObject(2, signloc);
+      logEntryStmt.setString(3, entry);
+      logEntryStmt.executeUpdate();
+
+      incrCountStmt.executeUpdate();
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+  }
+
+  public void logEntryAndPrevJourney(String player_uuid, Vector signloc, String entry, String fare, String travelClass, long exitTime) {
+      long timestamp = System.currentTimeMillis();
+
+      String incrCountSql = "UPDATE log_counts SET id = id + 1";
+      String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+      String logEntrySql = "INSERT INTO log_entry (id, signloc, entry) VALUES ((SELECT id FROM log_counts), ?, ?)";
+      String logPrevJourneySql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+
+      try (Connection conn = this.connect(); 
+          PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+          PreparedStatement logEntryStmt = conn.prepareStatement(logEntrySql);
+          PreparedStatement logPrevJourneyStmt = conn.prepareStatement(logPrevJourneySql);
+          PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+          logMasterStmt.setLong(1, timestamp);
+          logMasterStmt.setString(2, player_uuid);
+          logMasterStmt.executeUpdate();
+
+          logEntryStmt.setObject(1, signloc);
+          logEntryStmt.setString(2, entry);
+          logEntryStmt.executeUpdate();
+
+          logPrevJourneyStmt.setString(1, entry);
+          logPrevJourneyStmt.setString(2, fare);
+          logPrevJourneyStmt.setString(3, travelClass);
+          logPrevJourneyStmt.setLong(4, exitTime);
+          logPrevJourneyStmt.executeUpdate();
+
+          incrCountStmt.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logExitAndJourney(String player_uuid, Vector signloc, String entry, String exit, double fare) {
+    long timestamp = System.currentTimeMillis();
+
+    String incrCountSql = "UPDATE log_counts SET count = count + 1";
+    String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT count FROM log_counts), ?, ?)";
+    String logExitSql = "INSERT INTO log_exit (id, signloc, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?, ?)";
+    String logJourneySql = "INSERT INTO log_journey (id, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?)";
+
+    try (Connection conn = this.connect(); 
+       PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+       PreparedStatement logExitStmt = conn.prepareStatement(logExitSql);
+       PreparedStatement logJourneyStmt = conn.prepareStatement(logJourneySql);
+       PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+      logMasterStmt.setLong(1, timestamp);
+      logMasterStmt.setString(2, player_uuid);
+      logMasterStmt.executeUpdate();
+
+      logExitStmt.setObject(1, signloc);
+      logExitStmt.setString(2, entry);
+      logExitStmt.setString(3, exit);
+      logExitStmt.setDouble(4, fare);
+      logExitStmt.executeUpdate();
+
+      logJourneyStmt.setString(1, entry);
+      logJourneyStmt.setString(2, exit);
+      logJourneyStmt.setDouble(3, fare);
+      logJourneyStmt.executeUpdate();
+
+      incrCountStmt.executeUpdate();
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+  }
+
+  public void logExitAndPrevJourney(String player_uuid, Vector signloc, String entry, String exit, String fare, String travelClass, long exitTime) {
+      long timestamp = System.currentTimeMillis();
+
+      String incrCountSql = "UPDATE log_counts SET id = id + 1";
+      String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String logJourneySql = "INSERT INTO log_journey (id, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?)";
+      String logPrevJourneySql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+      String logExitSql = "INSERT INTO log_exit (id, signloc, entry, exit) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
+
+      try (Connection conn = this.connect(); 
+          PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+            PreparedStatement logJourneyStmt = conn.prepareStatement(logJourneySql);
+          PreparedStatement logPrevJourneyStmt = conn.prepareStatement(logPrevJourneySql);
+          PreparedStatement logExitStmt = conn.prepareStatement(logExitSql);
+          PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+          logMasterStmt.setLong(1, timestamp);
+          logMasterStmt.setString(2, player_uuid);
+          logMasterStmt.executeUpdate();
+
+        logJourneyStmt.setString(1, entry);
+        logJourneyStmt.setString(2, exit);
+        logJourneyStmt.setDouble(3, fare);
+        logJourneyStmt.executeUpdate();
+
+          logPrevJourneyStmt.setString(1, entry);
+          logPrevJourneyStmt.setString(2, fare);
+          logPrevJourneyStmt.setString(3, travelClass);
+          logPrevJourneyStmt.setLong(4, exitTime);
+          logPrevJourneyStmt.executeUpdate();
+
+          logExitStmt.setObject(1, signloc);
+          logExitStmt.setString(2, entry);
+          logExitStmt.setString(3, exit);
+          logExitStmt.executeUpdate();
+
+          incrCountStmt.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logMember(String player_uuid, Vector signloc, String station) {
+    long timestamp = System.currentTimeMillis();
+
+    String incrCountSql = "UPDATE log_counts SET id = id + 1";
+    String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String logMemberSql = "INSERT INTO log_member (id, signloc, station) VALUES ((SELECT id FROM log_counts), ?, ?)";
+
+    try (Connection conn = this.connect(); 
+        PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+        PreparedStatement logMemberStmt = conn.prepareStatement(logMemberSql);
+        PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+        logMasterStmt.setLong(1, timestamp);
+        logMasterStmt.setString(2, player_uuid);
+        logMasterStmt.executeUpdate();
+
+        logMemberStmt.setObject(1, signloc);
+        logMemberStmt.setString(2, station);
+        logMemberStmt.executeUpdate();
+
+        incrCountStmt.executeUpdate();
+    } catch (SQLException e) {
+        plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+    }
+  }
+
+  public void logTransferAndPrevJourney(String player_uuid, Vector signloc, String entry, String transfer, String fare, String travelClass, long exitTime) {
+      long timestamp = System.currentTimeMillis();
+
+      String incrCountSql = "UPDATE log_counts SET id = id + 1";
+      String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+      String logJourneySql = "INSERT INTO log_journey (id, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?)";
+      String logPrevJourneySql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+      String logTransferSql = "INSERT INTO log_transfer (id, signloc, entry, transfer) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
+
+      try (Connection conn = this.connect(); 
+          PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+          PreparedStatement logJourneyStmt = conn.prepareStatement(logJourneySql);
+          PreparedStatement logPrevJourneyStmt = conn.prepareStatement(logPrevJourneySql);
+          PreparedStatement logTransferStmt = conn.prepareStatement(logTransferSql);
+          PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+          logMasterStmt.setLong(1, timestamp);
+          logMasterStmt.setString(2, player_uuid);
+          logMasterStmt.executeUpdate();
+
+          logJourneyStmt.setString(1, entry);
+          logJourneyStmt.setString(2, transfer);
+          logJourneyStmt.setString(3, fare);
+          logJourneyStmt.executeUpdate();
+
+          logPrevJourneyStmt.setString(1, entry);
+          logPrevJourneyStmt.setString(2, fare);
+          logPrevJourneyStmt.setString(3, travelClass);
+          logPrevJourneyStmt.setLong(4, exitTime);
+          logPrevJourneyStmt.executeUpdate();
+
+          logTransferStmt.setObject(1, signloc);
+          logTransferStmt.setString(2, entry);
+          logTransferStmt.setString(3, transfer);
+          logTransferStmt.executeUpdate();
+
+          incrCountStmt.executeUpdate();
+      } catch (SQLException e) {
+          plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
+
+  public void logTransferAndJourney(String player_uuid, Vector signloc, String entry, String transfer, String exit, double fare) {
+      long timestamp = System.currentTimeMillis();
+
+      String incrCountSql = "UPDATE log_counts SET count = count + 1";
+      String logMasterSql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT count FROM log_counts), ?, ?)";
+      String logExitSql = "INSERT INTO log_exit (id, signloc, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?, ?)";
+      String logTransferSql = "INSERT INTO log_transfer (id, signloc, entry, transfer) VALUES ((SELECT count FROM log_counts), ?, ?, ?)";
+      String logJourneySql = "INSERT INTO log_journey (id, entry, exit, fare) VALUES ((SELECT count FROM log_counts), ?, ?, ?)";
+
+      try (Connection conn = this.connect(); 
+         PreparedStatement logMasterStmt = conn.prepareStatement(logMasterSql);
+         PreparedStatement logExitStmt = conn.prepareStatement(logExitSql);
+         PreparedStatement logTransferStmt = conn.prepareStatement(logTransferSql);
+         PreparedStatement logJourneyStmt = conn.prepareStatement(logJourneySql);
+         PreparedStatement incrCountStmt = conn.prepareStatement(incrCountSql)) {
+
+        logMasterStmt.setLong(1, timestamp);
+        logMasterStmt.setString(2, player_uuid);
+        logMasterStmt.executeUpdate();
+
+        logExitStmt.setObject(1, signloc);
+        logExitStmt.setString(2, entry);
+        logExitStmt.setString(3, exit);
+        logExitStmt.setDouble(4, fare);
+        logExitStmt.executeUpdate();
+
+        logTransferStmt.setObject(1, signloc);
+        logTransferStmt.setString(2, entry);
+        logTransferStmt.setString(3, transfer);
+        logTransferStmt.executeUpdate();
+
+        logJourneyStmt.setString(1, entry);
+        logJourneyStmt.setString(2, exit);
+        logJourneyStmt.setDouble(3, fare);
+        logJourneyStmt.executeUpdate();
+
+        incrCountStmt.executeUpdate();
+      } catch (SQLException e) {
+        plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      }
+  }
 
   
 }
