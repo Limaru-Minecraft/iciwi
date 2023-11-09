@@ -2,9 +2,11 @@ package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import mikeshafter.iciwi.util.IciwiUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -82,9 +84,23 @@ public class TicketMachine implements Machine {
 
   // main menu after inserting iciwi card
   public void cardMenu() {
+    // get card details
+    IcCard icCard = IciwiUtil.IcCardFromItem(this.selectedItem);
+    assert icCard != null;
+    Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
+    int cardModelData = plugin.getConfig().getInt("card.custom-model-data");
+
     // setup inventory
     inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
     this.clickables = new Clickable[9];
+
+    // Card details
+    this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"),
+      Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)),
+      Component.text("Serial: §a" + icCard.getSerial()),
+      Component.text("Value: §6" + icCard.getValue())
+      ), (e) -> {}
+    );
 
     // Create buttons
     this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")),
