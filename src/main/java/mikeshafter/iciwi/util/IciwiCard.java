@@ -2,18 +2,14 @@ package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.api.IcCard;
-import mikeshafter.iciwi.config.Owners;
 
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 
 public class IciwiCard implements IcCard {
   private final CardSql cardSql = new CardSql();
-  private final Owners owners = new Owners();
   private final String serial;
   
   public IciwiCard (ItemStack item) { this.serial = IciwiUtil.parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1)); }
@@ -55,31 +51,31 @@ public class IciwiCard implements IcCard {
   @Override
   public double getValue() { return cardSql.getCardValue(serial); }
 
-  /**
-   * Converts this card's details into an Iciwi-loggable map
-   * @return This card in a loggable state
-   */
-  @Override
-  public Map<String, Object> toMap() {
+  // /**
+  //  * Converts this card's details into an Iciwi-loggable map
+  //  * @return This card in a loggable state
+  //  */
+  // @Override
+  // public Map<String, Object> toMap() {
 
-    // Get rail pass details
-    HashMap<String, Object> railPassMap = new HashMap<>();
-    // Unpack rail pass map
-    for (String key : getRailPasses().keySet()) {
-      railPassMap.put("card_railpass_" + key + "_price", owners.getRailPassPrice(key));
-      railPassMap.put("card_railpass_" + key + "_percentage", owners.getRailPassPercentage(key));
-      railPassMap.put("card_railpass_" + key + "_start", railPassMap.get(key));
-      railPassMap.put("card_railpass_" + key + "_duration", owners.getRailPassDuration(key));
-      railPassMap.put("card_railpass_" + key + "_operator", owners.getRailPassOperator(key));
-    }
+  //   // Get rail pass details
+  //   HashMap<String, Object> railPassMap = new HashMap<>();
+  //   // Unpack rail pass map
+  //   for (String key : getRailPasses().keySet()) {
+  //     railPassMap.put("card_railpass_" + key + "_price", owners.getRailPassPrice(key));
+  //     railPassMap.put("card_railpass_" + key + "_percentage", owners.getRailPassPercentage(key));
+  //     railPassMap.put("card_railpass_" + key + "_start", railPassMap.get(key));
+  //     railPassMap.put("card_railpass_" + key + "_duration", owners.getRailPassDuration(key));
+  //     railPassMap.put("card_railpass_" + key + "_operator", owners.getRailPassOperator(key));
+  //   }
 
-    // Get card details
-    Map<String, Object> map = new HashMap<>(Map.ofEntries(
-      Map.entry("card_serial", this.serial),
-      Map.entry("card_value", cardSql.getCardValue(serial))
-    ));
-    map.putAll(railPassMap);
+  //   // Get card details
+  //   Map<String, Object> map = new HashMap<>(Map.ofEntries(
+  //     Map.entry("card_serial", this.serial),
+  //     Map.entry("card_value", cardSql.getCardValue(serial))
+  //   ));
+  //   map.putAll(railPassMap);
 
-    return map;
-  }
+  //   return map;
+  // }
 }

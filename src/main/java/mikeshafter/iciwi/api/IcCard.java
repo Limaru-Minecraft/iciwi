@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.api;
 import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.config.Owners;
 
 import java.util.Map;
 
@@ -7,12 +8,6 @@ import java.util.Map;
 public interface IcCard {
 	String serial = "";
 	CardSql cardSql = new CardSql();
-
-	/**
-	 * Converts this card's details into an Iciwi-loggable map
-	 * @return This card in a loggable state
-	 */
-	Map<String, Object> toMap();
 
 	/**
 	 * Withdraws a certain amount
@@ -60,5 +55,5 @@ public interface IcCard {
 	 * @param name	 Name of the rail pass
 	 * @return			 The expiry time
 	 */
-	default long getExpiry(String name) { return cardSql.getExpiry(serial, name); }
+	default long getExpiry(String name) { return cardSql.getStart(serial, name)+new Owners().getRailPassDuration(name); }
 }

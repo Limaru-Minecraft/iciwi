@@ -33,12 +33,10 @@ public abstract class ClosableFareGate extends FareGate {
     if (this.closeGateArray == null) return;
     Location ploc = event.getPlayer().getLocation();
     Location[] glocs = ((Location[]) closeGateArray[0]);
-    label0:
     for (Location gloc : glocs) {
       if (gloc.getBlockX() == ploc.getBlockX() && gloc.getBlockY() == ploc.getBlockY() && gloc.getBlockZ() == ploc.getBlockZ()) {
         for (Runnable r : ((Runnable[]) closeGateArray[1]))
           plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, r, plugin.getConfig().getLong("close-after-pass"));
-        break label0;
       }
     }
   }

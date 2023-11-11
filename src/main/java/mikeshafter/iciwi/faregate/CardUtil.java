@@ -46,7 +46,7 @@ public class CardUtil {
    * @param entryStation The station at which to enter
    * @return Whether entry was successful. If false, do not open the fare gate.
    */
-  protected static boolean entry(Player player, IcCard icCard, String entryStation, Vector signLocationVector) {
+  protected static boolean entry(Player player, IcCard icCard, String entryStation, Location signLocation) {
     if (onClick(player)) return false;
 
     double value = icCard.getValue();
@@ -63,11 +63,13 @@ public class CardUtil {
 
     // was the card already used to enter the network?
     if (!records.getStation(serial).equals("")) {
-      player.sendMessage(lang.getString("cannot-pass"));
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
-      } else return false;
+      } else {
+        player.sendMessage(lang.getString("cannot-pass"));
+        return false;
+      }
     }
 
     // write the entry station and fare class
@@ -79,34 +81,17 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
-/*
+    
     // logger
-    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-    Map.entry("timestamp", System.currentTimeMillis()),
-    Map.entry("uuid", player.getUniqueId().toString()),
-    Map.entry("function", "entry_card"),
-    Map.entry("signloc", signLocationVector),
-    Map.entry("station", entryStation)
-    ));
-    // check if we need to access Records to get OSI data if there is one
+    cardSql.incrementCount();
+    cardSql.logMaster(player.getUniqueId().toString());
+    cardSql.logEntry(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation);
+    cardSql.logCardUse(serial);
     if (records.getTransfer(icCard.getSerial())) {
-    Map<String, Object> previousJourneyMap = Map.ofEntries(
-    Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
-    Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
-    Map.entry("prevjourney_class", records.getClass(serial)),
-    Map.entry("prevjourney_exittime", records.getTimestamp(serial))
-    );
-    logMap.putAll(previousJourneyMap);
+      cardSql.logPrevJourney(records.getPreviousStation(serial), records.getCurrentFare(serial), records.getClass(serial), records.getTimestamp((serial)));
     }
 
-    // store IC Card details
-    logMap.putAll(icCard.toMap());
-
-    // record in logger
-    Iciwi.icLogger.record(ukey, logMap);
-*/
-  return true;
+    return true;
   }
 
 
@@ -117,7 +102,7 @@ public class CardUtil {
   * @param exitStation The station at which to exit
   * @return Whether exit was successful. If false, do not open the fare gate.
   */
-  protected static boolean exit(Player player, IcCard icCard, String exitStation, Vector signLocationVector) {
+  protected static boolean exit(Player player, IcCard icCard, String exitStation, Location signLocation) {
     if (onClick(player)) return false;
 
 	  Fares fares = new Fares();
@@ -135,8 +120,7 @@ public class CardUtil {
       if (plugin.getConfig().getBoolean("open-on-penalty")) {
         Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
         player.sendMessage(lang.getString("fare-evade"));
-      }
-      else {
+      } else {
         player.sendMessage(lang.getString("cannot-pass"));
         return false;
       }
@@ -150,6 +134,8 @@ public class CardUtil {
       double previousFare = records.getCurrentFare(serial);
       // if the difference between the fares is less than the current fare, change the fare to that difference.
       if (longFare-previousFare < fare) fare = longFare-previousFare;
+      // send confirmation
+      player.sendMessage(lang.getString("osi"));
     }
 
     // Get the owners of stations and rail passes
@@ -160,9 +146,7 @@ public class CardUtil {
 
     // Get cheapest discount
     for (var r : cardSql.getAllDiscounts(serial).keySet()) {
-      if (( entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r)) ) &&
-            owners.getRailPassPercentage(r) < payPercentage )
-      {
+      if (( entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r)) ) && owners.getRailPassPercentage(r) < payPercentage ) {
         finalRailPass = r;
         payPercentage = owners.getRailPassPercentage(r);
       }
@@ -188,51 +172,19 @@ public class CardUtil {
 
     // send (value - fare) as the value variable is not updated
     player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
-/*
+
     // log in IcLogger
-    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-      Map.entry("timestamp", System.currentTimeMillis()),
-      Map.entry("uuid", player.getUniqueId().toString()),
-      Map.entry("function", "exit_card"),
-      Map.entry("signloc", signLocationVector),
-      Map.entry("entry_station", entryStation),
-      Map.entry("exit_station", exitStation),
-      Map.entry("journey_finalfare", fare),
-      Map.entry("journey_originalfare", fares.getCardFare(entryStation, exitStation, records.getClass(serial))),
-      Map.entry("journey_class", records.getClass(serial))
-    ));
-
-    // check if a railpass is used, and if so, add the railpass to the log
+    cardSql.incrementCount();
+    cardSql.logMaster(player.getUniqueId().toString());
+    cardSql.logExit(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, exitStation);
+    cardSql.logJourney(fares.getCardFare(entryStation, exitStation, records.getClass(serial)), fare, records.getClass(serial));
+    cardSql.logCardUse(serial);
     if (finalRailPass != null) {
-      Map<String, Object> railPassMap = Map.ofEntries(
-        Map.entry("journey_railpass_used", finalRailPass),
-        Map.entry("journey_railpass_price", owners.getRailPassPrice(finalRailPass)),
-        Map.entry("journey_railpass_percentage", owners.getRailPassPercentage(finalRailPass)),
-        Map.entry("journey_railpass_start", cardSql.getStart(serial, finalRailPass)),
-        Map.entry("journey_railpass_duration", owners.getRailPassDuration(finalRailPass)),
-        Map.entry("journey_railpass_operator", owners.getRailPassOperator(finalRailPass))
-      );
-      logMap.putAll(railPassMap);
+      cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
     }
-
-    // check if we need to access Records to get OSI data if there is one
     if (records.getTransfer(icCard.getSerial())) {
-      Map<String, Object> previousJourneyMap = Map.ofEntries(
-        Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
-        Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
-        Map.entry("prevjourney_class", records.getClass(serial)),
-        Map.entry("prevjourney_exittime", records.getTimestamp(serial))
-      );
-      logMap.putAll(previousJourneyMap);
+      cardSql.logPrevJourney(records.getPreviousStation(serial), records.getCurrentFare(serial), records.getClass(serial), records.getTimestamp((serial)));
     }
-
-    // store IC Card details
-    logMap.putAll(icCard.toMap());
-
-    // record in logger
-    Iciwi.icLogger.record(ukey, logMap);
-*/
 
     return true;
   }
@@ -245,7 +197,7 @@ public class CardUtil {
    * @param station The station at which the sign is placed
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
-  protected static boolean member(Player player, IcCard icCard, String station, Vector signLocationVector) {
+  protected static boolean member(Player player, IcCard icCard, String station, Location signLocation) {
     if (onClick(player)) return false;
 
     // Get the serial number of the card
@@ -261,24 +213,14 @@ public class CardUtil {
     for (String r : railPasses) {
       if (stationOwners.contains(owners.getRailPassOperator(r))) {
         player.sendMessage(lang.getString("member-gate"));
-/*
+
         // logger
-        String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-        Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-          Map.entry("timestamp", System.currentTimeMillis()),
-          Map.entry("uuid", player.getUniqueId().toString()),
-          Map.entry("function", "member_card"),
-          Map.entry("signloc", signLocationVector),
-          Map.entry("station", station),
-          Map.entry("pass", r)
-        ));
+        cardSql.incrementCount();
+        cardSql.logMaster(player.getUniqueId().toString());
+        cardSql.logMember(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), station);
+        cardSql.logCardUse(serial);
+        cardSql.logRailpassUse(r, owners.getRailPassPrice(r), owners.getRailPassPercentage(r), cardSql.getStart(serial, r), owners.getRailPassDuration(r), owners.getRailPassOperator(r));
 
-        // store IC Card details
-        logMap.putAll(icCard.toMap());
-
-        // record in logger
-        Iciwi.icLogger.record(ukey, logMap);
-*/
         return true;
       }
     }
@@ -295,10 +237,10 @@ public class CardUtil {
    * @param station The station at which the sign is placed
    * @return Whether checks were successful. If false, do not open the fare gate.
    */
-  protected static boolean transfer(Player player, IcCard icCard, String station, Vector signLocationVector) {
+  protected static boolean transfer(Player player, IcCard icCard, String station, Location signLocation) {
     if (onClick(player)) return false;
 
-	Fares fares = new Fares();
+	  Fares fares = new Fares();
     String serial = icCard.getSerial();
 
     // If an OSI was detected, cancel OSI capability
@@ -377,51 +319,20 @@ public class CardUtil {
 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
-/*
-    // log in IcLogger
-    String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-    Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-      Map.entry("timestamp", System.currentTimeMillis()),
-      Map.entry("uuid", player.getUniqueId().toString()),
-      Map.entry("function", "transfer_card"),
-      Map.entry("signloc", signLocationVector),
-      Map.entry("entry_station", entryStation),
-      Map.entry("transfer_station", station),
-      Map.entry("journey_finalfare", fare),
-      Map.entry("journey_originalfare", fares.getCardFare(entryStation, station, records.getClass(serial))),
-      Map.entry("journey_class", records.getClass(serial))
-    ));
 
-    // check if a railpass is used, and if so, add the railpass to the log
+    // == log in IcLogger
+    cardSql.incrementCount();
+    cardSql.logMaster(player.getUniqueId().toString());
+    cardSql.logTransfer(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, station);
+    cardSql.logJourney(fares.getCardFare(entryStation, station, records.getClass(serial)), fare, records.getClass(serial));
+    cardSql.logCardUse(serial);
     if (finalRailPass != null) {
-      Map<String, Object> railPassMap = Map.ofEntries(
-        Map.entry("journey_railpass_used", finalRailPass),
-        Map.entry("journey_railpass_price", owners.getRailPassPrice(finalRailPass)),
-        Map.entry("journey_railpass_percentage", owners.getRailPassPercentage(finalRailPass)),
-        Map.entry("journey_railpass_start", cardSql.getStart(serial, finalRailPass)),
-        Map.entry("journey_railpass_duration", owners.getRailPassDuration(finalRailPass)),
-        Map.entry("journey_railpass_operator", owners.getRailPassOperator(finalRailPass))
-      );
-      logMap.putAll(railPassMap);
+      cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
     }
-
-    // check if we need to access Records to get OSI data if there is one
     if (records.getTransfer(icCard.getSerial())) {
-      Map<String, Object> previousJourneyMap = Map.ofEntries(
-        Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
-        Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
-        Map.entry("prevjourney_class", records.getClass(serial)),
-        Map.entry("prevjourney_exittime", records.getTimestamp(serial))
-      );
-      logMap.putAll(previousJourneyMap);
+      cardSql.logPrevJourney(records.getPreviousStation(serial), records.getCurrentFare(serial), records.getClass(serial), records.getTimestamp((serial)));
     }
 
-    // store IC Card details
-    logMap.putAll(icCard.toMap());
-
-    // record in logger
-    Iciwi.icLogger.record(ukey, logMap);
-*/
     return true;
   }
 
@@ -516,7 +427,12 @@ public class CardUtil {
     return closeGate;
   }
 
-
+  /**
+   * Changes vectors into BlockFace directions.
+   * This method does not work with non-cartesian directions.
+   * @param vector vector to change
+   * @return corresponding BlockFace
+   */
   private static BlockFace toFace(Vector vector) {
     if (Objects.equals(vector, BlockFace.EAST.getDirection()) ) return BlockFace.EAST;
     if (Objects.equals(vector, BlockFace.SOUTH.getDirection())) return BlockFace.SOUTH;

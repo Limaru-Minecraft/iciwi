@@ -24,8 +24,9 @@ public class Owners extends CustomConfig {
     List<String> ownersList = super.get().getStringList("Operators."+station);
     if (ownersList.size() == 0) {
       String s = super.getConfigPlugin().getConfig().getString("global-operator");
-      setOwners(station, List.of(s));
-      return List.of(s);
+      if (s == null) setOwners(station, List.of("null"));
+      else setOwners(station, List.of(s));
+      return getOwners(station);
     }
     else return ownersList;
   }
@@ -175,7 +176,10 @@ public class Owners extends CustomConfig {
     // Check if the name has the given operator
     // If it has, add it to returnSet
     HashSet<String> h = new HashSet<>();
-    assert railPassPrices != null;
+    // if there are no rail passes, return an empty set
+    if (railPassPrices == null) {
+      return new HashSet<>();
+    }
     for (String pass : railPassPrices.getKeys(false))
       if (Objects.equals(railPassPrices.getString(pass+".operator"), operator))
         h.add(pass);

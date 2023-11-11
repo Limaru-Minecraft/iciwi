@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
@@ -38,10 +37,8 @@ public class RailPassMachine implements Machine {
   private final Owners owners = plugin.owners;
   private final Lang lang = plugin.lang;
 
-  public RailPassMachine (Player player) {
-    bottomInv = true;
-    this.player = player;
-  }
+  public RailPassMachine (Player player) { bottomInv = true; this.player = player; }
+  public RailPassMachine (Player player, List<String> operators) { bottomInv = true; this.player = player; this.operators = operators; }
 
   // card selection menu. player clicks in their own inventory to select a card
   public void init (String station) {
@@ -77,68 +74,64 @@ public class RailPassMachine implements Machine {
 
     // rail pass viewer
     clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE,0, Component.text("View Rail Passes")), (event) -> {
-        // print current rail passes
-        // get current passes
-        List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
-            .sorted(Map.Entry.comparingByValue())
-            .map(railPass -> Component.text().content(
-                // Show expiry date
-                "\u00A76- \u00A7a" + railPass.getKey() + "\u00a76 | Exp. "
-                    + String.format("\u00a7b%s\n", new Date(railPass.getValue() * 1000)))
-                // Option to extend (currently disabled)
-                // .append(Component.text().content("\u00a76 | Extend
-                // \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
-                // "+railPass.getKey()))
-                .build())
-            .toList();
-        // menu title
-        TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
-        // build content
-        for (TextComponent displayEntry : discountList)
-          menu = menu.append(displayEntry);
-        menu = menu.append(Component.text("\n"));
-        // send to player
-        player.sendMessage(menu);
-      }
-    );
+      // print current rail passes
+      // get current passes
+      event.setCancelled(true);
+      List<TextComponent> discountList = cardSql.getAllDiscounts(serial).entrySet().stream()
+          .sorted(Map.Entry.comparingByValue())
+          .map(railPass -> Component.text().content(
+              // Show expiry date
+              "\u00A76- \u00A7a" + railPass.getKey() + "\u00a76 | Exp. "
+                  + String.format("\u00a7b%s\n", new Date(railPass.getValue() * 1000)))
+              // Option to extend (currently disabled)
+              // .append(Component.text().content("\u00a76 | Extend
+              // \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
+              // "+railPass.getKey()))
+              .build())
+          .toList();
+      // menu title
+      TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
+      // build content
+      for (TextComponent displayEntry : discountList)
+        menu = menu.append(displayEntry);
+      menu = menu.append(Component.text("\n"));
+      // send to player
+      player.sendMessage(menu);
+      player.closeInventory();
+    });
 
     // create all rail pass buttons
     for (int i = 1; i <= railPassNames.size(); i++) {
       clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE,0, Component.text(railPassNames.get(i))), (event) -> {
-          String name = parseComponent(
-              Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
-          double price = this.owners.getRailPassPrice(name);
+        String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
+        double price = this.owners.getRailPassPrice(name);
 
-          if (Iciwi.economy.getBalance(player) >= price) {
-            // take money from player
-            Iciwi.economy.withdrawPlayer(player, price);
+        if (Iciwi.economy.getBalance(player) >= price) {
+          // take money from player
+          Iciwi.economy.withdrawPlayer(player, price);
 
-            // check if the card already has the rail pass
-            if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {
-              // Extend by the duration of the rail pass (change start time to the current
-              // expiry time)
+          // check if the card already has the rail pass
+          if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {
+            // Extend by the duration of the rail pass (change start time to the current
+            // expiry time)
 
-              this.cardSql.setDiscount(serial, name, this.cardSql.getExpiry(serial, name));
-              player.sendMessage(this.lang.getString("added-rail-pass"));
-            }
-
-            else {
-              // New rail pass
-              this.cardSql.setDiscount(serial, name, Instant.now().getEpochSecond());
-              player.sendMessage(this.lang.getString("extended-rail-pass"));
-            }
-
-
-            // pay the TOC
-            this.owners.deposit(this.owners.getRailPassOperator(name), price);
+            this.cardSql.setDiscount(serial, name, this.cardSql.getStart(serial, name)+owners.getRailPassDuration(name));
+            player.sendMessage(this.lang.getString("added-rail-pass"));
           }
-          else
-            player.sendMessage(this.lang.getString("not-enough-money"));
 
-          // close inventory
-          player.closeInventory();
+          else {
+            // New rail pass
+            this.cardSql.setDiscount(serial, name, System.currentTimeMillis());
+            player.sendMessage(this.lang.getString("extended-rail-pass"));
+          }
+          // pay the TOC
+          this.owners.deposit(this.owners.getRailPassOperator(name), price);
         }
-      );
+        else player.sendMessage(this.lang.getString("not-enough-money"));
+
+        // close inventory
+        player.closeInventory();
+      });
     }
 
     // set items and open inventory

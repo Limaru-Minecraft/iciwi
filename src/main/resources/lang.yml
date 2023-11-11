@@ -9,6 +9,7 @@ faregate: Faregate
 member: Member
 payment: Payment
 classchange: Class
+transfer: Transfer
 
 # Error Messages
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
@@ -18,17 +19,18 @@ invalid-ticket: '§cYour ticket is not valid for this station! Please use a vali
 
 # Success messages
 remaining: '§aRemaining value: §£%.2f'
-transfer: '§aOut-of-station interchange recorded.'
+osi: '§aAn out-of-station interchange discount was applied.'
 tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
+transfer-cancel-osi: '§aOut-of-station interchange discounts were cancelled.'
 
 # Member sign
 member-gate: '§aMembership valid. Welcome!'
 
 # ClassChange sign
-member-gate: '§aChanged fare class to §e%s§a!'
+class-changed: '§aChanged fare class to §e%s§a!'
 
 # Payment sign
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
@@ -69,6 +71,7 @@ generate-ticket: '§aNew ticket for journeys costing up to §e£%2$.2f§a from �
 
 # == Card Operations Subpage ==
 select-card: '§1Select Card...'
+menu-card-details: '§6Card Details'
 menu-new-card: '§dNew Iciwi Card'
 menu-top-up-card: '§bTop Up Iciwi Card'
 menu-rail-pass: '§aRail Passes'
