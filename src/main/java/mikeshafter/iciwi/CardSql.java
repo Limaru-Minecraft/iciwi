@@ -1,5 +1,6 @@
 package mikeshafter.iciwi;
 
+import mikeshafter.iciwi.config.Owners;
 import org.bukkit.plugin.Plugin;
 
 import java.sql.*;
@@ -10,6 +11,7 @@ import java.util.*;
 public class CardSql {
 
   private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+  private final Owners owners = new Owners();
 
   private Connection connect() {
     // SQLite connection string
@@ -33,13 +35,13 @@ public class CardSql {
     String url = plugin.getConfig().getString("database");
 
     // SQL statement for creating a new table
-    LinkedList<String> sql = new LinkedList<>();
+    ArrayList<String> sql = new ArrayList<>(31);
     sql.add("CREATE TABLE IF NOT EXISTS cards (serial TEXT, value TEXT, PRIMARY KEY (serial) ); ");
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial) ON UPDATE CASCADE, name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
-    sql.add("CREATE TABLE IF NOT EXISTS railpasses (name TEXT, operator TEXT, duration INTEGER, percentage REAL, price REAL, PRIMARY KEY (name) ); ");
 
     // Logger tables
     sql.add("CREATE TABLE IF NOT EXISTS log_counts (id INTEGER PRIMARY KEY)");
+    sql.add("INSERT OR IGNORE INTO log_counts(id) VALUES (1)");
     sql.add("CREATE TABLE IF NOT EXISTS log_master (id	INTEGER NOT NULL UNIQUE,timestamp	INTEGER NOT NULL,player_uuid	TEXT NOT NULL,PRIMARY KEY(id));");
 
     sql.add("CREATE TABLE IF NOT EXISTS log_entry (id	INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry	TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
@@ -135,7 +137,7 @@ public class CardSql {
       while (rs.next()) {
         String name = rs.getString(1);
         // Check if expired
-        long expiry = getExpiry(serial, name);
+        long expiry = getStart(serial, name) + owners.getRailPassDuration(name);
 
         if (expiry > Instant.now().getEpochSecond())
           returnValue.put(name, expiry);
@@ -172,38 +174,6 @@ public class CardSql {
 
       // Get the start date
       return rs.getLong(1);
-
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-      return 0L;
-    }
-  }
-
-
-  /**
-   * Gets the expiry time of a certain railpass belonging to a card
-   *
-   * @param serial Serial number
-   * @param name   Name of the discount (include operator)
-   */
-  public long getExpiry(String serial, String name) {
-    String sql = "SELECT start FROM discounts WHERE serial = ? AND name = ?";
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, serial);
-      statement.setString(2, name);
-      ResultSet rs = statement.executeQuery();
-
-      // Get the start date
-      long start = rs.getLong(1);
-
-      // Get the end date
-      String sql1 = "SELECT duration FROM railpasses WHERE name = ?";
-      final PreparedStatement statement1 = conn.prepareStatement(sql1);
-      statement1.setString(1, name);
-      rs = statement.executeQuery();
-      long duration = rs.getLong(1);
-
-      return start+duration;
 
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
@@ -268,36 +238,12 @@ public class CardSql {
 
 
   /**
-   * Gets the rail passes sold by an operator
-   * @param operator Operator to query
-   */
-  public SortedSet<String> getRailPassNames(String operator) {
-    String sql = "SELECT name FROM railpasses WHERE operator = ? ;";
-    SortedSet<String> set = new TreeSet<>();
-
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, operator);
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        set.add(rs.getString(1));
-      }
-      return set;
-
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-      return null;
-    }
-  }
-
-
-
-  /**
    * Logger method
    * @return the current log id (AFTER incrementing)
    */
   public int incrementCount() {
     String update = "UPDATE log_counts SET id = id + 1";
-    String select = "SELECT id FROM log_counts";
+    String select = "SELECT max(id) FROM log_counts";
     try (Connection conn = this.connect();
          PreparedStatement updateStatement = conn.prepareStatement(update);
          PreparedStatement selectStatement = conn.prepareStatement(select)) {
@@ -315,7 +261,7 @@ public class CardSql {
    */
   public void logMaster(String player_uuid) {
     long timestamp = System.currentTimeMillis();
-    String sql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String sql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ( (SELECT max(id) FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setLong(1, timestamp);
       statement.setString(2, player_uuid);
@@ -329,10 +275,9 @@ public class CardSql {
    * Logger method
    */
   public void logEntry(int signX, int signY, int signZ, String entry) {
-    long timestamp = System.currentTimeMillis();
-    String sql = "INSERT INTO log_entry (id, sign_x, sign_y, sign_z, entry) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_entry (id, sign_x, sign_y, sign_z, entry) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?)";
 
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql);) {
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setInt(1, signX);
       statement.setInt(2, signY);
       statement.setInt(3, signZ);
@@ -348,7 +293,7 @@ public class CardSql {
    * Logger method
    */
   public void logPrevJourney(String prev_entry, double prev_fare, String prev_fareClass, long exitTime) {
-    String sql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, prev_entry);
       statement.setDouble(2, prev_fare);
@@ -365,7 +310,7 @@ public class CardSql {
    * Logger method
    */
   public void logExit(int signX, int signY, int signZ, String entry, String exit) {
-    String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, exit) VALUES ((SELECT count FROM log_counts), ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, exit) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?)";
 
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setInt(1, signX);
@@ -383,13 +328,12 @@ public class CardSql {
   /**
    * Logger method
    */
-  public void logJourney(String entry, String exit, double fare, String fareClass) {
-    String sql = "INSERT INTO log_journey (id, entry, exit, fare, class) VALUES ((SELECT count FROM log_counts), ?, ?, ?, ?)";
+  public void logJourney(double subtotal, double total, String fareClass) {
+    String sql = "INSERT INTO log_journey (id, subtotal, total, class) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, entry);
-      statement.setString(2, exit);
-      statement.setDouble(3, fare);
-      statement.setString(4, fareClass);
+      statement.setDouble(1, subtotal);
+      statement.setDouble(2, total);
+      statement.setString(3, fareClass);
       statement.executeUpdate();
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
@@ -401,7 +345,7 @@ public class CardSql {
    * Logger method
    */
   public void logMember(int signX, int signY, int signZ, String station) {
-    String sql = "INSERT INTO log_member (id, sign_x, sign_y, sign_z, station) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_member (id, sign_x, sign_y, sign_z, station) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?)";
 
     try (Connection conn = this.connect();  PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setInt(1, signX);
@@ -419,7 +363,7 @@ public class CardSql {
    * Logger method
    */
   public void logTransfer(int signX, int signY, int signZ, String entry, String transfer) {
-    String sql = "INSERT INTO log_transfer (id, sign_x, sign_y, sign_z, entry, transfer) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_transfer (id, sign_x, sign_y, sign_z, entry, transfer) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?)";
 
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setInt(1, signX);
@@ -433,12 +377,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logRailpassStore(String name, double price, double percentage, long start, long duration, String operator) {
-    String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, name);
@@ -453,12 +393,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logRailpassUse(String name, double price, double percentage, long start, long duration, String operator) {
-    String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, name);
@@ -473,12 +409,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logTicketUse(String from, String to, String travelClass) {
-    String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
+    String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, from);
@@ -490,28 +422,23 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
-  public void logCardUse(String serial, double value) {
-    String sql = "INSERT INTO log_card_use (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
+  public void logCardUse(String serial) {
+    String sql = "INSERT INTO log_card_use (id, serial, value) VALUES ( (SELECT max(id) FROM log_counts), ?, (SELECT value FROM cards WHERE serial = ?))";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-
       statement.setString(1, serial);
-      statement.setDouble(2, value);
+      statement.setString(2, serial);
       statement.executeUpdate();
     } catch (SQLException e) {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
+    Map<String, Long> currentPasses = getAllDiscounts(serial);
+    for (var name : currentPasses.keySet()) {
+      logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), getStart(serial, name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
+    }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logTicketCreate(String from, String to, String travelClass, double fare) {
-    String sql = "INSERT INTO log_ticket_create (id, from, to, class, fare) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
+    String sql = "INSERT INTO log_ticket_create (id, from, to, class, fare) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, from);
@@ -524,12 +451,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logCardCreate(String serial, double value) {
-    String sql = "INSERT INTO log_card_create (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String sql = "INSERT INTO log_card_create (id, serial, value) VALUES ( (SELECT max(id) FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, serial);
@@ -540,12 +463,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logCardTopup(String serial, double oldValue, double addedValue, double newValue) {
-    String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setString(1, serial);
@@ -558,12 +477,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logRailpassExtend(int newDuration, String name, double price, double percentage, long start, long duration, String operator) {
-    String sql = "INSERT INTO log_railpass_extend (id, new, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO log_railpass_extend (id, new, name, price, percentage, start, duration, operator) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
       statement.setInt(1, newDuration);
@@ -579,12 +494,8 @@ public class CardSql {
     }
   }
 
-
-  /**
-   * Logger method
-   */
   public void logCardRefund(String serial, double value) {
-    String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
+    String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES ( (SELECT max(id) FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
       statement.setString(1, serial);
       statement.setDouble(2, value);
@@ -593,48 +504,5 @@ public class CardSql {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
-  
 
-  /**
-   * Logger get method
-   */
-  public SortedSet<Integer> getIdFromUuid(String player_uuid) {
-    String sql = "SELECT id FROM log_master WHERE player_uuid = ?";
-    SortedSet<Integer> set = new TreeSet<>();
-
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, player_uuid);
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        set.add(rs.getInt(1));
-      }
-      return set;
-
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-      return null;
-    }
-  }
-
-  
-  /**
-   * Logger get method
-   */
-  public SortedSet<String> getUuidFromId(int id) {
-    String sql = "SELECT player_uuid FROM log_master WHERE id = ?";
-    SortedSet<Integer> set = new TreeSet<>();
-
-    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
-      statement.setString(1, id);
-      ResultSet rs = statement.executeQuery();
-      while (rs.next()) {
-        set.add(rs.getString(1));
-      }
-      return set;
-
-    } catch (SQLException e) {
-      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-      return null;
-    }
-  }
 }

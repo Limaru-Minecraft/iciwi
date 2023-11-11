@@ -74,7 +74,7 @@ public class Entry extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.entry(player, icCard, station, sign.getLocation().toVector())) {
+			if (CardUtil.entry(player, icCard, station, sign.getLocation())) {
         super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
 			}
 

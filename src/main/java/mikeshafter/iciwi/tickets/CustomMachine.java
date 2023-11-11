@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
+import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -29,9 +30,9 @@ public class CustomMachine implements Machine {
   private final Lang lang = plugin.lang;
   private final Fares fares = plugin.fares;
   private final Owners owners = plugin.owners;
+  private static final CardSql cardSql = new CardSql();
   private ItemStack[] playerInv;
   private Clickable[] clickables;
-  //private Component terminal;
   private final Set<String> stationList = fares.getAllStations();
 
   public CustomMachine(Player player, String station) {
@@ -157,18 +158,10 @@ public class CustomMachine implements Machine {
       int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
       // log into IcLogger
-      String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-      Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-        Map.entry("timestamp", System.currentTimeMillis()),
-        Map.entry("uuid", player.getUniqueId().toString()),
-        Map.entry("function", "new_ticket"),
-        Map.entry("ticket_to", to),
-        Map.entry("ticket_from", from),
-        Map.entry("ticket_fareclass", fareClass)
-      ));
-      Iciwi.icLogger.record(ukey, logMap);
+      cardSql.incrementCount();
+      cardSql.logMaster(player.getUniqueId().toString());
+      cardSql.logTicketCreate(from, to, fareClass, price);
 
-      // Generate ticket
       return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
     }
 

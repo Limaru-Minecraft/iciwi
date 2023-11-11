@@ -54,7 +54,7 @@ public class FareGateBlock {
   }
   
   private void spawnFallingBlock() {
-    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), ArmorStand.class);
+    this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.9805d, 0.5d), ArmorStand.class);
     this.armorStand.setVisible(false);
     this.armorStand.setGravity(false);
     this.armorStand.setInvulnerable(true);

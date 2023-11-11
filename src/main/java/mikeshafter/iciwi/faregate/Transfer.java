@@ -43,7 +43,7 @@ public class Transfer extends ClosableFareGate {
 			if (icCard == null) return;
 
 			// Call transfer, and if successful, open fare gate
-			if (CardUtil.transfer(player, icCard, station, sign.getLocation().toVector())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+			if (CardUtil.transfer(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
 		}
 	}
 }

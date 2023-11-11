@@ -9,7 +9,6 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.meta.CommandMeta;
 import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.api.FareGate;
-import mikeshafter.iciwi.api.IcLogger;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.commands.Commands;
 import mikeshafter.iciwi.config.Fares;
@@ -36,7 +35,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
   public Owners owners;
   public Records records;
   public Fares fares;
-  public static IcLogger icLogger = null;
+  //public static IcLogger icLogger = null;
 
   public void reloadAllConfig(){
     new Lang(this).reload();
@@ -84,7 +83,7 @@ public final class Iciwi extends JavaPlugin implements IciwiPlugin {
     app.initTables();
 
     // === Logger ===
-    Iciwi.icLogger = new IcLogger();
+    //Iciwi.icLogger = new IcLogger();
 
     // === Register events ===
     registerFareGate(new mikeshafter.iciwi.faregate.ClassChange());
