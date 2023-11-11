@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="fix #55">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/CardSql.java" afterDir="false" />
-    </list>
+    <list default="true" id="282bec46-b880-4ff1-b202-9f0164806161" name="Changes" comment="Formatting and remove ID requirement" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -231,7 +228,14 @@
       <option name="project" value="LOCAL" />
       <updated>1699516883408</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Formatting and remove ID requirement">
+      <created>1699533941299</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1699533941299</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -273,7 +277,8 @@
     <MESSAGE value="update" />
     <MESSAGE value="change all remaining String &quot;!= null&quot; to &quot;!...equals(&quot;&quot;)&quot;" />
     <MESSAGE value="fix #55" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix #55" />
+    <MESSAGE value="Formatting and remove ID requirement" />
+    <option name="LAST_COMMIT_MESSAGE" value="Formatting and remove ID requirement" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

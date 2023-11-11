@@ -433,6 +433,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logRailpassStore(String name, double price, double percentage, long start, long duration, String operator) {
     String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -449,6 +453,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logRailpassUse(String name, double price, double percentage, long start, long duration, String operator) {
     String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -465,6 +473,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logTicketUse(String from, String to, String travelClass) {
     String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -478,6 +490,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logCardUse(String serial, double value) {
     String sql = "INSERT INTO log_card_use (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -490,6 +506,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logTicketCreate(String from, String to, String travelClass, double fare) {
     String sql = "INSERT INTO log_ticket_create (id, from, to, class, fare) VALUES ((SELECT id FROM log_counts), ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -504,6 +524,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logCardCreate(String serial, double value) {
     String sql = "INSERT INTO log_card_create (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -516,6 +540,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logCardTopup(String serial, double oldValue, double addedValue, double newValue) {
     String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -530,6 +558,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logRailpassExtend(int newDuration, String name, double price, double percentage, long start, long duration, String operator) {
     String sql = "INSERT INTO log_railpass_extend (id, new, name, price, percentage, start, duration, operator) VALUES ((SELECT id FROM log_counts), ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -547,6 +579,10 @@ public class CardSql {
     }
   }
 
+
+  /**
+   * Logger method
+   */
   public void logCardRefund(String serial, double value) {
     String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES ((SELECT id FROM log_counts), ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -557,5 +593,48 @@ public class CardSql {
       plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
     }
   }
+  
 
+  /**
+   * Logger get method
+   */
+  public SortedSet<Integer> getIdFromUuid(String player_uuid) {
+    String sql = "SELECT id FROM log_master WHERE player_uuid = ?";
+    SortedSet<Integer> set = new TreeSet<>();
+
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, player_uuid);
+      ResultSet rs = statement.executeQuery();
+      while (rs.next()) {
+        set.add(rs.getInt(1));
+      }
+      return set;
+
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return null;
+    }
+  }
+
+  
+  /**
+   * Logger get method
+   */
+  public SortedSet<String> getUuidFromId(int id) {
+    String sql = "SELECT player_uuid FROM log_master WHERE id = ?";
+    SortedSet<Integer> set = new TreeSet<>();
+
+    try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+      statement.setString(1, id);
+      ResultSet rs = statement.executeQuery();
+      while (rs.next()) {
+        set.add(rs.getString(1));
+      }
+      return set;
+
+    } catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return null;
+    }
+  }
 }
