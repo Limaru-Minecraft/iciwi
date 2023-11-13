@@ -23,7 +23,7 @@ public class Owners extends CustomConfig {
   public @NotNull List<String> getOwners(String station) {
     List<String> ownersList = super.get().getStringList("Operators."+station);
     if (ownersList.size() == 0) {
-      String s = super.getConfigPlugin().getConfig().getString("global-operator");
+      String s = super.getConfigPlugin().getConfig().getString("default-operator");
       if (s == null) setOwners(station, List.of("null"));
       else setOwners(station, List.of(s));
       return getOwners(station);
