@@ -1,12 +1,9 @@
 package mikeshafter.iciwi;
-
 import mikeshafter.iciwi.config.Owners;
 import org.bukkit.plugin.Plugin;
-
 import java.sql.*;
 import java.time.Instant;
 import java.util.*;
-
 
 public class CardSql {
 
@@ -232,10 +229,45 @@ public class CardSql {
    * @param serial Serial number
    * @param value  Value to be subtracted
    */
-  public void subtractValueFromCard(String serial, double value) {
-    updateCard(serial, getCardValue(serial)-value);
-  }
+  public void subtractValueFromCard(String serial, double value) { updateCard(serial, getCardValue(serial)-value); }
 
+
+  /**
+   * Method to debug database
+   * @param sql SQL to run
+   * @return Values of the ResultSet returned
+   */
+  public String[][] runSql (String sql) {
+    try (Connection conn = this.connect(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+      if (preparedStatement.execute()) {
+        ResultSet resultSet = preparedStatement.executeQuery();
+        ResultSetMetaData metaData = resultSet.getMetaData();
+        int columnsNumber = metaData.getColumnCount();
+        ArrayList<String[]> r = new ArrayList<>();
+        int c = 0;
+        while (resultSet.next()) {
+          r.add(new String[columnsNumber]);
+          for (int i = 1; i <= columnsNumber; i++) {
+            r.get(c)[i] = resultSet.getString(i);
+          }
+          c++;
+        }
+        String[][] s = new String[r.size()][columnsNumber];
+        for (int i = 0; i < r.size(); i++) {
+          s[i] = r.get(i);
+        }
+        return s;
+      }
+      else {
+        long a = preparedStatement.executeLargeUpdate();
+        return new String[][] {{String.valueOf(a)}};
+      }
+    }
+    catch (SQLException e) {
+      plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+      return null;
+    }
+  }
 
   /**
    * Logger method
