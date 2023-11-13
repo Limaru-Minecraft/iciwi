@@ -1,12 +1,12 @@
-package mikeshafter.iciwi.commands;
+package mikeshafter.iciwi;
 
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandDescription;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
+import cloud.commandframework.annotations.specifier.Quoted;
 import cloud.commandframework.annotations.suggestions.Suggestions;
 import cloud.commandframework.context.CommandContext;
-import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
 
@@ -310,5 +310,16 @@ public class Commands {
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start)
   {
     fares.deleteStation(start);
+  }
+
+  @CommandMethod("iciwi debug sql <sql>")
+  @CommandDescription("Runs raw SQL in the iciwi database.")
+  @CommandPermission("iciwi.debug.sql")
+  public void debug_sql(final @NonNull CommandSender sender,
+    final @NonNull @Argument(value = "sql") @Quoted String sql)
+  {
+    CardSql cardSql = new CardSql();
+    String[][] table = cardSql.runSql(sql);
+    for (String[] strings : table) sender.sendMessage(String.join(", ", strings));
   }
 }
