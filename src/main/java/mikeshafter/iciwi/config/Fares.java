@@ -146,4 +146,15 @@ public class Fares extends CustomConfig {
     ConfigurationSection section = this.get().getConfigurationSection(from+"."+to);
     return section == null ? null : section.getKeys(false);
   }
+
+  /**
+   * Get all fare classes starting from a certain station and ending at another station.
+   * @param from Starting station
+   * @param to Ending station
+   * @return Fare classes
+   */
+  public Set<String> getDestinations(String from) {
+    ConfigurationSection section = this.get().getConfigurationSection(from);
+    return section == null ? null : section.getKeys(false);
+  }
 }
