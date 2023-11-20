@@ -15,6 +15,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import com.bergerkiller.bukkit.common.utils.TimeUtil;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 
@@ -295,16 +297,17 @@ public class Commands {
   @CommandMethod("iciwi fares check <start> [end] [fareClass]")
   @CommandDescription("Either checks for all destinations from a station, all the fare classes for a journey or the fare between two stations for a fare class.")
   @CommandPermission("iciwi.fares.check")
-  public void fares_set(final @NonNull CommandSender sender,
+  public void fares_check(final @NonNull CommandSender sender,
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
     final @Argument(value = "end", suggestions = "station_list") String end,
     final @Argument("fareClass") String fareClass,
     final @Argument("price") Double price)
   {
-    if (end == null) fares.getDestinations(start);
-    else if (fareClass == null) fares.getClasses(start, end);
-    else fares.getFare(start, end, fareClass);
-    sender.sendMessage("FUTURE");
+    Set<String> s = new HashSet<>();
+    if (end == null) {s = fares.getDestinations(start);}
+    else if (fareClass == null) {s = fares.getClasses(start, end);}
+    else {s = Collections.singleton(String.valueOf(fares.getFare(start, end, fareClass)));}
+    s.forEach(t -> sender.sendMessage(t));
   }
 
   @CommandMethod("iciwi fares unset <start> <end> <fareClass>")

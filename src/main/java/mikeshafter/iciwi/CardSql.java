@@ -37,8 +37,8 @@ public class CardSql {
     sql.add("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial) ON UPDATE CASCADE, name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
 
     // Logger tables
-    sql.add("CREATE TABLE IF NOT EXISTS log_counts (id INTEGER PRIMARY KEY)");
-    sql.add("INSERT OR IGNORE INTO log_counts(id) VALUES (1)");
+    sql.add("CREATE TABLE IF NOT EXISTS log_counts (id INTEGER PRIMARY KEY);");
+    sql.add("INSERT OR IGNORE INTO log_counts(id) VALUES (1);");
     sql.add("CREATE TABLE IF NOT EXISTS log_master (id	INTEGER NOT NULL UNIQUE,timestamp	INTEGER NOT NULL,player_uuid	TEXT NOT NULL,PRIMARY KEY(id));");
 
     sql.add("CREATE TABLE IF NOT EXISTS log_entry (id	INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry	TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
