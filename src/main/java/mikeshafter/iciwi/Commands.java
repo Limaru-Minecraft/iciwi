@@ -319,7 +319,7 @@ public class Commands {
     final @NonNull @Argument("fareClass") String fareClass)
   {
     fares.unsetFare(start, end, fareClass);
-    sender.sendMessage("FUTURE");
+     sender.sendMessage(formatString("The fare from %s to %s using the class %s has been deleted.", start, end, fareClass));
   }
 
   @CommandMethod("iciwi fares deletejourney <start> <end>")
@@ -330,7 +330,7 @@ public class Commands {
     final @NonNull @Argument(value = "end", suggestions = "station_list") String end)
   {
     fares.deleteJourney(start, end);
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("All fares from %s to %s has been deleted.", start, end));
   }
 
   @CommandMethod("iciwi fares deletestation <start>")
@@ -340,7 +340,7 @@ public class Commands {
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start)
   {
     fares.deleteStation(start);
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("All fares to all stations from %s has been deleted.", start));
   }
 
   @CommandMethod("iciwi debug sql <sql>")
