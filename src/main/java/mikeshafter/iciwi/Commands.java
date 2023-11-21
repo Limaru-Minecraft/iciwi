@@ -31,6 +31,21 @@ public class Commands {
     return String.format(message, (Object[]) items);
   }
 
+  @Suggestions("company_list")
+  public @NonNull List<String> suggestCompanyList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+    return owners.getAllCompanies().stream().toList();
+  }
+
+  @Suggestions("station_list")
+  public List<String> suggestStationList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+    return fares.getAllStations().stream().toList();
+  }
+
+  @Suggestions("railpass_list")
+  public List<String> suggestRailPassList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+    return owners.getAllRailPasses().stream().toList();
+  }
+
   @CommandMethod("iciwi reload")
   @CommandDescription("Reloads all configuration files")
   @CommandPermission("iciwi.reload")
@@ -137,21 +152,6 @@ public class Commands {
     sender.sendMessage("Set the default train fareClass.");
   }
 
-  @Suggestions("company_list")
-  public @NonNull List<String> suggestCompanyList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
-    return owners.getAllCompanies().stream().toList();
-  }
-
-  @Suggestions("station_list")
-  public List<String> suggestStationList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
-    return fares.getAllStations().stream().toList();
-  }
-
-  @Suggestions("railpass_list")
-  public List<String> suggestRailPassList(final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
-    return owners.getAllRailPasses().stream().toList();
-  }
-
   @CommandMethod("iciwi owners alias set <company> <username>")
   @CommandDescription("Sets the revenue collector for a company.")
   @CommandPermission("iciwi.owners.alias")
@@ -184,7 +184,7 @@ public class Commands {
   {
     owners.addOwner(station, company);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("%s now operates %s.", company, station));
   }
 
   @CommandMethod("iciwi owners operator <station> remove <company>")
@@ -196,7 +196,7 @@ public class Commands {
   {
     owners.addOwner(station, company);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("%s no longer operates %s.", company, station));
   }
 
   @CommandMethod("iciwi owners operator <station> set <company>")
@@ -208,7 +208,7 @@ public class Commands {
   {
     owners.setOwners(station, Collections.singletonList(company));
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("%s is now the sole operator of %s.", company, station));
   }
 
   @CommandMethod("iciwi owners operator <station> delete")
@@ -219,7 +219,7 @@ public class Commands {
   {
     owners.set("Operators."+station, null);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("No company is now operating %s.", station));
   }
 
   @CommandMethod("iciwi owners railpass <name> operator <company>")
@@ -231,7 +231,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".operator", company);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("The railpass %s is now owned by %s", name, company));
   }
 
   @CommandMethod("iciwi owners railpass <name> duration <duration>")
@@ -243,7 +243,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".duration", duration);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("The duration of railpass %s is now %d", name, duration));
   }
 
   @CommandMethod("iciwi owners railpass <name> price <price>")
@@ -255,7 +255,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".price", price);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("The price of railpass %s is now %f", name, price));
   }
 
   @CommandMethod("iciwi owners railpass <name> percentage <paidpercentage>")
@@ -263,11 +263,11 @@ public class Commands {
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_percentage(final @NonNull CommandSender sender,
       final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-      final @NonNull @Argument("paidpercentage") Double paidpercentage)
+      final @NonNull @Argument("paidpercentage") Double pp)
   {
-    owners.set("RailPasses."+name+".percentage", paidpercentage);
+    owners.set("RailPasses."+name+".percentage", pp);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("The payment percentage of railpass %s is now %f", name, pp));
   }
 
   @CommandMethod("iciwi owners railpass <name> delete")
@@ -278,7 +278,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name, null);
     owners.save();
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("Railpass %s has been deleted", name));
   }
 
   @CommandMethod("iciwi fares set <start> <end> <fareClass> <price>")
@@ -291,7 +291,7 @@ public class Commands {
     final @NonNull @Argument("price") Double price)
   {
     fares.setFare(start, end, fareClass, price);
-    sender.sendMessage("FUTURE");
+    sender.sendMessage(formatString("A new fare from %s to %s using the class %s has been set to: %d", start, end, fareClass, price));
   }
 
   @CommandMethod("iciwi fares check <start> [end] [fareClass]")
