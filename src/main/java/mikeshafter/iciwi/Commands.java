@@ -243,7 +243,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".duration", duration);
     owners.save();
-    sender.sendMessage(formatString("The duration of railpass %s is now %d", name, duration));
+    sender.sendMessage(formatString("The duration of railpass %s is now %s", name, String.valueOf(duration)));
   }
 
   @CommandMethod("iciwi owners railpass <name> price <price>")
@@ -255,7 +255,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".price", price);
     owners.save();
-    sender.sendMessage(formatString("The price of railpass %s is now %f", name, price));
+    sender.sendMessage(formatString("The price of railpass %s is now %s", name, String.valueOf(price)));
   }
 
   @CommandMethod("iciwi owners railpass <name> percentage <paidpercentage>")
@@ -267,7 +267,7 @@ public class Commands {
   {
     owners.set("RailPasses."+name+".percentage", pp);
     owners.save();
-    sender.sendMessage(formatString("The payment percentage of railpass %s is now %f", name, pp));
+    sender.sendMessage(formatString("The payment percentage of railpass %s is now %s", name, String.valueOf(pp)));
   }
 
   @CommandMethod("iciwi owners railpass <name> delete")
@@ -291,7 +291,7 @@ public class Commands {
     final @NonNull @Argument("price") Double price)
   {
     fares.setFare(start, end, fareClass, price);
-    sender.sendMessage(formatString("A new fare from %s to %s using the class %s has been set to: %d", start, end, fareClass, price));
+    sender.sendMessage(formatString("A new fare from %s to %s using the class %s has been set to: %s", start, end, fareClass, String.valueOf(price)));
   }
 
   @CommandMethod("iciwi fares check <start> [end] [fareClass]")
