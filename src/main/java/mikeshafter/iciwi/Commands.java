@@ -16,7 +16,6 @@ import com.bergerkiller.bukkit.common.utils.TimeUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 
 
@@ -59,7 +58,7 @@ public class Commands {
   @CommandDescription("Sets the penalty penalty given to fare evaders")
   @CommandPermission("iciwi.penalty")
   public void penalty(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Double amount)
+    final @NonNull @Argument(value = "amount") Double amount)
   {
     plugin.getConfig().set("penalty", amount);
     plugin.saveConfig();
@@ -70,7 +69,7 @@ public class Commands {
   @CommandDescription("Sets the deposit paid when buying a new card")
   @CommandPermission("iciwi.deposit")
   public void deposit(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Double amount)
+    final @NonNull @Argument(value = "amount") Double amount)
   {
     plugin.getConfig().set("deposit", amount);
     plugin.saveConfig();
@@ -81,7 +80,7 @@ public class Commands {
   @CommandDescription("Adds an option to the choices of card values")
   @CommandPermission("iciwi.addpricelist")
   public void addpricelist(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Double amount)
+    final @NonNull @Argument(value = "amount") Double amount)
   {
     List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
     priceArray.add(amount);
@@ -112,7 +111,7 @@ public class Commands {
   @CommandDescription("Sets the maximum time allowed for an out-of-station transfer to happen.")
   @CommandPermission("iciwi.maxtransfertime")
   public void maxtransfertime(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") String amount)
+    final @NonNull @Argument(value = "amount") String amount)
   {
     plugin.getConfig().set("max-transfer-time", TimeUtil.getTime(amount));
     plugin.saveConfig();
@@ -123,7 +122,7 @@ public class Commands {
   @CommandDescription("Sets the duration whereby fare gates open.")
   @CommandPermission("iciwi.gateclosedelay")
   public void gateclosedelay(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Long amount)
+    final @NonNull @Argument(value = "amount") Long amount)
   {
     plugin.getConfig().set("gate-close-delay", amount);
     plugin.saveConfig();
@@ -134,7 +133,7 @@ public class Commands {
   @CommandDescription("Sets the duration for which the gates are still open after a player walks through.")
   @CommandPermission("iciwi.closeafterpass")
   public void closeafterpass(final @NonNull CommandSender sender,
-    final @NonNull @Argument("amount") Long amount)
+    final @NonNull @Argument(value = "amount") Long amount)
   {
     plugin.getConfig().set("close-after-pass", amount);
     plugin.saveConfig();
@@ -145,7 +144,7 @@ public class Commands {
   @CommandDescription("Sets the fare fareClass used by default when card payment is used.")
   @CommandPermission("iciwi.defaultfareClass")
   public void defaultfareClass(final @NonNull CommandSender sender,
-      final @NonNull @Argument("fareClassname") String fareClassname)
+      final @NonNull @Argument(value = "fareClassname") String fareClassname)
   {
     plugin.getConfig().set("default-fareClass", fareClassname);
     plugin.saveConfig();
@@ -157,7 +156,7 @@ public class Commands {
   @CommandPermission("iciwi.owners.alias")
   public void owners_alias_set(final @NonNull CommandSender sender,
       final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
-      final @NonNull @Argument("username") String username)
+      final @NonNull @Argument(value = "username") String username)
   {
     owners.set("Aliases."+company, username);
     owners.save();
@@ -239,19 +238,19 @@ public class Commands {
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_duration(final @NonNull CommandSender sender,
       final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-      final @NonNull @Argument("duration") Long duration)
+      final @NonNull @Argument(value = "duration") Long duration)
   {
     owners.set("RailPasses."+name+".duration", duration);
     owners.save();
     sender.sendMessage(formatString("The duration of railpass %s is now %s", name, String.valueOf(duration)));
   }
 
-  @CommandMethod("iciwi owners railpass <name> price <price>")
+  @CommandMethod("iciwi owners railpass <name> price <amount>")
   @CommandDescription("Sets the price of the given railpass.")
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_price(final @NonNull CommandSender sender,
       final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-      final @NonNull @Argument("price") Double price)
+      final @NonNull @Argument(value = "amount") Double price)
   {
     owners.set("RailPasses."+name+".price", price);
     owners.save();
@@ -263,7 +262,7 @@ public class Commands {
   @CommandPermission("iciwi.owners.railpass")
   public void owners_railpass_percentage(final @NonNull CommandSender sender,
       final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-      final @NonNull @Argument("paidpercentage") Double pp)
+      final @NonNull @Argument(value = "paidpercentage") Double pp)
   {
     owners.set("RailPasses."+name+".percentage", pp);
     owners.save();
@@ -287,8 +286,8 @@ public class Commands {
   public void fares_set(final @NonNull CommandSender sender,
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
     final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-    final @NonNull @Argument("fareClass") String fareClass,
-    final @NonNull @Argument("price") Double price)
+    final @NonNull @Argument(value = "fareClass") String fareClass,
+    final @NonNull @Argument(value = "price") Double price)
   {
     fares.setFare(start, end, fareClass, price);
     sender.sendMessage(formatString("A new fare from %s to %s using the class %s has been set to: %s", start, end, fareClass, String.valueOf(price)));
@@ -299,15 +298,14 @@ public class Commands {
   @CommandPermission("iciwi.fares.check")
   public void fares_check(final @NonNull CommandSender sender,
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-    final @Argument(value = "end", suggestions = "station_list") String end,
-    final @Argument("fareClass") String fareClass,
-    final @Argument("price") Double price)
+    final          @Argument(value = "end", suggestions = "station_list") String end,
+    final          @Argument(value = "fareClass") @Quoted String fareClass)
   {
-    Set<String> s = new HashSet<>();
+    Set<String> s;
     if (end == null) {s = fares.getDestinations(start);}
     else if (fareClass == null) {s = fares.getClasses(start, end);}
     else {s = Collections.singleton(String.valueOf(fares.getFare(start, end, fareClass)));}
-    s.forEach(t -> sender.sendMessage(t));
+    s.forEach(sender::sendMessage);
   }
 
   @CommandMethod("iciwi fares unset <start> <end> <fareClass>")
@@ -316,7 +314,7 @@ public class Commands {
   public void fares_set(final @NonNull CommandSender sender,
     final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
     final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-    final @NonNull @Argument("fareClass") String fareClass)
+    final @NonNull @Argument(value = "fareClass") String fareClass)
   {
     fares.unsetFare(start, end, fareClass);
      sender.sendMessage(formatString("The fare from %s to %s using the class %s has been deleted.", start, end, fareClass));

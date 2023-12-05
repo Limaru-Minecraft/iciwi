@@ -56,11 +56,8 @@ public class InputDialogAnvil {
         this.plugin = plugin;
         this.player = player;
         this._openInventories = Collections.newSetFromMap(new WeakHashMap<>());
-        if (CommonCapabilities.HAS_PREPARE_ANVIL_EVENT) {
-            this._listener = new EventListenerFull();
-        } else {
-            this._listener = new EventListenerBase();
-        }
+        if (CommonCapabilities.HAS_PREPARE_ANVIL_EVENT) this._listener = new EventListenerFull();
+        else this._listener = new EventListenerBase();
     }
 
     /**
@@ -68,9 +65,7 @@ public class InputDialogAnvil {
      * 
      * @return text
      */
-    public String getText() {
-        return this._text;
-    }
+    public String getText() { return this._text; }
 
     /**
      * Sets the description displayed to the user, explaining
@@ -79,14 +74,13 @@ public class InputDialogAnvil {
      * @param text description
      */
     public InputDialogAnvil setDescription(String text) {
-      if (text == null || text.isEmpty()) {
-        MIDDLE_BUTTON.setMaterial(null);
-      } else {
-        MIDDLE_BUTTON.setMaterial(Material.PAPER);
-        MIDDLE_BUTTON.setTitle("§eAbout");
-        MIDDLE_BUTTON.setDescription(text);
-      }
-      return this;
+        if (text == null || text.isEmpty()) MIDDLE_BUTTON.setMaterial(null);
+        else {
+            MIDDLE_BUTTON.setMaterial(Material.PAPER);
+            MIDDLE_BUTTON.setTitle("§eAbout");
+            MIDDLE_BUTTON.setDescription(text);
+        }
+        return this;
     }
 
     /**
@@ -94,41 +88,31 @@ public class InputDialogAnvil {
      *
      * @return title
      */
-    public ChatText getTitle() {
-      return null;
-    }
+    public ChatText getTitle() { return null; }
 
     /**
      * Called when the player clicks on one of the three buttons in the menu
      */
-    public void onClick(Button button) {
-    }
+    public void onClick(Button button) {}
 
     /**
      * Called when the name text field is changed by the player
      */
-    public void onTextChanged() {
-    }
+    public void onTextChanged() {}
 
     /**
      * Called before the menu is opened. The dialog can be setup here.
      */
-    public void onOpen() {
-    }
+    public void onOpen() {}
 
     /**
      * Called when the anvil menu is closed by a viewing player, or by the server
      */
-    public void onClose() {
-    }
+    public void onClose() {}
 
-    public void open() {
-        this.setWindowOpen(true);
-    }
+    public void open() { this.setWindowOpen(true); }
 
-    public void close() {
-        this.setWindowOpen(false);
-    }
+    public void close() { this.setWindowOpen(false); }
 
     private void handleTextChange(InventoryView view) {
         // String new_text = view.getInventory().getRenameText(); // Not backwards-compatible
@@ -151,15 +135,11 @@ public class InputDialogAnvil {
     }
 
     private void setWindowOpen(boolean enabled) {
-        if (this._isWindowOpen == enabled) {
-            return;
-        }
+        if (this._isWindowOpen == enabled) return;
         this._isWindowOpen = enabled;
 
         // Close all old views first (to be sure), both when enabling and disabling
-        for (InventoryView view : this._openInventories) {
-            view.close();
-        }
+        for (InventoryView view : this._openInventories) view.close();
         this._openInventories.clear();
 
         if (enabled) {

@@ -2,9 +2,7 @@ package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.api.IcCard;
-
 import org.bukkit.inventory.ItemStack;
-
 import java.util.Objects;
 
 

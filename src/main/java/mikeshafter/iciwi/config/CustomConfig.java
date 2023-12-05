@@ -55,9 +55,7 @@ public class CustomConfig {
     }
   }
 
-  public File getFile() {
-    return file;
-  }
+  public File getFile() { return file; }
 
   public YamlConfiguration get() {
     if (config == null) reload();

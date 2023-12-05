@@ -82,17 +82,18 @@ public class IciwiUtil {
     return r;
   }
 
-  /**
+  /* UNUSED
    * Checks if any element in Collection c is present in Collection k.
    * @param <E> Parameter to use.
    * @param c First collection
    * @param k Second collection
    * @return whether any element in Collection c is present in Collection k.
-   */
+
   public static <E> boolean any(Collection<E> c, Collection<E> k) {
     for (E e:k) if (c.contains(e)) return true;
     return false;
   }
+  */
 
   /**
    * Makes an item

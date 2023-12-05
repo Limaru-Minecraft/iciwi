@@ -37,21 +37,13 @@ public class FareGateBlock {
     this.blockData = block.getBlockData();
   }
   
-  private BlockFace getOpenDirection() {
-    return this.openDirection;
-  }
+  private BlockFace getOpenDirection() { return this.openDirection; }
   
-  private long getOpenTime() {
-    return this.openTime;
-  }
+  private long getOpenTime() { return this.openTime; }
   
-  private Entity getArmorStand() {
-    return this.armorStand;
-  }
+  private Entity getArmorStand() { return this.armorStand; }
   
-  public Block getBlock() {
-    return this.block;
-  }
+  public Block getBlock() { return this.block; }
   
   private void spawnFallingBlock() {
     this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.4805d, 0.5d), ArmorStand.class);
@@ -115,9 +107,7 @@ public class FareGateBlock {
     this.teleportFallingSand(this.armorStand, this.getOpenDirection().getDirection().multiply(1d/ticksToOpen), ticksToOpen, true);
   }
   
-  public void closeGate() {
-    closeGate(false);
-  }
+  public void closeGate() { closeGate(false); }
   
   public void closeGate(boolean force) {
     if (!force) {

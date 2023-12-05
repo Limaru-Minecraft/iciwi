@@ -21,8 +21,7 @@ public class GateCreateListener implements Listener {
 
     int createdSign = containsMany(line, lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
 
-if (createdSign != -1 && !player.hasPermission("iciwi.create")) 
-{
+    if (createdSign != -1 && !player.hasPermission("iciwi.create")) {
       event.setCancelled(true);
       return;
     }
