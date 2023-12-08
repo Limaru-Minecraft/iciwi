@@ -13,6 +13,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import mikeshafter.iciwi.CardSql;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -39,6 +40,7 @@ public class CustomMachine implements Machine {
     this.player = player;
     this.station = station;
     Listener listener = new EventListener();
+    CardSql cardSql = new CardSql();
     var submitText = new InputDialogSubmitText(plugin, player) {
 
       @Override
@@ -97,17 +99,13 @@ public class CustomMachine implements Machine {
   }
 
   public void selectClass(String end) {
-    // End station as a String
-    //String end = parseComponent(terminal);
     // Create inventory and create clickables
     TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);    
    
-    // BUGFIX #53
     if (fareClasses == null) {
       player.sendMessage(lang.getString("no-tickets-found"));
       return;
     }
-    // END BUGFIX
 
     int invSize = roundUp(fareClasses.size(), 9);
     Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));

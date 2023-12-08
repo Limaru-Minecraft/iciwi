@@ -54,7 +54,7 @@ public void initTables() {
     sql.add("CREATE TABLE IF NOT EXISTS log_ticket_create (id INTEGER NOT NULL,entry TEXT NOT NULL,exit text NOT NULL,class text NOT NULL, fare NUMERIC NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_card_create (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_card_topup (id INTEGER NOT NULL,serial TEXT NOT NULL,old_value NUMERIC,added_value NUMERIC,new_value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
-    sql.add("CREATE TABLE IF NOT EXISTS log_railpass_extend (id INTEGER NOT NULL,new INTEGER NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+    sql.add("CREATE TABLE IF NOT EXISTS log_railpass_extend (id INTEGER NOT NULL,serial TEXT NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
     sql.add("CREATE TABLE IF NOT EXISTS log_card_refund (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 
     try (Connection conn = DriverManager.getConnection(Objects.requireNonNull(url)); Statement statement = conn.createStatement()) {
@@ -268,21 +268,19 @@ public String[][] runSql (String sql) {
 }
 
 /**
- * Logger method
- * @return the current log id (AFTER incrementing)
+ Logger method
  */
-public int incrementCount() {
+public void incrementCount() {
     String update = "UPDATE log_counts SET id = id + 1";
-    String select = "SELECT max(id) FROM log_counts";
+    //String select = "SELECT max(id) FROM log_counts";
     try (Connection conn = this.connect();
          PreparedStatement updateStatement = conn.prepareStatement(update);
-         PreparedStatement selectStatement = conn.prepareStatement(select)) {
+/*         PreparedStatement selectStatement = conn.prepareStatement(select) */) {
         updateStatement.executeUpdate();
-        ResultSet rs = selectStatement.executeQuery();
-        return rs.getInt("id");
+//        ResultSet rs = selectStatement.executeQuery();
+//        rs.getInt("id");
     } catch (SQLException e) {
         plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
-        return 0;
     }
 }
 
@@ -507,11 +505,11 @@ public void logCardTopup(String serial, double oldValue, double addedValue, doub
     }
 }
 
-public void logRailpassExtend(int newDuration, String name, double price, double percentage, long start, long duration, String operator) {
-    String sql = "INSERT INTO log_railpass_extend (id, new, name, price, percentage, start, duration, operator) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?, ?, ?)";
+public void logRailpassExtend(String serial, String name, double price, double percentage, long start, long duration, String operator) {
+    String sql = "INSERT INTO log_railpass_extend (id, serial, name, price, percentage, start, duration, operator) VALUES ( (SELECT max(id) FROM log_counts), ?, ?, ?, ?, ?, ?, ?)";
     try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 
-        statement.setInt(1, newDuration);
+        statement.setString(1, serial);
         statement.setString(2, name);
         statement.setDouble(3, price);
         statement.setDouble(4, percentage);
