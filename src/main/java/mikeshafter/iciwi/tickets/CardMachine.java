@@ -159,7 +159,7 @@ public void newCard() {
                 player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
 
                 // Log card
-                cardSql.incrementCount();
+                 
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logCardCreate(serial, value);
 
@@ -204,7 +204,7 @@ public void topUpCard(ItemStack item) {
                 player.closeInventory();
 
                 // Log card
-                cardSql.incrementCount();
+                 
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logCardTopup(serial, old, value, old+value);
 
@@ -251,7 +251,7 @@ public void refundCard(ItemStack item)
             player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
             // log refund
-            cardSql.incrementCount();
+             
             cardSql.logMaster(player.getUniqueId().toString());
             cardSql.logCardRefund(serial, remainingValue);
 

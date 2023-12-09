@@ -57,7 +57,7 @@ public class Trapdoor extends ClosableFareGate {
 	            String entryStation = lore.get(0).replace(" •", "");
 	            String fareClass = lore.get(2);
 	            Fares fares = new Fares();
-	            cardSql.incrementCount();
+	             
 	            cardSql.logMaster(player.getUniqueId().toString());
 	            cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
 	            cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
@@ -70,7 +70,7 @@ public class Trapdoor extends ClosableFareGate {
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
 	            // Log entry
-	            cardSql.incrementCount();
+	             
 	            cardSql.logMaster(player.getUniqueId().toString());
 	            cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));

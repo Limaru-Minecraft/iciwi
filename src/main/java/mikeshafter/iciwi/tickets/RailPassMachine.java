@@ -125,7 +125,7 @@ public void railPass (ItemStack item) {
                 this.owners.deposit(this.owners.getRailPassOperator(name), price);
 
                 // in any case, log into railpassExtend
-                cardSql.incrementCount();
+                 
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logRailpassExtend(serial, name,  owners.getRailPassPrice(name), owners.getRailPassPercentage(name), cardSql.getStart(serial, name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
 

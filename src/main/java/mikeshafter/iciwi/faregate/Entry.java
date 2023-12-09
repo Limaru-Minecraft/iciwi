@@ -60,7 +60,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             IciwiUtil.punchTicket(item, 0);
             player.sendMessage(String.format(lang.getString("ticket-in"), station));
             // Log entry
-            cardSql.incrementCount();
+             
             cardSql.logMaster(player.getUniqueId().toString());
             cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
             super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));

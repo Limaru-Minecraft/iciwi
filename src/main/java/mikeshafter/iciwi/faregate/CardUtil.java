@@ -83,7 +83,7 @@ protected static boolean entry(Player player, IcCard icCard, String entryStation
     player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
 
     // logger
-    cardSql.incrementCount();
+     
     cardSql.logMaster(player.getUniqueId().toString());
     cardSql.logEntry(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation);
     cardSql.logCardUse(serial);
@@ -183,7 +183,7 @@ protected static boolean exit(Player player, IcCard icCard, String exitStation, 
     player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
 
     // log in IcLogger
-    cardSql.incrementCount();
+     
     cardSql.logMaster(player.getUniqueId().toString());
     cardSql.logExit(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, exitStation);
     cardSql.logJourney(fares.getCardFare(entryStation, exitStation, records.getClass(serial)), fare, records.getClass(serial));
@@ -227,7 +227,7 @@ protected static boolean member(Player player, IcCard icCard, String station, Lo
             player.sendMessage(lang.getString("member-gate"));
 
             // Logger
-            cardSql.incrementCount();
+             
             cardSql.logMaster(player.getUniqueId().toString());
             cardSql.logMember(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), station);
             cardSql.logCardUse(serial);
@@ -340,7 +340,7 @@ protected static boolean transfer(Player player, IcCard icCard, String station, 
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
 
     // log in IcLogger
-    cardSql.incrementCount();
+     
     cardSql.logMaster(player.getUniqueId().toString());
     cardSql.logTransfer(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, station);
     cardSql.logJourney(fares.getCardFare(entryStation, station, records.getClass(serial)), fare, records.getClass(serial));

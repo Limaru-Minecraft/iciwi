@@ -55,7 +55,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             String entryStation = lore.get(0).replace(" •", "");
             String fareClass = lore.get(2);
             Fares fares = new Fares();
-            cardSql.incrementCount();
+             
             cardSql.logMaster(player.getUniqueId().toString());
             cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
             cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);

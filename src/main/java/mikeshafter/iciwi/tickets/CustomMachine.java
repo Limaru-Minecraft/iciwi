@@ -156,7 +156,7 @@ public class CustomMachine implements Machine {
       int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
       // log into IcLogger
-      cardSql.incrementCount();
+       
       cardSql.logMaster(player.getUniqueId().toString());
       cardSql.logTicketCreate(from, to, fareClass, price);
 
