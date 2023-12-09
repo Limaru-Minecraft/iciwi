@@ -7,6 +7,8 @@ import java.util.Objects;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+
+import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.*;
 import org.bukkit.util.Vector;
@@ -17,6 +19,7 @@ public class Trapdoor extends ClosableFareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 	private final Lang lang = new Lang();
+	private static final CardSql cardSql = new CardSql();
 
 	public Trapdoor() {
 		super(new Vector(0, -2, 0));
@@ -40,15 +43,25 @@ public class Trapdoor extends ClosableFareGate {
 			List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 			boolean entryPunched = lore.get(0).contains("•");
 			boolean exitPunched	= lore.get(1).contains("•");
-
+	        boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
+			
 			// Invalid Ticket
 			if (entryPunched && exitPunched) {
 				player.sendMessage(lang.getString("invalid-ticket"));
 			}
 
 			// Exit
-			else if (entryPunched && lore.get(1).equals(station)) {
+			else if ((entryPunched || !entryPunchRequired) && lore.get(1).equals(station)) {
 				IciwiUtil.punchTicket(item, 1);
+	            // Log exit
+	            String entryStation = lore.get(0).replace(" •", "");
+	            String fareClass = lore.get(2);
+	            Fares fares = new Fares();
+	            cardSql.incrementCount();
+	            cardSql.logMaster(player.getUniqueId().toString());
+	            cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
+	            cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
+	            cardSql.logTicketUse(entryStation, station, fareClass);
 				player.sendMessage(String.format(lang.getString("ticket-out"), station));
 				super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
@@ -56,6 +69,10 @@ public class Trapdoor extends ClosableFareGate {
 			// Entry
 			else if (lore.get(0).equals(station)) {
 				IciwiUtil.punchTicket(item, 0);
+	            // Log entry
+	            cardSql.incrementCount();
+	            cardSql.logMaster(player.getUniqueId().toString());
+	            cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
 				player.sendMessage(String.format(lang.getString("ticket-in"), station));
 				super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}

@@ -226,22 +226,19 @@ protected static boolean member(Player player, IcCard icCard, String station, Lo
         if (stationOwners.contains(owners.getRailPassOperator(r))) {
             player.sendMessage(lang.getString("member-gate"));
 
-            // // logger
-            // String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-            // Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-            //   Map.entry("timestamp", System.currentTimeMillis()),
-            //   Map.entry("uuid", player.getUniqueId().toString()),
-            //   Map.entry("function", "member_card"),
-            //   Map.entry("signloc", signLocationVector),
-            //   Map.entry("station", station),
-            //   Map.entry("pass", r)
-            // ));
-
-            // // store IC Card details
-            // logMap.putAll(icCard.toMap());
-
-            // // record in logger
-            // Iciwi.icLogger.record(ukey, logMap);
+            // Logger
+            cardSql.incrementCount();
+            cardSql.logMaster(player.getUniqueId().toString());
+            cardSql.logMember(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), station);
+            cardSql.logCardUse(serial);
+            cardSql.logRailpassUse(r, owners.getRailPassPrice(r), owners.getRailPassPercentage(r), cardSql.getStart(serial, r), owners.getRailPassDuration(r), owners.getRailPassOperator(r));
+            icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name,
+                owners.getRailPassPrice(name),
+                owners.getRailPassPercentage(name),
+                start,
+                owners.getRailPassDuration(name),
+                owners.getRailPassOperator(name))
+            );
 
             return true;
         }
@@ -342,50 +339,22 @@ protected static boolean transfer(Player player, IcCard icCard, String station, 
     // confirmation
     player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
 
-    //// == log in IcLogger
-    // String ukey = System.currentTimeMillis()+"_"+ player.getUniqueId();
-    // Map<String, Object> logMap = new HashMap<>(Map.ofEntries(
-    //   Map.entry("timestamp", System.currentTimeMillis()),
-    //   Map.entry("uuid", player.getUniqueId().toString()),
-    //   Map.entry("function", "transfer_card"),
-    //   Map.entry("signloc", signLocationVector),
-    //   Map.entry("entry_station", entryStation),
-    //   Map.entry("transfer_station", station),
-    //   Map.entry("journey_finalfare", fare),
-    //   Map.entry("journey_originalfare", fares.getCardFare(entryStation, station, records.getClass(serial))),
-    //   Map.entry("journey_class", records.getClass(serial))
-    // ));
-
-    // // check if a railpass is used, and if so, add the railpass to the log
-    // if (finalRailPass != null) {
-    //   Map<String, Object> railPassMap = Map.ofEntries(
-    //     Map.entry("journey_railpass_used", finalRailPass),
-    //     Map.entry("journey_railpass_price", owners.getRailPassPrice(finalRailPass)),
-    //     Map.entry("journey_railpass_percentage", owners.getRailPassPercentage(finalRailPass)),
-    //     Map.entry("journey_railpass_start", cardSql.getStart(serial, finalRailPass)),
-    //     Map.entry("journey_railpass_duration", owners.getRailPassDuration(finalRailPass)),
-    //     Map.entry("journey_railpass_operator", owners.getRailPassOperator(finalRailPass))
-    //   );
-    //   logMap.putAll(railPassMap);
-    // }
-
-    // // check if we need to access Records to get OSI data if there is one
-    // if (records.getTransfer(icCard.getSerial())) {
-    //   Map<String, Object> previousJourneyMap = Map.ofEntries(
-    //     Map.entry("prevjourney_entry", records.getPreviousStation(serial)),
-    //     Map.entry("prevjourney_fare", records.getCurrentFare(serial)),
-    //     Map.entry("prevjourney_class", records.getClass(serial)),
-    //     Map.entry("prevjourney_exittime", records.getTimestamp(serial))
-    //   );
-    //   logMap.putAll(previousJourneyMap);
-    // }
-
-    // // store IC Card details
-    // logMap.putAll(icCard.toMap());
-
-    // // record in logger
-    // Iciwi.icLogger.record(ukey, logMap);
-
+    // log in IcLogger
+    cardSql.incrementCount();
+    cardSql.logMaster(player.getUniqueId().toString());
+    cardSql.logTransfer(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, station);
+    cardSql.logJourney(fares.getCardFare(entryStation, station, records.getClass(serial)), fare, records.getClass(serial));
+    cardSql.logCardUse(serial);
+    icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name,
+        owners.getRailPassPrice(name),
+        owners.getRailPassPercentage(name),
+        start,
+        owners.getRailPassDuration(name),
+        owners.getRailPassOperator(name))
+    );
+    if (finalRailPass != null) {
+        cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
+    }
     return true;
 }
 
