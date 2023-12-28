@@ -24,7 +24,7 @@ java { toolchain {
 dependencies {
   compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.2-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.4-v1'
 
   compileOnly 'org.bergerhealer.cloud.commandframework:cloud-paper:1.8.0-SNAPSHOT'
   compileOnly 'org.bergerhealer.cloud.commandframework:cloud-annotations:1.8.0-SNAPSHOT'
