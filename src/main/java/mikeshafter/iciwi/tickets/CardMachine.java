@@ -12,7 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
+import java.lang.Runnable;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -27,6 +27,7 @@ private ItemStack selectedItem;
 private List<String> operators;
 private final Player player;
 private boolean bottomInv;
+private Runnable clickInvItemRunnable;
 
 // Constant helper classes
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -48,6 +49,8 @@ public Clickable[] getClickables () {return clickables;}
 public ItemStack getSelectedItem () {return selectedItem;}
 
 public boolean useBottomInv () {return bottomInv;}
+
+@Override public Runnable getClickInvItemRunnable () {return clickInvItemRunnable;}
 
 // setters
 @Override public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
@@ -77,11 +80,11 @@ public void selectCard () {
 	inv = this.plugin.getServer().createInventory(null, 9, lang.getComponent("select-card"));
 	// Swap flag
 	bottomInv = true;
+	// Set runnable after clicking the card
+	clickInvItemRunnable = this::cardMenu;
 	// Start listening and open inventory
 	player.openInventory(inv);
 }
-
-@Override public void onCardSelection () {cardMenu();}
 
 // main menu after inserting iciwi card
 public void cardMenu () {

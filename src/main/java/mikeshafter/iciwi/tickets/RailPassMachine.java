@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
+import java.lang.Runnable ;
 import java.util.function.Function;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
@@ -32,31 +33,29 @@ private final CardSql cardSql = new CardSql();
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
+private Runnable clickInvItemRunnable;
 
 public RailPassMachine (Player player) {
-	bottomInv = true;
 	this.player = player;
 }
 public RailPassMachine (Player player, List<String> operators) {
-	bottomInv = true;
 	this.player = player;
 	this.operators = operators;
 }
+
+@Override public Runnable getClickInvItemRunnable () {return clickInvItemRunnable;}
 
 // card selection menu. player clicks in their own inventory to select a card
 public void init (String station) {
 	// Set the operators
 	this.operators = new Owners().getOwners(station);
-
 	// Create inventory
 	inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
-
+	// Set next action
+	clickInvItemRunnable = () -> railPass(selectedItem);
 	// Start listening and open inventory
 	player.openInventory(inv);
 }
-
-// main menu after inserting iciwi card
-@Override public void onCardSelection () {railPass(selectedItem);}
 
 // rail pass menu
 public void railPass (ItemStack item) {

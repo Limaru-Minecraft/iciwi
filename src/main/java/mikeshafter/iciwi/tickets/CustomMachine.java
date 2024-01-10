@@ -251,8 +251,6 @@ public float relevance (String pattern, String term) {
 
 @Override public ItemStack getSelectedItem () {return null;}
 
-@Override public void onCardSelection () {}
-
 @Override public void setBottomInv (boolean b) {}
 
 }

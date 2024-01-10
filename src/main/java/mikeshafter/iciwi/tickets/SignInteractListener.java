@@ -32,21 +32,18 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 		Machine machine = machineHashMap.get(player);
 
 		if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
-			//event.setCancelled(true);
-			// close the previous inventory
-			// player.closeInventory();
 			// player inventory item selection code
 			if (machine.useBottomInv()) {
 				machine.setSelectedItem(event.getCurrentItem());
 				// there can only be 1 action here, which is to open the card menu
-				machine.onCardSelection();
+				//machine.onCardSelection();  // todo: generalise this
+				machine.getClickInvItemRunnable().run();
 				machine.setBottomInv(false);
 			}
 			return;
 		}
 
 		if (clickedInventory == player.getOpenInventory().getTopInventory()) {
-			//event.setCancelled(true);
 			// get contents of actual inventory
 			final ItemStack[] contents = clickedInventory.getContents();
 			// get slot
@@ -66,9 +63,8 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 }
 
 
-@EventHandler (priority = EventPriority.LOWEST) @SuppressWarnings ("Deprecation")
-// SignSide#getLine required for some older signs to work!
-public void onSignClick (final PlayerInteractEvent event) {
+@EventHandler (priority = EventPriority.LOWEST) @SuppressWarnings ("Deprecation") public void onSignClick (final PlayerInteractEvent event) {
+	// SignSide#getLine required for some older signs to work!
 	if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
 		Player player = event.getPlayer();
 		SignSide side = sign.getSide(sign.getInteractableSideFor(player));

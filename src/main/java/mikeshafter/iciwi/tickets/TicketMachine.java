@@ -73,11 +73,6 @@ public void selectCard () {
 	player.openInventory(inv);
 }
 
-@Override public void onCardSelection () {
-	SignInteractListener.machineHashMap.put(this.player, new CardMachine(this.player, this.selectedItem, this.operators));
-	((CardMachine) SignInteractListener.machineHashMap.get(this.player)).cardMenu();
-}
-
 /**
  Puts the items of a clickable[] into an inventory.
 
