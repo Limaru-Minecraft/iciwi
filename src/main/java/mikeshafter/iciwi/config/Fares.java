@@ -143,7 +143,7 @@ public Set<String> getClasses (String from, String to) {
 }
 
 /**
- Get all fare classes starting from a certain station and ending at another station.
+ Get all end stations starting from a certain station.
 
  @param from Starting station
  @return Fare classes */

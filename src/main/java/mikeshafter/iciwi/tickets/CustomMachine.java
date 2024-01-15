@@ -22,9 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
-
 public class CustomMachine implements Machine {
-
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Player player;
 private final String station;
@@ -34,11 +32,12 @@ private final Owners owners = plugin.owners;
 private static final CardSql cardSql = new CardSql();
 private ItemStack[] playerInv;
 private Clickable[] clickables;
-private final Set<String> stationList = fares.getAllStations();
+
 
 public CustomMachine (Player player, String station) {
 	this.player = player;
 	this.station = station;
+	final Set<String> stationList = fares.getDestinations(station);
 	Listener listener = new EventListener();
 	CardSql cardSql = new CardSql();
 	var submitText = new InputDialogSubmitText(plugin, player) {
