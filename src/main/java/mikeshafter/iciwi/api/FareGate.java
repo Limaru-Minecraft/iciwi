@@ -11,7 +11,6 @@ import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.block.sign.SignSide;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
@@ -46,13 +45,12 @@ public void setSignLine0 (String signLine0) {this.signLine0 = signLine0;}
 	clickedLocation.add(this.locationOffset);
 	BlockState signState = clickedLocation.getBlock().getState();
 	if (signState instanceof Sign sign) {
-		SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
 
-		if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
+		if (IciwiUtil.stripColor(sign.getLine(0)).contains(signLine0)) {
 			// get sign text
 			String[] signText = new String[4];
 			for (int i = 0; i < 4; i++) {
-				signText[i] = side.getLine(i).replace("[", "").replace("]", "");
+				signText[i] = sign.getLine(i).replace("[", "").replace("]", "");
 			}
 			// call onInteract
 			onInteract(event.getPlayer(), event.getItem(), signText, sign);

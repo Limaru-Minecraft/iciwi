@@ -26,8 +26,7 @@ public class Payment extends FareGate {
 		String station = IciwiUtil.stripColor(signText[1]);
 
 		// Wax sign
-		sign.setWaxed(true);
-		sign.update(true);
+		//sign.setWaxed(true);		sign.update(true);
 
 		// Get price
 		double price = Double.parseDouble(IciwiUtil.stripColor(signText[2]));

@@ -5,7 +5,6 @@ import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.block.Sign;
-import org.bukkit.block.sign.SignSide;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,7 +35,6 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 			if (machine.useBottomInv()) {
 				machine.setSelectedItem(event.getCurrentItem());
 				// there can only be 1 action here, which is to open the card menu
-				//machine.onCardSelection();  // todo: generalise this
 				machine.getClickInvItemRunnable().run();
 				machine.setBottomInv(false);
 			}
@@ -67,14 +65,12 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 	// SignSide#getLine required for some older signs to work!
 	if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
 		Player player = event.getPlayer();
-		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
-		final String signLine0 = IciwiUtil.stripColor(side.getLine(0));
-		final String station = IciwiUtil.stripColor(side.getLine(1)).replaceAll("\\s+", "");
+		final String signLine0 = IciwiUtil.stripColor(sign.getLine(0));
+		final String station = IciwiUtil.stripColor(sign.getLine(1)).replaceAll("\\s+", "");
 
 		// === Normal ticket machine ===
 		if (signLine0.equalsIgnoreCase("[" + lang.getString("tickets") + "]")) {
-			sign.setWaxed(true);
-			sign.update(true);
+//			//sign.setWaxed(true);			sign.update(true);
 			final TicketMachine machine = new TicketMachine(player);
 			machine.init(station);
 			machineHashMap.put(player, machine);
@@ -82,8 +78,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 
 		// === Card vending machine ===
 		if (signLine0.equalsIgnoreCase("[" + lang.getString("cards") + "]")) {
-			sign.setWaxed(true);
-			sign.update(true);
+//			//sign.setWaxed(true);			sign.update(true);
 			final CardMachine machine = new CardMachine(player);
 			machine.init(station);
 			machineHashMap.put(player, machine);
@@ -91,8 +86,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 
 		// === Rail pass machine ===
 		else if (signLine0.equalsIgnoreCase("[" + lang.getString("passes") + "]")) {
-			sign.setWaxed(true);
-			sign.update(true);
+//			//sign.setWaxed(true);			sign.update(true);
 			final RailPassMachine machine = new RailPassMachine(player);
 			machine.init(station);
 			machineHashMap.put(player, machine);
@@ -100,8 +94,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 
 		// === Custom machine ===
 		else if (signLine0.equalsIgnoreCase("[" + lang.getString("custom-tickets") + "]")) {
-			sign.setWaxed(true);
-			sign.update(true);
+			//sign.setWaxed(true);			sign.update(true);
 			CustomMachine machine = new CustomMachine(player, station);
 			machineHashMap.put(player, machine);
 		}

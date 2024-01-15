@@ -26,8 +26,7 @@ public class Transfer extends ClosableFareGate {
 		String station = IciwiUtil.stripColor(signText[1]);
 
 		// Wax sign
-		sign.setWaxed(true);
-		sign.update(true);
+		//sign.setWaxed(true);		sign.update(true);
 
 		// Paper ticket
 		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {

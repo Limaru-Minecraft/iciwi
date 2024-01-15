@@ -39,12 +39,11 @@ public class GateCreateListener implements Listener {
       case 8 -> player.sendMessage(lang.getString("create-pass-machine"));
       case 9 -> player.sendMessage(lang.getString("create-custom-machine"));
       // stop processing if containsMany outputs a "not found"
-      default -> {return;}
+      default -> {}
     }
     
     // wax sign
-    final Sign sign = (Sign) event.getBlock().getState();
-    sign.setWaxed(true);
-    sign.update(true);
+    //final Sign sign = (Sign) event.getBlock().getState();
+    //sign.setWaxed(true);    sign.update(true);
   }
 }

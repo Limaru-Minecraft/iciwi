@@ -1,6 +1,6 @@
 name: Iciwi
-version: 2.20.1
-api-version: "1.20"
+version: '${version}'
+api-version: "1.19"
 main: mikeshafter.iciwi.Iciwi
 depend:
   - BKCommonLib

@@ -27,8 +27,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
     String newClass = IciwiUtil.stripColor(signText[1]);
 
     // Wax sign
-    sign.setWaxed(true);
-    sign.update(true);
+    //sign.setWaxed(true);    sign.update(true);
 
     // Check if card
     if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
