@@ -25,17 +25,21 @@ gate-close-delay: 100
 # time to wait until a fare gate closes after a player walks through, in ticks
 close-after-pass: 5
 
+# should the plugin require validated paper tickets?
+require-entry-punch: false
+
+# the following options pertain to new stations
 # default operator's name
-global-operator: ExampleOperator
+default-operator: ExampleOperator
+
+# default station for new journeys
+default-end-station: ExampleStation
 
 # default train class. An underscore prefix makes the train class only accessible by card
 default-class: Second
 
-# should the plugin require validated paper tickets?
-require-entry-punch: false
-
-# global ticket price
-global-ticket-price: 5.0
+# default ticket price. Used when creating a new fare
+default-ticket-price: 5.0
 
 # glass fare gate speed
 ticks-to-open: 20

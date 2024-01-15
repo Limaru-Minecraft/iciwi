@@ -7,27 +7,21 @@ import java.util.function.Consumer;
 
 
 public class Clickable {
-  private final ItemStack item;
-  private final Consumer<InventoryClickEvent> consumer;
-  
-  private Clickable(ItemStack item, Consumer<InventoryClickEvent> consumer) {
-    this.item = item;
-    this.consumer = consumer;
-  }
-  
-  public static Clickable empty(ItemStack item) {
-    return of(item, e -> {});
-  }
-  
-  public static Clickable of(ItemStack item, Consumer<InventoryClickEvent> consumer) {
-    return new Clickable(item, consumer);
-  }
-  
-  public void run (InventoryClickEvent e) { consumer.accept(e); }
-  
-  public ItemStack getItem() { return item; }
+private final ItemStack item;
+private final Consumer<InventoryClickEvent> consumer;
 
-  public String toString() {
-    return this.item.getAmount() + " " + this.item.getType().toString();
-  }
+private Clickable (ItemStack item, Consumer<InventoryClickEvent> consumer) {
+	this.item = item;
+	this.consumer = consumer;
+}
+
+public static Clickable empty (ItemStack item) {return of(item, e -> {});}
+
+public static Clickable of (ItemStack item, Consumer<InventoryClickEvent> consumer) {return new Clickable(item, consumer);}
+
+public void run (InventoryClickEvent e) {consumer.accept(e);}
+
+public ItemStack getItem () {return item;}
+
+public String toString () {return this.item.getAmount() + " " + this.item.getType().toString();}
 }
