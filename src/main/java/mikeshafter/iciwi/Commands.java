@@ -42,8 +42,8 @@ private String formatString (String message, String... items) {
 }
 
 @CommandMethod ("iciwi import <filename>") @CommandDescription ("Imports the data in an Excel file to fares.yml") @CommandPermission ("iciwi.import") public void importExcel (final @NonNull CommandSender sender, final @NonNull @Argument (value = "filename") String file) {
-	fares.importFromFile(file);
-	sender.sendMessage("Imported fares!");
+	if (fares.importFromFile(file)) sender.sendMessage("Imported fares!");
+	else sender.sendMessage("Could not import fares due to an unexpected error!");
 }
 
 @CommandMethod ("iciwi penalty <amount>") @CommandDescription ("Sets the penalty penalty given to fare evaders") @CommandPermission ("iciwi.penalty") public void penalty (final @NonNull CommandSender sender, final @NonNull @Argument (value = "amount") Double amount) {

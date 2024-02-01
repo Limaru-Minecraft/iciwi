@@ -7,15 +7,13 @@ import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Stream;
 public class ExcelHelper {
 
-private final LinkedList<int[]> processedCells = new LinkedList<>();  // todo: heuristic aaaaaaaaaaaaa
+private final HashSet<ARange> processedCells = new HashSet<>();
 
-public List<Cell[][]> readExcel(String fileName) throws IOException
+public Set<Cell[][]> readExcel (String fileName) throws IOException
 {
 	if (!fileName.endsWith(".xlsx") && !fileName.endsWith(".xls")) throw new IOException("Not an Excel file!");
 
@@ -24,10 +22,10 @@ public List<Cell[][]> readExcel(String fileName) throws IOException
 	file.close();
 	// get all sheets and process them
 	Stream<Sheet> sheetStream = wb.getSheets();
-	LinkedList<Cell[][]> tables = new LinkedList<>();
+	HashSet<Cell[][]> tables = new HashSet<>();
 	sheetStream.forEach( sheet -> {
-		try	{ tables.addAll(splitSheet(3, 3, sheetToArray(sheet))); }
-		catch (IOException ignored) {}
+		try { tables.addAll(splitSheet(3, 3, sheetToArray(sheet))); }
+		catch (IOException e) { throw new RuntimeException(e); }
 	});
 
 	wb.close();
@@ -35,18 +33,22 @@ public List<Cell[][]> readExcel(String fileName) throws IOException
 }
 
 
-public List<Cell[][]> splitSheet (int minHeight, int minWidth, Cell[][] cells)
+public Set<Cell[][]> splitSheet (int minHeight, int minWidth, Cell[][] cells)
 {
-	LinkedList<Cell[][]> l = new LinkedList<>();
+	HashSet<Cell[][]> l = new HashSet<>();
 	for (int i = 0; i < cells.length; i += minHeight)
 	{
 		for (int j = 0; j < cells[0].length; j += minWidth)
 		{
-			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY)
+			// found non-empty cell
+			int finalJ = j;
+			int finalI = i;
+			// heuristic to skip already processed cells
+			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY && processedCells.stream().noneMatch(a -> a.contains(finalJ, finalI)))
 			{
-				// todo: add heuristic to skip already processed cells
 				int[] cornerCellCoords = findCornerCell(cells, i, j);
 				// Find everything in sub-table
+				assert cornerCellCoords != null;  // we should have already skipped processed cells
 				l.add(getTable(cells, cornerCellCoords[0], cornerCellCoords[1]));
 			}
 		}
@@ -85,7 +87,8 @@ private Cell[][] sheetToArray (Sheet sheet) throws IOException
 
 private int[] findCornerCell (Cell[][] cells, int i, int j)
 {
-	// todo: do not run this if the cell has already been processed
+	// do not run this if the cell has already been processed
+	if (processedCells.stream().noneMatch(a -> a.contains(j, i))) return null;
 	// BFS Constants
 	final int[] dRow = { -1, 0, 1, 0 };
 	final int[] dCol = { 0, 1, 0, -1 };
@@ -127,7 +130,6 @@ private int[] findCornerCell (Cell[][] cells, int i, int j)
 			}
 		}
 	}
-	// todo: DO NOT REMOVE
 	return null;
 }
 
@@ -152,9 +154,27 @@ private Cell[][] getTable (final Cell[][] cells, final int startRow, final int s
 	}
 
 	Cell[][] subSheet = new Cell[y][x];
-	for (int i = 0; i < y; i++)
-		System.arraycopy(cells[startRow + i], startRow, subSheet[i], 0, x);
+	ARange processing = new ARange(startCol, startRow, startCol + x, startRow + y);
+	for (int i = 0; i < y; i++) {
+		System.arraycopy(cells[startRow + i], startCol, subSheet[i], 0, x);
+	}
 
+	processedCells.add(processing);
 	return subSheet;
+}
+
+private static class ARange {
+	private final int lowX, lowY, highX, highY;
+
+	public ARange (int lowX, int lowY, int highX, int highY) {
+		this.lowX = lowX;
+		this.lowY = lowY;
+		this.highX = highX;
+		this.highY = highY;
+	}
+
+	public boolean contains (int x, int y) {
+		return lowX <= x && x < highX && lowY <= y && y < highY;
+	}
 }
 }

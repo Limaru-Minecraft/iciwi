@@ -156,10 +156,10 @@ public Set<String> getDestinations (String from) {
  Import fares from an Excel file
  @param fileName Name of the Excel file (placed in the plugins/Iciwi folder)
  */
-public void importFromFile(String fileName) {
+public boolean importFromFile(String fileName) {
 	ExcelHelper excelHelper = new ExcelHelper();
 	try {
-		var tables = excelHelper.readExcel(fileName);
+		var tables = excelHelper.readExcel(plugin.getDataFolder().getAbsolutePath()+fileName);
 		// loop through tables
 		for (Cell[][] t : tables) {
 			// get class
@@ -173,11 +173,11 @@ public void importFromFile(String fileName) {
 			for (int i = 0; i < s.length; i++)
 				for (int j = 0; j < e.length; j++)
 					setFare(s[i], e[j], c, t[i+1][j+1].asNumber().doubleValue());
-
 		}
 	}
 	catch (IOException e) {
-		e.printStackTrace();
+		return false;
 	}
+	return true;
 }
 }
