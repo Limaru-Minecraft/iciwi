@@ -11,7 +11,8 @@ import java.util.*;
 import java.util.stream.Stream;
 public class ExcelHelper {
 
-private final HashSet<ARange> processedCells = new HashSet<>();
+//private final HashSet<ARange> processedCells = new HashSet<>();
+private final HashSet<int[]> processedCells = new HashSet<>();
 
 public Set<Cell[][]> readExcel (String fileName) throws IOException
 {
@@ -44,7 +45,10 @@ public Set<Cell[][]> splitSheet (int minHeight, int minWidth, Cell[][] cells)
 			int finalJ = j;
 			int finalI = i;
 			// heuristic to skip already processed cells
-			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY && processedCells.stream().noneMatch(a -> a.contains(finalJ, finalI)))
+			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY && 
+				!inMultiRange(i,j)
+				//processedCells.stream().noneMatch(a -> a.contains(finalJ, finalI))
+			   )
 			{
 				int[] cornerCellCoords = findCornerCell(cells, i, j);
 				// Find everything in sub-table
@@ -88,7 +92,8 @@ private Cell[][] sheetToArray (Sheet sheet) throws IOException
 private int[] findCornerCell (Cell[][] cells, int i, int j)
 {
 	// do not run this if the cell has already been processed
-	if (processedCells.stream().noneMatch(a -> a.contains(j, i))) return null;
+	if (!inMultiRange(i, j)) return null;
+	//if (processedCells.stream().noneMatch(a -> a.contains(j, i))) return null;
 	// BFS Constants
 	final int[] dRow = { -1, 0, 1, 0 };
 	final int[] dCol = { 0, 1, 0, -1 };
@@ -159,8 +164,18 @@ private Cell[][] getTable (final Cell[][] cells, final int startRow, final int s
 		System.arraycopy(cells[startRow + i], startCol, subSheet[i], 0, x);
 	}
 
-	processedCells.add(processing);
+	processedCells.add(new int[] {startCol, startRow, startCol + x, startRow + y});
+	//processedCells.add(processing);
 	return subSheet;
+}
+
+private boolean inMultiRange(int y, int x) {
+	for (int[] range : this.processedCells) {
+		if (range[0] <= x && range[1] <= y && range[2] >= x && range[3] >= y) {
+			return true;
+		}
+	}
+	return false;
 }
 
 private static class ARange {
