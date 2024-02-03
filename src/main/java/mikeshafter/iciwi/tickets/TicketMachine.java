@@ -1,16 +1,13 @@
 package mikeshafter.iciwi.tickets;
 
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
-import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import java.util.*;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class TicketMachine implements Machine {
@@ -19,14 +16,14 @@ public class TicketMachine implements Machine {
 private Inventory inv;
 private Clickable[] clickables;
 private ItemStack selectedItem;
-private List<String> operators;
+// private List<String> operators;
 private final Player player;
 private boolean bottomInv;
 
 // Constant helper classes
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final CardSql cardSql = new CardSql();
-private final Owners owners = plugin.owners;
+// private final CardSql cardSql = new CardSql();
+// private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
 
 // Constructor and Menu Display
@@ -55,7 +52,7 @@ public void init (String station) {
 	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
 
 	// Get operators
-	operators = this.owners.getOwners(station);
+	// operators = this.owners.getOwners(station);
 	// Set items
 	setItems(clickables, inv);
 	// Start listening and open inventory

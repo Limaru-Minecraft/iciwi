@@ -159,7 +159,8 @@ public Set<String> getDestinations (String from) {
 public boolean importFromFile(String fileName) {
 	ExcelHelper excelHelper = new ExcelHelper();
 	try {
-		var tables = excelHelper.readExcel(plugin.getDataFolder().getAbsolutePath()+fileName);
+		plugin.getLogger().info("Getting file " + plugin.getDataFolder().getPath()+fileName);
+		var tables = excelHelper.readExcel(plugin.getDataFolder().getPath()+"/"+fileName);
 		// loop through tables
 		for (Cell[][] t : tables) {
 			// get class
@@ -172,7 +173,9 @@ public boolean importFromFile(String fileName) {
 			// set all fares
 			for (int i = 0; i < s.length; i++)
 				for (int j = 0; j < e.length; j++)
-					setFare(s[i], e[j], c, t[i+1][j+1].asNumber().doubleValue());
+					super.set(s[i] + "." + e[j] + "." + c, t[i+1][j+1].asNumber().doubleValue());
+
+			super.save();
 		}
 	}
 	catch (IOException e) {

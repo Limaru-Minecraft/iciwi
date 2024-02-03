@@ -22,7 +22,7 @@ java { toolchain {
 }}
 
 dependencies {
-  compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+  compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
   implementation 'org.dhatim:fastexcel-reader:0.16.4'
   compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.4-v1'

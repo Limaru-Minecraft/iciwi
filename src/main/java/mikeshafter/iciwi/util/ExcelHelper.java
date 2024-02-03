@@ -5,19 +5,21 @@ import org.dhatim.fastexcel.reader.CellType;
 import org.dhatim.fastexcel.reader.ReadableWorkbook;
 import org.dhatim.fastexcel.reader.Row;
 import org.dhatim.fastexcel.reader.Sheet;
+import mikeshafter.iciwi.Iciwi;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 public class ExcelHelper {
 
-//private final HashSet<ARange> processedCells = new HashSet<>();
 private final HashSet<int[]> processedCells = new HashSet<>();
+private Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private  Logger logger = plugin.getLogger();
 
 public Set<Cell[][]> readExcel (String fileName) throws IOException
 {
 	if (!fileName.endsWith(".xlsx") && !fileName.endsWith(".xls")) throw new IOException("Not an Excel file!");
-
 	FileInputStream file = new FileInputStream(fileName);
 	ReadableWorkbook wb = new ReadableWorkbook(file);
 	file.close();
@@ -42,18 +44,13 @@ public Set<Cell[][]> splitSheet (int minHeight, int minWidth, Cell[][] cells)
 		for (int j = 0; j < cells[0].length; j += minWidth)
 		{
 			// found non-empty cell
-			int finalJ = j;
-			int finalI = i;
-			// heuristic to skip already processed cells
-			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY && 
-				!inMultiRange(i,j)
-				//processedCells.stream().noneMatch(a -> a.contains(finalJ, finalI))
-			   )
+			if (cells[i][j] != null && cells[i][j].getType() != CellType.EMPTY && !inMultiRange(i,j))
 			{
+				logger.info("splitSheet " + i + " " + j + " " + cells[i][j].getRawValue()); // todo: debug
 				int[] cornerCellCoords = findCornerCell(cells, i, j);
 				// Find everything in sub-table
-				assert cornerCellCoords != null;  // we should have already skipped processed cells
-				l.add(getTable(cells, cornerCellCoords[0], cornerCellCoords[1]));
+				if (cornerCellCoords != null)  // we should have already skipped processed cells
+					l.add(getTable(cells, cornerCellCoords[0], cornerCellCoords[1]));
 			}
 		}
 	}
@@ -91,9 +88,9 @@ private Cell[][] sheetToArray (Sheet sheet) throws IOException
 
 private int[] findCornerCell (Cell[][] cells, int i, int j)
 {
+				logger.info("findCornerCell "+i+" "+j + " " + cells[i][j].getRawValue()); // todo: debug
 	// do not run this if the cell has already been processed
-	if (!inMultiRange(i, j)) return null;
-	//if (processedCells.stream().noneMatch(a -> a.contains(j, i))) return null;
+	if (inMultiRange(i, j)) return null;
 	// BFS Constants
 	final int[] dRow = { -1, 0, 1, 0 };
 	final int[] dCol = { 0, 1, 0, -1 };
@@ -143,53 +140,43 @@ private Cell[][] getTable (final Cell[][] cells, final int startRow, final int s
 {
 	// find bounds (y)
 	int r = startRow;
-	int y = 0;
-	while (cells[r][startCol] != null || cells[r][startCol].getType() != CellType.EMPTY)
+	int y = 1;
+	logger.info("getTable cells.length " + cells.length); // todo: debug
+	while (r < cells.length && (cells[r][startCol] != null || cells[r][startCol].getType() != CellType.EMPTY))
 	{
+		logger.info("getTable row " + r + " " + cells[r][startCol].getRawValue()); // todo: debug
 		y++;
 		r++;
 	}
+	logger.info("getTable final y " + y); // todo: debug
 	// find bounds (x)
 	int c = startCol;
-	int x = 0;
-	while (cells[startRow][c] != null || cells[startRow][c].getType() != CellType.EMPTY)
+	int x = 1;
+	logger.info("getTable cells[startRow].length " + cells[startRow].length); // todo: debug
+	while (c < cells[startRow].length && (cells[startRow][c] != null || cells[startRow][c].getType() != CellType.EMPTY))
 	{
+		logger.info("getTable col " + c + " " + cells[startRow][c].getRawValue()); // todo: debug
 		x++;
 		c++;
 	}
+	logger.info("getTable final x " + x); // todo: debug
 
+	// idk why but the final bounds will always be 1 too many
+	y--; x--;
 	Cell[][] subSheet = new Cell[y][x];
-	ARange processing = new ARange(startCol, startRow, startCol + x, startRow + y);
 	for (int i = 0; i < y; i++) {
-		System.arraycopy(cells[startRow + i], startCol, subSheet[i], 0, x);
+		for (int j = 0; j < x; j++) {
+			subSheet[i][j] = cells[startRow + i][startCol + j];
+		}
 	}
 
-	processedCells.add(new int[] {startCol, startRow, startCol + x, startRow + y});
-	//processedCells.add(processing);
+	processedCells.add(new int[] {startRow, startRow + y, startCol, startCol + x});
 	return subSheet;
 }
 
 private boolean inMultiRange(int y, int x) {
-	for (int[] range : this.processedCells) {
-		if (range[0] <= x && range[1] <= y && range[2] >= x && range[3] >= y) {
-			return true;
-		}
-	}
+	for (int[] range : this.processedCells) 
+		if (range[0] <= y && y <= range[1] && range[2] <= x && x <= range[3]) return true;
 	return false;
-}
-
-private static class ARange {
-	private final int lowX, lowY, highX, highY;
-
-	public ARange (int lowX, int lowY, int highX, int highY) {
-		this.lowX = lowX;
-		this.lowY = lowY;
-		this.highX = highX;
-		this.highY = highY;
-	}
-
-	public boolean contains (int x, int y) {
-		return lowX <= x && x < highX && lowY <= y && y < highY;
-	}
 }
 }

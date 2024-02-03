@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import mikeshafter.iciwi.CardSql;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -39,7 +38,6 @@ public CustomMachine (Player player, String station) {
 	this.station = station;
 	final Set<String> stationList = fares.getDestinations(station);
 	Listener listener = new EventListener();
-	CardSql cardSql = new CardSql();
 	var submitText = new InputDialogSubmitText(plugin, player) {
 
 		@Override public void onTextChanged () {

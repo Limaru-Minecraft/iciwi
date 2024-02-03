@@ -6,7 +6,6 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.IciwiUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
