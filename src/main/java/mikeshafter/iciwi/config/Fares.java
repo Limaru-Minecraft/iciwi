@@ -160,7 +160,7 @@ public boolean importFromFile(String fileName) {
 	ExcelHelper excelHelper = new ExcelHelper();
 	try {
 		plugin.getLogger().info("Getting file " + plugin.getDataFolder().getPath()+fileName);
-		var tables = excelHelper.readExcel(plugin.getDataFolder().getPath()+"/"+fileName);
+		Set<Cell[][]> tables = excelHelper.readExcel(plugin.getDataFolder().getPath()+"/"+fileName);
 		// loop through tables
 		for (Cell[][] t : tables) {
 			// get class

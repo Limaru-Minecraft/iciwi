@@ -102,13 +102,13 @@ private String formatString (String message, String... items) {
 @CommandMethod ("iciwi owners alias set <company> <username>") @CommandDescription ("Sets the revenue collector for a company.") @CommandPermission ("iciwi.owners.alias") public void owners_alias_set (final @NonNull CommandSender sender, final @NonNull @Argument (value = "company", suggestions = "company_list") String company, final @NonNull @Argument (value = "username") String username) {
 	owners.set("Aliases." + company, username);
 	owners.save();
-	sender.sendMessage(formatString("The coffers of %s will now be sent to %s.", company, username));
+	sender.sendMessage(formatString("The revenue of %s will now be sent to %s.", company, username));
 }
 
 @CommandMethod ("iciwi owners alias unset <company>") @CommandDescription ("Removes the revenue collector for a company.") @CommandPermission ("iciwi.owners.alias") public void owners_alias_unset (final @NonNull CommandSender sender, final @NonNull @Argument (value = "company", suggestions = "company_list") String company) {
 	owners.set("Aliases." + company, null);
 	owners.save();
-	sender.sendMessage(formatString("The coffers of %s will no longer be sent to anyone.", company));
+	sender.sendMessage(formatString("The revenue of %s will no longer be sent to anyone.", company));
 }
 
 @CommandMethod ("iciwi owners operator <station> add <company>") @CommandDescription ("Adds an owning company to a station.") @CommandPermission ("iciwi.owners.operator") public void owners_operator_add (final @NonNull CommandSender sender, final @NonNull @Argument (value = "station", suggestions = "station_list") String station, final @NonNull @Argument (value = "company", suggestions = "company_list") String company) {

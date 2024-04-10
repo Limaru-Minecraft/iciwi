@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class CustomConfig {
 private File file;
 private final YamlConfiguration config;
-protected final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
+protected final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final String name;
 
 public CustomConfig (String name) { this(name, Iciwi.getPlugin(Iciwi.class)); }

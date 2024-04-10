@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.config;
 
+import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -68,8 +69,10 @@ public void removeOwner (String station, String operator) {
  @param operator TOC to search up
  @param amt      Amount of money to give to the operator */
 public void deposit (String operator, double amt) {
-	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) + amt);
-	super.save();
+	String TOCOwnerName = super.getString("Aliases." + operator);
+	Iciwi.economy.depositPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
+//	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) + amt);
+//	super.save();
 }
 
 /**
@@ -77,8 +80,10 @@ public void deposit (String operator, double amt) {
  @param amt      Amount of money to remove from the operator
  This method should be used in conjunction with Owners#deposit for quick transactions between TOCs. */
 public void withdraw (String operator, double amt) {
-	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) - amt);
-	super.save();
+	String TOCOwnerName = super.getString("Aliases." + operator);
+	Iciwi.economy.withdrawPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
+//	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) - amt);
+//	super.save();
 }
 
 /**
@@ -183,11 +188,13 @@ public Set<String> getAllRailPasses () {
 /**
  @param operator TOC to search up
  @return Total amount of money earned by the operator since its last /coffers empty */
+@Deprecated
 public double getCoffers (String operator) {return super.getDouble("Coffers." + operator);}
 
 /**
  @param operator TOC to search up
  @param amt      Amount of money to set the operator's coffers to */
+@Deprecated
 public void setCoffers (String operator, double amt) {
 	super.set("Coffers." + operator, amt);
 	super.save();
