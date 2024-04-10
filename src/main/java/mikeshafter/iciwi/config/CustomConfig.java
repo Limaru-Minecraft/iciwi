@@ -20,21 +20,20 @@ public CustomConfig (String name) { this(name, Iciwi.getPlugin(Iciwi.class)); }
 public CustomConfig (String name, Plugin plugin) {
 	this.name = name;
 	file = new File(plugin.getDataFolder(), name);
-
+	Logger logger = plugin.getLogger();
 	if (!file.exists()) {
-		Logger logger = plugin.getLogger();
 		logger.log(Level.INFO, file.getParentFile().mkdirs() ? "[Iciwi] New config file created" : "[Iciwi] Config file already exists, initialising files...");
 		plugin.saveResource(name, false);
 	}
 
 	config = new YamlConfiguration();
 	try { config.load(file); }
-	catch (Exception e) { e.printStackTrace(); }
+	catch (Exception e) { logger.warning(e.getLocalizedMessage()); }
 }
 
 public void save () {
 	try { config.save(file); }
-	catch (Exception e) { e.printStackTrace(); }
+	catch (Exception e) { plugin.getLogger().warning(e.getLocalizedMessage()); }
 }
 
 protected Plugin getConfigPlugin () {return this.plugin;}
@@ -75,7 +74,7 @@ public void reload () {
 		config.load(file);
 	}
 	catch (Exception e) {
-		e.printStackTrace();
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 }

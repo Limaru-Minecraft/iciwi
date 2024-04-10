@@ -24,7 +24,7 @@ public Owners () { super("owners.yml"); }
  @return the owners of the station */
 public @NotNull List<String> getOwners (String station) {
 	List<String> ownersList = super.get().getStringList("Operators." + station);
-	if (ownersList.size() == 0) {
+	if (ownersList.isEmpty()) {
 		String s = super.getConfigPlugin().getConfig().getString("default-operator");
 		if (s == null) setOwners(station, List.of("null"));
 		else setOwners(station, List.of(s));
