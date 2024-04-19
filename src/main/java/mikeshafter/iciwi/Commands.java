@@ -40,11 +40,6 @@ private String formatString (String message, String... items) {
 	sender.sendMessage("Reloaded all config!");
 }
 
-@CommandMethod ("iciwi import <filename>") @CommandDescription ("Imports the data in an Excel file to fares.yml") @CommandPermission ("iciwi.import") public void importExcel (final @NonNull CommandSender sender, final @NonNull @Argument (value = "filename") String file) {
-	if (fares.importFromFile(file)) sender.sendMessage("Imported fares!");
-	else sender.sendMessage("Could not import fares due to an unexpected error!");
-}
-
 @CommandMethod ("iciwi penalty <amount>") @CommandDescription ("Sets the penalty penalty given to fare evaders") @CommandPermission ("iciwi.penalty") public void penalty (final @NonNull CommandSender sender, final @NonNull @Argument (value = "amount") Double amount) {
 	plugin.getConfig().set("penalty", amount);
 	plugin.saveConfig();

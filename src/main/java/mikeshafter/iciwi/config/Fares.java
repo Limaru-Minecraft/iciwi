@@ -1,13 +1,13 @@
 package mikeshafter.iciwi.config;
 
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.util.ExcelHelper;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.Plugin;
-import org.dhatim.fastexcel.reader.Cell;
 
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 
 public class Fares extends CustomConfig {
@@ -150,37 +150,5 @@ public Set<String> getClasses (String from, String to) {
 public Set<String> getDestinations (String from) {
 	ConfigurationSection section = this.get().getConfigurationSection(from);
 	return section == null ? null : section.getKeys(false);
-}
-
-/**
- Import fares from an Excel file
- @param fileName Name of the Excel file (placed in the plugins/Iciwi folder)
- */
-public boolean importFromFile(String fileName) {
-	ExcelHelper excelHelper = new ExcelHelper();
-	try {
-		plugin.getLogger().info("Getting file " + plugin.getDataFolder().getPath()+fileName);
-		Set<Cell[][]> tables = excelHelper.readExcel(plugin.getDataFolder().getPath()+"/"+fileName);
-		// loop through tables
-		for (Cell[][] t : tables) {
-			// get class
-			final String c = t[0][0].asString();
-			// get starts
-			String[] s = Arrays.stream(Arrays.copyOfRange(t[0], 1, t[0].length)).map(Cell::asString).toArray(String[]::new);
-			// get ends
-			String[] e = Arrays.copyOfRange(Arrays.stream(t).map(cells -> cells[0].asString()).toArray(String[]::new), 1, t.length);
-
-			// set all fares
-			for (int i = 0; i < s.length; i++)
-				for (int j = 0; j < e.length; j++)
-					super.set(s[i] + "." + e[j] + "." + c, t[i+1][j+1].asNumber().doubleValue());
-
-			super.save();
-		}
-	}
-	catch (IOException e) {
-		return false;
-	}
-	return true;
 }
 }

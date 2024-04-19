@@ -71,8 +71,6 @@ public void removeOwner (String station, String operator) {
 public void deposit (String operator, double amt) {
 	String TOCOwnerName = super.getString("Aliases." + operator);
 	Iciwi.economy.depositPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
-//	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) + amt);
-//	super.save();
 }
 
 /**
@@ -82,8 +80,6 @@ public void deposit (String operator, double amt) {
 public void withdraw (String operator, double amt) {
 	String TOCOwnerName = super.getString("Aliases." + operator);
 	Iciwi.economy.withdrawPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
-//	super.set("Coffers." + operator, super.getDouble("Coffers." + operator) - amt);
-//	super.save();
 }
 
 /**
@@ -124,7 +120,7 @@ private String timeToString (long time) {
 /**
  @param name Name of the rail pass
  @return How long the rail pass lasts */
-public long getRailPassDuration (String name) {return timetoLong(super.getString("RailPassPrices." + name + "duration"));}
+public long getRailPassDuration (String name) { return timetoLong(super.getString("RailPassPrices." + name + "duration")); }
 
 private long timetoLong (String time) {
 	try {
@@ -183,21 +179,6 @@ public Set<String> getRailPassNames (String operator) {
 public Set<String> getAllRailPasses () {
 	var railPasses = this.get().getConfigurationSection("RailPasses");
 	return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
-}
-
-/**
- @param operator TOC to search up
- @return Total amount of money earned by the operator since its last /coffers empty */
-@Deprecated
-public double getCoffers (String operator) {return super.getDouble("Coffers." + operator);}
-
-/**
- @param operator TOC to search up
- @param amt      Amount of money to set the operator's coffers to */
-@Deprecated
-public void setCoffers (String operator, double amt) {
-	super.set("Coffers." + operator, amt);
-	super.save();
 }
 
 /**

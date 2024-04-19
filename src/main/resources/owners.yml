@@ -47,5 +47,8 @@ Operators:
   ExampleStation1:
   - ExampleOperator2
 
-# DO NOT TOUCH THIS SECTION unless you know what you are doing!
-Coffers:
+# This section lets you change the type and price of a single journey ticket for each company.
+# Set the value to 0 if the operator uses the fares from the fare chart.
+TicketType:
+  ExampleOperator: 20
+  ExampleOperator1: 0
