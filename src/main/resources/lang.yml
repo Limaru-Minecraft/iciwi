@@ -89,6 +89,7 @@ top-up: '§1Top Up - '
 card-topped-up: '§aTopped up §e£%1$.2f§a.'
 
 # == Rail passes subpage ==
+menu-new-paper-pass: '§aPaper Rail Passes'
 menu-view-rail-pass: '§bView Rail Passes'
 added-rail-pass: '§aBought the rail pass §e%1$s§a for §e£%2$.2f§a.'
 extended-rail-pass: '§aExtended the rail pass §e%1$s§a for §e£%2$.2f§a.'

@@ -44,7 +44,8 @@ public void init (String station) {
 	this.clickables = new Clickable[9];
 
 	// Create buttons
-	this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) -> SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station)));
+	this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
+		SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station)));
 	this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
 		SignInteractListener.machineHashMap.put(player, new CardMachine(player));
 		((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();

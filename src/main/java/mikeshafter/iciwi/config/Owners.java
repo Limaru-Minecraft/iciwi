@@ -120,9 +120,9 @@ private String timeToString (long time) {
 /**
  @param name Name of the rail pass
  @return How long the rail pass lasts */
-public long getRailPassDuration (String name) { return timetoLong(super.getString("RailPassPrices." + name + "duration")); }
+public long getRailPassDuration (String name) { return timeToLong(super.getString("RailPassPrices." + name + "duration")); }
 
-private long timetoLong (String time) {
+private long timeToLong (String time) {
 	try {
 		return new SimpleDateFormat("dd:hh:mm:ss").parse(time).getTime();
 	}
@@ -193,6 +193,6 @@ public List<String> getOwnedCompanies (String player) {
  @param player   Name of the player
  @param operator TOC to search up
  @return whether the player owns the TOC */
-public boolean getOwnership (String player, String operator) {return player.equalsIgnoreCase(super.getString("Aliases." + operator));}
+public boolean getOwnership (String player, String operator) { return player.equalsIgnoreCase(super.getString("Aliases." + operator)); }
 
 }

@@ -45,8 +45,29 @@ public RailPassMachine (Player player, List<String> operators) {
 
 @Override public Runnable getClickInvItemRunnable () {return clickInvItemRunnable;}
 
-// card selection menu. player clicks in their own inventory to select a card
 public void init (String station) {
+
+	/*
+	// setup inventory
+	inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("railpass-machine"));
+	this.clickables = new Clickable[9];
+
+	// Create buttons
+	this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-paper-pass"), Component.text("Buy a paper rail pass")), (event) -> {
+
+	});
+	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card"), Component.text("Apply a rail pass onto your card")), (event) -> {
+
+	});
+*/
+
+
+	// phase this out
+	initOld(station);
+}
+
+// card selection menu. player clicks in their own inventory to select a card
+@Deprecated public void initOld (String station) {
 	// Set the operators
 	this.operators = new Owners().getOwners(station);
 	// Create inventory
@@ -84,10 +105,10 @@ public void railPass (ItemStack item) {
 		event.setCancelled(true);
 		List<TextComponent> discountList = icCard.getRailPasses().entrySet().stream().sorted(Map.Entry.comparingByValue()).map(railPass -> Component.text().content(
 				// Show expiry date
-				"\u00A76- \u00A7a" + railPass.getKey() + "\u00a76 | Exp. " + String.format("\u00a7b%s\n", new Date(railPass.getValue() * 1000)))
+				"§6- §a" + railPass.getKey() + "§6 | Exp. " + String.format("§b%s\n", new Date(railPass.getValue() * 1000)))
 			// Option to extend (currently disabled)
-			// .append(Component.text().content("\u00a76 | Extend
-			// \u00a7a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
+			// .append(Component.text().content("§6 | Extend
+			// §a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
 			// "+railPass.getKey()))
 			.build()).toList();
 		// menu title
