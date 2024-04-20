@@ -116,7 +116,8 @@ public class RailPassMachine implements Machine {
                     Material material = Material.valueOf(plugin.getConfig().getString("railpass.material"));
                     int customModelData = plugin.getConfig().getInt("railpass.custom-model-data");
                     long time = System.currentTimeMillis();
-                    ItemStack item = makeItem(material, customModelData, "Rail Pass", name, String.valueOf(time + owners.getRailPassDuration(name)));
+// todo: real rail pass lang pointer thing
+                    ItemStack item = makeItem(material, customModelData, Component.text("rail-pass"), Component.text(name), Component.text(String.valueOf(time + owners.getRailPassDuration(name))));
 
                     // give it to the player
                     player.getInventory().addItem(item);

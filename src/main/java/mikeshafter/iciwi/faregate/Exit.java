@@ -110,7 +110,6 @@ catch (Exception ignored) {
                     return;
                 }
                 break;
-        break;
     }
 }
 

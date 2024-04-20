@@ -54,29 +54,28 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 			if (CardUtil.member(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
 			break;
 		case RAIL_PASS:
-                String name = lore.get(0);
-                String expiry = lore.get(1);
+            String name = lore.get(0);
+            String expiry = lore.get(1);
 
-                try {
-                // check if expired
-                    long e = Long.parseLong(expiry);
-                // if expired, return and do not open the gate
-                    if (e < System.currentTimeMillis()) {
-                        return;
-                    }
-                // otherwise, check if issuing TOC is one of the station's owners
-                    List<String> tocs = owners.getOwners(station);
-                    if (tocs.contains(owners.getRailPassOperator(name))) {
-                // if yes, open the gate
-                        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
-                    }
-                }
-                catch (Exception ignored) {
+            try {
+            // check if expired
+                long e = Long.parseLong(expiry);
+            // if expired, return and do not open the gate
+                if (e < System.currentTimeMillis()) {
                     return;
                 }
-                break;
+            // otherwise, check if issuing TOC is one of the station's owners
+                List<String> tocs = owners.getOwners(station);
+                if (tocs.contains(owners.getRailPassOperator(name))) {
+            // if yes, open the gate
+                    super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+                }
+            }
+            catch (Exception ignored) {
+                return;
+            }
+            break;
 			
-			break;
 	}
 }
 
