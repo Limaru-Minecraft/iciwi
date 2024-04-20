@@ -54,12 +54,14 @@ public class RailPassMachine implements Machine {
         this.clickables = new Clickable[9];
 
         // Create buttons
-        this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-paper-pass"), Component.text("Buy a paper rail pass")), (event) -> {
-                paperPass();
-                });
-        this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card"), Component.text("Apply a rail pass onto your card")), (event) -> {
-                selectCard();
-                });
+        this.clickables[2] = Clickable.of(
+            makeItem(Material.PAPER, 0, lang.getComponent("menu-new-paper-pass"), Component.text("Buy a paper rail pass")),
+            (event) -> paperPass()
+        );
+        this.clickables[6] = Clickable.of(
+            makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card"), Component.text("Apply a rail pass onto your card")),
+            (event) -> selectCard()
+        );
 
 
         // phase this out
@@ -100,7 +102,9 @@ public class RailPassMachine implements Machine {
 
         // create all rail pass buttons
         for (int i = 0; i <= railPassNames.size(); i++) {
-            clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i)), Component.text(this.owners.getRailPassPrice(railPassNames.get(i)))), (event) -> {
+            clickables[i] = Clickable.of(
+                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i)), Component.text(this.owners.getRailPassPrice(railPassNames.get(i)))),
+                (event) -> {
                 String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
                 double price = this.owners.getRailPassPrice(name);
 
@@ -152,13 +156,13 @@ public class RailPassMachine implements Machine {
             // get current passes
             event.setCancelled(true);
             List<TextComponent> discountList = icCard.getRailPasses().entrySet().stream().sorted(Map.Entry.comparingByValue()).map(railPass -> Component.text().content(
-                        // Show expiry date
-                        "§6- §a" + railPass.getKey() + "§6 | Exp. " + String.format("§b%s\n", new Date(railPass.getValue() * 1000)))
-                    // Option to extend (currently disabled)
-                    // .append(Component.text().content("§6 | Extend
-                    // §a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
-                    // "+railPass.getKey()))
-                    .build()).toList();
+                // Show expiry date
+                "§6- §a" + railPass.getKey() + "§6 | Exp. " + String.format("§b%s\n", new Date(railPass.getValue() * 1000)))
+                // Option to extend (currently disabled)
+                // .append(Component.text().content("§6 | Extend
+                // §a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
+                // "+railPass.getKey()))
+                .build()).toList();
             // menu title
             TextComponent menu = Component.text().content("==== Rail Passes You Own ====\n").color(NamedTextColor.GOLD).build();
             // build content
@@ -172,7 +176,9 @@ public class RailPassMachine implements Machine {
 
         // create all rail pass buttons
         for (int i = 1; i <= railPassNames.size(); i++) {
-            clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i))), (event) -> {
+            clickables[i] = Clickable.of(
+                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i)), Component.text(this.owners.getRailPassPrice(railPassNames.get(i)))),
+                (event) -> {
                 String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
                 double price = this.owners.getRailPassPrice(name);
 
