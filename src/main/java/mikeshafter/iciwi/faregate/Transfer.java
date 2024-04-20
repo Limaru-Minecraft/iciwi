@@ -22,6 +22,8 @@ public Transfer() {
 
 @Override
 public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+    if (!IciwiUtil.loreCheck(item)) return;
+
     // Get station
     String station = IciwiUtil.stripColor(signText[1]);
 
@@ -29,27 +31,25 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
     sign.setWaxed(true);
     sign.update(true);
 
-    // Paper ticket
-    if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-        // Tickets are not valid at transfer signs
+    TicketType ticketType = TicketType.asTicketType(item.getType());
+
+    switch (ticketType) {
+        case TICKET:
         player.sendMessage(lang.getString("tickets-not-valid"));
-    }
+        break;
 
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
-
+        case CARD:
         // Get card from item
         IcCard icCard = IciwiUtil.IcCardFromItem(item);
         if (icCard == null) return;
 
         // Call transfer, and if successful, open fare gate
         if (CardUtil.transfer(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
-    }
+        break;
 
-
-    // Paper Rail Pass
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        case RAIL_PASS:
         List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+        break;
     }
-	}
+}
 }
