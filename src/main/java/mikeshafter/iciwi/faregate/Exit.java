@@ -28,6 +28,8 @@ public Exit() {
 
 @Override
 public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+    if (!IciwiUtil.loreCheck(item)) return;
+
     // Get station
     String station = IciwiUtil.stripColor(signText[1]);
 
@@ -35,8 +37,10 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
     sign.setWaxed(true);
     sign.update(true);
 
-    // Paper ticket
-    if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
+    TicketType ticketType = TicketType.asTicketType(item.getType());
+
+    switch (ticketType) {
+        case TICKET:
         List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
         boolean entryPunched = lore.get(0).contains("•");
         boolean exitPunched	= lore.get(1).contains("•");
@@ -71,12 +75,9 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
         else {
             player.sendMessage(lang.getString("invalid-ticket"));
         }
-    }
+        break;
 
-
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
-
+        case CARD:
         // Get card from item
         IcCard icCard = IciwiUtil.IcCardFromItem(item);
         if (icCard == null) return;
@@ -85,12 +86,11 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
         if (CardUtil.exit(player, icCard, station, sign.getLocation())) {
             super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
         }
-    }
+        break;
 
-
-    // Paper Rail Pass
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        case RAIL_PASS:
         List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+        break;
     }
 }
 

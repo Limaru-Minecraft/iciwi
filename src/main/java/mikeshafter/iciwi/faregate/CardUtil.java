@@ -20,12 +20,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class CardUtil {
-private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private static final Records records = new Records();
-private static final Lang lang = new Lang();
-private static final Owners owners = new Owners();
-private static final CardSql cardSql = new CardSql();
-private static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
+static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+static final Records records = new Records();
+static final Lang lang = new Lang();
+static final Owners owners = new Owners();
+static final CardSql cardSql = new CardSql();
+static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
 
 /**
  Prevent code from registering multiple accidental clicks
@@ -51,7 +51,7 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 	String serial = icCard.getSerial();
 
 	// don't parse if there is no serial
-	if (serial == null || serial.equals("") || serial.isBlank()) return false;
+	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
 
 	// reject entry if card has less than the minimum value
 	if (value < plugin.getConfig().getDouble("min-amount")) {
@@ -60,7 +60,7 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 	}
 
 	// was the card already used to enter the network?
-	if (!records.getStation(serial).equals("")) {
+	if (!records.getStation(serial).isEmpty()) {
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 			player.sendMessage(lang.getString("fare-evade"));
@@ -107,14 +107,14 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 	String serial = icCard.getSerial();
 
 	// don't parse if there is no serial
-	if (serial == null || serial.equals("") || serial.isBlank()) return false;
+	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
 
 	String entryStation = records.getStation(serial);
 	double value = icCard.getValue();
 	double fare = fares.getCardFare(entryStation, exitStation, records.getClass(serial));
 
 	// is the card not in the network?
-	if (records.getStation(serial).equals("")) {
+	if (records.getStation(serial).isEmpty()) {
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 			player.sendMessage(lang.getString("fare-evade"));
@@ -249,7 +249,7 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	double fare = fares.getCardFare(entryStation, station, records.getClass(serial));
 
 	// is the card already in the network?
-	if (records.getStation(serial).equals("")) {
+	if (records.getStation(serial).isEmpty()) {
 		player.sendMessage(lang.getString("cannot-pass"));
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -293,7 +293,7 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	if (value < plugin.getConfig().getDouble("min-amount")) return false;
 
 	// was the card already used to enter the network?
-	if (records.getStation(serial).equals("")) {
+	if (records.getStation(serial).isEmpty()) {
 		player.sendMessage(lang.getString("cannot-pass"));
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
@@ -345,18 +345,7 @@ protected static Object[] openGate (String signAction, String[] signText, Sign s
 	signFacing = toCartesian(signFacing);
 
 	// Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string.
-	String args;
-	if (signAction.length() == signLine0.length()) args = "";
-	else args = signLine0.substring(signAction.length());
-
-	int flags = 0;
-	flags |= args.contains("V") ? 1 : 0;    // Validator
-	flags |= args.contains("L") ? 2 : 0;    // Lefty
-	flags |= args.contains("S") ? 4 : 0;    // Sideways
-	flags |= args.contains("D") ? 8 : 0;    // Double
-	flags |= args.contains("R") ? 16 : 0;    // Redstone
-	flags |= args.contains("E") ? 32 : 0;    // Eye-level
-	flags |= args.contains("F") ? 64 : 0;    // Fare gate
+	final var flags = getFlags(signAction, signLine0);
 
 	// Get the relative position(s) of the fare gate block(s).
 	Vector[] relativePositions = toPos(signFacing, flags);
@@ -412,6 +401,21 @@ protected static Object[] openGate (String signAction, String[] signText, Sign s
 		plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, ((Runnable[]) closeGate[1])[i], plugin.getConfig().getLong("gate-close-delay"));
 	}
 	return closeGate;
+}
+private static int getFlags (String signAction, String signLine0) {
+	String args;
+	if (signAction.length() == signLine0.length()) args = "";
+	else args = signLine0.substring(signAction.length());
+
+	int flags = 0;
+	flags |= args.contains("V") ? 1 : 0;    // Validator
+	flags |= args.contains("L") ? 2 : 0;    // Lefty
+	flags |= args.contains("S") ? 4 : 0;    // Sideways
+	flags |= args.contains("D") ? 8 : 0;    // Double
+	flags |= args.contains("R") ? 16 : 0;    // Redstone
+	flags |= args.contains("E") ? 32 : 0;    // Eye-level
+	flags |= args.contains("F") ? 64 : 0;    // Fare gate
+	return flags;
 }
 
 /**
