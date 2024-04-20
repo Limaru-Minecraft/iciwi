@@ -113,8 +113,13 @@ public class RailPassMachine implements Machine {
                     Iciwi.economy.withdrawPlayer(player, price);
 
                     // generate the rail pass paper ticket item
+                    Material material = Material.valueOf(plugin.getConfig().getString("railpass.material"));
+                    int customModelData = plugin.getConfig().getInt("railpass.custom-model-data");
+                    long time = System.currentTimeMillis();
+                    ItemStack item = makeItem(material, customModelData, "Rail Pass", name, String.valueOf(time + owners.getRailPassDuration(name)));
 
                     // give it to the player
+                    player.getInventory().addItem(item);
 
                     // pay the TOC
                     this.owners.deposit(this.owners.getRailPassOperator(name), price);
