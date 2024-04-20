@@ -7,7 +7,6 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
-import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,7 +26,8 @@ public Exit() {
 }
 
 @Override public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-    if (!IciwiUtil.loreCheck(item)) return;
+    TicketType ticketType = TicketType.asTicketType(item.getType());
+    if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
 
     // Get station
     String station = IciwiUtil.stripColor(signText[1]);
@@ -36,11 +36,10 @@ public Exit() {
     sign.setWaxed(true);
     sign.update(true);
 
-    TicketType ticketType = TicketType.asTicketType(item.getType());
+    List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 
-    switch (ticketType) {
+    switch (Objects.requireNonNull(ticketType)) {
         case TICKET:
-        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
         boolean entryPunched = lore.get(0).contains("•");
         boolean exitPunched	= lore.get(1).contains("•");
         boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
@@ -88,7 +87,6 @@ public Exit() {
         break;
 
         case RAIL_PASS:
-        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
         break;
     }
 }

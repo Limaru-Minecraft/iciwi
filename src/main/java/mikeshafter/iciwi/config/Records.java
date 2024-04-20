@@ -36,7 +36,7 @@ public void setStation (String serial, String station) {
  @return the fare class of the journey taken by the card */
 public String getClass (String serial) {
 	String c = super.getString(serial + ".fareclass");
-	if (c.equals("")) return plugin.getConfig().getString("default-class");
+	if (c.isEmpty()) return plugin.getConfig().getString("default-class");
 	else return c;
 }
 

@@ -10,6 +10,9 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+import java.util.Objects;
+
 public class Transfer extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -22,7 +25,8 @@ public Transfer() {
 
 @Override
 public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-    if (!IciwiUtil.loreCheck(item)) return;
+    TicketType ticketType = TicketType.asTicketType(item.getType());
+    if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
 
     // Get station
     String station = IciwiUtil.stripColor(signText[1]);
@@ -31,7 +35,6 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
     sign.setWaxed(true);
     sign.update(true);
 
-    TicketType ticketType = TicketType.asTicketType(item.getType());
 
     switch (ticketType) {
         case TICKET:

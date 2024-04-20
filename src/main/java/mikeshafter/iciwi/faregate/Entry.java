@@ -27,7 +27,8 @@ public class Entry extends ClosableFareGate {
     }
 
     @Override public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-        if (!IciwiUtil.loreCheck(item)) return;
+        TicketType ticketType = TicketType.asTicketType(item.getType());
+        if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
 
         // Get station
         String station = IciwiUtil.stripColor(signText[1]);
@@ -36,11 +37,10 @@ public class Entry extends ClosableFareGate {
         sign.setWaxed(true);
         sign.update(true);
 
-        TicketType ticketType = TicketType.asTicketType(item.getType());
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 
-        switch (Objects.requireNonNull(ticketType)) {
+        switch (ticketType) {
             case TICKET:
-                List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
                 boolean entryPunched = lore.get(0).contains("•");
                 boolean exitPunched	= lore.get(1).contains("•");
 
@@ -86,10 +86,7 @@ public class Entry extends ClosableFareGate {
                 break;
 
             case RAIL_PASS:
-                List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
                 break;
         }
     }
-}
-
 }

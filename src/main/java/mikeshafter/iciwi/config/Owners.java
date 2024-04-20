@@ -175,7 +175,7 @@ public Set<String> getRailPassNames (String operator) {
 	public Set<String> getRailPassNamesFromList (List<String> operators) {
 		HashSet<String> set = new HashSet<>();
 		for (String operator : operators) {
-			set.addAll(getRailPassNames(operator))
+			set.addAll(getRailPassNames(operator));
 		}
 		return set;
 	}

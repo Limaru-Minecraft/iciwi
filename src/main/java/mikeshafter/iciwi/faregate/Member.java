@@ -28,7 +28,8 @@ public Member() {
 
 @Override
 public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-	if (!IciwiUtil.loreCheck(item)) return;
+	TicketType ticketType = TicketType.asTicketType(item.getType());
+	if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
 
 	// Get station
 	String station = IciwiUtil.stripColor(signText[1]);
@@ -37,9 +38,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 	sign.setWaxed(true);
 	sign.update(true);
 
-	TicketType ticketType = TicketType.asTicketType(item.getType());
-
-	switch (Objects.requireNonNull(ticketType)) {
+	switch (ticketType) {
 		case TICKET:
 			plugin.sendAll("(☞ ͡° ͜ʖ ͡°)☞ dude tried to use a feature from the future! (ง ͡ʘ ͜ʖ ͡ʘ)ง FUTURE FEATURE FUTURE FEATURE (ง ͡ʘ ͜ʖ ͡ʘ)ง");
 			break;
@@ -53,6 +52,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 			break;
 		case RAIL_PASS:
 			List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+			break;
 	}
 }
 
