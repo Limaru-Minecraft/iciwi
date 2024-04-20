@@ -6,7 +6,7 @@ import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
-
+import mikeshafter.iciwi.config.Owners;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -19,6 +19,7 @@ public class Entry extends ClosableFareGate {
 
     private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
     private final Lang lang = new Lang();
+    private final Owners owners = new Owners();
     private static final CardSql cardSql = new CardSql();
 
     public Entry() {

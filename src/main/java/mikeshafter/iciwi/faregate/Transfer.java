@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate;
 
+import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
@@ -17,6 +18,7 @@ public class Transfer extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = new Lang();
+private final Owners owners = new Owners();
 
 public Transfer() {
     super();

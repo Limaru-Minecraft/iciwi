@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate;
 
+import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import org.bukkit.block.Sign;
@@ -19,6 +20,7 @@ public class Validator extends FareGate {
 
     private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
     private final Lang lang = new Lang(); 
+    private final Owners owners = new Owners();
     private static final CardSql cardSql = new CardSql();
 
     public Validator() {
