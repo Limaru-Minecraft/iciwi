@@ -111,7 +111,7 @@ public class Validator extends FareGate {
                     List<String> tocs = owners.getOwners(station);
                     if (tocs.contains(owners.getRailPassOperator(name))) {
                 // if yes, open the gate
-                        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+//                        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
                     }
                 }
                 catch (Exception ignored) {

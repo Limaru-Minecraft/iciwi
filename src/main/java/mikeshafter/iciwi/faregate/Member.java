@@ -40,6 +40,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 	sign.setWaxed(true);
 	sign.update(true);
 
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 	switch (ticketType) {
 		case TICKET:
 			plugin.sendAll("(☞ ͡° ͜ʖ ͡°)☞ dude tried to use a feature from the future! (ง ͡ʘ ͜ʖ ͡ʘ)ง FUTURE FEATURE FUTURE FEATURE (ง ͡ʘ ͜ʖ ͡ʘ)ง");

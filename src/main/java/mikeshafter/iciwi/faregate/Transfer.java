@@ -37,6 +37,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
     sign.setWaxed(true);
     sign.update(true);
 
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 
     switch (ticketType) {
         case TICKET:
