@@ -93,6 +93,13 @@ public class Validator extends FareGate {
 			if (records.getStation(serial).equals("")) CardUtil.entry(player, icCard, station, sign.getLocation());
 			else CardUtil.exit(player, icCard, station, sign.getLocation());
 		}
-	}
+	
 
+
+    // Paper Rail Pass
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+    }
 }
+}
+

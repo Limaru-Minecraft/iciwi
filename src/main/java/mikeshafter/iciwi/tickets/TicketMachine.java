@@ -50,7 +50,10 @@ public void init (String station) {
 		SignInteractListener.machineHashMap.put(player, new CardMachine(player));
 		((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
 	});
-	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
+	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+		SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+		((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
+    });
 
 	// Get operators
 	// operators = this.owners.getOwners(station);
@@ -61,6 +64,7 @@ public void init (String station) {
 }
 
 // card selection menu. player clicks in their own inventory to select a card
+/*
 public void selectCard () {
 	// Setup listener for bottom inventory selection
 	// Create inventory
@@ -70,6 +74,7 @@ public void selectCard () {
 	// Start listening and open inventory
 	player.openInventory(inv);
 }
+*/
 
 /**
  Puts the items of a clickable[] into an inventory.

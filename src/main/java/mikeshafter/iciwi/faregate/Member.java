@@ -47,6 +47,12 @@ public class Member extends ClosableFareGate {
 			if (CardUtil.member(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
 
 		}
+
+
+        // Paper Rail Pass
+        else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+            List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+        }
 	}
 
 }

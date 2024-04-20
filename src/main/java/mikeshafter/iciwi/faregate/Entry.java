@@ -37,7 +37,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 
     // Paper ticket
     if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-        List<String> lore		= IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
         boolean entryPunched = lore.get(0).contains("•");
         boolean exitPunched	= lore.get(1).contains("•");
 
@@ -84,6 +84,12 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
         }
 
+    }
+
+
+    // Paper Rail Pass
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
     }
 }
 

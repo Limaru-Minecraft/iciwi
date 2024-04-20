@@ -12,38 +12,44 @@ import org.bukkit.inventory.ItemStack;
 
 public class Transfer extends ClosableFareGate {
 
-	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = new Lang();
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Lang lang = new Lang();
 
-	public Transfer() {
-		super();
-		super.setSignLine0(lang.getString("transfer"));
-	}
+public Transfer() {
+    super();
+    super.setSignLine0(lang.getString("transfer"));
+}
 
-	@Override
-	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-		// Get station
-		String station = IciwiUtil.stripColor(signText[1]);
+@Override
+public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+    // Get station
+    String station = IciwiUtil.stripColor(signText[1]);
 
-		// Wax sign
-		sign.setWaxed(true);
-		sign.update(true);
+    // Wax sign
+    sign.setWaxed(true);
+    sign.update(true);
 
-		// Paper ticket
-		if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-			// Tickets are not valid at transfer signs
-			player.sendMessage(lang.getString("tickets-not-valid"));
-		}
+    // Paper ticket
+    if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
+        // Tickets are not valid at transfer signs
+        player.sendMessage(lang.getString("tickets-not-valid"));
+    }
 
-		// Card
-		else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+    // Card
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
 
-			// Get card from item
-			IcCard icCard = IciwiUtil.IcCardFromItem(item);
-			if (icCard == null) return;
+        // Get card from item
+        IcCard icCard = IciwiUtil.IcCardFromItem(item);
+        if (icCard == null) return;
 
-			// Call transfer, and if successful, open fare gate
-			if (CardUtil.transfer(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
-		}
+        // Call transfer, and if successful, open fare gate
+        if (CardUtil.transfer(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+    }
+
+
+    // Paper Rail Pass
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+    }
 	}
 }

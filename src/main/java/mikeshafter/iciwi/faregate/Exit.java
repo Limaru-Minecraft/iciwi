@@ -86,6 +86,12 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
         }
     }
+
+
+    // Paper Rail Pass
+    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
+        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+    }
 }
 
 }

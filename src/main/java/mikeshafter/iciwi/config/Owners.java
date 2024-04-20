@@ -172,6 +172,14 @@ public Set<String> getRailPassNames (String operator) {
 	return h;
 }
 
+	public Set<String> getRailPassNamesFromList (List<String> operators) {
+		HashSet<String> set = new HashSet<>();
+		for (String operator : operators) {
+			set.addAll(getRailPassNames(operator))
+		}
+		return set;
+	}
+
 /**
  Gets all the rail passes from all operators.
 
