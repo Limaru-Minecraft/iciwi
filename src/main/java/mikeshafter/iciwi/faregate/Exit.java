@@ -26,8 +26,7 @@ public Exit() {
     super.setSignLine0(lang.getString("exit"));
 }
 
-@Override
-public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+@Override public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
     if (!IciwiUtil.loreCheck(item)) return;
 
     // Get station

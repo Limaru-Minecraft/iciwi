@@ -17,96 +17,98 @@ import mikeshafter.iciwi.util.IciwiUtil;
 
 public class Trapdoor extends ClosableFareGate {
 
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang();
-private static final CardSql cardSql = new CardSql();
+    private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+    private final Lang lang = new Lang();
+    private static final CardSql cardSql = new CardSql();
 
-public Trapdoor() {
-    super(new Vector(0, -2, 0));
-    super.setSignLine0(lang.getString("faregate"));
-}
-
-@Override
-public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-    // Get station
-    String station = IciwiUtil.stripColor(signText[1]);
-
-    // Wax sign
-    sign.setWaxed(true);
-    sign.update(true);
-
-    // Force fare gate
-    signText[0] = signText[0] + "F";
-
-    // Paper ticket
-    if (item.getType() == Material.valueOf(plugin.getConfig().getString("ticket.material")) && IciwiUtil.loreCheck(item)) {
-        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-        boolean entryPunched = lore.get(0).contains("•");
-        boolean exitPunched	= lore.get(1).contains("•");
-        boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
-        
-        // Invalid Ticket
-        if (entryPunched && exitPunched) {
-            player.sendMessage(lang.getString("invalid-ticket"));
-        }
-
-        // Exit
-        else if ((entryPunched || !entryPunchRequired) && lore.get(1).equals(station)) {
-            IciwiUtil.punchTicket(item, 1);
-            // Log exit
-            String entryStation = lore.get(0).replace(" •", "");
-            String fareClass = lore.get(2);
-            Fares fares = new Fares();
-             
-            cardSql.logMaster(player.getUniqueId().toString());
-            cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
-            cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
-            cardSql.logTicketUse(entryStation, station, fareClass);
-            player.sendMessage(String.format(lang.getString("ticket-out"), station));
-            super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
-        }
-
-        // Entry
-        else if (lore.get(0).equals(station)) {
-            IciwiUtil.punchTicket(item, 0);
-            // Log entry
-             
-            cardSql.logMaster(player.getUniqueId().toString());
-            cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
-            player.sendMessage(String.format(lang.getString("ticket-in"), station));
-            super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
-        }
-
-        else {
-            player.sendMessage(lang.getString("invalid-ticket"));
-        }
+    public Trapdoor() {
+        super(new Vector(0, -2, 0));
+        super.setSignLine0(lang.getString("faregate"));
     }
 
+    @Override public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+        if (!IciwiUtil.loreCheck(item)) return;
 
-    // Card
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("card.material")) && IciwiUtil.loreCheck(item)) {
+        // Get station
+        String station = IciwiUtil.stripColor(signText[1]);
 
-        // Get card from item
-        IcCard icCard = IciwiUtil.IcCardFromItem(item);
-        if (icCard == null) return;
+        // Wax sign
+        sign.setWaxed(true);
+        sign.update(true);
 
-        // Vital information
-        String serial = icCard.getSerial();
-        Records records = new Records();
+        // Force fare gate
+        signText[0] = signText[0] + "F";
 
-        // Determine entry or exit
-        if (records.getStation(serial).equals("")) CardUtil.entry(player, icCard, station, sign.getLocation());
-        else CardUtil.exit(player, icCard, station, sign.getLocation());
+        TicketType ticketType = TicketType.asTicketType(item.getType());
 
-        // Open the fare gate in both cases
-        super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+        switch (ticketType) {
+            case TICKET:
+                List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+                boolean entryPunched = lore.get(0).contains("•");
+                boolean exitPunched	= lore.get(1).contains("•");
+                boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
+
+                // Invalid Ticket
+                if (entryPunched && exitPunched) {
+                    player.sendMessage(lang.getString("invalid-ticket"));
+                }
+
+                // Exit
+                else if ((entryPunched || !entryPunchRequired) && lore.get(1).equals(station)) {
+                    IciwiUtil.punchTicket(item, 1);
+                    // Log exit
+                    String entryStation = lore.get(0).replace(" •", "");
+                    String fareClass = lore.get(2);
+                    Fares fares = new Fares();
+
+                    cardSql.logMaster(player.getUniqueId().toString());
+                    cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
+                    cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
+                    cardSql.logTicketUse(entryStation, station, fareClass);
+                    player.sendMessage(String.format(lang.getString("ticket-out"), station));
+                    super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+                }
+
+                // Entry
+                else if (lore.get(0).equals(station)) {
+                    IciwiUtil.punchTicket(item, 0);
+                    // Log entry
+
+                    cardSql.logMaster(player.getUniqueId().toString());
+                    cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
+                    player.sendMessage(String.format(lang.getString("ticket-in"), station));
+                    super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+                }
+
+                else {
+                    player.sendMessage(lang.getString("invalid-ticket"));
+                }
+                break;
+
+            case CARD:
+
+
+                // Get card from item
+                IcCard icCard = IciwiUtil.IcCardFromItem(item);
+                if (icCard == null) return;
+
+                // Vital information
+                String serial = icCard.getSerial();
+                Records records = new Records();
+
+                // Determine entry or exit
+                if (records.getStation(serial).equals("")) CardUtil.entry(player, icCard, station, sign.getLocation());
+                else CardUtil.exit(player, icCard, station, sign.getLocation());
+
+                // Open the fare gate in both cases
+                super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
+                break;
+
+
+            case RAIL_PASS:
+                List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
+                break;
+        }
     }
-
-
-    // Paper Rail Pass
-    else if (item.getType() == Material.valueOf(plugin.getConfig().getString("railpass.material")) && IciwiUtil.loreCheck(item)) {
-        List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-    }
-}
 
 }
