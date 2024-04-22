@@ -5,11 +5,11 @@ Universal transportation ticket plugin.
 # Development
 1. Use JDK 17 & Gradle 8
 2. Fork or clone this project locally
-3. Wait for the project to boot up; Gradle may take some time
+3. Checkout "alpha" branch
 4. Start developing!
 
 # Terminology used in this README
-**Station**: A valid station defined in Iciwi's config.
+**Station**: A valid station defined in Iciwi's config.<br>
 **TOC**: Train Operating Company. Iciwi is built to handle multiple competing companies, not just a single nationalised railway network (although it could do that as well). TOCs are the entities defined in Iciwi that collect the final fares from railways.
 
 # Usage
@@ -19,13 +19,13 @@ Fare gates are the contraptions to let players in and out of a transit network. 
 ### Flags
 Flags mostly determine which block the fare gate looks at for opening or closing. Here are the flags included with Iciwi:
 
-- V: Validator. Makes the sign into a validator. (This mode makes the sign not cause blocks to update)
-- S: Sideways sign. Place this sign on the right-hand side block before the fare gate.
-- L: Lefty sign. Place this sign on the LEFT of the fare gate.
-- D: Double fare gate. Use 2 blocks for the fare gate.
-- R: Redstone activator. Activates the lever placed below the block that the sign is attached to.
-- E: Eye-level sign. Place this sign 1 block above where you would normally place it.
-- F: Trapdoor fare gate. Place a trapdoor 2 blocks above this sign to use, and right-click the trapdoor to use.
+- **V**: Validator. Makes the sign into a validator. (This mode makes the sign not cause blocks to update)
+- **S**: Sideways sign. Place this sign on the right-hand side block before the fare gate.
+- **L**: Lefty sign. Place this sign on the LEFT of the fare gate.
+- **D**: Double fare gate. Use 2 blocks for the fare gate.
+- **R**: Redstone activator. Activates the lever placed below the block that the sign is attached to.
+- **E**: Eye-level sign. Place this sign 1 block above where you would normally place it.
+- **F**: Trapdoor fare gate. Place a trapdoor 2 blocks above this sign to use, and right-click the trapdoor to use.
 
 **By default (i.e. no flags), Iciwi's fare gate signs are placed on the block directly to the right of a fare gate.**
 
@@ -54,7 +54,7 @@ Mandatory fields are in <> while optional fields are in []. [anything] refers to
 
 ### Using fare gates
 
-There are two types of activation methods, explained below. In both cases, The plugin will check if the sign is valid and if the player fulfils all conditions to open the gate (things like whether the player has a valid ticket or card) before opening the gate. If there is no sign or if the sign is invalid, the second check will not happen and the handling will be passed back to the server; otherwise, the gate will continue to be closed.
+There are two types of activation methods, explained below. In both cases, the plugin will check if the sign is valid and if the player fulfils all conditions to open the gate (things like whether the player has a valid ticket or card) before opening the gate. If there is no sign or if the sign is invalid, the second check will not happen and the handling will be passed back to the server; otherwise, the gate will continue to be closed.
 
 - [Faregate] signs and signs with the F flag:
 > Players should right-click on an openable block (i.e. fence gates and trapdoors) located two blocks above the sign.
@@ -103,14 +103,16 @@ The cards ticket machine lets players do operations on their Iciwi card only, an
 (anything)
 (anything)
 ```
-The rail pass machine allows you to only check and buy rail passes. While rail passes are currently required to be linked to a card, paper rail passes are planned in the future, and the rail pass ticket machine will be the only place where you can buy these paper passes.
+The rail pass machine allows you to only check and buy rail passes. While most rail passes can be bought in paper form, rail passes preceded by an underscore can only be applied to an Iciwi Card.
 
 ## Transferring
 Exiting one station and entering another within a certain time (changeable in config) counts as a transfer. Transferring will usually lead to lower fares as the two separate journeys made with a transfer in between are counted as a single journey.
 
-However, this may lead to errors in pricing if a journey from a single system to another is made, especially if the second journey is lower-priced than the first. In that case, place a [Transfer] sign in the middle; it cuts the first journey and starts a new fare for the second. [Transfer] signs can also be placed in the paid area, in which they act like a [Exit] followed directly by an [Transfer] outside the gate line and then an [Entry].
+However, this may lead to errors in pricing if a journey from a single system to another is made, as no fare between the two endpoints is defined. In that case, the transfer will be counted as two separate journeys.
 
-# Admin usage
+At stations where both systems may share a single platform, `[Transfer]` signs can be placed in the paid area. This sign breaks the journey into two separate journeys, allowing for players to be charged correctly.
+
+# Config files
 
 ## fares.yml
 This file lists all the fares.
@@ -128,43 +130,142 @@ FromStation:
     Class1: price
     Class2: price
     Class3: price
-...
 ```
-You need to set a class as a default class to use when someone uses an Iciwi card to tap in/out. By default, the default class is `Second` (because metros aren't first class for obvious reasons)
+You need to set a class as a default class to use when someone uses an Iciwi Card to tap in/out. By default, the default class is `_Second` (because metros aren't first class for obvious reasons)
+
+**Note that classes preceded by an underscore are only accessible using an Iciwi Card.**
 
 ## owners.yml
 This file determines where the money goes when someone taps in/out.
 
-`Aliases` Determines who to pay when someone uses the /coffers commands. This list is in the form `Operator: Username`. One operator can only be assigned one username, but one username can have many operators listed under them.
-
-`Operators` Determines which **operator** owns which station. This list is in the form `Station: Operator`. One station can only be assigned one operator.
-
-`Coffers` **You shouldn't touch this,** but this lists how much each operator has earned since the last `/coffers empty`. If a station does not have an operator, the money earned from that station goes to the operator `'null'`.
-
-`RailPassPrices` Prices for rail passes. This list is in the form `Operator: Days: Price`, where Days refer to the number of days of free travel until expiry.
-
-Sample `owners.yml`:
+`Aliases`<br>
+This section determines which player is the owner of which company.<br>
+The owner of a company is paid whenever a player uses their services.<br>
+A single section in this section will look as follows:
 ```yml
+OPERATOR_NAME: PLAYER_NAME
+```
+<hr>
+
+`Operators`<br>
+This section assigns stations to companies. You will need to fill this up even if there is only 1 company on your server.<br>
+Stations not belonging to any company will belong to the "null" company. (The station name refers to the name in `fares.yml`.)<br>
+A single section in this section will look as follows:
+```yml
+STATION_NAME:
+- OPERATOR_NAME_0
+- OPERATOR_NAME_1
+```
+<hr>
+
+`RailPasses`<br>
+This section describes rail passes that give discounted travel for a certain duration to a player between a given operator's stations.<br>
+A single section in this section will look as follows:
+```yml
+NAME_OF_RAIL_PASS:
+  operator: OPERATOR_NAME
+  duration: VALID_DURATION
+  price: PRICE_OF_RAIL_PASS
+  percentage: FRACTION_CHARGED (if it's 1/3 off, put 0.67)
+```
+<hr>
+
+`TicketType`<br>
+(FUTURE) Buttons to show when a player opens a [Tickets] ticket machine.
+
+### Default file:
+```yml
+# This section determines which player is the owner of which company.
+# The owner of a company is paid whenever a player uses their services.
+# The format is <company>: <owner's username>
 Aliases:
-  ExampleOperator: ExampleUsername
+  ExampleOperator: Mineshafter61
+  ExampleOperator1: Mineshafter62
+
+# This section describes rail passes that give discounted travel for a certain duration to a player between a given operator's stations.
+# The format is in:
+# Name of rail pass:
+#   operator
+#   duration
+#   price
+#   fraction payable
+RailPasses:
+  '7 days half price':
+    operator: ExampleOperator
+    duration: '7:00:00:00'
+    price: 32.5
+    percentage: 0.5
+  '30 days free journeys':
+    operator: ExampleOperator
+    duration: '30:00:00:00'
+    price: 109.9
+    percentage: 0.0
+  '8 days free journeys':
+    operator: ExampleOperator1
+    duration: '8:00:00:00'
+    price: 32.5
+    percentage: 0.0
+  '35 days half price':
+    operator: ExampleOperator1
+    duration: '7:00:00:00'
+    price: 60.0
+    percentage: 0.5
+
 Operators:
-  ExampleStation: ExampleOperator
-Coffers:
-  ExampleOperator: 0.0
-  'null': 4.22
-RailPassPrices:
-  ExampleOperator:
-    '7': 25.0
-    '30': 100.0
+  ExampleStation:
+  - ExampleOperator
+  - ExampleOperator1
+  ExampleStation1:
+  - ExampleOperator2
+
+#TicketType:
+  #FUTURE SECTION DO NOT USE
 ```
 
 ## What Iciwi CANNOT do
-Iciwi only allows for fixed prices between stations. Time-discriminated and time-based prices are not available, and are not planned for the future. This is because Iciwi is built with mode integration in mind, i.e. commuters should be able to transfer between the metro and intercity trains seamlessly without worrying about paying double or paying for one over the other. 
+Iciwi only allows for fixed prices between stations. Time-discriminated and time-based prices are not available, and are not planned for the future. This is because Iciwi is built with mode integration in mind, i.e. commuters should be able to transfer between the metro and intercity trains seamlessly without worrying about paying double or paying for one over the other.
 
-The default Iciwi card also does not come with a fare cap for the same reason. Coding cards with fare caps opens a new can of worms that is calculating how much a single card has paid to a certain company within a certain time frame.
-
-## Commands
+# Commands
 Iciwi uses the Cloud Command Framework for its commands. Type /iciwi to see every command added.
+
+Commands can be used to modify most parts of Iciwi's config files.
+
+### Main config
+| Command | Description | Permission |
+| --- | --- | --- |
+| `iciwi reload` | Reloads all configuration files | `iciwi.reload` |
+| `iciwi penalty <amount>` | Sets the penalty penalty given to fare evaders | `iciwi.penalty` |
+| `iciwi deposit <amount>` | Sets the deposit paid when buying a new card | `iciwi.deposit` |
+| `iciwi addpricelist <amount>` | Adds an option to the choices of card values | `iciwi.addpricelist` |
+| `iciwi removepricelist <amount>` | Adds an option to the choices of card values | `iciwi.removepricelist` |
+| `iciwi maxtransfertime <amount>` | Sets the maximum time allowed for an out-of-station transfer to happen. | `iciwi.maxtransfertime` |
+| `iciwi gateclosedelay <amount>` | Sets the duration whereby fare gates open. | `iciwi.gateclosedelay` |
+| `iciwi closeafterpass <amount>` | Sets the duration for which the gates are still open after a player walks through. | `iciwi.closeafterpass` |
+| `iciwi defaultfareClass <fareClassname>` | Sets the fare fareClass used by default when card payment is used. | `iciwi.defaultfareClass` |
+
+### Owners
+| Command | Description | Permission |
+| --- | --- | --- |
+| `iciwi owners alias set <company> <username>` | Sets the revenue collector for a company. | `iciwi.owners.alias` |
+| `iciwi owners alias unset <company>` | Removes the revenue collector for a company. | `iciwi.owners.alias` |
+| `iciwi owners operator <station> add <company>` | Adds an owning company to a station. | `iciwi.owners.operator` |
+| `iciwi owners operator <station> set <company>` | Sets the owning company of a station. | `iciwi.owners.operator` |
+| `iciwi owners operator <station> delete` | Removes all owning companies of a station. | `iciwi.owners.operator` |
+| `iciwi owners railpass <name> operator <company>` | Sets the rail company that owns the given railpass. | `iciwi.owners.railpass` |
+| `iciwi owners railpass <name> duration <duration>` | Sets the duration that the given railpass is active. | `iciwi.owners.railpass` |
+| `iciwi owners railpass <name> price <amount>` | Sets the price of the given railpass. | `iciwi.owners.railpass` |
+| `iciwi owners railpass <name> percentage <paidpercentage>` | Sets the percentage paid by the card holder when they use the railpass. | `iciwi.owners.railpass` |
+| `iciwi owners railpass <name> delete` | Deletes a railpass. | `iciwi.owners.railpass` |
+| `iciwi owners railpass <name> delete` | Deletes a railpass. | `iciwi.owners.railpass` |
+
+### Fares
+| Command | Description | Permission |
+| --- | --- | --- |
+| `iciwi fares set <start> <end> <fareClass> <price>` | Creates a new fare. | `iciwi.fares.set` |
+| `iciwi fares check <start> [end] [fareClass]` | Either checks for all destinations from a station, all the fare classes for a journey or the fare between two stations for a fare class. | `iciwi.fares.check` |
+| `iciwi fares unset <start> <end> <fareClass>` | Deletes a fare. | `iciwi.fares.unset` |
+| `iciwi fares deletejourney <start> <end>` | Deletes all fares between a start and end point. | `iciwi.fares.deletejourney` |
+| `iciwi fares deletestation <start>` | Removes a station and all its associated fares from the data. | `iciwi.fares.deletestation` |
 
 ## Dependencies
 - BKCommonLib (you should already have this installed if you have TrainCarts installed.)

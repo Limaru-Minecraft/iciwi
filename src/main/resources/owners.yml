@@ -1,5 +1,5 @@
-# This controls who owns whch company.
-# Only the owner of a company can withdraw the money from its coffers.
+# This section determines which player is the owner of which company.
+# The owner of a company is paid whenever a player uses their services.
 # The format is <company>: <owner's username>
 Aliases:
   ExampleOperator: Mineshafter61
