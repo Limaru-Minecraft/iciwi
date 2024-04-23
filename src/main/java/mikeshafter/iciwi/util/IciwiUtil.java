@@ -94,6 +94,27 @@ public static List<Component> toComponents (List<String> sList) {
   }
   */
 
+private static boolean checkDiv2 (int n) {
+    return ((n >> 1) << 1) == n;
+}
+
+/**
+ Spread items evenly across n slots in an array
+ @param n Number of slots
+ @param items Items to spread
+ @return Final spreaded array */
+public static Object[] justify (int n, Object... items) {
+    // Create an array with n elements
+    Object[] arr = new Object[n];
+    int l = items.length;
+    // optimisation
+    if (n == l) return items;
+    for (int i = 1; i <= l; i++) {
+        arr[i * n / (l+1)] = items[i-1]
+    }
+    return arr;
+}
+
 /**
  Makes an item
 

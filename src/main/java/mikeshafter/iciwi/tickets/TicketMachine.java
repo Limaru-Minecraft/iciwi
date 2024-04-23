@@ -23,7 +23,7 @@ private boolean bottomInv;
 // Constant helper classes
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 // private final CardSql cardSql = new CardSql();
-// private final Owners owners = plugin.owners;
+private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
 
 // Constructor and Menu Display
@@ -37,23 +37,64 @@ public boolean useBottomInv () {return bottomInv;}
 // setters
 @Override public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
 
-// initial menu
 public void init (String station) {
-	// setup inventory
-	inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
-	this.clickables = new Clickable[9];
+    //initCustomTicket(station);
+    List<String> operators = this.owners.getOwners(station);
+    ArrayList<Clickable> clickList = new ArrayList<>();
+    boolean addCustomTickets = true;
+    for (String operator : operators) {
+        if (this.owners.hasOperatorTicket(operator)) {
+            Clickable companyTicketButton = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text(operator)), (event) -> {
+                // TODO: Operator ticket
+            });
+            clickList.add(companyTicketButton);
+        }
+        else if (addCustomTickets) {
+            clickList.add(Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
+                SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station)))
+            );
+            addCustomTickets = false;
+        }
+    }
 
+    clickList.add(
+        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            ((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
+        })
+    );
+    clickList.add(
+        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            ((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
+        })
+    );
+
+    this.clickables = (Clickables[]) IciwiUtils.justify(9, clickList.toArray());
+	this.inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
+	setItems(clickables, inv);
+	// Start listening and open inventory
+	player.openInventory(inv);
+}
+
+// initial menu
+public void initCustomTicket (String station) {
+	// setup inventory
+	this.inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
 	// Create buttons
-	this.clickables[2] = Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
-		SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station)));
-	this.clickables[4] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-		SignInteractListener.machineHashMap.put(player, new CardMachine(player));
-		((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
-	});
-	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-		SignInteractListener.machineHashMap.put(player, new CardMachine(player));
-		((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
-    });
+    var btnArray = new Clickable[]{
+        Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
+            SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station))),
+        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            ((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
+        }),
+        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            ((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
+        }
+    }
+	this.clickables = IciwiUtil.justify(btnArray);
 
 	// Get operators
 	// operators = this.owners.getOwners(station);
