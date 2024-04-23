@@ -224,6 +224,6 @@ public boolean hasOperatorTicket (String operator) { return super.getDouble("Tic
  Sets the price of a single company-wide ticket
  @param operator Name of the company
  @param price The price of a company-wide ticket
- @return the price of a single journey ticket */
+ */
 public void setOperatorTicket (String operator, double price) { super.set("TicketType."+operator, price); }
 }

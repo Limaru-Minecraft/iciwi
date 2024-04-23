@@ -12,6 +12,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.awt.print.Paper;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,8 +29,7 @@ public Exit() {
 }
 
 @Override public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-    TicketType ticketType = TicketType.asTicketType(item.getType());
-    if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
+    if (!IciwiUtil.loreCheck(item)) return;
 
     // Get station
     String station = IciwiUtil.stripColor(signText[1]);
@@ -40,8 +40,8 @@ public Exit() {
 
     List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
 
-    switch (Objects.requireNonNull(ticketType)) {
-        case TICKET:
+    switch (item.getType()) {
+        case PAPER:
         boolean entryPunched = lore.get(0).contains("•");
         boolean exitPunched	= lore.get(1).contains("•");
         boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
@@ -52,7 +52,7 @@ public Exit() {
         }
 
         // Exit
-        else if ((entryPunched || !entryPunchRequired) && lore.get(1).equals(station)) {
+        else if ((entryPunched || !entryPunchRequired) && (lore.get(1).equals(station) || owners.getOwners(station).contains(lore.get(1).replaceFirst("C:", "")))) {
             IciwiUtil.punchTicket(item, 1);
             player.sendMessage(String.format(lang.getString("ticket-out"), station));
             // Log exit
@@ -77,7 +77,7 @@ public Exit() {
         }
         break;
 
-        case CARD:
+        case NAME_TAG:
         // Get card from item
         IcCard icCard = IciwiUtil.IcCardFromItem(item);
         if (icCard == null) return;
@@ -88,7 +88,7 @@ public Exit() {
         }
         break;
 
-        case RAIL_PASS:
+        case FILLED_MAP:
                 String name = lore.get(0);
                 String expiry = lore.get(1);
 
@@ -103,7 +103,7 @@ public Exit() {
                     List<String> tocs = owners.getOwners(station);
                     if (tocs.contains(owners.getRailPassOperator(name))) {
                 // if yes, open the gate
-                        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+                        super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
                     }
                 }
 catch (Exception ignored) {
