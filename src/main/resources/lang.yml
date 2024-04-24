@@ -24,6 +24,7 @@ tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
+used-paper-pass: '§aA paper rail passed was used§e%s§a. Welcome aboard/Thank you for riding with us!'
 transfer-cancel-osi: '§aOut-of-station interchange discounts were cancelled.'
 
 # Member sign
@@ -58,7 +59,8 @@ no-tickets-found: '§cNo tickets were found for your selected journey!'
 ticket-machine: '§1Ticket Machine'
 
 # == Main page item names ==
-menu-new-ticket: '§aNew Single Journey Ticket'
+menu-new-ticket: '§aNew Single Journey Ticket (Key in the station)'
+menu-new-flat-ticket: '§aNew Single Journey Ticket (Flat Fare)'
 menu-insert-card: '§eInsert Card'
 
 # == Paper ticket subpage ==

@@ -94,6 +94,11 @@ public static List<Component> toComponents (List<String> sList) {
   }
   */
 
+private static boolean checkDiv2 (int n) {
+    return ((n >> 1) << 1) == n;
+}
+
+
 /**
  Makes an item
 

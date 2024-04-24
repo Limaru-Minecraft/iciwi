@@ -136,21 +136,21 @@ private long timeToLong (String time) {
 
  @param name Name of the rail pass
  @return Percentage payable by the commuter */
-public double getRailPassPercentage (String name) {return super.getDouble("RailPassPrices." + name + "percentage");}
+public double getRailPassPercentage (String name) { return super.getDouble("RailPassPrices." + name + "percentage") ;}
 
 /**
  Get the price of the rail pass
 
  @param name Name of the rail pass
  @return Price of the rail pass */
-public double getRailPassPrice (String name) {return super.getDouble("RailPassPrices." + name + "price");}
+public double getRailPassPrice (String name) { return super.getDouble("RailPassPrices." + name + "price") ;}
 
 /**
  Get the operator who sells the rail pass
 
  @param name Name of the rail pass
  @return The operator who sells the rail pass */
-public String getRailPassOperator (String name) {return super.getString("RailPassPrices." + name + "operator");}
+public String getRailPassOperator (String name) { return super.getString("RailPassPrices." + name + "operator"); }
 
 /**
  Get the name of the rail pass that is sold by the operator
@@ -172,13 +172,18 @@ public Set<String> getRailPassNames (String operator) {
 	return h;
 }
 
-	public Set<String> getRailPassNamesFromList (List<String> operators) {
-		HashSet<String> set = new HashSet<>();
-		for (String operator : operators) {
-			set.addAll(getRailPassNames(operator));
-		}
-		return set;
-	}
+/**
+ Gets all the rail passes from a list of operators
+
+ @param operators TOCs to search up
+ @return Set of the rail passes */
+public Set<String> getRailPassNamesFromList (List<String> operators) {
+    HashSet<String> set = new HashSet<>();
+    for (String operator : operators) {
+        set.addAll(getRailPassNames(operator));
+    }
+    return set;
+}
 
 /**
  Gets all the rail passes from all operators.
@@ -203,4 +208,22 @@ public List<String> getOwnedCompanies (String player) {
  @return whether the player owns the TOC */
 public boolean getOwnership (String player, String operator) { return player.equalsIgnoreCase(super.getString("Aliases." + operator)); }
 
+/**
+ Gets the price of a single company-wide ticket
+ @param operator Name of the company
+ @return the price of a single journey ticket */
+public double getOperatorTicket (String operator) { return super.getDouble("TicketType."+operator); }
+
+/**
+ Gets whether a company ticket exists
+ @param operator Name of the company
+ @return true if a company ticket exists */
+public boolean hasOperatorTicket (String operator) { return super.getDouble("TicketType."+operator) > 0; }
+
+/**
+ Sets the price of a single company-wide ticket
+ @param operator Name of the company
+ @param price The price of a company-wide ticket
+ */
+public void setOperatorTicket (String operator, double price) { super.set("TicketType."+operator, price); }
 }

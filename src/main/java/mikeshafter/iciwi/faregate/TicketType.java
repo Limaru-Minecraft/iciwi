@@ -13,12 +13,8 @@ public enum TicketType {
 
 	private final Material material;
 
-TicketType (Material material) {
-	this.material = material;
-}
-public Material getMaterial () {
-	return material;
-}
+TicketType (Material material) { this.material = material; }
+public Material getMaterial () { return material; }
 
 static TicketType asTicketType (Material material) {
 	if (material == TICKET.material) return TICKET;

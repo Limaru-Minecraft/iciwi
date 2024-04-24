@@ -30,8 +30,7 @@ public Member() {
 
 @Override
 public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
-	TicketType ticketType = TicketType.asTicketType(item.getType());
-	if (!IciwiUtil.loreCheck(item) || ticketType == null) return;
+	if (!IciwiUtil.loreCheck(item)) return;
 
 	// Get station
 	String station = IciwiUtil.stripColor(signText[1]);
@@ -41,11 +40,11 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 	sign.update(true);
 
         List<String> lore = IciwiUtil.parseComponents(Objects.requireNonNull(item.getItemMeta().lore()));
-	switch (ticketType) {
-		case TICKET:
-			plugin.sendAll("(☞ ͡° ͜ʖ ͡°)☞ dude tried to use a feature from the future! (ง ͡ʘ ͜ʖ ͡ʘ)ง FUTURE FEATURE FUTURE FEATURE (ง ͡ʘ ͜ʖ ͡ʘ)ง");
+	switch (item.getType()) {
+		case PAPER:
+			plugin.sendAll("(☞ ͡° ͜ʖ ͡°)☞ Hey you! Wrong ticket, bud! (ง ͡ʘ ͜ʖ ͡ʘ)ง Use a paper rail pass! IT'S HERE! (ง ͡ʘ ͜ʖ ͡ʘ)ง");
 			break;
-		case CARD:
+		case NAME_TAG:
 			// Get card from item
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
 			if (icCard == null) return;
@@ -53,7 +52,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 			// Call entry, and if successful, open fare gate
 			if (CardUtil.member(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
 			break;
-		case RAIL_PASS:
+		case FILLED_MAP:
             String name = lore.get(0);
             String expiry = lore.get(1);
 
@@ -68,7 +67,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
                 List<String> tocs = owners.getOwners(station);
                 if (tocs.contains(owners.getRailPassOperator(name))) {
             // if yes, open the gate
-                    super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+                    super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
                 }
             }
             catch (Exception ignored) {
