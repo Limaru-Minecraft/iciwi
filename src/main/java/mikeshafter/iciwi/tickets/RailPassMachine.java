@@ -62,10 +62,6 @@ public class RailPassMachine implements Machine {
             makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card"), Component.text("Apply a rail pass onto your card")),
             (event) -> selectCard()
         );
-
-
-        // phase this out
-//        initOld(station);
     }
 
     // card selection menu. player clicks in their own inventory to select a card
@@ -116,7 +112,8 @@ public class RailPassMachine implements Machine {
                     Material material = Material.valueOf(plugin.getConfig().getString("railpass.material"));
                     int customModelData = plugin.getConfig().getInt("railpass.custom-model-data");
                     long time = System.currentTimeMillis();
-// todo: real rail pass lang pointer thing
+
+                    // todo: real rail pass lang pointer thing
                     ItemStack item = makeItem(material, customModelData, Component.text("rail-pass"), Component.text(name), Component.text(String.valueOf(time + owners.getRailPassDuration(name))));
 
                     // give it to the player
