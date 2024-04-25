@@ -35,19 +35,17 @@ public class RailPassMachine implements Machine {
     private final Lang lang = plugin.lang;
     private Runnable clickInvItemRunnable;
 
-    public RailPassMachine (Player player) {
-        this.player = player;
-    }
+    public RailPassMachine (Player player) { this.player = player; }
     public RailPassMachine (Player player, List<String> operators) {
         this.player = player;
         this.operators = operators;
     }
 
-    @Override public Runnable getClickInvItemRunnable () {return clickInvItemRunnable;}
+    @Override public Runnable getClickInvItemRunnable () { return clickInvItemRunnable; }
 
     public void init (String station) {
         // Set the operators
-        this.operators = new Owners().getOwners(station);
+        this.operators = owners.getOwners(station);
 
         // setup inventory
         inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("railpass-machine"));
@@ -78,14 +76,14 @@ public class RailPassMachine implements Machine {
     }
 
     // card selection menu. player clicks in their own inventory to select a card
-    @Deprecated public void initOld (String station) {
-        // Create inventory
-        inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
-        // Set next action
-        clickInvItemRunnable = () -> railPass(selectedItem);
-        // Start listening and open inventory
-        player.openInventory(inv);
-    }
+//    @Deprecated public void initOld (String station) {
+//        // Create inventory
+//        inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("select-card"));
+//        // Set next action
+//        clickInvItemRunnable = () -> railPass(selectedItem);
+//        // Start listening and open inventory
+//        player.openInventory(inv);
+//    }
 
     public void paperPass () {
         // get available railpasses
@@ -113,8 +111,12 @@ public class RailPassMachine implements Machine {
                     int customModelData = plugin.getConfig().getInt("railpass.custom-model-data");
                     long time = System.currentTimeMillis();
 
-                    // todo: real rail pass lang pointer thing
-                    ItemStack item = makeItem(material, customModelData, Component.text("rail-pass"), Component.text(name), Component.text(String.valueOf(time + owners.getRailPassDuration(name))));
+                    /*
+                    Rail Pass
+                    <name>
+                    <expiry>
+                     */
+                    ItemStack item = makeItem(material, customModelData, lang.getComponent("paper-rail-pass"), Component.text(name), Component.text(String.valueOf(time + owners.getRailPassDuration(name))));
 
                     // give it to the player
                     player.getInventory().addItem(item);
