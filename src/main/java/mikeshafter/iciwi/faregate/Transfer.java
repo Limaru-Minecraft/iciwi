@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate;
 
+import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;
@@ -15,9 +16,10 @@ import java.util.Objects;
 
 public class Transfer extends ClosableFareGate {
 
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = new Lang();
 private final Owners owners = new Owners();
+private static final CardSql cardSql = new CardSql();
+
 
 public Transfer() {
     super();
@@ -62,7 +64,11 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             // otherwise, check if issuing TOC is one of the station's owners
             List<String> tocs = owners.getOwners(station);
             if (tocs.contains(owners.getRailPassOperator(name))) {
-                // if yes, open the gate
+                // log
+                cardSql.logMaster(player.getUniqueId().toString());
+                cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
+                cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
+
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
     }

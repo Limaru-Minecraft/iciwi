@@ -105,7 +105,12 @@ public Validator() {
             // otherwise, check if issuing TOC is one of the station's owners
             List<String> tocs = owners.getOwners(station);
             if (tocs.contains(owners.getRailPassOperator(name))) {
-                // if yes, send da message
+                // log
+                cardSql.logMaster(player.getUniqueId().toString());
+                cardSql.logMaster(player.getUniqueId().toString());
+                cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "validator");
+                cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
+
                 player.sendMessage(lang.getString("used-paper-pass"));
             }
     }

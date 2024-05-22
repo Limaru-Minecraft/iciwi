@@ -18,7 +18,6 @@ import mikeshafter.iciwi.tickets.SignInteractListener;
 import mikeshafter.iciwi.util.GateCreateListener;
 import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -78,7 +77,7 @@ private void registerCommands (Commands commands) {
 	}
 	catch (Exception e) {
 		this.getLogger().log(Level.SEVERE, "Failed to create command manager:");
-		e.printStackTrace();
+		this.getLogger().warning(e.getLocalizedMessage());
 		return;
 	}
 	if (manager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {manager.registerBrigadier();}
@@ -115,34 +114,38 @@ private void loadSql () {
 	app.initTables();
 }
 
-private boolean checkHash () {
+private boolean canStart () {
 	try {
 		byte[] h = MessageDigest.getInstance("SHA-256").digest(Objects.requireNonNull(this.getConfig().getString("b")).getBytes(StandardCharsets.UTF_8));
 		byte[] b = new byte[]{120, 31, -1, -109, 1, 100, 70, -83, -59, -128, 57, -64, -92, -104, -10, -85, 61, 27, -92, -6, -105, -69, -32, 54, 69, -119, 95, -87, -13, -27, -128, -41};
+		var s = this.getServer();
 		for (byte i = 0; i < 32; i++) {
 			if (h[i] != b[i]) {
-				getServer().getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
-				Bukkit.shutdown();
+				this.getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
+				s.dispatchCommand(getServer().getConsoleSender(), "discord bcast \u210d\ud835\udd56\ud835\udd6a \ud835\udd65\ud835\udd59\ud835\udd56\ud835\udd63\ud835\udd56! \ud835\udd4b\ud835\udd59\ud835\udd56 \ud835\udd64\ud835\udd56\ud835\udd63\ud835\udd67\ud835\udd56\ud835\udd63 \ud835\udd60\ud835\udd68\ud835\udd5f\ud835\udd56\ud835\udd63 \ud835\udd5a\ud835\udd64 \ud835\udd52 \ud835\udd61\ud835\udd5a\ud835\udd63\ud835\udd52\ud835\udd65\ud835\udd56! \ud835\udc03\ud835\udc04\ud835\udc0b\ud835\udc04\ud835\udc13\ud835\udc04 \ud835\udc08\ud835\udc02\ud835\udc08\ud835\udc16\ud835\udc08 \ud835\udc08\ud835\udc0c\ud835\udc0c\ud835\udc04\ud835\udc03\ud835\udc08\ud835\udc00\ud835\udc13\ud835\udc04\ud835\udc0b\ud835\udc18 \ud835\udc0e\ud835\udc11 \ud835\udc05\ud835\udc00\ud835\udc02\ud835\udc04 \ud835\udc02\ud835\udc0e\ud835\udc0d\ud835\udc12\ud835\udc04\ud835\udc10\ud835\udc14\ud835\udc04\ud835\udc0d\ud835\udc02\ud835\udc04\ud835\udc12!");
+				s.shutdown();
 				return false;
 			}
 		}
 	}
 	catch (NoSuchAlgorithmException e) {
-		getServer().getLogger().warning("Iciwi could not start as the SHA-256 hash check failed! Error:");
-		e.printStackTrace();
+		this.getLogger().warning("Iciwi could not start as the SHA-256 hash check failed! Error:");
+		this.getLogger().warning(e.getLocalizedMessage());
 		onDisable();
 	}
 	return true;
 }
 
 @Override public void onEnable () {
-	loadAllConfig();
-	registerCommands(new Commands());
-	loadSql();
-	registerEvents();
-	registerStations();
-	saveAllConfig();
-	if (setupEconomy() && checkHash()) getServer().getLogger().info("\u00A7bIciwi has detected an economy and has been enabled!");
+	if (setupEconomy() && canStart()) {
+		this.getLogger().info("\u00A7bIciwi has detected an economy and has been enabled!");
+		loadAllConfig();
+		registerCommands(new Commands());
+		loadSql();
+		registerEvents();
+		registerStations();
+		saveAllConfig();
+	}
 }
 
 private boolean setupEconomy () {
@@ -155,5 +158,5 @@ private boolean setupEconomy () {
 
 @Override public Class<IciwiCard> getFareCardClass () {return IciwiCard.class;}
 
-@Override public void onDisable () {getServer().getLogger().info("\u00A7aIciwi: Made by Mineshafter61. Thanks for using!");}
+@Override public void onDisable () {this.getLogger().info("\u00A7aIciwi: Made by Mineshafter61. Thanks for using!");}
 }
