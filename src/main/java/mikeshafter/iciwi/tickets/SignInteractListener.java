@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 public class SignInteractListener implements Listener {
 private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang(plugin);
+private final Lang lang = new Lang();
 protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
 
 

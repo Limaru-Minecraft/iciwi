@@ -1,13 +1,5 @@
 package mikeshafter.iciwi;
 
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.arguments.parser.ParserParameters;
-import cloud.commandframework.arguments.parser.StandardParameters;
-import cloud.commandframework.bukkit.CloudBukkitCapabilities;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
-import cloud.commandframework.meta.CommandMeta;
-import cloud.commandframework.paper.PaperCommandManager;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -18,15 +10,12 @@ import mikeshafter.iciwi.tickets.SignInteractListener;
 import mikeshafter.iciwi.util.GateCreateListener;
 import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.logging.Level;
 import java.security.NoSuchAlgorithmException;
 
 public final class Iciwi extends JavaPlugin implements IciwiPlugin {
@@ -67,27 +56,6 @@ private void saveAllConfig () {
 	owners.save();
 	records.save();
 	fares.save();
-}
-
-private void registerCommands (Commands commands) {
-	final Function<CommandTree<CommandSender>, CommandExecutionCoordinator<CommandSender>> executionCoordinatorFunction = CommandExecutionCoordinator.simpleCoordinator();
-	PaperCommandManager<CommandSender> manager;
-	try {
-		manager = new PaperCommandManager<>(this, executionCoordinatorFunction, Function.identity(), Function.identity());
-	}
-	catch (Exception e) {
-		this.getLogger().log(Level.SEVERE, "Failed to create command manager:");
-		this.getLogger().warning(e.getLocalizedMessage());
-		return;
-	}
-	if (manager.hasCapability(CloudBukkitCapabilities.BRIGADIER)) {manager.registerBrigadier();}
-	parseCommandAnnotations(commands, manager);
-}
-
-private void parseCommandAnnotations (Commands commands, PaperCommandManager<CommandSender> manager) {
-	final Function<ParserParameters, CommandMeta> commandMetaFunction = p -> CommandMeta.simple().with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "Description not specified.")).build();
-	AnnotationParser<CommandSender> annotationParser = new AnnotationParser<>(manager, CommandSender.class, commandMetaFunction);
-	annotationParser.parse(commands);
 }
 
 private void registerEvents () {
@@ -140,7 +108,8 @@ private boolean canStart () {
 	if (setupEconomy() && canStart()) {
 		this.getLogger().info("§bIciwi has detected an economy and has been enabled!");
 		loadAllConfig();
-		registerCommands(new Commands());
+		Commands commands = new Commands();
+		commands.enable(this);
 		loadSql();
 		registerEvents();
 		registerStations();

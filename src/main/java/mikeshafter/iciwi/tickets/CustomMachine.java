@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.tickets;
 
+import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
@@ -7,7 +8,6 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

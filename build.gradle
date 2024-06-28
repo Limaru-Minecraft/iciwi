@@ -22,13 +22,14 @@ java { toolchain {
 }}
 
 dependencies {
-  compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+  compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.4-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.6-v1'
 
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-paper:1.8.0-SNAPSHOT'
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-annotations:1.8.0-SNAPSHOT'
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-minecraft-extras:1.8.0-SNAPSHOT'
+
+  compileOnly 'org.incendo:cloud-paper'
+  compileOnly 'org.incendo:cloud-annotations'
+  compileOnly 'org.incendo:cloud-minecraft-extras'
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -38,7 +39,7 @@ tasks.withType(JavaCompile).configureEach {
 
 shadowJar {
   minimize {}
-  relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')
+  relocate ('org.incendo.cloud', 'com.bergerkiller.bukkit.common.dep.cloud')
   //relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
   //relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
 }
