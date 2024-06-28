@@ -2,7 +2,6 @@ package mikeshafter.iciwi.config;
 
 import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +10,6 @@ import java.util.TreeMap;
 
 
 public class Fares extends CustomConfig {
-
-public Fares (Plugin plugin) {super("fares.yml", plugin);}
 
 public Fares () {super("fares.yml");}
 

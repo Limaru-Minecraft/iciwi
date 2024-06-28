@@ -4,7 +4,6 @@ import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,9 +14,7 @@ private final YamlConfiguration config;
 protected final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final String name;
 
-public CustomConfig (String name) { this(name, Iciwi.getPlugin(Iciwi.class)); }
-
-public CustomConfig (String name, Plugin plugin) {
+public CustomConfig (String name) {
 	this.name = name;
 	file = new File(plugin.getDataFolder(), name);
 	Logger logger = plugin.getLogger();

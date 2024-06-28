@@ -215,7 +215,7 @@ public double getCardValue (String serial) {
 
 	}
 	catch (SQLException e) {
-		plugin.getLogger().warning(x.getLocalizedMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return 0d;
 	}
 }
@@ -261,7 +261,7 @@ public String[][] runSql (String sql) {
 		}
 	}
 	catch (SQLException e) {
-		plugin.getLogger().warning(x.getLocalizedMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return null;
 	}
 }

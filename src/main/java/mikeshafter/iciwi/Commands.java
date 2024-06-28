@@ -12,14 +12,13 @@ import mikeshafter.iciwi.config.Owners;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import com.bergerkiller.bukkit.common.utils.TimeUtil;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 
-@SuppressWarnings ("Unused") public class Commands {
+@SuppressWarnings ("unused") public class Commands {
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
 private final Fares fares = plugin.fares;

@@ -2,7 +2,6 @@ package mikeshafter.iciwi.config;
 
 import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,8 +11,6 @@ import java.util.*;
 
 
 public class Owners extends CustomConfig {
-
-public Owners (Plugin plugin) { super("owners.yml", plugin); }
 
 public Owners () { super("owners.yml"); }
 

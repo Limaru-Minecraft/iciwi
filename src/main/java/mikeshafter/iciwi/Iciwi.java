@@ -40,10 +40,10 @@ public Fares fares;
 public void sendAll (String message) {getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));}
 
 private void loadAllConfig () {
-	lang = new Lang(this);
-	owners = new Owners(this);
-	records = new Records(this);
-	fares = new Fares(this);
+	lang = new Lang();
+	owners = new Owners();
+	records = new Records();
+	fares = new Fares();
 
 	this.saveDefaultConfig();
 	this.getConfig().options().copyDefaults(true);
@@ -54,10 +54,10 @@ private void loadAllConfig () {
 }
 
 public void reloadAllConfig () {
-	new Lang(this).reload();
-	new Owners(this).reload();
-	new Records(this).reload();
-	new Fares(this).reload();
+	new Lang().reload();
+	new Owners().reload();
+	new Records().reload();
+	new Fares().reload();
 	reloadConfig();
 }
 
@@ -138,7 +138,7 @@ private boolean canStart () {
 
 @Override public void onEnable () {
 	if (setupEconomy() && canStart()) {
-		this.getLogger().info("\u00A7bIciwi has detected an economy and has been enabled!");
+		this.getLogger().info("§bIciwi has detected an economy and has been enabled!");
 		loadAllConfig();
 		registerCommands(new Commands());
 		loadSql();
@@ -158,5 +158,5 @@ private boolean setupEconomy () {
 
 @Override public Class<IciwiCard> getFareCardClass () {return IciwiCard.class;}
 
-@Override public void onDisable () {this.getLogger().info("\u00A7aIciwi: Made by Mineshafter61. Thanks for using!");}
+@Override public void onDisable () {this.getLogger().info("§aIciwi: Made by Mineshafter61. Thanks for using!");}
 }
