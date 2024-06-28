@@ -322,12 +322,12 @@ public int incrementAndGetCount () {
 			return 1;
 		}
 		catch (IOException ex) {
-			ex.printStackTrace();
+			plugin.getLogger().warning(ex.getLocalizedMessage());
 			return -1;
 		}
 	}
 	catch (IOException e) {
-		e.printStackTrace();
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return -1;
 	}
 }
