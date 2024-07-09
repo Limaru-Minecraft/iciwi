@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
@@ -19,7 +20,7 @@ public class Transfer extends ClosableFareGate {
 private final Lang lang = new Lang();
 private final Owners owners = new Owners();
 private static final CardSql cardSql = new CardSql();
-
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
 public Transfer() {
     super();
@@ -50,7 +51,9 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             if (icCard == null) return;
 
             // Call transfer, and if successful, open fare gate
-            if (CardUtil.transfer(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+            if (CardUtil.transfer(player, icCard, station, sign.getLocation())) {
+                super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+            }
             break;
 
         case RAIL_PASS:
@@ -68,7 +71,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
                 cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-
+                player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
     }

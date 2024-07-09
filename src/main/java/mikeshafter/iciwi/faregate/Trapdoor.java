@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.api.ClosableFareGate;
@@ -7,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.*;
@@ -65,6 +65,7 @@ public Trapdoor() {
                 cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
                 cardSql.logTicketUse(entryStation, station, fareClass);
                 player.sendMessage(String.format(lang.getString("ticket-out"), station));
+                player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
 
@@ -76,6 +77,7 @@ public Trapdoor() {
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
                 player.sendMessage(String.format(lang.getString("ticket-in"), station));
+                player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
 
@@ -117,7 +119,7 @@ public Trapdoor() {
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "trapdoor");
                 cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-
+                player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
     }

@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.CardSql;
@@ -62,6 +63,7 @@ public Exit() {
             cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
             cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
             cardSql.logTicketUse(entryStation, station, fareClass);
+            player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
             super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
         }
 
@@ -101,7 +103,7 @@ public Exit() {
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
                 cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-
+                player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }
     }

@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
@@ -48,7 +49,9 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 			if (icCard == null) return;
 
 			// Call entry, and if successful, open fare gate
-			if (CardUtil.member(player, icCard, station, sign.getLocation())) super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
+			if (CardUtil.member(player, icCard, station, sign.getLocation())) {
+				super.setCloseGateArray(CardUtil.openGate(lang.getString("Member"), signText, sign));
+			}
 			break;
 		case RAIL_PASS:
 			String name = lore.get(0);
@@ -65,7 +68,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
 				cardSql.logMaster(player.getUniqueId().toString());
 				cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
 				cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-
+				player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 				super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
 			}
 	}

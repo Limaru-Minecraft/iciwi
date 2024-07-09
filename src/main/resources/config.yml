@@ -45,6 +45,14 @@ default-ticket-price: 5.0
 ticks-to-open: 20
 ticks-to-close: 20
 
+# fare gate noises
+entry-noise: minecraft:entity.allay.item_thrown
+exit-noise: minecraft:block.amethyst_block.step
+member-noise: minecraft:entity.allay.item_thrown
+payment-noise: minecraft:block.amethyst_block.step
+classchange-noise: minecraft:entity.allay.item_thrown
+transfer-noise: minecraft:block.amethyst_block.step
+
 # custom item usage
 card:
   material: NAME_TAG

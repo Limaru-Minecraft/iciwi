@@ -5,7 +5,6 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.IciwiUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -43,7 +42,6 @@ public boolean useBottomInv () {return bottomInv;}
 @Override public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
 
 public void init (String station) {
-    //initCustomTicket(station);
     List<String> operators = this.owners.getOwners(station);
     ArrayList<Clickable> clickList = new ArrayList<>();
     boolean addCustomTickets = true;

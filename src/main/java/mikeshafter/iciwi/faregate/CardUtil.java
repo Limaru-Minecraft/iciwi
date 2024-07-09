@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.config.*;
 import mikeshafter.iciwi.CardSql;
@@ -90,6 +91,7 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 		cardSql.logPrevJourney(records.getPreviousStation(serial), records.getCurrentFare(serial), records.getClass(serial), records.getTimestamp((serial)));
 	}
 
+	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
@@ -181,6 +183,8 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 	if (finalRailPass != null) {
 		cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
 	}
+
+	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
@@ -215,6 +219,7 @@ protected static boolean member (Player player, IcCard icCard, String station, L
 			cardSql.logRailpassUse(r, owners.getRailPassPrice(r), owners.getRailPassPercentage(r), cardSql.getStart(serial, r), owners.getRailPassDuration(r), owners.getRailPassOperator(r));
 			icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
 
+			player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 			return true;
 		}
 	}
@@ -240,6 +245,7 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	if (records.getTransfer(serial)) {
 		records.setTransfer(serial, false);
 		player.sendMessage(lang.getString("transfer-cancel-osi"));
+		player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 		return true;
 	}
 
@@ -321,6 +327,7 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	if (finalRailPass != null) {
 		cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
 	}
+	player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
