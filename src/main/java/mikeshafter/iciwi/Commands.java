@@ -48,12 +48,12 @@ public class Commands {
 		return owners.getAllCompanies().stream().toList();
 	}
 
-	@Suggestions("station_list")
-	public List<String> suggestStationList(
+	@Suggestions("start_list")
+	public List<String> suggestStartList (
 			final @NonNull CommandContext<CommandSender> ctx,
 			final @NonNull String input
 	) {
-		return fares.getAllStations().stream().toList();
+		return fares.getAllStarts().stream().toList();
 	}
 
 	@Suggestions("railpass_list")
@@ -224,7 +224,7 @@ public class Commands {
 	public void owners_operator_add(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.addOwner(station, company);
@@ -238,7 +238,7 @@ public class Commands {
 	public void owners_operator_remove(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.addOwner(station, company);
@@ -252,7 +252,7 @@ public class Commands {
 	public void owners_operator_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.setOwners(station, Collections.singletonList(company));
@@ -266,7 +266,7 @@ public class Commands {
 	public void owners_operator_delete(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station
 	) {
 		owners.set("Operators." + station, null);
 		owners.save();
@@ -348,8 +348,8 @@ public class Commands {
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
 			final @NonNull @Argument(value = "fareClass") String fareClass,
 			final @NonNull @Argument(value = "price") Double price
 	) {
@@ -363,8 +363,8 @@ public class Commands {
 	public void fares_check(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @Argument(value = "end", suggestions = "station_list") String end,
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @Argument(value = "end", suggestions = "start_list") String end,
 			final @Argument(value = "fareClass") @Quoted String fareClass
 	) {
 		Set<String> s;
@@ -381,8 +381,8 @@ public class Commands {
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
 			final @NonNull @Argument(value = "fareClass") String fareClass
 	) {
 		fares.unsetFare(start, end, fareClass);
@@ -395,8 +395,8 @@ public class Commands {
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end
 	) {
 		fares.deleteJourney(start, end);
 		sender.sendMessage(formatString("All fares from %s to %s has been deleted.", start, end));
@@ -408,7 +408,7 @@ public class Commands {
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start
 	) {
 		fares.deleteStation(start);
 		sender.sendMessage(formatString("All fares to all stations from %s has been deleted.", start));
