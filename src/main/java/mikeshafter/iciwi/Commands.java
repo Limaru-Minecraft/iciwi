@@ -353,6 +353,8 @@ public class Commands {
 			final @NonNull @Argument(value = "fareClass") String fareClass,
 			final @NonNull @Argument(value = "price") Double price
 	) {
+		// Run getOwners to register station owners
+		owners.getOwners(start);
 		fares.setFare(start, end, fareClass, price);
 		sender.sendMessage(formatString("A new fare from %s to %s using the class %s has been set to: %s", start, end, fareClass, String.valueOf(price)));
 	}
@@ -392,7 +394,7 @@ public class Commands {
 	@Command("iciwi fares deletejourney <start> <end>")
 	@CommandDescription("Deletes all fares between a start and end point.")
 	@Permission("iciwi.fares.deletejourney")
-	public void fares_set(
+	public void delete_journey (
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
@@ -405,7 +407,7 @@ public class Commands {
 	@Command("iciwi fares deletestation <start>")
 	@CommandDescription("Removes a station and all its associated fares from the data.")
 	@Permission("iciwi.fares.deletestation")
-	public void fares_set(
+	public void delete_station(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "station_list") String start

@@ -15,27 +15,25 @@ public class Owners extends CustomConfig {
 public Owners () { super("owners.yml"); }
 
 /**
- Gets the owners of a station
-
+ Gets the owners of a station.
  @param station the station to query
  @return the owners of the station */
 public @NotNull List<String> getOwners (String station) {
-	List<String> ownersList = super.get().getStringList("Operators." + station);
+	List<String> ownersList = super.getStringList("Operators." + station);
 	if (ownersList.isEmpty()) {
 		String s = super.getConfigPlugin().getConfig().getString("default-operator");
-		if (s == null) setOwners(station, List.of("null"));
-		else setOwners(station, List.of(s));
-		return getOwners(station);
+		var o = s == null ? List.of("null") : List.of(s);
+		setOwners(station, o);
+		return o;
 	}
 	else return ownersList;
 }
 
 /**
  Gets all registered TOCs
-
  @return Set of all TOCs */
 public Set<String> getAllCompanies () {
-	var aliases = this.get().getConfigurationSection("Aliases");
+	var aliases = super.getConfigurationSection("Aliases");
 	return aliases == null ? new HashSet<>() : aliases.getKeys(false);
 }
 
@@ -80,12 +78,13 @@ public void withdraw (String operator, double amt) {
 }
 
 /**
+ *  Creates a rail pass using a long Unix time as its duration.
  @param name       Name of the rail pass
  @param operator   The operator who sells the rail pass
  @param duration   How long the rail pass lasts (in d:hh:mm:ss)
  @param price      Price of the rail pass
  @param percentage Percentage payable by the commuter when taking a train owned by said operator
- Creates a rail pass using a long Unix time as its duration. */
+*/
 public void setRailPassInfo (String name, String operator, long duration, double price, double percentage) {
 	super.set("RailPasses." + name + "operator", operator);
 	super.set("RailPasses." + name + "duration", timeToString(duration));
@@ -95,12 +94,13 @@ public void setRailPassInfo (String name, String operator, long duration, double
 }
 
 /**
+ * Creates a rail pass using a timestring as its duration.
  @param name       Name of the rail pass
  @param operator   The operator who sells the rail pass
  @param duration   How long the rail pass lasts (in milliseconds)
  @param price      Price of the rail pass
  @param percentage Percentage payable by the commuter
- Creates a rail pass using a timestring as its duration. */
+ */
 public void setRailPassInfo (String name, String operator, String duration, double price, double percentage) {
 	super.set("RailPasses." + name + "operator", operator);
 	super.set("RailPasses." + name + "duration", duration);
@@ -156,7 +156,7 @@ public String getRailPassOperator (String name) { return super.getString("RailPa
  @return Names of rail passes sold by the operator */
 public Set<String> getRailPassNames (String operator) {
 	// Loop through all names in RailPasses
-	ConfigurationSection railPassPrices = super.get().getConfigurationSection("RailPassPrices");
+	ConfigurationSection railPassPrices = super.getConfigurationSection("RailPassPrices");
 	// Check if the name has the given operator
 	// If it has, add it to returnSet
 	HashSet<String> h = new HashSet<>();
@@ -187,7 +187,7 @@ public Set<String> getRailPassNamesFromList (List<String> operators) {
 
  @return Set of all rail passes */
 public Set<String> getAllRailPasses () {
-	var railPasses = this.get().getConfigurationSection("RailPasses");
+	var railPasses = super.getConfigurationSection("RailPasses");
 	return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
 }
 
