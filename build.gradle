@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mikeshafter'
-version '2.20.2'
+version '2.20.301'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -13,6 +13,7 @@ repositories {
   maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
   maven { url 'https://jitpack.io' }
   maven { url 'https://oss.sonatype.org/content/groups/public/' }
+  maven { url 'https://repo.opencollab.dev/main/' }
   mavenLocal()
   mavenCentral()
 }
@@ -24,21 +25,22 @@ java { toolchain {
 dependencies {
   compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.4-v1'
+  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.6-v1'
+  compileOnly 'org.geysermc.geyser:api:2.2.0-SNAPSHOT'
 
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-paper:1.8.0-SNAPSHOT'
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-annotations:1.8.0-SNAPSHOT'
-  compileOnly 'org.bergerhealer.cloud.commandframework:cloud-minecraft-extras:1.8.0-SNAPSHOT'
+  compileOnly 'org.incendo:cloud-paper'
+  compileOnly 'org.incendo:cloud-annotations'
+  compileOnly 'org.incendo:cloud-minecraft-extras'
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << '-Xlint:unchecked'
-    //options.deprecation = true
+tasks.withType(JavaCompile).configureEach {
+  options.compilerArgs << '-Xlint:unchecked'
+  //options.deprecation = true
 }
 
 shadowJar {
   minimize {}
-  relocate ('cloud.commandframework', 'com.bergerkiller.bukkit.common.dep.cloud')
+  relocate ('org.incendo.cloud', 'com.bergerkiller.bukkit.common.dep.cloud')
   //relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
   //relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
 }

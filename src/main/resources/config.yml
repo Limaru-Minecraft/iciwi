@@ -32,11 +32,8 @@ require-entry-punch: false
 # default operator's name
 default-operator: ExampleOperator
 
-# default station for new journeys
-default-end-station: ExampleStation
-
 # default train class. An underscore prefix makes the train class only accessible by card
-default-class: Second
+default-fare-class: _Second
 
 # default ticket price. Used when creating a new fare
 default-ticket-price: 5.0
@@ -44,6 +41,14 @@ default-ticket-price: 5.0
 # glass fare gate speed
 ticks-to-open: 20
 ticks-to-close: 20
+
+# fare gate noises
+entry-noise: minecraft:entity.allay.item_thrown
+exit-noise: minecraft:block.amethyst_block.step
+member-noise: minecraft:entity.allay.item_thrown
+payment-noise: minecraft:block.amethyst_block.step
+classchange-noise: minecraft:entity.allay.item_thrown
+transfer-noise: minecraft:block.amethyst_block.step
 
 # custom item usage
 card:
@@ -54,6 +59,10 @@ ticket:
   material: PAPER
   custom-model-data: 0
 
+railpass:
+  material: BOOK
+  custom-model-data: 0
+  
 # usage passwords
 a: password
 b: password

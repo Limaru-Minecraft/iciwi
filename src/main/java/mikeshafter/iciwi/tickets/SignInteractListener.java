@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.tickets;
 
-import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.IciwiUtil;
@@ -15,12 +14,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+
 import java.util.HashMap;
 
 public class SignInteractListener implements Listener {
-private final Plugin plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang(plugin);
+private final Lang lang = new Lang();
 protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
 
 
@@ -68,8 +66,8 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 	if (event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getState() instanceof Sign sign) {
 		Player player = event.getPlayer();
 		SignSide side = sign.getSide(sign.getInteractableSideFor(player));
-		final String signLine0 = IciwiUtil.stripColor(side.getLine(0));
-		final String station = IciwiUtil.stripColor(side.getLine(1)).replaceAll("\\s+", "");
+		final String signLine0 = IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0)));
+		final String station = IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(1))).replaceAll("\\s+", "");
 
 		// === Normal ticket machine ===
 		if (signLine0.equalsIgnoreCase("[" + lang.getString("tickets") + "]")) {

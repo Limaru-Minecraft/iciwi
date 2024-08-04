@@ -1,10 +1,6 @@
 package mikeshafter.iciwi.config;
 
-import org.bukkit.plugin.Plugin;
-
 public class Records extends CustomConfig {
-
-public Records (Plugin plugin) { super("records.yml", plugin); }
 
 public Records () { super("records.yml"); }
 
@@ -36,7 +32,7 @@ public void setStation (String serial, String station) {
  @return the fare class of the journey taken by the card */
 public String getClass (String serial) {
 	String c = super.getString(serial + ".fareclass");
-	if (c.equals("")) return plugin.getConfig().getString("default-class");
+	if (c.isEmpty()) return plugin.getConfig().getString("default-class");
 	else return c;
 }
 

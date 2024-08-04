@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.FareGate;
@@ -39,6 +40,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
             final Records records = new Records();
             records.setClass(serial, newClass);
             player.sendMessage(String.format(lang.getString("class-changed"), newClass));
+            player.playSound(player, plugin.getConfig().getString("classchange-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
         }
     }
 }

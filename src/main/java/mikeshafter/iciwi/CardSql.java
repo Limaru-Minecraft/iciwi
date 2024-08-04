@@ -26,7 +26,7 @@ private Connection connect () {
 		conn = DriverManager.getConnection(Objects.requireNonNull(url));
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 	return conn;
 }
@@ -47,6 +47,7 @@ public void initTables () {
 	sql.add("CREATE TABLE IF NOT EXISTS log_journey (id INTEGER NOT NULL,subtotal real NOT NULL,total real NOT NULL,class text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_railpass_use (id INTEGER NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_member (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,station TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+	sql.add("CREATE TABLE IF NOT EXISTS log_free_pass (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,station TEXT,sign_type TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_transfer (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT NOT NULL,transfer text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_ticket_use (id INTEGER NOT NULL,entry TEXT NOT NULL,exit TEXT NOT NULL,class TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_use (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
@@ -60,7 +61,7 @@ public void initTables () {
 		for (String s : sql) statement.execute(s);
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -78,7 +79,7 @@ public void newCard (String serial, double value) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -94,7 +95,7 @@ public void deleteCard (String serial) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -114,7 +115,7 @@ public void setDiscount (String serial, String name, long start) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -147,7 +148,7 @@ public Map<String, Long> getAllDiscounts (String serial) {
 
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 
 	return returnValue;
@@ -169,7 +170,7 @@ public long getStart (String serial, String name) {
 
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return 0L;
 	}
 }
@@ -196,7 +197,7 @@ public void updateCard (String serial, double value) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -214,7 +215,7 @@ public double getCardValue (String serial) {
 
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return 0d;
 	}
 }
@@ -260,7 +261,7 @@ public String[][] runSql (String sql) {
 		}
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return null;
 	}
 }
@@ -287,13 +288,13 @@ public int getCount () {
 			writer.close();
 			return 1;
 		}
-		catch (IOException ex) {
-			ex.printStackTrace();
+		catch (IOException x) {
+			plugin.getLogger().warning(x.getLocalizedMessage());
 			return -1;
 		}
 	}
 	catch (IOException e) {
-		e.printStackTrace();
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return -1;
 	}
 }
@@ -321,12 +322,12 @@ public int incrementAndGetCount () {
 			return 1;
 		}
 		catch (IOException ex) {
-			ex.printStackTrace();
+			plugin.getLogger().warning(ex.getLocalizedMessage());
 			return -1;
 		}
 	}
 	catch (IOException e) {
-		e.printStackTrace();
+		plugin.getLogger().warning(e.getLocalizedMessage());
 		return -1;
 	}
 }
@@ -345,7 +346,7 @@ public void logMaster (String player_uuid) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -367,7 +368,7 @@ public void logEntry (int signX, int signY, int signZ, String entry) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -390,7 +391,7 @@ public void logPrevJourney (String prev_entry, double prev_fare, String prev_far
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -416,7 +417,7 @@ public void logExit (int signX, int signY, int signZ, String entry, String exit)
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -438,7 +439,7 @@ public void logJourney (double subtotal, double total, String fareClass) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -463,7 +464,35 @@ public void logMember (int signX, int signY, int signZ, String station) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
+	}
+}
+
+
+/**
+ Inserts a new log entry when players use a paper rail pass.
+ This is separate from the normal gate-specific signs as all fare gates work as member signs when a paper pass is used.
+
+ @param signX   the x coordinate of the sign
+ @param signY   the y coordinate of the sign
+ @param signZ   the z coordinate of the sign
+ @param station the station information
+ @param signType the type of sign */
+public void logFreePass (int signX, int signY, int signZ, String station, String signType) {
+	String sql = "INSERT INTO log_free_pass (id, sign_x, sign_y, sign_z, station, sign_type) VALUES ( ?, ?, ?, ?, ?, ?)";
+
+	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+		statement.setInt(1, getCount());
+
+		statement.setInt(2, signX);
+		statement.setInt(3, signY);
+		statement.setInt(4, signZ);
+		statement.setString(5, station);
+		statement.setString(6, signType);
+		statement.executeUpdate();
+	}
+	catch (SQLException e) {
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -489,7 +518,7 @@ public void logTransfer (int signX, int signY, int signZ, String entry, String t
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -516,7 +545,7 @@ public void logRailpassStore (String name, double price, double percentage, long
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -544,7 +573,7 @@ public void logRailpassUse (String name, double price, double percentage, long s
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -565,7 +594,7 @@ public void logTicketUse (String from, String to, String travelClass) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
@@ -584,7 +613,7 @@ public void logCardUse (String serial) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 	Map<String, Long> currentPasses = getAllDiscounts(serial);
 	for (var name : currentPasses.keySet()) {
@@ -609,7 +638,7 @@ public void logTicketCreate (String from, String to, String travelClass, double 
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 /**
@@ -626,7 +655,7 @@ public void logCardCreate (String serial, double value) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 /**
@@ -647,7 +676,7 @@ public void logCardTopup (String serial, double oldValue, double addedValue, dou
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 /**
@@ -674,7 +703,7 @@ public void logRailpassExtend (String serial, String name, double price, double 
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 /**
@@ -691,7 +720,7 @@ public void logCardRefund (String serial, double value) {
 		statement.executeUpdate();
 	}
 	catch (SQLException e) {
-		plugin.getServer().getConsoleSender().sendMessage(e.getMessage());
+		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 

@@ -1,5 +1,5 @@
-# This controls who owns whch company.
-# Only the owner of a company can withdraw the money from its coffers.
+# This section determines which player is the owner of which company.
+# The owner of a company is paid whenever a player uses their services.
 # The format is <company>: <owner's username>
 Aliases:
   ExampleOperator: Mineshafter61
@@ -47,5 +47,8 @@ Operators:
   ExampleStation1:
   - ExampleOperator2
 
-# DO NOT TOUCH THIS SECTION unless you know what you are doing!
-Coffers:
+# This section lets you change the type and price of a single journey ticket for each company.
+# Set the value to 0 if the operator uses the fares from the fare chart.
+TicketType:
+  ExampleOperator: 20
+  ExampleOperator1: 0

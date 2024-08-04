@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.util;
 
+import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import net.kyori.adventure.text.Component;
@@ -14,16 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class IciwiUtil {
-
-/**
- Checks if a string can be parsed as a double.
-
- @param s The string to check.
- @return Whether the string is parseable as a double. */
-public static boolean isDouble (final String s) {return Pattern.matches(("[\\x00-\\x20]*" + "[+-]?(" + "NaN|" + "Infinity|" + "((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|" + "(\\.(\\d+)([eE][+-]?(\\d+))?)|" + "((" + "(0[xX](\\p{XDigit}+)(\\.)?)|" + "(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))" + ")[pP][+-]?(\\d+)))" + "[fFdD]?))" + "[\\x00-\\x20]*"), s);}
 
 /**
  Check if any of the elements in a given array is a substring of another string.
@@ -94,6 +87,7 @@ public static List<Component> toComponents (List<String> sList) {
   }
   */
 
+
 /**
  Makes an item
 
@@ -130,6 +124,20 @@ public static int roundUp (final int n, final int r) {return ceilDiv(n, r) * r;}
  @param itemStack the item to check
  @return true if itemStack has lore, else false. */
 public static boolean loreCheck (ItemStack itemStack) {return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null;}
+
+/**
+ Checks if itemStack has lore.
+
+ @param itemStack the item to check
+ @return true if itemStack has lore, else false. */
+public static boolean loreCheck (ItemStack itemStack, int minSize) {
+	return itemStack != null &&
+		itemStack.hasItemMeta() &&
+		itemStack.getItemMeta() != null &&
+		itemStack.getItemMeta().hasLore() &&
+		itemStack.getItemMeta().lore() != null &&
+		Objects.requireNonNull(itemStack.getItemMeta().lore()).size() >= minSize;
+}
 
 /* UNUSED
  * Checks if itemStack has a displayName.
@@ -180,5 +188,22 @@ public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
 	catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 		return null;
 	}
+}
+
+public static TicketType getTicketType (ItemStack item) {
+	var m = item.getType().toString();
+	var i = item.getItemMeta().getCustomModelData();
+	var c = Iciwi.getPlugin(Iciwi.class).getConfig();
+
+	if (m.equalsIgnoreCase(c.getString("ticket.material")) && i == c.getInt("ticket.custom-model-data")) {
+		return TicketType.TICKET;
+	}
+	else if (m.equalsIgnoreCase(c.getString("card.material")) && i == c.getInt("card.custom-model-data")) {
+		return TicketType.CARD;
+	}
+	else if (m.equalsIgnoreCase(c.getString("railpass.material")) && i == c.getInt("railpass.custom-model-data")) {
+		return TicketType.RAIL_PASS;
+	}
+	else throw new EnumConstantNotPresentException(TicketType.class, m);
 }
 }

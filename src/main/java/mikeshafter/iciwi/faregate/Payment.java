@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.FareGate;
@@ -42,6 +43,7 @@ public class Payment extends FareGate {
 
 			// If there is no card, pay with cash
 			else payCash(player, price);
+			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 		}
 
 		// Deposit money into owner's bank account

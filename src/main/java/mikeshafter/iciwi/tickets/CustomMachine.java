@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.tickets;
 
+import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
@@ -7,13 +8,11 @@ import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
-import mikeshafter.iciwi.util.InputDialogSubmitText;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import mikeshafter.iciwi.CardSql;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -39,7 +38,6 @@ public CustomMachine (Player player, String station) {
 	this.station = station;
 	final Set<String> stationList = fares.getDestinations(station);
 	Listener listener = new EventListener();
-	CardSql cardSql = new CardSql();
 	var submitText = new InputDialogSubmitText(plugin, player) {
 
 		@Override public void onTextChanged () {
@@ -185,18 +183,6 @@ private class EventListener implements Listener {
 public String[] relevanceSort (String pattern, String[] values) {
 	Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
 	return values;
-}
-
-/**
- Puts the items of a clickable[] into an inventory.
-
- @param clickables The clickable[] stated above.
- @param inventory  The inventory stated above. */
-private void setItems (Clickable[] clickables, Inventory inventory) {
-	ItemStack[] items = new ItemStack[clickables.length];
-	for (int i = 0; i < clickables.length; i++)
-		if (clickables[i] != null) items[i] = clickables[i].getItem();
-	inventory.setStorageContents(items);
 }
 
 /**
