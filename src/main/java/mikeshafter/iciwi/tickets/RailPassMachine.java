@@ -14,8 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
-import java.lang.Runnable ;
-import java.util.function.Function;
+import java.lang.Runnable;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class RailPassMachine implements Machine {
@@ -48,7 +47,7 @@ public class RailPassMachine implements Machine {
         this.operators = this.owners.getOwners(station);
 
         // setup inventory
-        inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("railpass-machine"));
+        inv = this.plugin.getServer().createInventory(null, 9, this.lang.getComponent("ticket-machine"));
         this.clickables = new Clickable[9];
 
         // Create buttons
@@ -60,6 +59,9 @@ public class RailPassMachine implements Machine {
             makeItem(Material.NAME_TAG, 0, this.lang.getComponent("menu-insert-card"), Component.text("Apply a rail pass onto your card")),
             (event) -> selectCard()
         );
+
+        setItems(clickables, inv);
+        player.openInventory(inv);
     }
 
     // card selection menu. player clicks in their own inventory to select a card
@@ -81,16 +83,16 @@ public class RailPassMachine implements Machine {
         this.operators.forEach((o) -> railPassNames.addAll(this.owners.getRailPassNames(o)));
         
         int invSize = (railPassNames.size() / 9 + 1) * 9;
-        inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
+        this.inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
         clickables = new Clickable[invSize];
 
         // create all rail pass buttons
-        for (int i = 0; i <= railPassNames.size(); i++) {
+        for (int i = 0; i < railPassNames.size(); i++) {
+            String rpName = railPassNames.get(i);
             clickables[i] = Clickable.of(
-                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i)), Component.text(this.owners.getRailPassPrice(railPassNames.get(i)))),
+                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))),
                 (event) -> {
-                String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
-                double price = this.owners.getRailPassPrice(name);
+                double price = this.owners.getRailPassPrice(rpName);
 
                 if (Iciwi.economy.getBalance(this.player) >= price) {
                     // take money from player
@@ -106,13 +108,13 @@ public class RailPassMachine implements Machine {
                     <name>
                     <expiry>
                      */
-                    ItemStack item = makeItem(material, customModelData, lang.getComponent("paper-rail-pass"), Component.text(name), Component.text(String.valueOf(time + this.owners.getRailPassDuration(name))));
+                    ItemStack item = makeItem(material, customModelData, lang.getComponent("paper-rail-pass"), Component.text(rpName), Component.text(String.valueOf(time + this.owners.getRailPassDuration(rpName))));
 
                     // give it to the player
                     this.player.getInventory().addItem(item);
 
                     // pay the TOC
-                    this.owners.deposit(this.owners.getRailPassOperator(name), price);
+                    this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
                     // todo: log the transaction
                     this.cardSql.logMaster(this.player.getUniqueId().toString());
@@ -123,6 +125,8 @@ public class RailPassMachine implements Machine {
                 this.player.closeInventory();
             });
         }
+        setItems(clickables, inv);
+        this.player.openInventory(this.inv);
     }
 
     // rail pass menu
@@ -170,35 +174,35 @@ public class RailPassMachine implements Machine {
         });
 
         // create all rail pass buttons
-        for (int i = 1; i <= railPassNames.size(); i++) {
+        for (int i = 1; i < railPassNames.size(); i++) {
+            String rpName = railPassNames.get(i);
             this.clickables[i] = Clickable.of(
-                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(railPassNames.get(i)), Component.text(this.owners.getRailPassPrice(railPassNames.get(i)))),
+                makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))),
                 (event) -> {
-                String name = parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName());
-                double price = this.owners.getRailPassPrice(name);
+                double price = this.owners.getRailPassPrice(rpName);
 
                 if (Iciwi.economy.getBalance(this.player) >= price) {
                     // take money from player
                     Iciwi.economy.withdrawPlayer(this.player, price);
 
                     // check if the card already has the rail pass
-                    if (this.cardSql.getAllDiscounts(serial).containsKey(name)) {
+                    if (this.cardSql.getAllDiscounts(serial).containsKey(rpName)) {
                         // Extend existing rail pass
-                        icCard.setRailPass(name, icCard.getExpiry(name));
-                        this.player.sendMessage(this.lang.getString("extended-rail-pass"));
+                        icCard.setRailPass(rpName, icCard.getExpiry(rpName));
+                        this.player.sendMessage(String.format(this.lang.getString("extended-rail-pass"), rpName, this.owners.getRailPassPrice(rpName)));
                     }
                     else {
                         // New rail pass
-                        icCard.setRailPass(name, System.currentTimeMillis());
-                        this.player.sendMessage(this.lang.getString("added-rail-pass"));
+                        icCard.setRailPass(rpName, System.currentTimeMillis());
+                        this.player.sendMessage(String.format(this.lang.getString("added-rail-pass"), rpName, this.owners.getRailPassPrice(rpName)));
                     }
 
                     // pay the TOC
-                    this.owners.deposit(this.owners.getRailPassOperator(name), price);
+                    this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
                     // in any case, log into railpassExtend
                     this.cardSql.logMaster(this.player.getUniqueId().toString());
-                    this.cardSql.logRailpassExtend(serial, name, this.owners.getRailPassPrice(name), this.owners.getRailPassPercentage(name), this.cardSql.getStart(serial, name), this.owners.getRailPassDuration(name), this.owners.getRailPassOperator(name));
+                    this.cardSql.logRailpassExtend(serial, rpName, this.owners.getRailPassPrice(rpName), this.owners.getRailPassPercentage(rpName), this.cardSql.getStart(serial, rpName), this.owners.getRailPassDuration(rpName), this.owners.getRailPassOperator(rpName));
                 }
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
@@ -208,7 +212,7 @@ public class RailPassMachine implements Machine {
         }
 
         // set items and open inventory
-        this.inv = setItems(this.clickables, this.inv);
+        setItems(this.clickables, this.inv);
         this.player.openInventory(this.inv);
 
     }
@@ -220,17 +224,6 @@ public class RailPassMachine implements Machine {
     @Override public void setSelectedItem (ItemStack selectedItem) { this.selectedItem = selectedItem; }
 
     @Override public ItemStack getSelectedItem () { return this.selectedItem; }
-
-    // puts the items of a clickable[] into an inventory
-    public Inventory setItems (Clickable[] clickables, Inventory inventory) {
-        Function<Clickable[], ItemStack[]> getItems = (c) -> {
-            ItemStack[] items = new ItemStack[c.length];
-            for (int i = 0; i < c.length; i++) if (c[i] != null) items[i] = c[i].getItem();
-            return items;
-        };
-        inventory.setStorageContents(getItems.apply(clickables));
-        return inventory;
-    }
 
     @Override public void setBottomInv (boolean b) { this.bottomInv = b; }
 }

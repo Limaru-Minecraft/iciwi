@@ -119,6 +119,7 @@ public Trapdoor() {
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "trapdoor");
                 cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
+                player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
                 player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
                 super.setCloseGateArray(CardUtil.openGate(lang.getString("faregate"), signText, sign));
             }

@@ -64,7 +64,7 @@ public void init (String station) {
 	// New card
     clickList.add(
         Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
         })
     );
@@ -72,7 +72,7 @@ public void init (String station) {
 	// Select card
     clickList.add(
         Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
+            SignInteractListener.machineHashMap.put(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
         })
     );
@@ -110,10 +110,9 @@ protected void generateOperatorTicket (String owner) {
 	int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
 	// log into IcLogger
-
 	cardSql.logMaster(player.getUniqueId().toString());
-
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:"+owner), Component.text("C:"+owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
+	player.closeInventory();
 }
 
 // initial menu
@@ -173,16 +172,8 @@ private Clickable[] justify (int n, ArrayList<Clickable> items) {
     return arr;
 }
 	
-/**
- Puts the items of a clickable[] into an inventory.
- @param clickables The clickable[] stated above.
- @param inventory  The inventory stated above. */
-private void setItems (Clickable[] clickables, Inventory inventory) {
-	ItemStack[] items = new ItemStack[clickables.length];
-	for (int i = 0; i < clickables.length; i++)
-		if (clickables[i] != null) items[i] = clickables[i].getItem();
-	inventory.setStorageContents(items);
-}
+
+
 
 @Override public void setBottomInv (boolean b) {this.bottomInv = b;}
 

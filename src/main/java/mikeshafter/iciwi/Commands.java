@@ -178,15 +178,15 @@ public class Commands {
 		sender.sendMessage("Set the duration for which the gates are still open after a player walks through.");
 	}
 
-	@Command("iciwi defaultfareClass <fareClassname>")
+	@Command("iciwi defaultfareClass <fareclass>")
 	@CommandDescription("Sets the fare fareClass used by default when card payment is used.")
-	@Permission("iciwi.defaultfareClass")
-	public void defaultfareClass(
+	@Permission("iciwi.defaultfareclass")
+	public void default_fare_class(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "fareClassname") String fareClassname
+			final @NonNull @Argument(value = "fareclass") String c
 	) {
-		plugin.getConfig().set("default-fareClass", fareClassname);
+		plugin.getConfig().set("default-fare-class", c);
 		plugin.saveConfig();
 		sender.sendMessage("Set the default train fareClass.");
 	}
@@ -241,7 +241,7 @@ public class Commands {
 			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
-		owners.addOwner(station, company);
+		owners.removeOwner(station, company);
 		owners.save();
 		sender.sendMessage(formatString("%s no longer operates %s.", company, station));
 	}
@@ -380,7 +380,7 @@ public class Commands {
 	@Command("iciwi fares unset <start> <end> <fareClass>")
 	@CommandDescription("Deletes a fare.")
 	@Permission("iciwi.fares.unset")
-	public void fares_set(
+	public void fares_unset(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,

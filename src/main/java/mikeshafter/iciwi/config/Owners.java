@@ -86,10 +86,10 @@ public void withdraw (String operator, double amt) {
  @param percentage Percentage payable by the commuter when taking a train owned by said operator
 */
 public void setRailPassInfo (String name, String operator, long duration, double price, double percentage) {
-	super.set("RailPasses." + name + "operator", operator);
-	super.set("RailPasses." + name + "duration", timeToString(duration));
-	super.set("RailPasses." + name + "price", price);
-	super.set("RailPasses." + name + "percentage", percentage);
+	super.set(toPath("RailPasses", name, "operator"), operator);
+	super.set(toPath("RailPasses", name, "duration"), timeToString(duration));
+	super.set(toPath("RailPasses", name, "price"), price);
+	super.set(toPath("RailPasses", name, "percentage"), percentage);
 	super.save();
 }
 
@@ -102,10 +102,10 @@ public void setRailPassInfo (String name, String operator, long duration, double
  @param percentage Percentage payable by the commuter
  */
 public void setRailPassInfo (String name, String operator, String duration, double price, double percentage) {
-	super.set("RailPasses." + name + "operator", operator);
-	super.set("RailPasses." + name + "duration", duration);
-	super.set("RailPasses." + name + "price", price);
-	super.set("RailPasses." + name + "percentage", percentage);
+	super.set(toPath("RailPasses", name, "operator"), operator);
+	super.set(toPath("RailPasses", name, "duration"), duration);
+	super.set(toPath("RailPasses", name, "price"), price);
+	super.set(toPath("RailPasses", name, "percentage"), percentage);
 	super.save();
 }
 
@@ -117,7 +117,7 @@ private String timeToString (long time) {
 /**
  @param name Name of the rail pass
  @return How long the rail pass lasts */
-public long getRailPassDuration (String name) { return timeToLong(super.getString("RailPassPrices." + name + "duration")); }
+public long getRailPassDuration (String name) { return timeToLong(super.getString(toPath("RailPasses", name, "duration"))); }
 
 private long timeToLong (String time) {
 	try {
@@ -133,21 +133,21 @@ private long timeToLong (String time) {
 
  @param name Name of the rail pass
  @return Percentage payable by the commuter */
-public double getRailPassPercentage (String name) { return super.getDouble("RailPassPrices." + name + "percentage") ;}
+public double getRailPassPercentage (String name) { return super.getDouble(toPath("RailPasses", name, "percentage")) ;}
 
 /**
  Get the price of the rail pass
 
  @param name Name of the rail pass
  @return Price of the rail pass */
-public double getRailPassPrice (String name) { return super.getDouble("RailPassPrices." + name + "price") ;}
+public double getRailPassPrice (String name) { return super.getDouble(toPath("RailPasses", name, "price")) ;}
 
 /**
  Get the operator who sells the rail pass
 
  @param name Name of the rail pass
  @return The operator who sells the rail pass */
-public String getRailPassOperator (String name) { return super.getString("RailPassPrices." + name + "operator"); }
+public String getRailPassOperator (String name) { return super.getString(toPath("RailPasses", name, "operator")); }
 
 /**
  Get the name of the rail pass that is sold by the operator
@@ -156,7 +156,7 @@ public String getRailPassOperator (String name) { return super.getString("RailPa
  @return Names of rail passes sold by the operator */
 public Set<String> getRailPassNames (String operator) {
 	// Loop through all names in RailPasses
-	ConfigurationSection railPassPrices = super.getConfigurationSection("RailPassPrices");
+	ConfigurationSection railPassPrices = super.getConfigurationSection("RailPasses");
 	// Check if the name has the given operator
 	// If it has, add it to returnSet
 	HashSet<String> h = new HashSet<>();

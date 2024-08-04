@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'mikeshafter'
-version '2.20.300'
+version '2.20.301'
 
 compileJava.options.encoding 'UTF-8'
 

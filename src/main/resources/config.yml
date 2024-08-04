@@ -33,7 +33,7 @@ require-entry-punch: false
 default-operator: ExampleOperator
 
 # default train class. An underscore prefix makes the train class only accessible by card
-default-class: _Second
+default-fare-class: _Second
 
 # default ticket price. Used when creating a new fare
 default-ticket-price: 5.0
@@ -60,7 +60,7 @@ ticket:
   custom-model-data: 0
 
 railpass:
-  material: FILLED_MAP
+  material: BOOK
   custom-model-data: 0
   
 # usage passwords

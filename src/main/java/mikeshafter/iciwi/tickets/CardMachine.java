@@ -36,10 +36,9 @@ private final Lang lang = plugin.lang;
 
 // Constructor and Menu Display
 public CardMachine (Player player) {this.player = player;}
-public CardMachine (Player player, ItemStack selectedItem, List<String> operators) {
+public CardMachine (Player player, String station) {
 	this.player = player;
-	this.selectedItem = selectedItem;
-	this.operators = operators;
+	this.operators = this.owners.getOwners(station);
 }
 
 // getters
@@ -65,7 +64,7 @@ public void init (String station) {
 	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
 
 	// Get operators
-	operators = this.owners.getOwners(station);
+	this.operators = this.owners.getOwners(station);
 	// Set items
 	setItems(clickables, inv);
 	// Start listening and open inventory
@@ -223,7 +222,7 @@ public void refundCard (ItemStack item) {
 	String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
 	for (ItemStack itemStack : player.getInventory().getContents()) {
 		// check if the lore matches
-		if (loreCheck(itemStack) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
+		if (loreCheck(itemStack, 2) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
 
 			// get remaining value
 			double remainingValue = this.cardSql.getCardValue(serial);
@@ -251,18 +250,6 @@ public void refundCard (ItemStack item) {
 			break;
 		}
 	}
-}
-
-/**
- Puts the items of a clickable[] into an inventory.
-
- @param clickables The clickable[] stated above.
- @param inventory  The inventory stated above. */
-private void setItems (Clickable[] clickables, Inventory inventory) {
-	ItemStack[] items = new ItemStack[clickables.length];
-	for (int i = 0; i < clickables.length; i++)
-		if (clickables[i] != null) items[i] = clickables[i].getItem();
-	inventory.setStorageContents(items);
 }
 
 @Override public void setBottomInv (boolean b) {this.bottomInv = b;}

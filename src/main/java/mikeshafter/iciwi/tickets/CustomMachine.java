@@ -186,18 +186,6 @@ public String[] relevanceSort (String pattern, String[] values) {
 }
 
 /**
- Puts the items of a clickable[] into an inventory.
-
- @param clickables The clickable[] stated above.
- @param inventory  The inventory stated above. */
-private void setItems (Clickable[] clickables, Inventory inventory) {
-	ItemStack[] items = new ItemStack[clickables.length];
-	for (int i = 0; i < clickables.length; i++)
-		if (clickables[i] != null) items[i] = clickables[i].getItem();
-	inventory.setStorageContents(items);
-}
-
-/**
  Relevance function
 
  @param pattern The pattern (search) term
