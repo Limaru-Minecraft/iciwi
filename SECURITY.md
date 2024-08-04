@@ -9,4 +9,4 @@
 
 ## Reporting a Vulnerability
 
-Opening an issue using Github is the fastest way to reach me. Alternatively, you may open a ticket in the Limaru (preferred), Sunrise, Feria, Noctora or Harlon discords.
+Opening an issue using Github is the fastest way to reach me. Alternatively, you may open a ticket in the Limaru, Trinity or Sylvarion discords.
