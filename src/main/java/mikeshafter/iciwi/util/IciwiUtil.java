@@ -18,13 +18,6 @@ import java.util.*;
 
 public class IciwiUtil {
 
-///**
-// Checks if a string can be parsed as a double.
-//
-// @param s The string to check.
-// @return Whether the string is parseable as a double. */
-//public static boolean isDouble (final String s) {return Pattern.matches(("[\\x00-\\x20]*" + "[+-]?(" + "NaN|" + "Infinity|" + "((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|" + "(\\.(\\d+)([eE][+-]?(\\d+))?)|" + "((" + "(0[xX](\\p{XDigit}+)(\\.)?)|" + "(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+))" + ")[pP][+-]?(\\d+)))" + "[fFdD]?))" + "[\\x00-\\x20]*"), s);}
-
 /**
  Check if any of the elements in a given array is a substring of another string.
 
@@ -94,10 +87,6 @@ public static List<Component> toComponents (List<String> sList) {
   }
   */
 
-//private static boolean checkDiv2 (int n) {
-//    return ((n >> 1) << 1) == n;
-//}
-
 
 /**
  Makes an item
@@ -135,6 +124,20 @@ public static int roundUp (final int n, final int r) {return ceilDiv(n, r) * r;}
  @param itemStack the item to check
  @return true if itemStack has lore, else false. */
 public static boolean loreCheck (ItemStack itemStack) {return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null;}
+
+/**
+ Checks if itemStack has lore.
+
+ @param itemStack the item to check
+ @return true if itemStack has lore, else false. */
+public static boolean loreCheck (ItemStack itemStack, int minSize) {
+	return itemStack != null &&
+		itemStack.hasItemMeta() &&
+		itemStack.getItemMeta() != null &&
+		itemStack.getItemMeta().hasLore() &&
+		itemStack.getItemMeta().lore() != null &&
+		Objects.requireNonNull(itemStack.getItemMeta().lore()).size() >= minSize;
+}
 
 /* UNUSED
  * Checks if itemStack has a displayName.
