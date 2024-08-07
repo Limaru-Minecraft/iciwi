@@ -56,6 +56,14 @@ public class Commands {
 		return fares.getAllStarts().stream().toList();
 	}
 
+@Suggestions("fareclass_list")
+public List<String> suggestClassList(
+	final @NonNull CommandContext<CommandSender> ctx,
+	final @NonNull String input
+) {
+	return fares.getAllClasses().stream().toList();
+}
+
 	@Suggestions("railpass_list")
 	public List<String> suggestRailPassList(
 			final @NonNull CommandContext<CommandSender> ctx,
@@ -184,7 +192,7 @@ public class Commands {
 	public void default_fare_class(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "fareclass") String c
+			final @NonNull @Argument(value = "fareclass", suggestions = "fareclass_list") String c
 	) {
 		plugin.getConfig().set("default-fare-class", c);
 		plugin.saveConfig();
@@ -350,7 +358,7 @@ public class Commands {
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
 			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass,
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass,
 			final @NonNull @Argument(value = "price") Double price
 	) {
 		// Run getOwners to register station owners
@@ -367,7 +375,7 @@ public class Commands {
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
 			final @Argument(value = "end", suggestions = "start_list") String end,
-			final @Argument(value = "fareClass") @Quoted String fareClass
+			final @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		Set<String> s;
 		if (end == null) s = fares.getDestinations(start);
@@ -385,7 +393,7 @@ public class Commands {
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
 			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		fares.unsetFare(start, end, fareClass);
 		sender.sendMessage(formatString("The fare from %s to %s using the class %s has been deleted.", start, end, fareClass));
