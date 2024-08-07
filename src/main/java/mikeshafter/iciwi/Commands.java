@@ -1,6 +1,7 @@
 package mikeshafter.iciwi;
 
 import com.bergerkiller.bukkit.common.cloud.CloudSimpleHandler;
+import org.bukkit.entity.Player;
 import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -63,6 +64,14 @@ public class Commands {
 	) {
 		return owners.getAllRailPasses().stream().toList();
 	}
+
+@Suggestions("player_list")
+public List<String> suggestPlayerList(
+	final @NonNull CommandContext<CommandSender> ctx,
+	final @NonNull String input
+) {
+	return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+}
 
 	@Command("iciwi reload")
 	@CommandDescription("Reloads all configuration files")
@@ -198,7 +207,7 @@ public class Commands {
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
-			final @NonNull @Argument(value = "username") String username
+			final @NonNull @Argument(value = "username", suggestions = "player_list") String username
 	) {
 		owners.set("Aliases." + company, username);
 		owners.save();
@@ -273,7 +282,24 @@ public class Commands {
 		sender.sendMessage(formatString("No company is now operating %s.", station));
 	}
 
-	@Command("iciwi owners railpass <name> operator <company>")
+@Command("iciwi railpass set <name> <company>")
+@CommandDescription("Sets the rail company that owns the given railpass.")
+@Permission("iciwi.owners.railpass")
+public void owners_railpass_set(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "name") String name,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "duration") String duration,
+	final @NonNull @Argument(value = "amount") Double price,
+	final @NonNull @Argument(value = "paidpercentage") Double pp
+) {
+	owners.setRailPassInfo(name, company, duration, price, pp);
+	owners.save();
+	sender.sendMessage(formatString("New rail pass created!"));
+}
+
+	@Command("iciwi railpass edit <name> operator <company>")
 	@CommandDescription("Sets the rail company that owns the given railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_operator(
@@ -287,21 +313,21 @@ public class Commands {
 		sender.sendMessage(formatString("The railpass %s is now owned by %s", name, company));
 	}
 
-	@Command("iciwi owners railpass <name> duration <duration>")
+	@Command("iciwi railpass edit <name> duration <duration>")
 	@CommandDescription("Sets the duration that the given railpass is active.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_duration(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-			final @NonNull @Argument(value = "duration") Long duration
+			final @NonNull @Argument(value = "duration") String duration
 	) {
 		owners.set("RailPasses." + name + ".duration", duration);
 		owners.save();
-		sender.sendMessage(formatString("The duration of railpass %s is now %s", name, String.valueOf(duration)));
+		sender.sendMessage(formatString("The duration of railpass %s is now %s", name, duration));
 	}
 
-	@Command("iciwi owners railpass <name> price <amount>")
+	@Command("iciwi railpass edit <name> price <amount>")
 	@CommandDescription("Sets the price of the given railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_price(
@@ -315,7 +341,7 @@ public class Commands {
 		sender.sendMessage(formatString("The price of railpass %s is now %s", name, String.valueOf(price)));
 	}
 
-	@Command("iciwi owners railpass <name> percentage <paidpercentage>")
+	@Command("iciwi railpass edit <name> percentage <paidpercentage>")
 	@CommandDescription("Sets the percentage paid by the card holder when they use the railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_percentage(
@@ -329,7 +355,7 @@ public class Commands {
 		sender.sendMessage(formatString("The payment percentage of railpass %s is now %s", name, String.valueOf(pp)));
 	}
 
-	@Command("iciwi owners railpass <name> delete")
+	@Command("iciwi railpass delete <name>")
 	@CommandDescription("Deletes a railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_delete(
