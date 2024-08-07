@@ -51,6 +51,7 @@ public YamlConfiguration get () {
 	return config;
 }
 
+
  /**
  * @see YamlConfiguration#get(String)
  */

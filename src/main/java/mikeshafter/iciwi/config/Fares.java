@@ -1,111 +1,114 @@
 package mikeshafter.iciwi.config;
 
-import mikeshafter.iciwi.Iciwi;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
-
+// New fares: <class>.<start>.<end>
 public class Fares extends CustomConfig {
 
 public Fares () {super("fares.yml");}
 
-public Set<String> getAllStations () {return this.get().getKeys(false);}
+public Set<String> getAllClasses () {return this.get().getKeys(false);}
 
 /**
  Remove a fare from fares.yml
- @param from      Starting station
- @param to        Ending station
- @param fareClass Fare class
+ @param f Starting station
+ @param e Ending station
+ @param c Fare class
  */
-public void unsetFare (String from, String to, String fareClass) {
-	super.set(from + "." + to + "." + fareClass, null);
+public void unsetFare (String f, String e, String c) {
+	super.set(toPath(c, f, e), null);
+	super.save();
+}
+
+/**
+ Remove all fares from a station given a fare class
+ @param c fare class
+ @param f starting station
+ */
+public void deleteStationFromClass (String c, String f) {
+	super.set(toPath(c, f), null);
+	super.save();
+}
+
+/**
+ Remove all fares belonging to a fare class.
+ @param c fare class
+ */
+public void deleteClass (String c) {
+	super.set(c, null);
 	super.save();
 }
 
 /**
  Remove all fares between two stations from fares.yml
- @param from Starting station
- @param to   Ending station
+ @param f Starting station
+ @param e Ending station
  */
-public void deleteJourney (String from, String to) {
-	super.set(from + "." + to, null);
+public void deleteJourney (String f, String e) {
+	for (var c : getAllClasses())
+		super.set(toPath(c, f, e), null);
 	super.save();
 }
 
 /**
  Remove all fares starting from a specified station from fares.yml
- @param station Station
+ @param f Station
  */
-public void deleteStation (String station) {
-	super.set(station, null);
+public void deleteStation (String f) {
+	for (var c : getAllClasses())
+		super.set(toPath(c, f), null);
 	super.save();
 }
 
 /**
  Set a fare to fares.yml
- @param from      Starting station
- @param to        Ending station
- @param fareClass Fare class
- @param price     Price to set
+ @param f Starting station
+ @param e Ending station
+ @param c Fare class
+ @param price Price to set
  */
-public void setFare (String from, String to, String fareClass, double price) {
-	super.set(from + "." + to + "." + fareClass, price);
+public void setFare (String f, String e, String c, double price) {
+	super.set(toPath(c, f, e), price);
 	super.save();
 }
 
 /**
  Get the corresponding fare if the player pays by card
- @param from                  Starting station
- @param to                    Ending station
- @param fareClassNoUnderscore Fare class, without the starting underscore
+ @param f Starting station
+ @param e Ending station
+ @param cSans_ Fare class, without the starting underscore
  @return Fare
  */
-public double getCardFare (String from, String to, String fareClassNoUnderscore) {
-	if (fareClassNoUnderscore.indexOf("_") == 0) fareClassNoUnderscore = fareClassNoUnderscore.substring(1);
-	final double fare = this.getDouble(from + "." + to + "._" + fareClassNoUnderscore);
-	if (fare == 0d) return this.getDouble(from + "." + to + "." + fareClassNoUnderscore);
+public double getCardFare (String f, String e, String cSans_) {
+	if (cSans_.indexOf("_") == 0) cSans_ = cSans_.substring(1);
+	final double fare = this.getDouble(toPath("_" + cSans_, f, e));
+	if (fare == 0d) return this.getDouble(toPath(cSans_, f, e));
 	else return fare;
 }
 
 /**
  Get the corresponding fare if the player pays by cash
- @param from      Starting station
- @param to        Ending station
- @param fareClass Fare class
+ @param f Starting station
+ @param e Ending station
+ @param c Fare class
  @return Fare
  */
-public double getFare (String from, String to, String fareClass) {return this.getDouble(from + "." + to + "." + fareClass);}
-
-/**
- Get the corresponding fare using the default train class
- @param from Starting station
- @param to   Ending station
- @return Fare
- */
-@Deprecated public double getFare (String from, String to) {return getFare(from, to, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));}
-
-/**
- Get all fares starting from a certain station
- @param station Starting station
- @return Fare
- */
-@Deprecated public Map<String, Double> getFares (String station) {return getFares(station, Iciwi.getPlugin(Iciwi.class).getConfig().getString("default-class"));}
+public double getFare (String f, String e, String c) {return this.getDouble(toPath(c, f, e));}
 
 /**
  Get all fares starting from a certain station, with the specified class
- @param from      Starting station
- @param fareClass Fare class
- @return Fare
+ @param f Starting station
+ @param c Fare class
+ @return A treemap in the format ENDPOINT, PRICE
  */
-public Map<String, Double> getFares (String from, String fareClass) {
-	ConfigurationSection section = this.get().getConfigurationSection(from);
+public TreeMap<String, Double> getFares (String f, String c) {
+	ConfigurationSection section = this.getConfigurationSection(toPath(c, f));
 	if (section != null) {
-		var fareMap = new HashMap<String, Double>();
-		section.getKeys(false).forEach(to -> fareMap.put(to, this.getDouble(from + "." + to + "." + fareClass)));
+		var fareMap = new TreeMap<String, Double>();
+
+		section.getKeys(false).forEach(e -> fareMap.put(e, section.getDouble(e, 0d)));
 		return fareMap;
 	}
 	else return null;
@@ -113,39 +116,56 @@ public Map<String, Double> getFares (String from, String fareClass) {
 
 /**
  Get all fares starting from a certain station and ending at another station.
- @param from Starting station
- @param to   Ending station
+ @param f Starting station
+ @param e Ending station
  @return Fare
  */
-public TreeMap<String, Double> getFaresFromDestinations (String from, String to) {
-	ConfigurationSection section = this.get().getConfigurationSection(from + "." + to);
-	if (section != null) {
-		var fareMap = new TreeMap<String, Double>();
-
-		section.getKeys(false).forEach(fareClass -> fareMap.put(fareClass, this.getDouble(from + "." + to + "." + fareClass)));
-		return fareMap;
+public TreeMap<String, Double> getFaresFromDestinations (String f, String e) {
+	var fareMap = new TreeMap<String, Double>();
+	for (var c : getAllClasses()) {
+		if (getFare(f, e, c) > 0d)
+			fareMap.put(c, getFare(f, e, c));
 	}
-	else return null;
+	return fareMap;
 }
 
 /**
  Get all fare classes starting from a certain station and ending at another station.
- @param from Starting station
- @param to   Ending station
+ @param f Starting station
+ @param e   Ending station
  @return Fare classes
  */
-public Set<String> getClasses (String from, String to) {
-	ConfigurationSection section = this.get().getConfigurationSection(from + "." + to);
-	return section == null ? null : section.getKeys(false);
+public TreeSet<String> getClasses (String f, String e) {
+	var set = new TreeSet<String>();
+	for (var c : getAllClasses()) {
+		if (getFare(f, e, c) > 0d)
+			set.add(c);
+	}
+	return set;
 }
 
 /**
  Get all end stations starting from a certain station.
- @param from Starting station
+ @param f Starting station
  @return Fare classes
  */
-public Set<String> getDestinations (String from) {
-	ConfigurationSection section = this.get().getConfigurationSection(from);
-	return section == null ? null : section.getKeys(false);
+public TreeSet<String> getDestinations (String f) {
+	var set = new TreeSet<String>();
+	for (var c : getAllClasses()) {
+		set.addAll(super.getConfigurationSection(toPath(c, f)).getKeys(false));
+	}
+	return set;
+}
+
+/**
+ Get all starting stations starting from a certain station.
+ @return All starting stations
+ */
+public Set<String> getAllStarts () {
+	var set = new TreeSet<String>();
+	for (var c : getAllClasses()) {
+		set.addAll(super.getConfigurationSection(c).getKeys(false));
+	}
+	return set;
 }
 }

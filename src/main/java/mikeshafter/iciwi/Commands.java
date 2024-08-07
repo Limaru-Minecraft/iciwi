@@ -49,13 +49,21 @@ public class Commands {
 		return owners.getAllCompanies().stream().toList();
 	}
 
-	@Suggestions("station_list")
-	public List<String> suggestStationList(
+	@Suggestions("start_list")
+	public List<String> suggestStartList (
 			final @NonNull CommandContext<CommandSender> ctx,
 			final @NonNull String input
 	) {
-		return fares.getAllStations().stream().toList();
+		return fares.getAllStarts().stream().toList();
 	}
+
+@Suggestions("fareclass_list")
+public List<String> suggestClassList(
+	final @NonNull CommandContext<CommandSender> ctx,
+	final @NonNull String input
+) {
+	return fares.getAllClasses().stream().toList();
+}
 
 	@Suggestions("railpass_list")
 	public List<String> suggestRailPassList(
@@ -193,7 +201,7 @@ public List<String> suggestPlayerList(
 	public void default_fare_class(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "fareclass") String c
+			final @NonNull @Argument(value = "fareclass", suggestions = "fareclass_list") String c
 	) {
 		plugin.getConfig().set("default-fare-class", c);
 		plugin.saveConfig();
@@ -233,7 +241,7 @@ public List<String> suggestPlayerList(
 	public void owners_operator_add(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.addOwner(station, company);
@@ -247,7 +255,7 @@ public List<String> suggestPlayerList(
 	public void owners_operator_remove(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.removeOwner(station, company);
@@ -261,7 +269,7 @@ public List<String> suggestPlayerList(
 	public void owners_operator_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.setOwners(station, Collections.singletonList(company));
@@ -275,7 +283,7 @@ public List<String> suggestPlayerList(
 	public void owners_operator_delete(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station
 	) {
 		owners.set("Operators." + station, null);
 		owners.save();
@@ -374,9 +382,9 @@ public void owners_railpass_set(
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass,
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass,
 			final @NonNull @Argument(value = "price") Double price
 	) {
 		// Run getOwners to register station owners
@@ -391,9 +399,9 @@ public void owners_railpass_set(
 	public void fares_check(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @Argument(value = "end", suggestions = "station_list") String end,
-			final @Argument(value = "fareClass") @Quoted String fareClass
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @Argument(value = "end", suggestions = "start_list") String end,
+			final @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		Set<String> s;
 		if (end == null) s = fares.getDestinations(start);
@@ -409,9 +417,9 @@ public void owners_railpass_set(
 	public void fares_unset(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		fares.unsetFare(start, end, fareClass);
 		sender.sendMessage(formatString("The fare from %s to %s using the class %s has been deleted.", start, end, fareClass));
@@ -423,8 +431,8 @@ public void owners_railpass_set(
 	public void delete_journey (
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end
 	) {
 		fares.deleteJourney(start, end);
 		sender.sendMessage(formatString("All fares from %s to %s has been deleted.", start, end));
@@ -436,7 +444,7 @@ public void owners_railpass_set(
 	public void delete_station(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start
 	) {
 		fares.deleteStation(start);
 		sender.sendMessage(formatString("All fares to all stations from %s has been deleted.", start));
