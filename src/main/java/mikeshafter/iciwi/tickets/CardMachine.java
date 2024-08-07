@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.Runnable;
 import java.security.SecureRandom;
 import java.util.*;
-
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class CardMachine implements Machine {
@@ -101,12 +100,12 @@ public void cardMenu () {
 
 	// Create buttons
 	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
-	this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")), (event) -> topUpCard(this.selectedItem));
+	this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")), (event) -> topUpCard(icCard));
 	this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, lang.getComponent("menu-rail-pass")), (event) -> {
 		SignInteractListener.machineHashMap.put(player, new RailPassMachine(player, this.operators));
 		((RailPassMachine) SignInteractListener.machineHashMap.get(player)).railPass(this.selectedItem);
 	});
-	this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")), (event) -> refundCard(this.selectedItem));
+	this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")), (event) -> refundCard(icCard));
 	this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-select-other-card")), (event) -> selectCard());
 
 	// Set items
@@ -170,7 +169,7 @@ public void newCard () {
 }
 
 // top up menu
-public void topUpCard (ItemStack item) {
+public void topUpCard (IcCard icCard) {
 	// Setup listener
 	// setup inventory
 	List<Double> priceArray = plugin.getConfig().getDoubleList("price-array");
@@ -179,7 +178,7 @@ public void topUpCard (ItemStack item) {
 	clickables = new Clickable[invSize];
 
 	// get serial number
-	String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+	String serial = icCard.getSerial();
 
 	for (int i = 0; i < priceArray.size(); i++) {
 		clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
@@ -187,10 +186,10 @@ public void topUpCard (ItemStack item) {
 
 			if (Iciwi.economy.getBalance(player) >= value) {
 				// Get old value for later
-				double old = cardSql.getCardValue(serial);
+				double old = icCard.getValue();
 
 				// Update value in SQL
-				cardSql.addValueToCard(serial, value);
+				icCard.deposit(value);
 				player.closeInventory();
 
 				// Log card
@@ -217,15 +216,15 @@ public void topUpCard (ItemStack item) {
 }
 
 // refunds the card
-public void refundCard (ItemStack item) {
+public void refundCard (IcCard icCard) {
 	// get serial number
-	String serial = parseComponent(Objects.requireNonNull(item.getItemMeta().lore()).get(1));
+	String serial = icCard.getSerial();
 	for (ItemStack itemStack : player.getInventory().getContents()) {
 		// check if the lore matches
 		if (loreCheck(itemStack, 2) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
 
 			// get remaining value
-			double remainingValue = this.cardSql.getCardValue(serial);
+			double remainingValue = icCard.getValue();
 
 			// get deposit
 			double deposit = this.plugin.getConfig().getDouble("deposit");
