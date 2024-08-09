@@ -368,6 +368,36 @@ public void owners_railpass_set(
 		sender.sendMessage(formatString("Railpass %s has been deleted", name));
 	}
 
+@Command("iciwi operatorticket <company> <price>")
+@CommandDescription("Creates/deletes an operator ticket. Set <amount> to 0 for deletion.")
+@Permission("iciwi.owners.railpass")
+public void owners_operatorticket(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "price") Double price
+) {
+	owners.setOperatorTicket(company, price);
+	owners.save();
+	sender.sendMessage(formatString("Single journey tickets for %s has been set to %s.", company, String.valueOf(price)));
+}
+
+@Command("iciwi farecap <company> <amount> <duration>")
+@CommandDescription("Creates/deletes a fare cap. Set <amount> to 0 for deletion.")
+@Permission("iciwi.owners.railpass")
+public void owners_operatorticket(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "amount") Double amount,
+	final @NonNull @Argument(value = "duration") String duration
+) {
+	owners.setFareCapAmt(company, amount);
+	owners.setFareCapDuration(company, duration);
+	owners.save();
+	sender.sendMessage(formatString("The fare cap for %s has been set to %s, valid for %s.", company, String.valueOf(amount), duration));
+}
+
 	@Command("iciwi fares set <start> <end> <fareClass> <price>")
 	@CommandDescription("Creates a new fare.")
 	@Permission("iciwi.fares.set")

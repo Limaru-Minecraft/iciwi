@@ -162,8 +162,17 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 		return false;
 	}
 
+	// Check for fare caps
+
+	//TODO: check each owner for their respective fare caps
+	// if an owner has a fare cap, and records.yml says that the fare cap has not been reached, deposit into the TOC's coffer
+	// if the fare cap has been reached, do not deposit into the TOC's coffer, and remove that amount of money from the final fare.
+
 	// withdraw fare from card
-	icCard.withdraw(fare);
+	if (!icCard.withdraw(fare)) {
+		player.sendMessage("Error tapping out");
+		return false;
+	}
 
 	// set details for future transfer
 	records.setTimestamp(serial, System.currentTimeMillis());
@@ -238,8 +247,11 @@ protected static boolean member (Player player, IcCard icCard, String station, L
 protected static boolean transfer (Player player, IcCard icCard, String station, Location signLocation) {
 	if (onClick(player)) return false;
 
-	Fares fares = new Fares();
+	Fares fares = plugin.fares;
 	String serial = icCard.getSerial();
+
+	// don't parse if there is no serial
+	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
 
 	// If an OSI was detected, cancel OSI capability
 	if (records.getTransfer(serial)) {
@@ -254,14 +266,16 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	double value = icCard.getValue();
 	double fare = fares.getCardFare(entryStation, station, records.getClass(serial));
 
-	// is the card already in the network?
+	// is the card not in the network?
 	if (records.getStation(serial).isEmpty()) {
-		player.sendMessage(lang.getString("cannot-pass"));
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 			player.sendMessage(lang.getString("fare-evade"));
 		}
-		else return false;
+		else {
+			player.sendMessage(lang.getString("cannot-pass"));
+			return false;
+		}
 	}
 
 	// Get the owners of stations and rail passes
@@ -286,7 +300,11 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 		player.sendMessage(lang.getString("value-low"));
 		return false;
 	}
-	icCard.withdraw(fare);
+
+	if (!icCard.withdraw(fare)) {
+		player.sendMessage("Error tapping out");
+		return false;
+	}
 
 	// set details for future transfer
 	records.setTimestamp(serial, System.currentTimeMillis());
@@ -374,7 +392,6 @@ protected static Object[] openGate (String signAction, String[] signText, Sign s
 				openable.setOpen(false);
 				currentBlock.setBlockData(openable);
 			};
-
 		}
 
 		// If powerable, power it!
@@ -409,6 +426,7 @@ protected static Object[] openGate (String signAction, String[] signText, Sign s
 	}
 	return closeGate;
 }
+
 private static int getFlags (String signAction, String signLine0) {
 	String args;
 	if (signAction.length() == signLine0.length()) args = "";
