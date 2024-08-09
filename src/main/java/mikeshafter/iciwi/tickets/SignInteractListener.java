@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.tickets;
 
+import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.IciwiUtil;
@@ -14,20 +15,23 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.HashMap;
 
 public class SignInteractListener implements Listener {
-private final Lang lang = new Lang();
-protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
 
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Lang lang = plugin.lang;
+private static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
+
+protected static Machine getMachine (Player player) { return machineHashMap.get(player); }
+protected static void putMachine (Player player, Machine machine) { machineHashMap.put(player, machine); }
 
 @EventHandler (priority = EventPriority.LOWEST) public void TicketMachineListener (final InventoryClickEvent event) {
 	final Player player = (Player) event.getWhoClicked();
 
 	if (machineHashMap.containsKey(player)) {
 		final Inventory clickedInventory = event.getClickedInventory();
-		Machine machine = machineHashMap.get(player);
+		final Machine machine = getMachine(player);
 
 		if (clickedInventory == player.getOpenInventory().getBottomInventory()) {
 			// player inventory item selection code
@@ -75,7 +79,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 			sign.update(true);
 			final TicketMachine machine = new TicketMachine(player);
 			machine.init(station);
-			machineHashMap.put(player, machine);
+			putMachine(player, machine);
 		}
 
 		// === Card vending machine ===
@@ -84,7 +88,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 			sign.update(true);
 			final CardMachine machine = new CardMachine(player);
 			machine.init(station);
-			machineHashMap.put(player, machine);
+			putMachine(player, machine);
 		}
 
 		// === Rail pass machine ===
@@ -93,7 +97,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 			sign.update(true);
 			final RailPassMachine machine = new RailPassMachine(player);
 			machine.init(station);
-			machineHashMap.put(player, machine);
+			putMachine(player, machine);
 		}
 
 		// === Custom machine ===
@@ -101,7 +105,7 @@ protected static final HashMap<Player, Machine> machineHashMap = new HashMap<>()
 			sign.setWaxed(true);
 			sign.update(true);
 			CustomMachine machine = new CustomMachine(player, station);
-			machineHashMap.put(player, machine);
+			putMachine(player, machine);
 		}
 	}
 }
