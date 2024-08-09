@@ -52,3 +52,13 @@ Operators:
 TicketType:
   ExampleOperator: 20
   ExampleOperator1: 0
+
+# This section lets you change fare caps for each company.
+# Set the value to 0 if the operator doesn't use this feature
+Caps:
+  ExampleOperator:
+    amount: 15
+    duration: '1:00:00:00'
+  ExampleOperator1:
+    amount: 0
+    duration: ''
