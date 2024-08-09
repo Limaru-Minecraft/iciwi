@@ -17,8 +17,8 @@ import java.util.Objects;
 public class Member extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang();
-private final Owners owners = new Owners();
+private final Lang lang = plugin.lang;
+private final Owners owners = plugin.owners;
 private final CardSql cardSql = new CardSql();
 
 public Member() {

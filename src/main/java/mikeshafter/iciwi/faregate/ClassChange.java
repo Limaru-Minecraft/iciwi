@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 public class ClassChange extends FareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang();
+private final Lang lang = plugin.lang;
 
 public ClassChange() {
     super();
@@ -37,7 +37,7 @@ public void onInteract(Player player, ItemStack item, String[] signText, Sign si
         IcCard icCard = IciwiUtil.IcCardFromItem(item);
         if (icCard != null) {
             String serial = icCard.getSerial();
-            final Records records = new Records();
+            final Records records = plugin.records;
             records.setClass(serial, newClass);
             player.sendMessage(String.format(lang.getString("class-changed"), newClass));
             player.playSound(player, plugin.getConfig().getString("classchange-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);

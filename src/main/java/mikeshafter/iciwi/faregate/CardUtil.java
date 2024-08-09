@@ -21,12 +21,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 public class CardUtil {
-static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-static final Records records = new Records();
-static final Lang lang = new Lang();
-static final Owners owners = new Owners();
-static final CardSql cardSql = new CardSql();
-static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
+private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private static final Records records = plugin.records;
+private static final Lang lang = plugin.lang;
+private static final Owners owners = plugin.owners;
+private static final CardSql cardSql = new CardSql();
+private static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
 
 /**
  Prevent code from registering multiple accidental clicks
@@ -105,7 +105,7 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 protected static boolean exit (Player player, IcCard icCard, String exitStation, Location signLocation) {
 	if (onClick(player)) return false;
 
-	Fares fares = new Fares();
+	Fares fares = plugin.fares;
 	String serial = icCard.getSerial();
 
 	// don't parse if there is no serial

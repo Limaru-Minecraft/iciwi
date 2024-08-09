@@ -18,8 +18,8 @@ import java.util.Objects;
 public class Exit extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang();
-private final Owners owners = new Owners();
+private final Lang lang = plugin.lang;
+private final Owners owners = plugin.owners;
 private static final CardSql cardSql = new CardSql();
 
 public Exit() {
@@ -57,7 +57,7 @@ public Exit() {
             // Log exit
             String entryStation = lore.get(0).replace(" •", "");
             String fareClass = lore.get(2);
-            Fares fares = new Fares();
+            Fares fares = plugin.fares;
              
             cardSql.logMaster(player.getUniqueId().toString());
             cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
