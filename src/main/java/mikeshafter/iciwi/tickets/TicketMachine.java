@@ -55,7 +55,7 @@ public void init (String station) {
         else if (addCustomTickets) {
             clickList.add(Clickable.of(
 				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-				(event) -> SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station))
+				(event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
 			));
             addCustomTickets = false;
         }
@@ -64,16 +64,16 @@ public void init (String station) {
 	// New card
     clickList.add(
         Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-            SignInteractListener.machineHashMap.put(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
+            SignInteractListener.putMachine(player, new CardMachine(player, station));
+            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
         })
     );
 
 	// Select card
     clickList.add(
         Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-            SignInteractListener.machineHashMap.put(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
+            SignInteractListener.putMachine(player, new CardMachine(player, station));
+            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
         })
     );
 
@@ -122,14 +122,14 @@ protected void generateOperatorTicket (String owner) {
 //	// Create buttons
 //    var btnArray = new Clickable[]{
 //        Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
-//            SignInteractListener.machineHashMap.put(this.player, new CustomMachine(player, station))),
+//            SignInteractListener.putMachine(this.player, new CustomMachine(player, station))),
 //        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-//            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
-//            ((CardMachine) SignInteractListener.machineHashMap.get(player)).newCard();
+//            SignInteractListener.putMachine(player, new CardMachine(player));
+//            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
 //        }),
 //        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-//            SignInteractListener.machineHashMap.put(player, new CardMachine(player));
-//            ((CardMachine) SignInteractListener.machineHashMap.get(player)).selectCard();
+//            SignInteractListener.putMachine(player, new CardMachine(player));
+//            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
 //        })
 //    };
 //	this.clickables = (Clickable[]) IciwiUtil.justify(9, btnArray);
