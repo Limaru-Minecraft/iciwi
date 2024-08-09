@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 public class Payment extends FareGate {
 
 	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = new Lang();
+	private final Lang lang = plugin.lang;
 
 	public Payment() {
 		super();
@@ -39,29 +39,22 @@ public class Payment extends FareGate {
 
 			// Try paying with card
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
-			if (icCard != null) payCard(icCard, player, price);
+			if (icCard != null && icCard.withdraw(price)) {
+				player.sendMessage(String.format(lang.getString("pay-success-card"), price, icCard.getValue()));
+			}
 
 			// If there is no card, pay with cash
-			else payCash(player, price);
+			else {
+				Iciwi.economy.withdrawPlayer(player, price);
+				player.sendMessage(lang.getString("cash-divert"));
+				player.sendMessage(String.format(lang.getString("pay-success"), price));
+			}
 			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 		}
 
 		// Deposit money into owner's bank account
 		var stationOwners = plugin.owners.getOwners(station);
 		for (int i = 0; i < stationOwners.size(); i++) plugin.owners.deposit(stationOwners.get(i), price / stationOwners.size());
-	}
-
-	public void payCard(IcCard card, Player player, double price) {
-		if (card.getValue() < price) payCash(player, price);
-		card.withdraw(price);
-		double value = card.getValue();
-		player.sendMessage(String.format(lang.getString("pay-success-card"), price, value));
-	}
-
-	public void payCash(Player player, double price) {
-		Iciwi.economy.withdrawPlayer(player, price);
-		player.sendMessage(lang.getString("cash-divert"));
-		player.sendMessage(String.format(lang.getString("pay-success"), price));
 	}
 
 }
