@@ -17,10 +17,10 @@ import java.util.Objects;
 
 public class Transfer extends ClosableFareGate {
 
-private final Lang lang = new Lang();
-private final Owners owners = new Owners();
-private static final CardSql cardSql = new CardSql();
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private static final CardSql cardSql = new CardSql();
+private final Owners owners = plugin.owners;
+private final Lang lang = plugin.lang;
 
 public Transfer() {
     super();

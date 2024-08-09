@@ -18,9 +18,9 @@ import mikeshafter.iciwi.util.IciwiUtil;
 public class Trapdoor extends ClosableFareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = new Lang();
-private final Owners owners = new Owners();
 private static final CardSql cardSql = new CardSql();
+private final Lang lang = plugin.lang;
+private final Owners owners = plugin.owners;
 
 public Trapdoor() {
     super(new Vector(0, -2, 0));
@@ -58,7 +58,7 @@ public Trapdoor() {
                 // Log exit
                 String entryStation = lore.get(0).replace(" •", "");
                 String fareClass = lore.get(2);
-                Fares fares = new Fares();
+                Fares fares = plugin.fares;
 
                 cardSql.logMaster(player.getUniqueId().toString());
                 cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
@@ -93,7 +93,7 @@ public Trapdoor() {
 
             // Vital information
             String serial = icCard.getSerial();
-            Records records = new Records();
+            Records records = plugin.records;
 
             // Determine entry or exit
             if (records.getStation(serial).isEmpty()) CardUtil.entry(player, icCard, station, sign.getLocation());
