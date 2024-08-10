@@ -282,7 +282,7 @@ public List<String> suggestPlayerList(
 		sender.sendMessage(formatString("No company is now operating %s.", station));
 	}
 
-@Command("iciwi railpass set <name> <company>")
+@Command("iciwi railpass set <name> <company> <duration> <amount> <paidpercentage>")
 @CommandDescription("Sets the rail company that owns the given railpass.")
 @Permission("iciwi.owners.railpass")
 public void owners_railpass_set(

@@ -21,19 +21,25 @@ import java.security.NoSuchAlgorithmException;
 public final class Iciwi extends JavaPlugin implements IciwiPlugin {
 
 public static Economy economy = null;
-public Lang lang = new Lang();
-public Owners owners = new Owners();
-public Records records = new Records();
-public Fares fares = new Fares();
+public Lang lang;
+public Owners owners;
+public Records records;
+public Fares fares;
 
 public void sendAll (String message) {getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));}
 
 private void loadAllConfig () {
+	lang = new Lang();
+	owners = new Owners();
+	records = new Records();
+	fares = new Fares();
+
+	this.saveDefaultConfig();
 	this.getConfig().options().copyDefaults(true);
-	this.lang.get().options().copyDefaults(true);
-	this.owners.get().options().copyDefaults(true);
-	this.records.get().options().copyDefaults(true);
-	this.fares.get().options().copyDefaults(true);
+	lang.get().options().copyDefaults(true);
+	owners.get().options().copyDefaults(true);
+	records.get().options().copyDefaults(true);
+	fares.get().options().copyDefaults(true);
 }
 
 public void reloadAllConfig () {
