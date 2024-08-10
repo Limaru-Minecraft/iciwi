@@ -149,6 +149,7 @@ public double getRailPassPrice (String name) { return super.getDouble(toPath("Ra
  @return The operator who sells the rail pass */
 public String getRailPassOperator (String name) { return super.getString(toPath("RailPasses", name, "operator")); }
 
+//todo: make these 2 return arrays
 /**
  Get the name of the rail pass that is sold by the operator
 
