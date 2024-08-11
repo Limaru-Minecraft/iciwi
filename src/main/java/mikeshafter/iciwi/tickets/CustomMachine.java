@@ -114,7 +114,7 @@ public void selectClass (String end) {
 			if (ticket != null) player.getInventory().addItem(ticket);
 			// the drill on last step
 			event.setCancelled(true);
-			player.closeInventory();
+			player.closeInventory();SignInteractListener.removeMachine(player);
 		});
 	}
 	setItems(this.clickables, inventory);

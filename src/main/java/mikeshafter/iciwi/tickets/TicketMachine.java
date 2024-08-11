@@ -113,6 +113,7 @@ protected void generateOperatorTicket (String owner) {
 	cardSql.logMaster(player.getUniqueId().toString());
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:"+owner), Component.text("C:"+owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
 	player.closeInventory();
+	SignInteractListener.removeMachine(player);
 }
 
 // initial menu

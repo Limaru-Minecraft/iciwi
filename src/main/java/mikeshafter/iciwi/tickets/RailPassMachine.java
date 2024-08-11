@@ -126,7 +126,7 @@ public class RailPassMachine implements Machine {
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
                 // close inventory
-                this.player.closeInventory();
+                this.player.closeInventory();SignInteractListener.removeMachine(player);
             });
         }
         setItems(clickables, inv);
@@ -147,7 +147,7 @@ public class RailPassMachine implements Machine {
         // get serial number
         IcCard icCard = IcCardFromItem(item);
         if (icCard == null) {
-            this.player.closeInventory();
+            this.player.closeInventory();SignInteractListener.removeMachine(player);
             return;
         }
         String serial = icCard.getSerial();
@@ -173,7 +173,7 @@ public class RailPassMachine implements Machine {
             menu = menu.append(Component.text("\n"));
             // send to player
             this.player.sendMessage(menu);
-            this.player.closeInventory();
+            this.player.closeInventory();SignInteractListener.removeMachine(player);
         });
 
         // create all rail pass buttons
@@ -210,7 +210,7 @@ public class RailPassMachine implements Machine {
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
                 // close inventory
-                this.player.closeInventory();
+                this.player.closeInventory();SignInteractListener.removeMachine(player);
             });
         }
 

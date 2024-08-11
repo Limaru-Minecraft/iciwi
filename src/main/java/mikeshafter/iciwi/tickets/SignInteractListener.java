@@ -21,15 +21,50 @@ public class SignInteractListener implements Listener {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
-private static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
+private static final Player[] playerArr = new Player[plugin.getServer().getMaxPlayers()];
+private static final Machine[] machineArr = new Machine[plugin.getServer().getMaxPlayers()];
 
-protected static Machine getMachine (Player player) { return machineHashMap.get(player); }
-protected static void putMachine (Player player, Machine machine) { machineHashMap.put(player, machine); }
+protected static Machine getMachine (Player player) {
+	for (int i = 0; i < playerArr.length; i++) {
+		if (playerArr[i] == player) {
+			return machineArr[i];
+		}
+	}
+}
+
+protected static void putMachine (Player player, Machine machine) {
+	for (int i = 0; i < playerArr.length; i++) {
+		if (playerArr[i] == null) {
+			playerArr[i] = player;
+			machineArr[i] = machine;
+			return;
+		}
+	}
+}
+
+protected static void removeMachine (Player player) {
+	for (int i = 0; i < playerArr.length; i++) {
+		if (playerArr[i] == player) {
+			playerArr[i] = null;
+			machineArr[i] = null;
+			return;
+		}
+	}
+}
+
+	protected static boolean hasMachine (Player player) {
+		for (int i = 0; i < playerArr.length; i++) {
+			if (playerArr[i] == player) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 @EventHandler (priority = EventPriority.LOWEST) public void TicketMachineListener (final InventoryClickEvent event) {
 	final Player player = (Player) event.getWhoClicked();
 
-	if (machineHashMap.containsKey(player)) {
+	if (hasMachine(player)) {
 		final Inventory clickedInventory = event.getClickedInventory();
 		final Machine machine = getMachine(player);
 

@@ -153,10 +153,10 @@ public void newCard () {
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
-				player.closeInventory();
+				player.closeInventory();SignInteractListener.removeMachine(player);
 			}
 			else {
-				player.closeInventory();
+				player.closeInventory();SignInteractListener.removeMachine(player);
 				player.sendMessage(lang.getString("not-enough-money"));
 			}
 		});
@@ -190,7 +190,7 @@ public void topUpCard (IcCard icCard) {
 
 				// Update value in SQL
 				icCard.deposit(value);
-				player.closeInventory();
+				player.closeInventory();SignInteractListener.removeMachine(player);
 
 				// Log card
 
@@ -203,7 +203,7 @@ public void topUpCard (IcCard icCard) {
 
 			}
 			else {
-				player.closeInventory();
+				player.closeInventory();SignInteractListener.removeMachine(player);
 				player.sendMessage(lang.getString("not-enough-money"));
 			}
 		});
@@ -245,7 +245,7 @@ public void refundCard (IcCard icCard) {
 			cardSql.logCardRefund(serial, remainingValue);
 
 			// close inventory
-			player.closeInventory();
+			player.closeInventory();SignInteractListener.removeMachine(player);
 			break;
 		}
 	}
