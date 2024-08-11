@@ -21,8 +21,8 @@ public class SignInteractListener implements Listener {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
-private static final Player[] playerArr = new Player[plugin.getServer().getMaxPlayers()];
-private static final Machine[] machineArr = new Machine[plugin.getServer().getMaxPlayers()];
+private static final Player[] playerArr = new Player[20];
+private static final Machine[] machineArr = new Machine[20];
 
 protected static Machine getMachine (Player player) {
 	for (int i = 0; i < playerArr.length; i++) {
