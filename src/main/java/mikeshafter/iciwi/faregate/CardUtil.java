@@ -369,7 +369,7 @@ protected static Object[] openGate (String signAction, String[] signText, Sign s
 	else if (sign.getBlockData() instanceof org.bukkit.block.data.type.Sign s) signFacing = s.getRotation();
 	signFacing = toCartesian(signFacing);
 
-	// Get the fare gate flags. Tenary avoids the error with String#substring when returning an empty string.
+	// Get the fare gate flags.
 	final var flags = getFlags(signAction, signLine0);
 
 	// Get the relative position(s) of the fare gate block(s).

@@ -62,9 +62,7 @@ public static String parseComponent (final Component c) {
  * @return a list of Strings from the list of Components
  */
 public static List<String> parseComponents (List<Component> cList) {
-	List<String> r = new ArrayList<>();
-	cList.forEach(c -> r.add(parseComponent(c)));
-	return r;
+	return cList.stream().map(IciwiUtil::parseComponent).toList();
 }
 
 /**
@@ -74,9 +72,7 @@ public static List<String> parseComponents (List<Component> cList) {
  * @return a list of Components from the list of Strings
  */
 public static List<Component> toComponents (List<String> sList) {
-	List<Component> r = new ArrayList<>();
-	sList.forEach(c -> r.add(Component.text(c)));
-	return r;
+	return sList.stream().map(c -> (Component) Component.text(c)).toList();
 }
 
   /* UNUSED

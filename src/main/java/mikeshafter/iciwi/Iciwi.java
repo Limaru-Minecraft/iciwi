@@ -63,7 +63,6 @@ private void registerEvents () {
 	getServer().getPluginManager().registerEvents(new Entry(), this);
 	getServer().getPluginManager().registerEvents(new Exit(), this);
 	getServer().getPluginManager().registerEvents(new Transfer(), this);
-	getServer().getPluginManager().registerEvents(new Trapdoor(), this);
 	getServer().getPluginManager().registerEvents(new Member(), this);
 	getServer().getPluginManager().registerEvents(new Payment(), this);
 	getServer().getPluginManager().registerEvents(new Validator(), this);

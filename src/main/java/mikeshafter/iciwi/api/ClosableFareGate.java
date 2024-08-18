@@ -13,23 +13,30 @@ private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private Object[] closeGateArray;
 
 /**
+ * Creates a new fare gate at the sign's location.
+ *
+ * @param path Path to line 0's text in lang.yml
+ */
+public ClosableFareGate (String path) {
+	super(path);
+}
+
+/**
+ * Creates a new fare gate with an offset from the sign's location.
+ *
+ * @param path           Path to line 0's text in lang.yml
+ * @param locationOffset Default offset sign location
+ */
+public ClosableFareGate (String path, Vector locationOffset) {
+	super(path, locationOffset);
+}
+
+/**
  * Sets the closeGateArray
  *
  * @param closeGateArray the closeGateArray, in the format {Location[], Runnable[]}
  */
 public void setCloseGateArray (Object[] closeGateArray) {this.closeGateArray = closeGateArray;}
-
-/**
- * Creates a new fare gate at the sign's location.
- */
-public ClosableFareGate () {super();}
-
-/**
- * Creates a new fare gate with an offset from the sign's location.
- *
- * @param locationOffset Default offset sign location
- */
-public ClosableFareGate (Vector locationOffset) {super(locationOffset);}
 
 @EventHandler(priority = EventPriority.LOWEST)
 public void onPlayerMove (PlayerMoveEvent event) {
