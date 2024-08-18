@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.faregate;
 import org.bukkit.SoundCategory;
-
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
@@ -11,7 +10,6 @@ import mikeshafter.iciwi.config.Owners;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Objects;
 

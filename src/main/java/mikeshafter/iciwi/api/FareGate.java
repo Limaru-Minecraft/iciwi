@@ -22,24 +22,26 @@ private String signLine0;
 private Vector locationOffset = new Vector();
 
 /**
- Creates a new fare gate at the sign's location.
+ * Creates a new fare gate at the sign's location.
  */
 public FareGate () {}
 
 /**
- Creates a new fare gate with an offset from the sign's location.
-
- @param locationOffset Default offset sign location */
+ * Creates a new fare gate with an offset from the sign's location.
+ *
+ * @param locationOffset Default offset sign location
+ */
 public FareGate (Vector locationOffset) {this.locationOffset = locationOffset;}
 
 /**
- Sets the first line to be used in the sign
-
- @param signLine0 first line in sign */
+ * Sets the first line to be used in the sign
+ *
+ * @param signLine0 first line in sign
+ */
 public void setSignLine0 (String signLine0) {this.signLine0 = signLine0;}
 
-@SuppressWarnings ("Deprecation")  // SignSide#getLine required for some older signs to work!
-@EventHandler (priority = EventPriority.LOWEST) public void onPlayerInteract (PlayerInteractEvent event) {
+@EventHandler(priority = EventPriority.LOWEST)
+public void onPlayerInteract (PlayerInteractEvent event) {
 	Block block = event.getClickedBlock();
 	if (block == null || event.getItem() == null) return;
 	Location clickedLocation = block.getLocation();
@@ -48,11 +50,11 @@ public void setSignLine0 (String signLine0) {this.signLine0 = signLine0;}
 	if (signState instanceof Sign sign) {
 		SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
 
-		if (IciwiUtil.stripColor(side.getLine(0)).contains(signLine0)) {
+		if (IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(signLine0)) {
 			// get sign text
 			String[] signText = new String[4];
 			for (int i = 0; i < 4; i++) {
-				signText[i] = side.getLine(i).replace("[", "").replace("]", "");
+				signText[i] = IciwiUtil.parseComponent(side.line(i)).replace("[", "").replace("]", "");
 			}
 			// call onInteract
 			onInteract(event.getPlayer(), event.getItem(), signText, sign);

@@ -58,7 +58,9 @@ public void setClass (String serial, String fareClass) {
  * @param serial Serial number of card
  * @return the station at which the card entered the transit system on the previous journey
  */
-public String getPreviousStation (String serial) {return super.getString(serial + ".previous-station");}
+public String getPreviousStation (String serial) {
+	return super.getString(serial + ".p-station");
+}
 
 /**
  * Set the entry station of the previous journey
@@ -68,7 +70,7 @@ public String getPreviousStation (String serial) {return super.getString(serial 
  * @param station the station at which the card entered the transit system on the previous journey
  */
 public void setPreviousStation (String serial, String station) {
-	super.set(serial + ".previous-station", station);
+	super.set(serial + ".p-station", station);
 	super.save();
 }
 
@@ -121,7 +123,9 @@ public void setTimestamp (String serial, long timestamp) {
  * @param serial Serial number of card
  * @return the final price of the previous journey
  */
-public double getCurrentFare (String serial) {return super.getDouble(serial + ".current-fare");}
+public double getPreviousFare (String serial) {
+	return super.getDouble(serial + ".p-fare");
+}
 
 /**
  * Writes the price of the journey to the records file
@@ -130,24 +134,52 @@ public double getCurrentFare (String serial) {return super.getDouble(serial + ".
  * @param serial Serial number of card
  * @param fare   The final fare of the journey
  */
-public void setCurrentFare (String serial, double fare) {
-	super.set(serial + ".current-fare", fare);
+public void setPreviousFare (String serial, double fare) {
+	super.set(serial + ".p-fare", fare);
 	super.save();
 }
 
+/**
+ * Gets the expiry time of the current fare cap.
+ *
+ * @param serial Serial number of card
+ * @param operator Fare cap's TOC
+ * @return Fare cap expiry time
+ */
 public long getCapExpiry (String serial, String operator) {
 	return super.getLong(toPath(serial, operator, "expiry"));
 }
 
+/**
+ * Gets the remaining amount of the current fare cap.
+ *
+ * @param serial Serial number of card
+ * @param operator Fare cap's TOC
+ * @return Fare cap remaining amount
+ */
 public double getCapRemAmt (String serial, String operator) {
 	return super.getDouble(toPath(serial, operator, "rem-amt"));
 }
 
+/**
+ * Sets the expiry time of the current fare cap.
+ *
+ * @param serial Serial number of card
+ * @param operator Fare cap's TOC
+ * @param exp New expiry time
+ */
 public void setCapExpiry (String serial, String operator, long exp) {
 	super.set(toPath(serial, operator, "expiry"), exp);
 	super.save();
 }
 
+/**
+ * Sets the remaining amount of the current fare cap.
+ *
+ * @param serial Serial number of card
+ * @param operator Fare cap's TOC
+ * @param amt New remaining amount
+ */
 public void setCapRemAmt (String serial, String operator, double amt) {
 	super.set(toPath(serial, operator, "rem-amt"), amt);
 	super.save();

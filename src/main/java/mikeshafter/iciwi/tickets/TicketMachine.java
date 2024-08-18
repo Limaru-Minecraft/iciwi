@@ -35,49 +35,42 @@ public TicketMachine (Player player) {this.player = player;}
 
 // getters
 public Clickable[] getClickables () {return clickables;}
+
 public ItemStack getSelectedItem () {return selectedItem;}
+
 public boolean useBottomInv () {return bottomInv;}
 
 // setters
-@Override public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
+@Override
+public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
 
 public void init (String station) {
-    List<String> operators = this.owners.getOwners(station);
-    ArrayList<Clickable> clickList = new ArrayList<>();
-    boolean addCustomTickets = true;
-    for (String operator : operators) {
-        if (this.owners.hasOperatorTicket(operator)) {
-			clickList.add(Clickable.of(
-				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)),
-				(event) -> generateOperatorTicket(operator)
-			));
-        }
-        else if (addCustomTickets) {
-            clickList.add(Clickable.of(
-				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-				(event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
-			));
-            addCustomTickets = false;
-        }
-    }
+	List<String> operators = this.owners.getOwners(station);
+	ArrayList<Clickable> clickList = new ArrayList<>();
+	boolean addCustomTickets = true;
+	for (String operator : operators) {
+		if (this.owners.hasOperatorTicket(operator)) {
+			clickList.add(Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)), (event) -> generateOperatorTicket(operator)));
+		}
+		else if (addCustomTickets) {
+			clickList.add(Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))));
+			addCustomTickets = false;
+		}
+	}
 
 	// New card
-    clickList.add(
-        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-            SignInteractListener.putMachine(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
-        })
-    );
+	clickList.add(Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
+		SignInteractListener.putMachine(player, new CardMachine(player, station));
+		((CardMachine) SignInteractListener.getMachine(player)).newCard();
+	}));
 
 	// Select card
-    clickList.add(
-        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-            SignInteractListener.putMachine(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
-        })
-    );
+	clickList.add(Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+		SignInteractListener.putMachine(player, new CardMachine(player, station));
+		((CardMachine) SignInteractListener.getMachine(player)).selectCard();
+	}));
 
-    this.clickables = justify(9, clickList);
+	this.clickables = justify(9, clickList);
 
 	// Attributes
 	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
@@ -87,7 +80,8 @@ public void init (String station) {
 }
 
 /**
- Generates a new flat fare ticket
+ * Generates a new flat fare ticket
+ *
  * @param owner TOC handling the ticket
  */
 protected void generateOperatorTicket (String owner) {
@@ -111,71 +105,30 @@ protected void generateOperatorTicket (String owner) {
 
 	// log into IcLogger
 	cardSql.logMaster(player.getUniqueId().toString());
-	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:"+owner), Component.text("C:"+owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
+	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
 	player.closeInventory();
 	SignInteractListener.removeMachine(player);
 }
 
-// initial menu
-//public void initCustomTicket (String station) {
-//	// setup inventory
-//	this.inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
-//	// Create buttons
-//    var btnArray = new Clickable[]{
-//        Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) ->
-//            SignInteractListener.putMachine(this.player, new CustomMachine(player, station))),
-//        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-//            SignInteractListener.putMachine(player, new CardMachine(player));
-//            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
-//        }),
-//        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-//            SignInteractListener.putMachine(player, new CardMachine(player));
-//            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
-//        })
-//    };
-//	this.clickables = (Clickable[]) IciwiUtil.justify(9, btnArray);
-//
-//	// Get operators
-//	// operators = this.owners.getOwners(station);
-//	// Set items
-//	setItems(clickables, inv);
-//	// Start listening and open inventory
-//	player.openInventory(inv);
-//}
-
-// card selection menu. player clicks in their own inventory to select a card
-/*
-public void selectCard () {
-	// Setup listener for bottom inventory selection
-	// Create inventory
-	inv = this.plugin.getServer().createInventory(null, 9, lang.getComponent("select-card"));
-	// Swap flag
-	bottomInv = true;
-	// Start listening and open inventory
-	player.openInventory(inv);
-}
-*/
-
 /**
- Spread items evenly across n slots in an array
- @param n Number of slots
- @param items Items to spread
- @return Final spreaded array */
+ * Spread items evenly across n slots in an array
+ *
+ * @param n     Number of slots
+ * @param items Items to spread
+ * @return Final spreaded array
+ */
 private Clickable[] justify (int n, ArrayList<Clickable> items) {
-    // Create an array with n elements
-    Clickable[] arr = new Clickable[n];
-    int l = items.size();
-    // optimisation
-    if (n == l) return items.toArray(new Clickable[l]);
-    for (int i = 1; i <= l; i++) {
-        arr[i * n / (l+1)] = items.get(i-1);
-    }
-    return arr;
+	// optimisation
+	int l = items.size();
+	if (n == l) return items.toArray(new Clickable[l]);
+	// Create an array with n elements
+	Clickable[] arr = new Clickable[n];
+	for (int i = 1; i <= l; i++) arr[i * n / (l + 1)] = items.get(i - 1);
+	return arr;
 }
-	
 
 
-
-@Override public void setBottomInv (boolean b) {this.bottomInv = b;}
+@Override
+public void setBottomInv (boolean b) {this.bottomInv = b;}
 
 }

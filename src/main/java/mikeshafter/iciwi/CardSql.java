@@ -1,6 +1,5 @@
 package mikeshafter.iciwi;
 import mikeshafter.iciwi.config.Owners;
-import org.bukkit.plugin.Plugin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +8,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.*;
-import java.time.Instant;
 import java.util.*;
 
 public class CardSql {
@@ -135,7 +133,7 @@ public Map<String, Long> getAllDiscounts (String serial) {
 		while (rs.next()) {
 			String name = rs.getString(1);
 			long expiry = getStart(serial, name) + owners.getRailPassDuration(name);
-			if (expiry > Instant.now().getEpochSecond()) returnValue.put(name, expiry);
+			if (expiry > System.currentTimeMillis()) returnValue.put(name, expiry);
 			else {
 				String sql1 = "DELETE FROM DISCOUNTS WHERE serial = ? AND name = ?";
 				final PreparedStatement statement1 = conn.prepareStatement(sql1);

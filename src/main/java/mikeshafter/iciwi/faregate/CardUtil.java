@@ -88,7 +88,7 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 	cardSql.logCardUse(serial);
 	icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
 	if (records.getTransfer(icCard.getSerial())) {
-		cardSql.logPrevJourney(records.getPreviousStation(serial), records.getCurrentFare(serial), records.getClass(serial), records.getTimestamp((serial)));
+		cardSql.logPrevJourney(records.getPreviousStation(serial), records.getPreviousFare(serial), records.getClass(serial), records.getTimestamp((serial)));
 	}
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -132,7 +132,7 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 		// fare if the player did not tap out
 		double longFare = fares.getCardFare(records.getPreviousStation(serial), exitStation, records.getClass(serial));
 		// the previous charged fare
-		double previousFare = records.getCurrentFare(serial);
+		double previousFare = records.getPreviousFare(serial);
 		// if the difference between the fares is less than the current fare, change the fare to that difference.
 		if (longFare - previousFare < fare) fare = longFare - previousFare;
 		// send confirmation
@@ -178,7 +178,7 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 	records.setTimestamp(serial, System.currentTimeMillis());
 	records.setPreviousStation(serial, entryStation);
 	records.setStation(serial, null);
-	records.setCurrentFare(serial, fare);
+	records.setPreviousFare(serial, fare);
 
 	// send (value - fare) as the value variable is not updated
 	player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
@@ -310,7 +310,7 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	records.setTimestamp(serial, System.currentTimeMillis());
 	records.setPreviousStation(serial, entryStation);
 	records.setStation(serial, null);
-	records.setCurrentFare(serial, fare);
+	records.setPreviousFare(serial, fare);
 
 	// Perform entry sequence
 	// reject entry if card has less than the minimum value
