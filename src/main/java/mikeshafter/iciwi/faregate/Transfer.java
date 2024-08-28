@@ -31,14 +31,13 @@ public void onCard (Player player, SignInfo info) {
     var item = info.item();
     var station = info.station();
     var sign = info.sign();
-    var signText = info.signText();
     // Get card from item
     IcCard icCard = IciwiUtil.IcCardFromItem(item);
     if (icCard == null) return;
 
     // Call transfer, and if successful, open fare gate
     if (CardUtil.transfer(player, icCard, station, sign.getLocation())) {
-        super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+        super.setCloseGateArray(super.openGate());
     }
 }
 
@@ -47,7 +46,6 @@ public void onRailPass (Player player, SignInfo info) {
     var lore = info.lore();
     var station = info.station();
     var sign = info.sign();
-    var signText = info.signText();
 
     String name = lore.get(0);
     String expiry = lore.get(1);
@@ -65,7 +63,7 @@ public void onRailPass (Player player, SignInfo info) {
         cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
         player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
         player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-        super.setCloseGateArray(CardUtil.openGate(lang.getString("transfer"), signText, sign));
+        super.setCloseGateArray(super.openGate());
     }
 }
 

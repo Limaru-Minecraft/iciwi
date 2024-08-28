@@ -25,8 +25,7 @@ public Entry() {
 
 @Override
 public void onTicket (Player player, SignInfo info) {
-    var signText = info.signText();
-    var lore = info.lore();
+	var lore = info.lore();
     var sign = info.sign();
     String station = info.station();
     boolean entryPunched = lore.get(0).contains("•");
@@ -44,7 +43,7 @@ public void onTicket (Player player, SignInfo info) {
         cardSql.logMaster(player.getUniqueId().toString());
         cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
         player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+        super.setCloseGateArray(super.openGate());
     }
 
     else {
@@ -54,8 +53,7 @@ public void onTicket (Player player, SignInfo info) {
 
 @Override
 public void onCard (Player player, SignInfo info) {
-    var signText = info.signText();
-    var sign = info.sign();
+	var sign = info.sign();
     final String station = info.station();
     final Records records = plugin.records;
     final IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
@@ -99,13 +97,12 @@ public void onCard (Player player, SignInfo info) {
     }
 
     player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-    super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+    super.setCloseGateArray(super.openGate());
 }
 
 @Override
 public void onRailPass (Player player, SignInfo info) {
-    var signText = info.signText();
-    var lore = info.lore();
+	var lore = info.lore();
     var sign = info.sign();
     String name = lore.get(0);
     String expiry = lore.get(1);
@@ -124,7 +121,7 @@ public void onRailPass (Player player, SignInfo info) {
         cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
         player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
         player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-        super.setCloseGateArray(CardUtil.openGate(lang.getString("entry"), signText, sign));
+        super.setCloseGateArray(super.openGate());
     }
 }
 

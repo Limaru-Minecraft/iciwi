@@ -5,11 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d8965a29-91b3-4cdb-957a-0025b8794d28" name="Changes" comment="move fare gates' switch statements to parent class">
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/ClassChange.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/ClassChange.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/gradle_build_temp_storage.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/gradle_build_temp_storage.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/FareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/SignInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/SignInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Lang.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/config/Lang.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/CardUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Entry.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Exit.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Member.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Payment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/faregate/Transfer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/IciwiUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/tickets/RailPassMachine.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +82,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="ProjectErrors" />
   </component>
   <component name="ProjectCodeStyleSettingsMigration">
     <option name="version" value="2" />
@@ -110,6 +117,7 @@
     "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.40239522",
+    "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   },
   "keyToStringList": {

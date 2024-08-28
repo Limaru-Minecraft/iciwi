@@ -14,12 +14,12 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.sign.SignSide;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import java.util.ArrayList;
 
 
 public abstract class FareGate implements Listener {
 
-private final String header;
+final String header;
+SignInfo signInfo;
 private Vector locationOffset = new Vector();
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
@@ -50,6 +50,10 @@ public void onPlayerInteract (PlayerInteractEvent event) {
 	BlockState signState = clickedLocation.getBlock().getState();
 
 	if (!(signState instanceof Sign sign)) {return;}
+
+	sign.setWaxed(true);
+	sign.update(true);
+
 	SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
 	if (!IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(header)) {return;}
 
@@ -61,20 +65,14 @@ public void onPlayerInteract (PlayerInteractEvent event) {
 		IciwiUtil.parseComponent(side.line(3)).replaceAll("[\\[\\]]", "")
 	};
 
-	var c = event.getItem().lore();
-	var lore = (c == null) ? new ArrayList<String>() : IciwiUtil.parseComponents(c);
-	// call onInteract
-	onInteract(event.getPlayer(), new SignInfo(event.getItem(), lore, signText, sign));
+	var item = event.getItem();
+	this.signInfo = new SignInfo(item, signText, sign);
+	onInteract(event.getPlayer(), signInfo);
 }
 
 public void onInteract (Player player, SignInfo info) {
 	var item = info.item();
-	var sign = info.sign();
 	if (!IciwiUtil.loreCheck(item)) return;
-
-    // Wax sign
-	sign.setWaxed(true);
-	sign.update(true);
 
 	switch (IciwiUtil.getTicketType(item)) {
 		case TICKET -> onTicket(player, info);

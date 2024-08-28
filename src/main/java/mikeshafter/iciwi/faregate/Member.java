@@ -28,7 +28,6 @@ public void onTicket (Player player, SignInfo info) {}
 
 @Override
 public void onCard (Player player, SignInfo info) {
-	var signText = info.signText();
 	var sign = info.sign();
 	final String station = info.station();
 	// Get card from item
@@ -37,12 +36,11 @@ public void onCard (Player player, SignInfo info) {
 
 	// Call entry, and if successful, open fare gate
 	if (CardUtil.member(player, icCard, station, sign.getLocation())) {
-		super.setCloseGateArray(CardUtil.openGate(lang.getString("member"), signText, sign));
+		super.setCloseGateArray(super.openGate());
 	}
 }
 @Override
 public void onRailPass (Player player, SignInfo info) {
-	var signText = info.signText();
 	var sign = info.sign();
 	final String station = info.station();
 	String name = info.lore().get(0);
@@ -61,7 +59,7 @@ public void onRailPass (Player player, SignInfo info) {
 		cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
 		player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
 		player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-		super.setCloseGateArray(CardUtil.openGate(lang.getString("member"), signText, sign));
+		super.setCloseGateArray(super.openGate());
 	}
 }
 

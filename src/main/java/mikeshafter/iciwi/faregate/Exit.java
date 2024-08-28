@@ -28,7 +28,6 @@ public Exit () {
 
 @Override
 public void onTicket (Player player, SignInfo info) {
-	var signText = info.signText();
 	var lore = info.lore();
 	var sign = info.sign();
 
@@ -56,7 +55,7 @@ public void onTicket (Player player, SignInfo info) {
 		cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
 		cardSql.logTicketUse(entryStation, station, fareClass);
 		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-		super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
+		super.setCloseGateArray(super.openGate());
 	}
 
 	// Ticket not used
@@ -71,7 +70,6 @@ public void onTicket (Player player, SignInfo info) {
 
 @Override
 public void onCard (Player player, SignInfo info) {
-	var signText = info.signText();
 	var sign = info.sign();
 
 	// Get card from item
@@ -88,7 +86,7 @@ public void onCard (Player player, SignInfo info) {
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 			player.sendMessage(lang.getString("fare-evade"));
-			super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
+			super.setCloseGateArray(super.openGate());
 		}
 		else {
 			player.sendMessage(lang.getString("cannot-pass"));
@@ -195,12 +193,11 @@ public void onCard (Player player, SignInfo info) {
 
 	// Finally exit
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-	super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
+	super.setCloseGateArray(super.openGate());
 }
 
 @Override
 public void onRailPass (Player player, SignInfo info) {
-	var signText = info.signText();
 	var lore = info.lore();
 	var sign = info.sign();
 
@@ -221,7 +218,7 @@ public void onRailPass (Player player, SignInfo info) {
 		cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
 		player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
 		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-		super.setCloseGateArray(CardUtil.openGate(lang.getString("exit"), signText, sign));
+		super.setCloseGateArray(super.openGate());
 	}
 }
 
