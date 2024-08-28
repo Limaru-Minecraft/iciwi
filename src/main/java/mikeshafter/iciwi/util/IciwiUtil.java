@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.util;
 
-import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import net.kyori.adventure.text.Component;
@@ -17,20 +16,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class IciwiUtil {
-
-/**
- * Check if any of the elements in a given array is a substring of another string.
- *
- * @param s          The string which contains a substring from checkArray
- * @param checkArray The array of strings in which a substring of s lies.
- * @return -1 if no string from checkArray is a substring of s, otherwise the index of the substring.
- */
-public static int containsMany (final String s, final String... checkArray) {
-	// loop through array
-	for (int i = 0; i < checkArray.length; i++) if (s.contains(checkArray[i])) return i;
-	// if nothing found output -1
-	return -1;
-}
 
 /**
  * Strips the given message of all color codes
@@ -137,9 +122,7 @@ public static boolean loreCheck (ItemStack itemStack) {return itemStack != null 
  * @param itemStack the item to check
  * @return true if itemStack has lore, else false.
  */
-public static boolean loreCheck (ItemStack itemStack, int minSize) {
-	return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null && Objects.requireNonNull(itemStack.getItemMeta().lore()).size() >= minSize;
-}
+public static boolean loreCheck (ItemStack itemStack, int minSize) {return itemStack != null && itemStack.hasItemMeta() && itemStack.getItemMeta() != null && itemStack.getItemMeta().hasLore() && itemStack.getItemMeta().lore() != null && Objects.requireNonNull(itemStack.getItemMeta().lore()).size() >= minSize;}
 
 /* UNUSED
  * Checks if itemStack has a displayName.
@@ -191,22 +174,5 @@ public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
 	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 		return null;
 	}
-}
-
-public static TicketType getTicketType (ItemStack item) {
-	var m = item.getType().toString();
-	var i = item.getItemMeta().getCustomModelData();
-	var c = Iciwi.getPlugin(Iciwi.class).getConfig();
-
-	if (m.equalsIgnoreCase(c.getString("ticket.material")) && i == c.getInt("ticket.custom-model-data")) {
-		return TicketType.TICKET;
-	}
-	else if (m.equalsIgnoreCase(c.getString("card.material")) && i == c.getInt("card.custom-model-data")) {
-		return TicketType.CARD;
-	}
-	else if (m.equalsIgnoreCase(c.getString("railpass.material")) && i == c.getInt("railpass.custom-model-data")) {
-		return TicketType.RAIL_PASS;
-	}
-	else {throw new EnumConstantNotPresentException(TicketType.class, m);}
 }
 }

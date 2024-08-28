@@ -1,13 +1,13 @@
 package mikeshafter.iciwi.api;
 
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.util.TicketType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 import mikeshafter.iciwi.util.IciwiUtil;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -73,12 +73,23 @@ public void onPlayerInteract (PlayerInteractEvent event) {
 public void onInteract (Player player, SignInfo info) {
 	var item = info.item();
 	if (!IciwiUtil.loreCheck(item)) return;
+	var m = item.getType().toString();
+	var i = item.getItemMeta().getCustomModelData();
+	var c = Iciwi.getPlugin(Iciwi.class).getConfig();
 
-	switch (IciwiUtil.getTicketType(item)) {
-		case TICKET -> onTicket(player, info);
-		case CARD -> onCard(player, info);
-		case RAIL_PASS -> onRailPass(player, info);
+	if (m.equalsIgnoreCase(c.getString("ticket.material")) && i == c.getInt("ticket.custom-model-data")) {
+		onTicket(player, info);
 	}
+	else if (m.equalsIgnoreCase(c.getString("card.material")) && i == c.getInt("card.custom-model-data")) {
+		onCard(player, info);
+	}
+	else if (m.equalsIgnoreCase(c.getString("railpass.material")) && i == c.getInt("railpass.custom-model-data")) {
+		onRailPass(player, info);
+	}
+	else {
+		throw new EnumConstantNotPresentException(TicketType.class, m);
+	}
+
 }
 
 public abstract void onTicket (Player player, SignInfo info);
