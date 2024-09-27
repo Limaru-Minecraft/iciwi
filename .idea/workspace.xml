@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8965a29-91b3-4cdb-957a-0025b8794d28" name="Changes" comment="refactor">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/gradle_build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/gradle_build.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="d8965a29-91b3-4cdb-957a-0025b8794d28" name="Changes" comment="refactor" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
