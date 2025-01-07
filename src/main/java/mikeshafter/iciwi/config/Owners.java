@@ -241,7 +241,15 @@ public double getFareCapAmt (String operator) {return super.getDouble("Caps." + 
  * @param operator Name of the company
  * @return the duration in which the fare cap is active
  */
-public String getFareCapDuration (String operator) {return super.getString("Caps." + operator + "duration");}
+public long getFareCapDuration (String operator) {return Long.parseLong(super.getString("Caps." + operator + "duration"));}
+
+/**
+ * Gets the duration of the fare cap of a company as a string
+ *
+ * @param operator Name of the company
+ * @return the duration in which the fare cap is active
+ */
+public String getFareCapDurationString (String operator) {return super.getString("Caps." + operator + "duration");}
 
 /**
  * Gets whether a company has a fare cap

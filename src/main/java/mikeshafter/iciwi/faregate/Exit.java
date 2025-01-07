@@ -221,5 +221,4 @@ public void onRailPass (Player player, SignInfo info) {
 		super.setCloseGateArray(super.openGate());
 	}
 }
-
 }
