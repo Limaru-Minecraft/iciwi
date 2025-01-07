@@ -73,7 +73,7 @@ private void registerEvents () {
 }
 
 private void registerStations () {
-	Set<String> stations = fares.getAllStations();
+	Set<String> stations = fares.getAllStarts();
 	if (stations != null) stations.forEach(station -> owners.getOwners(station));
 }
 

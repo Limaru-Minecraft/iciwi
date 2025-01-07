@@ -2,7 +2,7 @@ package mikeshafter.iciwi.config;
 
 public class Records extends CustomConfig {
 
-public Records () {super("records.yml");}
+public Records () { super("records.yml"); }
 
 /**
  * Get the station at which the card entered the transit system.

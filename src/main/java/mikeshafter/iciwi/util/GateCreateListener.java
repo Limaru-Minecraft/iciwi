@@ -8,24 +8,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
-import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
-import static mikeshafter.iciwi.util.IciwiUtil.containsMany;
 
 public class GateCreateListener implements Listener {
 
   @EventHandler(priority = EventPriority.LOWEST)
   public void onGateCreate(SignChangeEvent event) {
     Lang lang = Iciwi.getPlugin(Iciwi.class).lang;
-    final String line = parseComponent(event.line(0));
+    final String line = IciwiUtil.parseComponent(event.line(0));
     final Player player = event.getPlayer();
 
-    int createdSign = containsMany(line, lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
+    int createdSign = IciwiUtil.containsMany(line, lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
 
     if (createdSign != -1 && !player.hasPermission("iciwi.create")) {
       event.setCancelled(true);
       return;
     }
-
 
     switch (createdSign) {
       case 0 -> player.sendMessage(lang.getString("create-entry-sign"));

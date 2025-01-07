@@ -117,8 +117,8 @@ private String timeToString (long time) {
 /**
  @param name Name of the rail pass
  @return How long the rail pass lasts */
-public long getRailPassDuration (String name) { 
-	return timeToLong(super.getString(toPath("RailPasses", name, "duration"))); 
+public long getRailPassDuration (String name) {
+	return timeToLong(super.getString(toPath("RailPasses", name, "duration")));
 }
 
 private long timeToLong (String time) {
@@ -241,9 +241,7 @@ public double getFareCapAmt (String operator) {return super.getDouble("Caps." + 
  * @param operator Name of the company
  * @return the duration in which the fare cap is active
  */
-public long getFareCapDuration (String operator) {
-	return timeToLong(super.getString("Caps." + operator + "duration"));
-}
+public String getFareCapDuration (String operator) {return super.getString("Caps." + operator + "duration");}
 
 /**
  * Gets whether a company has a fare cap

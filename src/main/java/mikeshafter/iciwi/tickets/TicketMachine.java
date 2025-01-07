@@ -10,7 +10,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,9 +34,7 @@ public TicketMachine (Player player) {this.player = player;}
 
 // getters
 public Clickable[] getClickables () {return clickables;}
-
 public ItemStack getSelectedItem () {return selectedItem;}
-
 public boolean useBottomInv () {return bottomInv;}
 
 // setters
@@ -45,30 +42,40 @@ public boolean useBottomInv () {return bottomInv;}
 public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
 
 public void init (String station) {
-	List<String> operators = this.owners.getOwners(station);
-	ArrayList<Clickable> clickList = new ArrayList<>();
-	boolean addCustomTickets = true;
-	for (String operator : operators) {
-		if (this.owners.hasOperatorTicket(operator)) {
-			clickList.add(Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)), (event) -> generateOperatorTicket(operator)));
-		}
-		else if (addCustomTickets) {
-			clickList.add(Clickable.of(makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")), (event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))));
-			addCustomTickets = false;
-		}
-	}
+    List<String> operators = this.owners.getOwners(station);
+    ArrayList<Clickable> clickList = new ArrayList<>();
+    boolean addCustomTickets = true;
+    for (String operator : operators) {
+        if (this.owners.hasOperatorTicket(operator)) {
+			clickList.add(Clickable.of(
+				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)),
+				(event) -> generateOperatorTicket(operator)
+			));
+        }
+        else if (addCustomTickets) {
+            clickList.add(Clickable.of(
+				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
+				(event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
+			));
+            addCustomTickets = false;
+        }
+    }
 
 	// New card
-	clickList.add(Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
-		SignInteractListener.putMachine(player, new CardMachine(player, station));
-		((CardMachine) SignInteractListener.getMachine(player)).newCard();
-	}));
+    clickList.add(
+        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
+            SignInteractListener.putMachine(player, new CardMachine(player, station));
+            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
+        })
+    );
 
 	// Select card
-	clickList.add(Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
-		SignInteractListener.putMachine(player, new CardMachine(player, station));
-		((CardMachine) SignInteractListener.getMachine(player)).selectCard();
-	}));
+    clickList.add(
+        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+            SignInteractListener.putMachine(player, new CardMachine(player, station));
+            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
+        })
+    );
 
 	this.clickables = justify(9, clickList);
 
