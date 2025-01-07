@@ -1,9 +1,5 @@
 package mikeshafter.iciwi.api;
 
-import jdk.incubator.vector.IntVector;
-import jdk.incubator.vector.VectorMask;
-import jdk.incubator.vector.VectorOperators;
-import jdk.incubator.vector.VectorSpecies;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.util.FareGateBlock;
 import org.bukkit.Location;
@@ -57,22 +53,12 @@ public void setCloseGateArray (Object[] closeGateArray) {this.closeGateArray = c
 public void onPlayerMove (PlayerMoveEvent event) {
 	if (this.closeGateArray == null) return;
 	Location ploc = event.getPlayer().getLocation();
-	if (sameBlockLoc((Location[]) closeGateArray[0], ploc)) {
-		for (Runnable r : ((Runnable[]) closeGateArray[1]))
-			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, r, plugin.getConfig().getLong("close-after-pass"));
-
+	for (Location gloc : ((Location[]) closeGateArray[0])) {
+		if (gloc.getBlockX() == ploc.getBlockX() && gloc.getBlockY() == ploc.getBlockY() && gloc.getBlockZ() == ploc.getBlockZ()) {
+			for (Runnable r : ((Runnable[]) closeGateArray[1]))
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, r, plugin.getConfig().getLong("close-after-pass"));
+		}
 	}
-}
-
-private boolean sameBlockLoc (Location[] check, Location loc) {
-	VectorSpecies<Integer> species = IntVector.SPECIES_64;
-	IntVector locV = IntVector.fromArray(species, new int[]{loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()}, 0);
-	for (Location l : check) {
-		IntVector locC = IntVector.fromArray(species, new int[]{l.getBlockX(), l.getBlockY(), l.getBlockZ()}, 0);
-		VectorMask<Integer> mask = locV.compare(VectorOperators.EQ, locC);
-		if (mask.allTrue()) return true;
-	}
-	return false;
 }
 
 /**
