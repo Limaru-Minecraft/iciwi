@@ -65,9 +65,6 @@ public void TicketMachineListener (final InventoryClickEvent event) {
 	}
 }
 
-
-
-
 @EventHandler(priority = EventPriority.LOWEST)
 public void onSignClick (final PlayerInteractEvent event) {
 	if (event.getClickedBlock() == null || event.getAction() != Action.RIGHT_CLICK_BLOCK || !(event.getClickedBlock().getState() instanceof Sign sign)) {

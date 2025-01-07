@@ -16,21 +16,20 @@ private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
 
 private Connection connect () {
-// SQLite connection string
-// "jdbc:sqlite:IciwiCards.db"
+	// SQLite connection string
+	// "jdbc:sqlite:IciwiCards.db"
 	String url = plugin.getConfig().getString("database");
 	Connection conn = null;
 	try {
 		conn = DriverManager.getConnection(Objects.requireNonNull(url));
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 	return conn;
 }
 
 /**
- Initialise SQL tables
+ * Initialise SQL tables
  */
 public void initTables () {
 	ArrayList<String> sql = new ArrayList<>(31);
@@ -57,53 +56,51 @@ public void initTables () {
 
 	try (Connection conn = this.connect(); Statement statement = conn.createStatement()) {
 		for (String s : sql) statement.execute(s);
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 /**
- Creates a new Iciwi card
-
- @param serial Serial number
- @param value  Starting value of the card */
+ * Creates a new Iciwi card
+ *
+ * @param serial Serial number
+ * @param value  Starting value of the card
+ */
 public void newCard (String serial, double value) {
 	String sql = "INSERT INTO cards(serial, value) VALUES(?, ?) ; ";
-
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setString(1, serial);
 		statement.setDouble(2, Math.round(value * 100.0) / 100.0);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 /**
- Deletes an existing Iciwi card
-
- @param serial Serial number */
+ * Deletes an existing Iciwi card
+ *
+ * @param serial Serial number
+ */
 public void deleteCard (String serial) {
 	String sql = "DELETE FROM cards WHERE serial = ? ;";
-
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setString(1, serial);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 
 /**
- Sets a rail pass for a certain card and operator
-
- @param serial Serial number
- @param name   Name of the rail pass
- @param start  Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z. */
+ * Sets a rail pass for a certain card and operator
+ *
+ * @param serial Serial number
+ * @param name   Name of the rail pass
+ * @param start  Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z.
+ */
 public void setDiscount (String serial, String name, long start) {
 	String sql = "INSERT INTO discounts VALUES (?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -111,18 +108,18 @@ public void setDiscount (String serial, String name, long start) {
 		statement.setString(2, name);
 		statement.setLong(3, start);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 
 /**
- Gets all the rail passes of a card. This method also deletes expired rail passes.
-
- @param serial Serial number
- @return Map in the format String name, Long start. */
+ * Gets all the rail passes of a card. This method also deletes expired rail passes.
+ *
+ * @param serial Serial number
+ * @return Map in the format String name, Long start.
+ */
 public Map<String, Long> getAllDiscounts (String serial) {
 	String sql = "SELECT name, start FROM discounts WHERE serial = ?";
 	HashMap<String, Long> returnValue = new HashMap<>();
@@ -133,7 +130,7 @@ public Map<String, Long> getAllDiscounts (String serial) {
 		while (rs.next()) {
 			String name = rs.getString(1);
 			long expiry = getStart(serial, name) + owners.getRailPassDuration(name);
-			if (expiry > System.currentTimeMillis()) returnValue.put(name, expiry);
+			if (expiry > System.currentTimeMillis()) {returnValue.put(name, expiry);}
 			else {
 				String sql1 = "DELETE FROM DISCOUNTS WHERE serial = ? AND name = ?";
 				final PreparedStatement statement1 = conn.prepareStatement(sql1);
@@ -141,23 +138,20 @@ public Map<String, Long> getAllDiscounts (String serial) {
 				statement1.setString(2, name);
 				statement1.executeUpdate();
 			}
-
 		}
-
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
-
 	return returnValue;
 }
 
 
 /**
- Gets the start time of a certain railpass belonging to a card
-
- @param serial Serial number
- @param name   Name of the discount (include operator) */
+ * Gets the start time of a certain railpass belonging to a card
+ *
+ * @param serial Serial number
+ * @param name   Name of the discount (include operator)
+ */
 public long getStart (String serial, String name) {
 	String sql = "SELECT start FROM discounts WHERE serial = ? AND name = ?";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -166,8 +160,7 @@ public long getStart (String serial, String name) {
 		ResultSet rs = statement.executeQuery();
 		return rs.getLong(1);
 
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 		return 0L;
 	}
@@ -175,35 +168,37 @@ public long getStart (String serial, String name) {
 
 
 /**
- Adds a value to a card
-
- @param serial Serial number
- @param value  Value to be added */
+ * Adds a value to a card
+ *
+ * @param serial Serial number
+ * @param value  Value to be added
+ */
 public void addValueToCard (String serial, double value) {updateCard(serial, getCardValue(serial) + value);}
 
 
 /**
- Changes a value of a card
-
- @param serial Serial number
- @param value  New value of card */
+ * Changes a value of a card
+ *
+ * @param serial Serial number
+ * @param value  New value of card
+ */
 public void updateCard (String serial, double value) {
 	String sql = "UPDATE cards SET value = ? WHERE serial = ?";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setDouble(1, Math.round(value * 100.0) / 100.0);
 		statement.setString(2, serial);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 
 /**
- Gets the value of a card
-
- @param serial Serial number */
+ * Gets the value of a card
+ *
+ * @param serial Serial number
+ */
 public double getCardValue (String serial) {
 	String sql = "SELECT value FROM cards WHERE serial = ?";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -211,8 +206,7 @@ public double getCardValue (String serial) {
 		ResultSet rs = statement.executeQuery();
 		return Math.round(rs.getDouble("value") * 100.0) / 100.0;
 
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 		return 0d;
 	}
@@ -220,18 +214,20 @@ public double getCardValue (String serial) {
 
 
 /**
- Subtracts a value from a card
-
- @param serial Serial number
- @param value  Value to be subtracted */
+ * Subtracts a value from a card
+ *
+ * @param serial Serial number
+ * @param value  Value to be subtracted
+ */
 public void subtractValueFromCard (String serial, double value) {updateCard(serial, getCardValue(serial) - value);}
 
 
 /**
- Method to debug database
-
- @param sql SQL to run
- @return Values of the ResultSet returned */
+ * Method to debug database
+ *
+ * @param sql SQL to run
+ * @return Values of the ResultSet returned
+ */
 public String[][] runSql (String sql) {
 	try (Connection conn = this.connect(); PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
 		if (preparedStatement.execute()) {
@@ -257,20 +253,20 @@ public String[][] runSql (String sql) {
 			long a = preparedStatement.executeLargeUpdate();
 			return new String[][]{{String.valueOf(a)}};
 		}
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 		return null;
 	}
 }
 
 /**
- This method returns the number of log counts in the file.
- If the file does not exist, it creates a new file with 1 in it.
- If the file exists but is empty, it returns 1.
- Otherwise, it reads the number from the file and returns it.
-
- @return the number of log counts */
+ * This method returns the number of log counts in the file.
+ * If the file does not exist, it creates a new file with 1 in it.
+ * If the file exists but is empty, it returns 1.
+ * Otherwise, it reads the number from the file and returns it.
+ *
+ * @return the number of log counts
+ */
 public int getCount () {
 	File file = new File("iciwi_id.txt");
 	try {
@@ -278,29 +274,27 @@ public int getCount () {
 		int number = Integer.parseInt(br.readLine());
 		br.close();
 		return number;
-	}
-	catch (FileNotFoundException e) {
+	} catch (FileNotFoundException e) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("iciwi_id.txt"));
 			writer.write("1");
 			writer.close();
 			return 1;
-		}
-		catch (IOException x) {
+		} catch (IOException x) {
 			plugin.getLogger().warning(x.getLocalizedMessage());
 			return -1;
 		}
-	}
-	catch (IOException e) {
+	} catch (IOException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 		return -1;
 	}
 }
 
 /**
- Increments the count in the file by 1 and returns the updated count.
-
- @return the updated count in the file */
+ * Increments the count in the file by 1 and returns the updated count.
+ *
+ * @return the updated count in the file
+ */
 public int incrementAndGetCount () {
 	File file = new File("iciwi_id.txt");
 	try {
@@ -311,29 +305,27 @@ public int incrementAndGetCount () {
 		writer.write(String.valueOf(number + 1));
 		writer.close();
 		return number + 1;
-	}
-	catch (FileNotFoundException e) {
+	} catch (FileNotFoundException e) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("iciwi_id.txt"));
 			writer.write("1");
 			writer.close();
 			return 1;
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			plugin.getLogger().warning(ex.getLocalizedMessage());
 			return -1;
 		}
-	}
-	catch (IOException e) {
+	} catch (IOException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 		return -1;
 	}
 }
 
 /**
- Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
-
- @param player_uuid the UUID of the player */
+ * Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
+ *
+ * @param player_uuid the UUID of the player
+ */
 public void logMaster (String player_uuid) {
 	long timestamp = System.currentTimeMillis();
 	String sql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ( ?, ?, ?)";
@@ -342,19 +334,19 @@ public void logMaster (String player_uuid) {
 		statement.setLong(2, timestamp);
 		statement.setString(3, player_uuid);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 /**
- Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
-
- @param signX the x coordinate of the sign
- @param signY the y coordinate of the sign
- @param signZ the z coordinate of the sign
- @param entry the log entry */
+ * Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
+ *
+ * @param signX the x coordinate of the sign
+ * @param signY the y coordinate of the sign
+ * @param signZ the z coordinate of the sign
+ * @param entry the log entry
+ */
 public void logEntry (int signX, int signY, int signZ, String entry) {
 	String sql = "INSERT INTO log_entry (id, sign_x, sign_y, sign_z, entry) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -364,20 +356,19 @@ public void logEntry (int signX, int signY, int signZ, String entry) {
 		statement.setInt(4, signZ);
 		statement.setString(5, entry);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and exit time.
-
- @param prev_entry     the log entry
- @param prev_fare      the fare for the log entry
- @param prev_fareClass the class of the fare
- @param exitTime       the exit time in seconds from the Java epoch of 1970-01-01T00:00:00Z */
+ * Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and exit time.
+ *
+ * @param prev_entry     the log entry
+ * @param prev_fare      the fare for the log entry
+ * @param prev_fareClass the class of the fare
+ * @param exitTime       the exit time in seconds from the Java epoch of 1970-01-01T00:00:00Z
+ */
 public void logPrevJourney (String prev_entry, double prev_fare, String prev_fareClass, long exitTime) {
 	String sql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -387,21 +378,20 @@ public void logPrevJourney (String prev_entry, double prev_fare, String prev_far
 		statement.setString(4, prev_fareClass);
 		statement.setLong(5, exitTime);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and exit.
-
- @param signX the x coordinate of the sign
- @param signY the y coordinate of the sign
- @param signZ the z coordinate of the sign
- @param entry the log entry
- @param exit  the log exit */
+ * Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and exit.
+ *
+ * @param signX the x coordinate of the sign
+ * @param signY the y coordinate of the sign
+ * @param signZ the z coordinate of the sign
+ * @param entry the log entry
+ * @param exit  the log exit
+ */
 public void logExit (int signX, int signY, int signZ, String entry, String exit) {
 	String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, exit) VALUES ( ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -413,19 +403,18 @@ public void logExit (int signX, int signY, int signZ, String entry, String exit)
 		statement.setString(5, entry);
 		statement.setString(6, exit);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_journey table with the specified subtotal, total, and fare class
-
- @param subtotal  the subtotal of the journey
- @param total     the total cost of the journey
- @param fareClass the class of the fare for the journey */
+ * Inserts a new log entry into the log_journey table with the specified subtotal, total, and fare class
+ *
+ * @param subtotal  the subtotal of the journey
+ * @param total     the total cost of the journey
+ * @param fareClass the class of the fare for the journey
+ */
 public void logJourney (double subtotal, double total, String fareClass) {
 	String sql = "INSERT INTO log_journey (id, subtotal, total, class) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -435,20 +424,19 @@ public void logJourney (double subtotal, double total, String fareClass) {
 		statement.setDouble(3, total);
 		statement.setString(4, fareClass);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_member table with the specified sign coordinates and station name.
-
- @param signX   the x coordinate of the sign
- @param signY   the y coordinate of the sign
- @param signZ   the z coordinate of the sign
- @param station the station information */
+ * Inserts a new log entry into the log_member table with the specified sign coordinates and station name.
+ *
+ * @param signX   the x coordinate of the sign
+ * @param signY   the y coordinate of the sign
+ * @param signZ   the z coordinate of the sign
+ * @param station the station information
+ */
 public void logMember (int signX, int signY, int signZ, String station) {
 	String sql = "INSERT INTO log_member (id, sign_x, sign_y, sign_z, station) VALUES ( ?, ?, ?, ?, ?)";
 
@@ -460,22 +448,21 @@ public void logMember (int signX, int signY, int signZ, String station) {
 		statement.setInt(4, signZ);
 		statement.setString(5, station);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry when players use a paper rail pass.
- This is separate from the normal gate-specific signs as all fare gates work as member signs when a paper pass is used.
-
- @param signX   the x coordinate of the sign
- @param signY   the y coordinate of the sign
- @param signZ   the z coordinate of the sign
- @param station the station information
- @param signType the type of sign */
+ * Inserts a new log entry when players use a paper rail pass.
+ * This is separate from the normal gate-specific signs as all fare gates work as member signs when a paper pass is used.
+ *
+ * @param signX    the x coordinate of the sign
+ * @param signY    the y coordinate of the sign
+ * @param signZ    the z coordinate of the sign
+ * @param station  the station information
+ * @param signType the type of sign
+ */
 public void logFreePass (int signX, int signY, int signZ, String station, String signType) {
 	String sql = "INSERT INTO log_free_pass (id, sign_x, sign_y, sign_z, station, sign_type) VALUES ( ?, ?, ?, ?, ?, ?)";
 
@@ -488,21 +475,20 @@ public void logFreePass (int signX, int signY, int signZ, String station, String
 		statement.setString(5, station);
 		statement.setString(6, signType);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_transfer table with the specified sign coordinates, entry station, and transfer station.
-
- @param signX    the x coordinate of the sign
- @param signY    the y coordinate of the sign
- @param signZ    the z coordinate of the sign
- @param entry    the log entry
- @param transfer the log transfer */
+ * Inserts a new log entry into the log_transfer table with the specified sign coordinates, entry station, and transfer station.
+ *
+ * @param signX    the x coordinate of the sign
+ * @param signY    the y coordinate of the sign
+ * @param signZ    the z coordinate of the sign
+ * @param entry    the log entry
+ * @param transfer the log transfer
+ */
 public void logTransfer (int signX, int signY, int signZ, String entry, String transfer) {
 	String sql = "INSERT INTO log_transfer (id, sign_x, sign_y, sign_z, entry, transfer) VALUES ( ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -514,21 +500,21 @@ public void logTransfer (int signX, int signY, int signZ, String entry, String t
 		statement.setString(5, entry);
 		statement.setString(6, transfer);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
 /**
- Inserts a new log entry into the log_railpass_store table with the specified name, price, percentage, start time, duration, and operator.
-
- @param name       the name of the rail pass
- @param price      the price of the rail pass
- @param percentage the percentage discount of the rail pass
- @param start      the start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
- @param duration   the duration of the rail pass in seconds
- @param operator   the operator of the rail pass */
+ * Inserts a new log entry into the log_railpass_store table with the specified name, price, percentage, start time, duration, and operator.
+ *
+ * @param name       the name of the rail pass
+ * @param price      the price of the rail pass
+ * @param percentage the percentage discount of the rail pass
+ * @param start      the start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
+ * @param duration   the duration of the rail pass in seconds
+ * @param operator   the operator of the rail pass
+ */
 public void logRailpassStore (String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -541,22 +527,21 @@ public void logRailpassStore (String name, double price, double percentage, long
 		statement.setLong(6, duration);
 		statement.setString(7, operator);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_railpass_use table with the specified name, price, percentage, start time, duration, and operator.
-
- @param name       the name of the rail pass
- @param price      the price of the rail pass
- @param percentage the percentage discount of the rail pass
- @param start      the start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
- @param duration   the duration of the rail pass in seconds
- @param operator   the operator of the rail pass */
+ * Inserts a new log entry into the log_railpass_use table with the specified name, price, percentage, start time, duration, and operator.
+ *
+ * @param name       the name of the rail pass
+ * @param price      the price of the rail pass
+ * @param percentage the percentage discount of the rail pass
+ * @param start      the start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
+ * @param duration   the duration of the rail pass in seconds
+ * @param operator   the operator of the rail pass
+ */
 public void logRailpassUse (String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -569,19 +554,18 @@ public void logRailpassUse (String name, double price, double percentage, long s
 		statement.setLong(6, duration);
 		statement.setString(7, operator);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_ticket_use table with the specified from station, to station, and travel class.
-
- @param from        the starting station
- @param to          the destination station
- @param travelClass the class of the travel */
+ * Inserts a new log entry into the log_ticket_use table with the specified from station, to station, and travel class.
+ *
+ * @param from        the starting station
+ * @param to          the destination station
+ * @param travelClass the class of the travel
+ */
 public void logTicketUse (String from, String to, String travelClass) {
 	String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -590,17 +574,16 @@ public void logTicketUse (String from, String to, String travelClass) {
 		statement.setString(3, to);
 		statement.setString(4, travelClass);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
 
-
 /**
- Inserts a new log entry into the log_card_use table with the specified serial and value.
-
- @param serial Serial number of the card */
+ * Inserts a new log entry into the log_card_use table with the specified serial and value.
+ *
+ * @param serial Serial number of the card
+ */
 public void logCardUse (String serial) {
 	String sql = "INSERT INTO log_card_use (id, serial, value) VALUES ( ?, ?, (SELECT value FROM cards WHERE serial = ?))";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -609,8 +592,7 @@ public void logCardUse (String serial) {
 		statement.setString(2, serial);
 		statement.setString(3, serial);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 	Map<String, Long> currentPasses = getAllDiscounts(serial);
@@ -620,11 +602,12 @@ public void logCardUse (String serial) {
 }
 
 /**
- Inserts a new log entry into the log_ticket_create table with the specified from station, to station, and travel class.
-
- @param from        the starting station
- @param to          the destination station
- @param travelClass the class of the travel */
+ * Inserts a new log entry into the log_ticket_create table with the specified from station, to station, and travel class.
+ *
+ * @param from        the starting station
+ * @param to          the destination station
+ * @param travelClass the class of the travel
+ */
 public void logTicketCreate (String from, String to, String travelClass, double fare) {
 	String sql = "INSERT INTO log_ticket_create (id, from, to, class, fare) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -634,16 +617,17 @@ public void logTicketCreate (String from, String to, String travelClass, double 
 		statement.setString(4, travelClass);
 		statement.setDouble(5, fare);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
-/**
- Inserts a new log entry into the log_card_create table with the specified serial and value.
 
- @param serial Serial number of the card
- @param value  Value of the card */
+/**
+ * Inserts a new log entry into the log_card_create table with the specified serial and value.
+ *
+ * @param serial Serial number of the card
+ * @param value  Value of the card
+ */
 public void logCardCreate (String serial, double value) {
 	String sql = "INSERT INTO log_card_create (id, serial, value) VALUES ( ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -651,18 +635,19 @@ public void logCardCreate (String serial, double value) {
 		statement.setString(2, serial);
 		statement.setDouble(3, value);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
-/**
- Inserts a new log entry into the log_card_topup table with the specified serial, old value, added value, and new value.
 
- @param serial     Serial number of the card
- @param oldValue   Old value of the card
- @param addedValue Value added to the card
- @param newValue   New value of the card */
+/**
+ * Inserts a new log entry into the log_card_topup table with the specified serial, old value, added value, and new value.
+ *
+ * @param serial     Serial number of the card
+ * @param oldValue   Old value of the card
+ * @param addedValue Value added to the card
+ * @param newValue   New value of the card
+ */
 public void logCardTopup (String serial, double oldValue, double addedValue, double newValue) {
 	String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -672,21 +657,22 @@ public void logCardTopup (String serial, double oldValue, double addedValue, dou
 		statement.setDouble(4, addedValue);
 		statement.setDouble(5, newValue);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
-/**
- Inserts a new log entry into the log_railpass_extend table with the specified serial, name, price, percentage, start time, duration, and operator.
 
- @param serial     Serial number of the rail pass
- @param name       Name of the rail pass
- @param price      Price of the rail pass
- @param percentage Percentage discount of the rail pass
- @param start      Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
- @param duration   Duration of the rail pass in seconds
- @param operator   Operator of the rail pass */
+/**
+ * Inserts a new log entry into the log_railpass_extend table with the specified serial, name, price, percentage, start time, duration, and operator.
+ *
+ * @param serial     Serial number of the rail pass
+ * @param name       Name of the rail pass
+ * @param price      Price of the rail pass
+ * @param percentage Percentage discount of the rail pass
+ * @param start      Start time of the rail pass as number of seconds from the Java epoch of 1970-01-01T00:00:00Z
+ * @param duration   Duration of the rail pass in seconds
+ * @param operator   Operator of the rail pass
+ */
 public void logRailpassExtend (String serial, String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_extend (id, serial, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -699,16 +685,17 @@ public void logRailpassExtend (String serial, String name, double price, double 
 		statement.setLong(7, duration);
 		statement.setString(8, operator);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
-/**
- Inserts a new log entry into the log_card_refund table with the specified serial and value.
 
- @param serial Serial number of the card
- @param value  Value of the card */
+/**
+ * Inserts a new log entry into the log_card_refund table with the specified serial and value.
+ *
+ * @param serial Serial number of the card
+ * @param value  Value of the card
+ */
 public void logCardRefund (String serial, double value) {
 	String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES ( ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -716,10 +703,8 @@ public void logCardRefund (String serial, double value) {
 		statement.setString(2, serial);
 		statement.setDouble(3, value);
 		statement.executeUpdate();
-	}
-	catch (SQLException e) {
+	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
 }
-
 }

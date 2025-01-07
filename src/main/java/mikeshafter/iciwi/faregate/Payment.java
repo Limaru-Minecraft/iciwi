@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import mikeshafter.iciwi.api.SignInfo;
 import org.bukkit.SoundCategory;
 
 import mikeshafter.iciwi.Iciwi;
@@ -6,10 +7,8 @@ import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
-import org.bukkit.block.Sign;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class Payment extends FareGate {
 
@@ -17,14 +16,16 @@ public class Payment extends FareGate {
 	private final Lang lang = plugin.lang;
 
 	public Payment() {
-		super();
-		super.setSignLine0(lang.getString("payment"));
+		super("payment");
 	}
 
 	@Override
-	public void onInteract(Player player, ItemStack item, String[] signText, Sign sign) {
+	public void onInteract(Player player, SignInfo info) {
+		var signText = info.signText();
+		var sign = info.sign();
+		var item = info.item();
 		// Get station
-		String station = IciwiUtil.stripColor(signText[1]);
+		String station = info.station();
 
 		// Wax sign
 		sign.setWaxed(true);
@@ -56,5 +57,14 @@ public class Payment extends FareGate {
 		var stationOwners = plugin.owners.getOwners(station);
 		for (int i = 0; i < stationOwners.size(); i++) plugin.owners.deposit(stationOwners.get(i), price / stationOwners.size());
 	}
+
+@Override
+public void onTicket (Player player, SignInfo info) {}
+
+@Override
+public void onCard (Player player, SignInfo info) {}
+
+@Override
+public void onRailPass (Player player, SignInfo info) {}
 
 }

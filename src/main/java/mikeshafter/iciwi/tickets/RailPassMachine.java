@@ -138,7 +138,7 @@ public class RailPassMachine implements Machine {
         if (!loreCheck(item)) return;
 
         // get available railpasses
-        List<String> railPassNames = new ArrayList<String>(this.owners.getRailPassNamesFromList(this.operators));
+        List<String> railPassNames = new ArrayList<>(this.owners.getRailPassNamesFromList(this.operators));
 
         int invSize = (railPassNames.size() / 9 + 1) * 9;
         this.inv = this.plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
