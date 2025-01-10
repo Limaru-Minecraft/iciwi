@@ -113,8 +113,12 @@ public void onCard (Player player, SignInfo info) {
 	for (String o : nOwners) railPasses.addAll(owners.getRailPassNames(o));
 	for (String o : xOwners) railPasses.addAll(owners.getRailPassNames(o));
 	railPasses.retainAll(cardSql.getAllDiscounts(serial).keySet());
-	String finalRailPass = Collections.min(railPasses, (r, s) -> Double.compare(owners.getRailPassPercentage(r), owners.getRailPassPercentage(s)));
-	double pp = owners.getRailPassPercentage(finalRailPass);
+	double pp = 1f;
+	String finalRailPass = null;
+	if (!railPasses.isEmpty()) {
+		finalRailPass = Collections.min(railPasses, (r, s) -> Double.compare(owners.getRailPassPercentage(r), owners.getRailPassPercentage(s)));
+		pp = owners.getRailPassPercentage(finalRailPass);
+	}
 
 	// Set final base fare
 	fare *= pp;
@@ -125,6 +129,7 @@ public void onCard (Player player, SignInfo info) {
 	}
 
 	// Prepare each company's earnings
+	// TODO: Case where owners are not found
 	double nEarning = fare / (2 * nOwners.size());
 	double xEarning = fare / (2 * xOwners.size());
 

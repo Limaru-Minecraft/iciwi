@@ -50,12 +50,11 @@ public void onPlayerInteract (PlayerInteractEvent event) {
 	BlockState signState = clickedLocation.getBlock().getState();
 
 	if (!(signState instanceof Sign sign)) {return;}
+	SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
+	if (!IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(header)) {return;}
 
 	sign.setWaxed(true);
 	sign.update(true);
-
-	SignSide side = sign.getSide(sign.getInteractableSideFor(event.getPlayer()));
-	if (!IciwiUtil.stripColor(IciwiUtil.parseComponent(side.line(0))).contains(header)) {return;}
 
 	// get sign text
 	String[] signText = new String[]{

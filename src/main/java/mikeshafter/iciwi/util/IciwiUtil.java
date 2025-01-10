@@ -47,7 +47,7 @@ public static String parseComponent (final Component c) {
  * @return a list of Strings from the list of Components
  */
 public static List<String> parseComponents (List<Component> cList) {
-	return cList.stream().map(IciwiUtil::parseComponent).toList();
+	return new ArrayList<>(cList.stream().map(IciwiUtil::parseComponent).toList());
 }
 
 /**
@@ -57,7 +57,7 @@ public static List<String> parseComponents (List<Component> cList) {
  * @return a list of Components from the list of Strings
  */
 public static List<Component> toComponents (List<String> sList) {
-	return sList.stream().map(c -> (Component) Component.text(c)).toList();
+	return new ArrayList<>(sList.stream().map(c -> (Component) Component.text(c)).toList());
 }
 
   /* UNUSED
@@ -138,14 +138,13 @@ public static boolean loreCheck (ItemStack itemStack, int minSize) {return itemS
  * @param line   line of lore to punch (starting from Line 0)
  */
 public static void punchTicket (ItemStack ticket, int line) {
-	if (loreCheck(ticket)) {
-		var meta = ticket.getItemMeta();
-		List<String> lore = parseComponents(Objects.requireNonNull(meta.lore()));
-		if (line < lore.size() && !lore.get(line).contains("•")) {
-			lore.set(line, lore.get(line) + " •");
-			meta.lore(toComponents(lore));
-			ticket.setItemMeta(meta);
-		}
+	if (!loreCheck(ticket)) {return;}
+	var meta = ticket.getItemMeta();
+	List<String> lore = parseComponents(Objects.requireNonNull(meta.lore()));
+	if (line < lore.size() && !lore.get(line).contains("•")) {
+		lore.set(line, lore.get(line) + " •");
+		meta.lore(toComponents(lore));
+		ticket.setItemMeta(meta);
 	}
 }
 

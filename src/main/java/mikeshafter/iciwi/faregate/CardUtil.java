@@ -7,9 +7,7 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 import java.util.*;
 import org.bukkit.Location;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 public class CardUtil {
 private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
