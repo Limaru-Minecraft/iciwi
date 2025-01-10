@@ -43,10 +43,10 @@ private void loadAllConfig () {
 }
 
 public void reloadAllConfig () {
-	new Lang().reload();
-	new Owners().reload();
-	new Records().reload();
-	new Fares().reload();
+	this.lang.reload();
+	this.owners.reload();
+	this.records.reload();
+	this.fares.reload();
 	reloadConfig();
 }
 
@@ -63,7 +63,6 @@ private void registerEvents () {
 	getServer().getPluginManager().registerEvents(new Entry(), this);
 	getServer().getPluginManager().registerEvents(new Exit(), this);
 	getServer().getPluginManager().registerEvents(new Transfer(), this);
-	getServer().getPluginManager().registerEvents(new Trapdoor(), this);
 	getServer().getPluginManager().registerEvents(new Member(), this);
 	getServer().getPluginManager().registerEvents(new Payment(), this);
 	getServer().getPluginManager().registerEvents(new Validator(), this);
@@ -73,7 +72,7 @@ private void registerEvents () {
 }
 
 private void registerStations () {
-	Set<String> stations = fares.getAllStations();
+	Set<String> stations = fares.getAllStarts();
 	if (stations != null) stations.forEach(station -> owners.getOwners(station));
 }
 
@@ -90,7 +89,7 @@ private boolean canStart () {
 		for (byte i = 0; i < 32; i++) {
 			if (h[i] != b[i]) {
 				this.getLogger().warning("YOU ARE USING A PIRATED VERSION OF ICIWI. SHUTTING DOWN... ");
-				s.dispatchCommand(getServer().getConsoleSender(), "discord bcast \u210d\ud835\udd56\ud835\udd6a \ud835\udd65\ud835\udd59\ud835\udd56\ud835\udd63\ud835\udd56! \ud835\udd4b\ud835\udd59\ud835\udd56 \ud835\udd64\ud835\udd56\ud835\udd63\ud835\udd67\ud835\udd56\ud835\udd63 \ud835\udd60\ud835\udd68\ud835\udd5f\ud835\udd56\ud835\udd63 \ud835\udd5a\ud835\udd64 \ud835\udd52 \ud835\udd61\ud835\udd5a\ud835\udd63\ud835\udd52\ud835\udd65\ud835\udd56! \ud835\udc03\ud835\udc04\ud835\udc0b\ud835\udc04\ud835\udc13\ud835\udc04 \ud835\udc08\ud835\udc02\ud835\udc08\ud835\udc16\ud835\udc08 \ud835\udc08\ud835\udc0c\ud835\udc0c\ud835\udc04\ud835\udc03\ud835\udc08\ud835\udc00\ud835\udc13\ud835\udc04\ud835\udc0b\ud835\udc18 \ud835\udc0e\ud835\udc11 \ud835\udc05\ud835\udc00\ud835\udc02\ud835\udc04 \ud835\udc02\ud835\udc0e\ud835\udc0d\ud835\udc12\ud835\udc04\ud835\udc10\ud835\udc14\ud835\udc04\ud835\udc0d\ud835\udc02\ud835\udc04\ud835\udc12!");
+				s.dispatchCommand(getServer().getConsoleSender(), "discord bcast ℍ\ud835\udd56\ud835\udd6a \ud835\udd65\ud835\udd59\ud835\udd56\ud835\udd63\ud835\udd56! \ud835\udd4b\ud835\udd59\ud835\udd56 \ud835\udd64\ud835\udd56\ud835\udd63\ud835\udd67\ud835\udd56\ud835\udd63 \ud835\udd60\ud835\udd68\ud835\udd5f\ud835\udd56\ud835\udd63 \ud835\udd5a\ud835\udd64 \ud835\udd52 \ud835\udd61\ud835\udd5a\ud835\udd63\ud835\udd52\ud835\udd65\ud835\udd56! \ud835\udc03\ud835\udc04\ud835\udc0b\ud835\udc04\ud835\udc13\ud835\udc04 \ud835\udc08\ud835\udc02\ud835\udc08\ud835\udc16\ud835\udc08 \ud835\udc08\ud835\udc0c\ud835\udc0c\ud835\udc04\ud835\udc03\ud835\udc08\ud835\udc00\ud835\udc13\ud835\udc04\ud835\udc0b\ud835\udc18 \ud835\udc0e\ud835\udc11 \ud835\udc05\ud835\udc00\ud835\udc02\ud835\udc04 \ud835\udc02\ud835\udc0e\ud835\udc0d\ud835\udc12\ud835\udc04\ud835\udc10\ud835\udc14\ud835\udc04\ud835\udc0d\ud835\udc02\ud835\udc04\ud835\udc12!");
 				s.shutdown();
 				return false;
 			}

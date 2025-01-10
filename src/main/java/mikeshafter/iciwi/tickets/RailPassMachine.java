@@ -79,8 +79,12 @@ public class RailPassMachine implements Machine {
 
     public void paperPass () {
         // get available railpasses
-        ArrayList<String> railPassNames = new ArrayList<>();
-        this.operators.forEach((o) -> railPassNames.addAll(this.owners.getRailPassNames(o)));
+        List<String> railPassNames = new ArrayList<>();
+        for (String railPassName : this.owners.getRailPassNamesFromList(this.operators)) {
+            if (this.owners.getRailPassPercentage(railPassName) == 0d) {
+                railPassNames.add(railPassName);
+            }
+        }
         
         int invSize = (railPassNames.size() / 9 + 1) * 9;
         this.inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
@@ -122,7 +126,7 @@ public class RailPassMachine implements Machine {
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
                 // close inventory
-                this.player.closeInventory();
+                this.player.closeInventory();SignInteractListener.removeMachine(player);
             });
         }
         setItems(clickables, inv);
@@ -134,8 +138,7 @@ public class RailPassMachine implements Machine {
         if (!loreCheck(item)) return;
 
         // get available railpasses
-        ArrayList<String> railPassNames = new ArrayList<>();
-        this.operators.forEach((o) -> railPassNames.addAll(owners.getRailPassNames(o)));
+        List<String> railPassNames = new ArrayList<>(this.owners.getRailPassNamesFromList(this.operators));
 
         int invSize = (railPassNames.size() / 9 + 1) * 9;
         this.inv = this.plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
@@ -144,7 +147,7 @@ public class RailPassMachine implements Machine {
         // get serial number
         IcCard icCard = IcCardFromItem(item);
         if (icCard == null) {
-            this.player.closeInventory();
+            this.player.closeInventory();SignInteractListener.removeMachine(player);
             return;
         }
         String serial = icCard.getSerial();
@@ -170,7 +173,7 @@ public class RailPassMachine implements Machine {
             menu = menu.append(Component.text("\n"));
             // send to player
             this.player.sendMessage(menu);
-            this.player.closeInventory();
+            this.player.closeInventory();SignInteractListener.removeMachine(player);
         });
 
         // create all rail pass buttons
@@ -207,7 +210,7 @@ public class RailPassMachine implements Machine {
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
                 // close inventory
-                this.player.closeInventory();
+                this.player.closeInventory();SignInteractListener.removeMachine(player);
             });
         }
 

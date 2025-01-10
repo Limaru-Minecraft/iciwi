@@ -1,5 +1,5 @@
 # should the plugin open the fare gate when someone forgets to tap in/out?
-open-on-penalty: true
+open-on-penalty: false
 
 # penalty amount when someone did not tap in/out
 penalty: 8.0

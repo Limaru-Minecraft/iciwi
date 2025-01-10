@@ -1,6 +1,7 @@
 package mikeshafter.iciwi;
 
 import com.bergerkiller.bukkit.common.cloud.CloudSimpleHandler;
+import org.bukkit.entity.Player;
 import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
 import org.incendo.cloud.annotations.CommandDescription;
@@ -13,7 +14,6 @@ import mikeshafter.iciwi.config.Owners;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import com.bergerkiller.bukkit.common.utils.TimeUtil;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,39 +22,45 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class Commands {
-	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Owners owners = plugin.owners;
-	private final Fares fares = plugin.fares;
-	private final CloudSimpleHandler cloud = new CloudSimpleHandler();
 
-	public CloudSimpleHandler getHandler() { return cloud; }
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Owners owners = plugin.owners;
+private final Fares fares = plugin.fares;
+private final CloudSimpleHandler cloud = new CloudSimpleHandler();
 
-	public void enable(Iciwi plugin) {
-		cloud.enable(plugin);
-		cloud.annotations(this);
-		cloud.helpCommand(Collections.singletonList("iciwi"), "Shows information about all of Iciwi's commands");
-	}
+public CloudSimpleHandler getHandler () {return cloud;}
 
-	private String formatString(String message, String... items) {
-		message = "§a" + message.replace("%s", "§e%s§a");
-		return String.format(message, (Object[]) items);
-	}
+public void enable (Iciwi plugin) {
+	cloud.enable(plugin);
+	cloud.annotations(this);
+	cloud.helpCommand(Collections.singletonList("iciwi"), "Shows information about all of Iciwi's commands");
+}
 
-	@Suggestions("company_list")
-	public @NonNull List<String> suggestCompanyList(
+private String formatString (String message, String... items) {
+	message = "§a" + message.replace("%s", "§e%s§a");
+	return String.format(message, (Object[]) items);
+}
+
+@Suggestions("company_list")
+public @NonNull List<String> suggestCompanyList (final @NonNull CommandContext<CommandSender> ctx, final @NonNull String input) {
+	return owners.getAllCompanies().stream().toList();
+}
+
+	@Suggestions("start_list")
+	public List<String> suggestStartList (
 			final @NonNull CommandContext<CommandSender> ctx,
 			final @NonNull String input
 	) {
-		return owners.getAllCompanies().stream().toList();
+		return fares.getAllStarts().stream().toList();
 	}
 
-	@Suggestions("station_list")
-	public List<String> suggestStationList(
-			final @NonNull CommandContext<CommandSender> ctx,
-			final @NonNull String input
-	) {
-		return fares.getAllStations().stream().toList();
-	}
+@Suggestions("fareclass_list")
+public List<String> suggestClassList(
+	final @NonNull CommandContext<CommandSender> ctx,
+	final @NonNull String input
+) {
+	return fares.getAllClasses().stream().toList();
+}
 
 	@Suggestions("railpass_list")
 	public List<String> suggestRailPassList(
@@ -63,6 +69,14 @@ public class Commands {
 	) {
 		return owners.getAllRailPasses().stream().toList();
 	}
+
+@Suggestions("player_list")
+public List<String> suggestPlayerList(
+	final @NonNull CommandContext<CommandSender> ctx,
+	final @NonNull String input
+) {
+	return plugin.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+}
 
 	@Command("iciwi reload")
 	@CommandDescription("Reloads all configuration files")
@@ -184,7 +198,7 @@ public class Commands {
 	public void default_fare_class(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "fareclass") String c
+			final @NonNull @Argument(value = "fareclass", suggestions = "fareclass_list") String c
 	) {
 		plugin.getConfig().set("default-fare-class", c);
 		plugin.saveConfig();
@@ -198,7 +212,7 @@ public class Commands {
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
-			final @NonNull @Argument(value = "username") String username
+			final @NonNull @Argument(value = "username", suggestions = "player_list") String username
 	) {
 		owners.set("Aliases." + company, username);
 		owners.save();
@@ -224,7 +238,7 @@ public class Commands {
 	public void owners_operator_add(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.addOwner(station, company);
@@ -238,7 +252,7 @@ public class Commands {
 	public void owners_operator_remove(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.removeOwner(station, company);
@@ -252,7 +266,7 @@ public class Commands {
 	public void owners_operator_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station,
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
 			final @NonNull @Argument(value = "company", suggestions = "company_list") String company
 	) {
 		owners.setOwners(station, Collections.singletonList(company));
@@ -266,14 +280,31 @@ public class Commands {
 	public void owners_operator_delete(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "station", suggestions = "station_list") String station
+			final @NonNull @Argument(value = "station", suggestions = "start_list") String station
 	) {
 		owners.set("Operators." + station, null);
 		owners.save();
 		sender.sendMessage(formatString("No company is now operating %s.", station));
 	}
 
-	@Command("iciwi owners railpass <name> operator <company>")
+@Command("iciwi railpass set <name> <company> <duration> <amount> <paidpercentage>")
+@CommandDescription("Sets the rail company that owns the given railpass.")
+@Permission("iciwi.owners.railpass")
+public void owners_railpass_set(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "name") String name,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "duration") String duration,
+	final @NonNull @Argument(value = "amount") Double price,
+	final @NonNull @Argument(value = "paidpercentage") Double pp
+) {
+	owners.setRailPassInfo(name, company, duration, price, pp);
+	owners.save();
+	sender.sendMessage(formatString("New rail pass created!"));
+}
+
+	@Command("iciwi railpass edit <name> operator <company>")
 	@CommandDescription("Sets the rail company that owns the given railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_operator(
@@ -287,21 +318,21 @@ public class Commands {
 		sender.sendMessage(formatString("The railpass %s is now owned by %s", name, company));
 	}
 
-	@Command("iciwi owners railpass <name> duration <duration>")
+	@Command("iciwi railpass edit <name> duration <duration>")
 	@CommandDescription("Sets the duration that the given railpass is active.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_duration(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
 			final @NonNull @Argument(value = "name", suggestions = "railpass_list") String name,
-			final @NonNull @Argument(value = "duration") Long duration
+			final @NonNull @Argument(value = "duration") String duration
 	) {
 		owners.set("RailPasses." + name + ".duration", duration);
 		owners.save();
-		sender.sendMessage(formatString("The duration of railpass %s is now %s", name, String.valueOf(duration)));
+		sender.sendMessage(formatString("The duration of railpass %s is now %s", name, duration));
 	}
 
-	@Command("iciwi owners railpass <name> price <amount>")
+	@Command("iciwi railpass edit <name> price <amount>")
 	@CommandDescription("Sets the price of the given railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_price(
@@ -315,7 +346,7 @@ public class Commands {
 		sender.sendMessage(formatString("The price of railpass %s is now %s", name, String.valueOf(price)));
 	}
 
-	@Command("iciwi owners railpass <name> percentage <paidpercentage>")
+	@Command("iciwi railpass edit <name> percentage <paidpercentage>")
 	@CommandDescription("Sets the percentage paid by the card holder when they use the railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_percentage(
@@ -329,7 +360,7 @@ public class Commands {
 		sender.sendMessage(formatString("The payment percentage of railpass %s is now %s", name, String.valueOf(pp)));
 	}
 
-	@Command("iciwi owners railpass <name> delete")
+	@Command("iciwi railpass delete <name>")
 	@CommandDescription("Deletes a railpass.")
 	@Permission("iciwi.owners.railpass")
 	public void owners_railpass_delete(
@@ -342,15 +373,45 @@ public class Commands {
 		sender.sendMessage(formatString("Railpass %s has been deleted", name));
 	}
 
+@Command("iciwi operatorticket <company> <price>")
+@CommandDescription("Creates/deletes an operator ticket. Set <amount> to 0 for deletion.")
+@Permission("iciwi.owners.railpass")
+public void owners_operatorticket(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "price") Double price
+) {
+	owners.setOperatorTicket(company, price);
+	owners.save();
+	sender.sendMessage(formatString("Single journey tickets for %s has been set to %s.", company, String.valueOf(price)));
+}
+
+@Command("iciwi farecap <company> <amount> <duration>")
+@CommandDescription("Creates/deletes a fare cap. Set <amount> to 0 for deletion.")
+@Permission("iciwi.owners.railpass")
+public void owners_operatorticket(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "company", suggestions = "company_list") String company,
+	final @NonNull @Argument(value = "amount") Double amount,
+	final @NonNull @Argument(value = "duration") String duration
+) {
+	owners.setFareCapAmt(company, amount);
+	owners.setFareCapDuration(company, duration);
+	owners.save();
+	sender.sendMessage(formatString("The fare cap for %s has been set to %s, valid for %s.", company, String.valueOf(amount), duration));
+}
+
 	@Command("iciwi fares set <start> <end> <fareClass> <price>")
 	@CommandDescription("Creates a new fare.")
 	@Permission("iciwi.fares.set")
 	public void fares_set(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass,
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass,
 			final @NonNull @Argument(value = "price") Double price
 	) {
 		// Run getOwners to register station owners
@@ -365,17 +426,17 @@ public class Commands {
 	public void fares_check(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @Argument(value = "end", suggestions = "station_list") String end,
-			final @Argument(value = "fareClass") @Quoted String fareClass
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @Argument(value = "end", suggestions = "start_list") String end,
+			final @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		Set<String> s;
 		if (end == null) s = fares.getDestinations(start);
 		else if (fareClass == null) s = fares.getClasses(start, end);
 		else s = Collections.singleton(String.valueOf(fares.getFare(start, end, fareClass)));
 
-		s.forEach(sender::sendMessage);
-	}
+	s.forEach(sender::sendMessage);
+}
 
 	@Command("iciwi fares unset <start> <end> <fareClass>")
 	@CommandDescription("Deletes a fare.")
@@ -383,9 +444,9 @@ public class Commands {
 	public void fares_unset(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end,
-			final @NonNull @Argument(value = "fareClass") String fareClass
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end,
+			final @NonNull @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
 	) {
 		fares.unsetFare(start, end, fareClass);
 		sender.sendMessage(formatString("The fare from %s to %s using the class %s has been deleted.", start, end, fareClass));
@@ -397,8 +458,8 @@ public class Commands {
 	public void delete_journey (
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start,
-			final @NonNull @Argument(value = "end", suggestions = "station_list") String end
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+			final @NonNull @Argument(value = "end", suggestions = "start_list") String end
 	) {
 		fares.deleteJourney(start, end);
 		sender.sendMessage(formatString("All fares from %s to %s has been deleted.", start, end));
@@ -410,7 +471,7 @@ public class Commands {
 	public void delete_station(
 			final @NonNull CommandSender sender,
 			final Iciwi plugin,
-			final @NonNull @Argument(value = "start", suggestions = "station_list") String start
+			final @NonNull @Argument(value = "start", suggestions = "start_list") String start
 	) {
 		fares.deleteStation(start);
 		sender.sendMessage(formatString("All fares to all stations from %s has been deleted.", start));

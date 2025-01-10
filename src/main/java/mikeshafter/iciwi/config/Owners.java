@@ -117,7 +117,9 @@ private String timeToString (long time) {
 /**
  @param name Name of the rail pass
  @return How long the rail pass lasts */
-public long getRailPassDuration (String name) { return timeToLong(super.getString(toPath("RailPasses", name, "duration"))); }
+public long getRailPassDuration (String name) {
+	return timeToLong(super.getString(toPath("RailPasses", name, "duration")));
+}
 
 private long timeToLong (String time) {
 	try {
@@ -149,6 +151,7 @@ public double getRailPassPrice (String name) { return super.getDouble(toPath("Ra
  @return The operator who sells the rail pass */
 public String getRailPassOperator (String name) { return super.getString(toPath("RailPasses", name, "operator")); }
 
+//todo: make these 2 return arrays
 /**
  Get the name of the rail pass that is sold by the operator
 
@@ -223,4 +226,52 @@ public boolean hasOperatorTicket (String operator) { return super.getDouble("Tic
  @param price The price of a company-wide ticket
  */
 public void setOperatorTicket (String operator, double price) { super.set("TicketType."+operator, price); }
+
+/**
+ * Gets the fare cap of a company
+ *
+ * @param operator Name of the company
+ * @return the maximum amount in which a card can pay for a given duration
+ */
+public double getFareCapAmt (String operator) {return super.getDouble("Caps." + operator + "amount");}
+
+/**
+ * Gets the duration of the fare cap of a company
+ *
+ * @param operator Name of the company
+ * @return the duration in which the fare cap is active
+ */
+public long getFareCapDuration (String operator) {return Long.parseLong(super.getString("Caps." + operator + "duration"));}
+
+/**
+ * Gets the duration of the fare cap of a company as a string
+ *
+ * @param operator Name of the company
+ * @return the duration in which the fare cap is active
+ */
+public String getFareCapDurationString (String operator) {return super.getString("Caps." + operator + "duration");}
+
+/**
+ * Gets whether a company has a fare cap
+ *
+ * @param operator Name of the company
+ * @return true if a fare cap exists
+ */
+public boolean hasFareCap (String operator) {return super.getDouble("Caps." + operator + "amount") > 0;}
+
+/**
+ * Sets the amount capped for a company
+ *
+ * @param operator Name of the company
+ * @param amt      the maximum amount in which a card can pay for a given duration
+ */
+public void setFareCapAmt (String operator, double amt) {super.set("Caps." + operator + "amount", amt);}
+
+/**
+ * Sets the duration of the fare cap of a company
+ *
+ * @param operator Name of the company
+ * @param duration the duration in which the fare cap is active
+ */
+public void setFareCapDuration (String operator, String duration) {super.set("Caps." + operator + "duration", duration);}
 }
