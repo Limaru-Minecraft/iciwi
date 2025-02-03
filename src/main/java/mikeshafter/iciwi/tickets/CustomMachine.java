@@ -181,8 +181,16 @@ private class EventListener implements Listener {
  @param values  The array to sort
  @return Sorted array */
 public String[] relevanceSort (String pattern, String[] values) {
-	Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
-	return values;
+	HashMap<String, Float> m = new HashMap<>();
+	for (String value : values) {
+		float r = relevance(pattern, value);
+		if (r > 0) m.put(value, r);
+	}
+	List<Map.Entry<String, Float>> list = new ArrayList<>(m.entrySet());
+	list.sort(Map.Entry.comparingByValue());
+	return (String[]) list.toArray();
+	//Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
+	//return values;
 }
 
 /**
