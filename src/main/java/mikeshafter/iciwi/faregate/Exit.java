@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class Exit extends ClosableFareGate {
 
@@ -55,6 +56,7 @@ public void onTicket (Player player, SignInfo info) {
 		cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
 		cardSql.logTicketUse(entryStation, station, fareClass);
 		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", entryStation, "station", station)));
 		super.setCloseGateArray(super.openGate());
 	}
 
@@ -184,7 +186,8 @@ public void onCard (Player player, SignInfo info) {
 	// Messages and logs
 	if (osi) player.sendMessage(lang.getString("osi"));
 	if (icCard.withdraw(tFare))
-		player.sendMessage(String.format(lang.getString("tapped-out"), station, fare, icCard.getValue()));
+		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>=============</green>", Map.of("entry", nStation,"station", station, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
+		// player.sendMessage(String.format(lang.getString("tapped-out"), station, fare, icCard.getValue()));
 
 	// Logger
 	cardSql.logMaster(player.getUniqueId().toString());
@@ -221,7 +224,8 @@ public void onRailPass (Player player, SignInfo info) {
 		cardSql.logMaster(player.getUniqueId().toString());
 		cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
 		cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-		player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
+		//player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
+		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>", Map.of("station", station, "name", name)));
 		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 		super.setCloseGateArray(super.openGate());
 	}

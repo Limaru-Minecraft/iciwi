@@ -109,6 +109,7 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 		if (plugin.getConfig().getBoolean("open-on-penalty")) {
 			Iciwi.economy.withdrawPlayer(player, plugin.getConfig().getDouble("penalty"));
 			player.sendMessage(lang.getString("fare-evade"));
+			return true;
 		}
 		else {
 			player.sendMessage(lang.getString("cannot-pass"));

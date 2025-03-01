@@ -11,6 +11,7 @@ import mikeshafter.iciwi.util.IciwiUtil;
 import mikeshafter.iciwi.config.Owners;
 import org.bukkit.entity.Player;
 import java.util.List;
+import java.util.Map;
 
 public class Entry extends ClosableFareGate {
 
@@ -39,7 +40,9 @@ public void onTicket (Player player, SignInfo info) {
     // Entry
     else if (lore.get(0).equals(station) || owners.getOwners(station).contains(lore.get(0).replaceFirst("C:", ""))) {
         IciwiUtil.punchTicket(info.item(), 0);
-        player.sendMessage(String.format(lang.getString("ticket-in"), station));
+        //player.sendMessage(String.format(lang.getString("ticket-in"), station));
+        player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>=============</green>", Map.of("station", station)));
+
         cardSql.logMaster(player.getUniqueId().toString());
         cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
         player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -87,7 +90,9 @@ public void onCard (Player player, SignInfo info) {
     records.setClass(serial, plugin.getConfig().getString("default-class"));
     records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
-    player.sendMessage(String.format(lang.getString("tapped-in"), station, value));
+    //player.sendMessage(String.format(lang.getString("tapped-in"), station, value));
+    player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{value}</yellow><br>=============</green>", Map.of("station", station, "value", String.valueOf(value))));
+
     cardSql.logMaster(player.getUniqueId().toString());
     cardSql.logEntry(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station);
     cardSql.logCardUse(serial);
@@ -119,7 +124,9 @@ public void onRailPass (Player player, SignInfo info) {
         cardSql.logMaster(player.getUniqueId().toString());
         cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
         cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-        player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
+        //player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
+        player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>", Map.of("station", station, "name", name)));
+
         player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
         super.setCloseGateArray(super.openGate());
     }
