@@ -75,11 +75,11 @@ public void setFare (String f, String e, String c, double price) {
 }
 
 /**
- Get the corresponding fare if the player pays by card
+ Get the corresponding fare if the player pays by card.
  @param f Starting station
  @param e Ending station
  @param cSans_ Fare class, without the starting underscore
- @return Fare
+ @return Fare. If the fare is not found, this method returns 0.
  */
 public double getCardFare (String f, String e, String cSans_) {
 	if (cSans_.indexOf("_") == 0) cSans_ = cSans_.substring(1);
@@ -93,7 +93,7 @@ public double getCardFare (String f, String e, String cSans_) {
  @param f Starting station
  @param e Ending station
  @param c Fare class
- @return Fare
+ @return Fare. If the fare is not found, this method returns 0.
  */
 public double getFare (String f, String e, String c) {return this.getDouble(toPath(c, f, e));}
 
