@@ -65,7 +65,8 @@ public void removeOwner (String station, String operator) {
  @param amt      Amount of money to give to the operator */
 public void deposit (String operator, double amt) {
 	String TOCOwnerName = super.getString("Aliases." + operator);
-	Iciwi.economy.depositPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
+	if (!TOCOwnerName.isEmpty())
+		Iciwi.economy.depositPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
 }
 
 /**
@@ -74,7 +75,8 @@ public void deposit (String operator, double amt) {
  This method should be used in conjunction with Owners#deposit for quick transactions between TOCs. */
 public void withdraw (String operator, double amt) {
 	String TOCOwnerName = super.getString("Aliases." + operator);
-	Iciwi.economy.withdrawPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
+	if (!TOCOwnerName.isEmpty())
+		Iciwi.economy.withdrawPlayer(plugin.getServer().getOfflinePlayer(TOCOwnerName), amt);
 }
 
 /**
@@ -212,20 +214,20 @@ public boolean getOwnership (String player, String operator) { return player.equ
  Gets the price of a single company-wide ticket
  @param operator Name of the company
  @return the price of a single journey ticket */
-public double getOperatorTicket (String operator) { return super.getDouble("TicketType."+operator); }
+public double getOperatorTicket (String operator) { return super.getDouble(toPath("TicketTypeUtil", operator)); }
 
 /**
  Gets whether a company ticket exists
  @param operator Name of the company
  @return true if a company ticket exists */
-public boolean hasOperatorTicket (String operator) { return super.getDouble("TicketType."+operator) > 0; }
+public boolean hasOperatorTicket (String operator) { return super.getDouble(toPath("TicketTypeUtil", operator)) > 0; }
 
 /**
  Sets the price of a single company-wide ticket
  @param operator Name of the company
  @param price The price of a company-wide ticket
  */
-public void setOperatorTicket (String operator, double price) { super.set("TicketType."+operator, price); }
+public void setOperatorTicket (String operator, double price) { super.set(toPath("TicketTypeUtil", operator), price); }
 
 /**
  * Gets the fare cap of a company
@@ -233,7 +235,7 @@ public void setOperatorTicket (String operator, double price) { super.set("Ticke
  * @param operator Name of the company
  * @return the maximum amount in which a card can pay for a given duration
  */
-public double getFareCapAmt (String operator) {return super.getDouble("Caps." + operator + "amount");}
+public double getFareCapAmt (String operator) {return super.getDouble(toPath("Caps" ,  operator ,  "amount"));}
 
 /**
  * Gets the duration of the fare cap of a company
@@ -241,7 +243,7 @@ public double getFareCapAmt (String operator) {return super.getDouble("Caps." + 
  * @param operator Name of the company
  * @return the duration in which the fare cap is active
  */
-public long getFareCapDuration (String operator) {return Long.parseLong(super.getString("Caps." + operator + "duration"));}
+public long getFareCapDuration (String operator) {return Long.parseLong(super.getString(toPath("Caps" ,  operator ,  "duration")));}
 
 /**
  * Gets the duration of the fare cap of a company as a string
@@ -249,7 +251,7 @@ public long getFareCapDuration (String operator) {return Long.parseLong(super.ge
  * @param operator Name of the company
  * @return the duration in which the fare cap is active
  */
-public String getFareCapDurationString (String operator) {return super.getString("Caps." + operator + "duration");}
+public String getFareCapDurationString (String operator) {return super.getString(toPath("Caps" ,  operator ,  "duration"));}
 
 /**
  * Gets whether a company has a fare cap
@@ -257,7 +259,7 @@ public String getFareCapDurationString (String operator) {return super.getString
  * @param operator Name of the company
  * @return true if a fare cap exists
  */
-public boolean hasFareCap (String operator) {return super.getDouble("Caps." + operator + "amount") > 0;}
+public boolean hasFareCap (String operator) {return super.getDouble(toPath("Caps" ,  operator ,  "amount")) > 0;}
 
 /**
  * Sets the amount capped for a company
@@ -265,7 +267,7 @@ public boolean hasFareCap (String operator) {return super.getDouble("Caps." + op
  * @param operator Name of the company
  * @param amt      the maximum amount in which a card can pay for a given duration
  */
-public void setFareCapAmt (String operator, double amt) {super.set("Caps." + operator + "amount", amt);}
+public void setFareCapAmt (String operator, double amt) {super.set(toPath("Caps" ,  operator ,  "amount"), amt);}
 
 /**
  * Sets the duration of the fare cap of a company
@@ -273,5 +275,5 @@ public void setFareCapAmt (String operator, double amt) {super.set("Caps." + ope
  * @param operator Name of the company
  * @param duration the duration in which the fare cap is active
  */
-public void setFareCapDuration (String operator, String duration) {super.set("Caps." + operator + "duration", duration);}
+public void setFareCapDuration (String operator, String duration) {super.set(toPath("Caps" ,  operator ,  "duration"), duration);}
 }

@@ -18,6 +18,20 @@ import java.util.*;
 public class IciwiUtil {
 
 /**
+ * Replaces named placeholders with their values
+ *
+ * @param template Initial template string
+ * @param values Keys and values to replace with
+ * @return A copy of the input string, without any coloring
+ */
+public static String format (String template, Map<String, String> values) {
+	for (Map.Entry<String, String> entry : values.entrySet()) {
+		template = template.replace("{" + entry.getKey() + "}", entry.getValue());
+	}
+	return template;
+}
+
+/**
  * Strips the given message of all color codes
  *
  * @param input String to strip of color
