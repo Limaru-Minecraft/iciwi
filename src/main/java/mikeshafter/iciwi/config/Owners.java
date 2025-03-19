@@ -212,20 +212,20 @@ public boolean getOwnership (String player, String operator) { return player.equ
  Gets the price of a single company-wide ticket
  @param operator Name of the company
  @return the price of a single journey ticket */
-public double getOperatorTicket (String operator) { return super.getDouble("TicketType."+operator); }
+public double getOperatorTicket (String operator) { return super.getDouble("TicketTypeUtil."+operator); }
 
 /**
  Gets whether a company ticket exists
  @param operator Name of the company
  @return true if a company ticket exists */
-public boolean hasOperatorTicket (String operator) { return super.getDouble("TicketType."+operator) > 0; }
+public boolean hasOperatorTicket (String operator) { return super.getDouble("TicketTypeUtil."+operator) > 0; }
 
 /**
  Sets the price of a single company-wide ticket
  @param operator Name of the company
  @param price The price of a company-wide ticket
  */
-public void setOperatorTicket (String operator, double price) { super.set("TicketType."+operator, price); }
+public void setOperatorTicket (String operator, double price) { super.set("TicketTypeUtil."+operator, price); }
 
 /**
  * Gets the fare cap of a company

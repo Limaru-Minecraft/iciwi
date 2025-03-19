@@ -16,7 +16,7 @@ public class GateCreateListener implements Listener {
 	if (!(line.startsWith("[") && line.endsWith("]"))) return;
     final Player player = event.getPlayer();
 
-    int createdSign = containsMany(line, lang.getString("entry"), lang.getString("exit"), lang.getString("member"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
+    int createdSign = containsMany(line, lang.getString("entry"), lang.getString("onExit"), lang.getString("onMember"), lang.getString("payment"), lang.getString("faregate"), lang.getString("validator"), lang.getString("tickets"), lang.getString("cards"), lang.getString("passes"), lang.getString("custom-tickets"));
 
 	if (createdSign != -1 && !player.hasPermission("iciwi.create")) {
 		event.setCancelled(true);
@@ -25,8 +25,8 @@ public class GateCreateListener implements Listener {
 
     switch (createdSign) {
       case 0 -> player.sendMessage(lang.getString("create-entry-sign"));
-      case 1 -> player.sendMessage(lang.getString("create-exit-sign"));
-      case 2 -> player.sendMessage(lang.getString("create-member-sign"));
+      case 1 -> player.sendMessage(lang.getString("create-onExit-sign"));
+      case 2 -> player.sendMessage(lang.getString("create-onMember-sign"));
       case 3 -> player.sendMessage(lang.getString("create-payment-sign"));
       case 4 -> player.sendMessage(lang.getString("create-faregate-sign"));
       case 5 -> player.sendMessage(lang.getString("create-validator-sign"));

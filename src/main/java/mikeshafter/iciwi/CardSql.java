@@ -40,15 +40,15 @@ public void initTables () {
 	sql.add("CREATE TABLE IF NOT EXISTS log_entry (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_prevjourney (id INTEGER NOT NULL,entry TEXT,fare NUMERIC,class text,exittime INT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_railpass_store (id INTEGER NOT NULL,name TEXT NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_card_use(id));");
-	sql.add("CREATE TABLE IF NOT EXISTS log_exit (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT,exit TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+	sql.add("CREATE TABLE IF NOT EXISTS log_exit (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT,onExit TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_journey (id INTEGER NOT NULL,subtotal real NOT NULL,total real NOT NULL,class text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_railpass_use (id INTEGER NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_member (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,station TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_free_pass (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,station TEXT,sign_type TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_transfer (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT NOT NULL,transfer text NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
-	sql.add("CREATE TABLE IF NOT EXISTS log_ticket_use (id INTEGER NOT NULL,entry TEXT NOT NULL,exit TEXT NOT NULL,class TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+	sql.add("CREATE TABLE IF NOT EXISTS log_ticket_use (id INTEGER NOT NULL,entry TEXT NOT NULL,onExit TEXT NOT NULL,class TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_use (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
-	sql.add("CREATE TABLE IF NOT EXISTS log_ticket_create (id INTEGER NOT NULL,entry TEXT NOT NULL,exit text NOT NULL,class text NOT NULL, fare NUMERIC NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
+	sql.add("CREATE TABLE IF NOT EXISTS log_ticket_create (id INTEGER NOT NULL,entry TEXT NOT NULL,onExit text NOT NULL,class text NOT NULL, fare NUMERIC NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_create (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_topup (id INTEGER NOT NULL,serial TEXT NOT NULL,old_value NUMERIC,added_value NUMERIC,new_value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_railpass_extend (id INTEGER NOT NULL,serial TEXT NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
@@ -362,12 +362,12 @@ public void logEntry (int signX, int signY, int signZ, String entry) {
 }
 
 /**
- * Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and exit time.
+ * Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and onExit time.
  *
  * @param prev_entry     the log entry
  * @param prev_fare      the fare for the log entry
  * @param prev_fareClass the class of the fare
- * @param exitTime       the exit time in seconds from the Java epoch of 1970-01-01T00:00:00Z
+ * @param exitTime       the onExit time in seconds from the Java epoch of 1970-01-01T00:00:00Z
  */
 public void logPrevJourney (String prev_entry, double prev_fare, String prev_fareClass, long exitTime) {
 	String sql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ( ?, ?, ?, ?, ?)";
@@ -384,16 +384,16 @@ public void logPrevJourney (String prev_entry, double prev_fare, String prev_far
 }
 
 /**
- * Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and exit.
+ * Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and onExit.
  *
  * @param signX the x coordinate of the sign
  * @param signY the y coordinate of the sign
  * @param signZ the z coordinate of the sign
  * @param entry the log entry
- * @param exit  the log exit
+ * @param exit  the log onExit
  */
 public void logExit (int signX, int signY, int signZ, String entry, String exit) {
-	String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, exit) VALUES ( ?, ?, ?, ?, ?, ?)";
+	String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, onExit) VALUES ( ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setInt(1, getCount());
 
@@ -455,7 +455,7 @@ public void logMember (int signX, int signY, int signZ, String station) {
 
 /**
  * Inserts a new log entry when players use a paper rail pass.
- * This is separate from the normal gate-specific signs as all fare gates work as member signs when a paper pass is used.
+ * This is separate from the normal gate-specific signs as all fare gates work as onMember signs when a paper pass is used.
  *
  * @param signX    the x coordinate of the sign
  * @param signY    the y coordinate of the sign

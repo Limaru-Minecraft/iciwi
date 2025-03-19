@@ -1,21 +1,36 @@
-package mikeshafter.iciwi.faregate;
+package mikeshafter.iciwi.faregate.util;
+import mikeshafter.iciwi.api.IcCard;
+import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.SoundCategory;
-
 import mikeshafter.iciwi.config.*;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.api.IcCard;
+import mikeshafter.iciwi.api.SignInfo;
+
 import java.util.*;
-import org.bukkit.Location;
+
 import org.bukkit.entity.Player;
 
-public class CardUtil {
+public class Card extends PayType {
 private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private static final Records records = plugin.records;
 private static final Lang lang = plugin.lang;
 private static final Owners owners = plugin.owners;
 private static final CardSql cardSql = new CardSql();
 private static final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
+
+private final IcCard icCard;
+private double value = 0;
+private String serial = "";
+
+public Card (Player player, SignInfo info) {
+	super(player, info);
+	this.icCard = IciwiUtil.IcCardFromItem(info.item());
+	if (icCard != null) {
+		this.value = this.icCard.getValue();
+		this.serial = this.icCard.getSerial();
+	}
+}
 
 /**
  Prevent code from registering multiple accidental clicks
@@ -30,15 +45,11 @@ private static boolean onClick (Player player) {
 /**
  Register entry from a card
 
- @param player       Player who used the card
- @param icCard       The card to register
- @param entryStation The station at which to enter
- @return Whether entry was successful. If false, do not open the fare gate. */
-protected static boolean entry (Player player, IcCard icCard, String entryStation, Location signLocation) {
+ @return Whether entry was successful. If false, do not open the fare gate.
+ */
+public boolean onEntry () {
 	if (onClick(player)) return false;
-
-	double value = icCard.getValue();
-	String serial = icCard.getSerial();
+	final String nStation = super.signInfo.station();
 
 	// don't parse if there is no serial
 	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
@@ -62,47 +73,36 @@ protected static boolean entry (Player player, IcCard icCard, String entryStatio
 	}
 
 	// write the entry station and fare class
-	records.setStation(serial, entryStation);
+	records.setStation(serial, nStation);
 	records.setClass(serial, plugin.getConfig().getString("default-class"));
 
 	// player has a transfer discount when they tap out and in within the time limit
 	records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
 	// confirmation
-	player.sendMessage(String.format(lang.getString("tapped-in"), entryStation, value));
+	player.sendMessage(String.format(lang.getString("tapped-in"), nStation, value));
 
-	// logger
-	cardSql.logMaster(player.getUniqueId().toString());
-	cardSql.logEntry(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation);
-	cardSql.logCardUse(serial);
-	icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
-	if (records.getTransfer(icCard.getSerial())) {
-		cardSql.logPrevJourney(records.getPreviousStation(serial), records.getPreviousFare(serial), records.getClass(serial), records.getTimestamp((serial)));
-	}
+	// TODO: logger
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
 /**
- Register exit from a card
+ Register onExit from a card
 
- @param player      Player who used the card
- @param icCard      The card to register
- @param exitStation The station at which to exit
- @return Whether exit was successful. If false, do not open the fare gate. */
-protected static boolean exit (Player player, IcCard icCard, String exitStation, Location signLocation) {
+ @return Whether onExit was successful. If false, do not open the fare gate. */
+public boolean onExit () {
 	if (onClick(player)) return false;
 
 	Fares fares = plugin.fares;
-	String serial = icCard.getSerial();
+	String xStation = super.signInfo.station();
 
 	// don't parse if there is no serial
 	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
 
-	String entryStation = records.getStation(serial);
-	double value = icCard.getValue();
-	double fare = fares.getCardFare(entryStation, exitStation, records.getClass(serial));
+	String nStation = records.getStation(serial);
+	double fare = fares.getCardFare(nStation, xStation, records.getClass(serial));
 
 	// is the card not in the network?
 	if (records.getStation(serial).isEmpty()) {
@@ -117,10 +117,10 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 		}
 	}
 
-	// If an OSI is applicable, use the fare from the first entry station until the exit station
+	// If an OSI is applicable, use the fare from the first entry station until the onExit station
 	if (records.getTransfer(serial)) {
 		// fare if the player did not tap out
-		double longFare = fares.getCardFare(records.getPreviousStation(serial), exitStation, records.getClass(serial));
+		double longFare = fares.getCardFare(records.getPreviousStation(serial), xStation, records.getClass(serial));
 		// the previous charged fare
 		double previousFare = records.getPreviousFare(serial);
 		// if the difference between the fares is less than the current fare, change the fare to that difference.
@@ -130,14 +130,14 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 	}
 
 	// Get the owners of stations and rail passes
-	List<String> entryStationOwners = owners.getOwners(entryStation);
-	List<String> exitStationOwners = owners.getOwners(exitStation);
+	List<String> nStationOwners = owners.getOwners(nStation);
+	List<String> xStationOwners = owners.getOwners(xStation);
 	String finalRailPass = null;
 	double payPercentage = 1d;
 
 	// Get cheapest discount
 	for (var r : cardSql.getAllDiscounts(serial).keySet()) {
-		if ((entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r))) && owners.getRailPassPercentage(r) < payPercentage) {
+		if ((nStationOwners.contains(owners.getRailPassOperator(r)) || xStationOwners.contains(owners.getRailPassOperator(r))) && owners.getRailPassPercentage(r) < payPercentage) {
 			finalRailPass = r;
 			payPercentage = owners.getRailPassPercentage(r);
 		}
@@ -166,39 +166,28 @@ protected static boolean exit (Player player, IcCard icCard, String exitStation,
 
 	// set details for future transfer
 	records.setTimestamp(serial, System.currentTimeMillis());
-	records.setPreviousStation(serial, entryStation);
+	records.setPreviousStation(serial, nStation);
 	records.setStation(serial, null);
 	records.setPreviousFare(serial, fare);
 
 	// send (value - fare) as the value variable is not updated
-	player.sendMessage(String.format(lang.getString("tapped-out"), exitStation, fare, value - fare));
+	player.sendMessage(String.format(lang.getString("tapped-out"), xStation, fare, value - fare));
 
-	// Logger
-	cardSql.logMaster(player.getUniqueId().toString());
-	cardSql.logExit(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, exitStation);
-	cardSql.logJourney(fares.getCardFare(entryStation, exitStation, records.getClass(serial)), fare, records.getClass(serial));
-	cardSql.logCardUse(serial);
-	icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
-	if (finalRailPass != null) {
-		cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
-	}
+	// TODO: Logger
 
-	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+	player.playSound(player, plugin.getConfig().getString("onExit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
 /**
  Check if a card has a railpass
-
- @param player  Player who used the card
- @param icCard  The card used
- @param station The station at which the sign is placed
  @return Whether checks were successful. If false, do not open the fare gate. */
-protected static boolean member (Player player, IcCard icCard, String station, Location signLocation) {
-	if (onClick(player)) return false;
+public boolean onMember () {
+	if (onClick(super.player)) return false;
 
 	// Get the serial number of the card
 	String serial = icCard.getSerial();
+	String station = super.signInfo.station();
 
 	// Get the owners of the station and the card's rail passes
 	List<String> stationOwners = owners.getOwners(station);
@@ -209,16 +198,11 @@ protected static boolean member (Player player, IcCard icCard, String station, L
 	// Check if the card has a rail pass belonging to the station's operator
 	for (String r : railPasses) {
 		if (stationOwners.contains(owners.getRailPassOperator(r))) {
-			player.sendMessage(lang.getString("member-gate"));
+			player.sendMessage(lang.getString("onMember-gate"));
 
-			// Logger
-			cardSql.logMaster(player.getUniqueId().toString());
-			cardSql.logMember(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), station);
-			cardSql.logCardUse(serial);
-			cardSql.logRailpassUse(r, owners.getRailPassPrice(r), owners.getRailPassPercentage(r), cardSql.getStart(serial, r), owners.getRailPassDuration(r), owners.getRailPassOperator(r));
-			icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
+			// TODO: Logger
 
-			player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
+			player.playSound(player, plugin.getConfig().getString("onMember-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 			return true;
 		}
 	}
@@ -230,15 +214,12 @@ protected static boolean member (Player player, IcCard icCard, String station, L
 /**
  Stops and starts a journey without allowing for an OSI
 
- @param player  Player who used the card
- @param icCard  The card used
- @param station The station at which the sign is placed
  @return Whether checks were successful. If false, do not open the fare gate. */
-protected static boolean transfer (Player player, IcCard icCard, String station, Location signLocation) {
-	if (onClick(player)) return false;
+public boolean onTransfer () {
+	if (onClick(super.player)) return false;
 
 	Fares fares = plugin.fares;
-	String serial = icCard.getSerial();
+	String station = super.signInfo.station();
 
 	// don't parse if there is no serial
 	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
@@ -251,9 +232,8 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 		return true;
 	}
 
-	// Else perform normal exit, then entry sequence
+	// Else perform normal onExit, then entry sequence
 	String entryStation = records.getStation(serial);
-	double value = icCard.getValue();
 	double fare = fares.getCardFare(entryStation, station, records.getClass(serial));
 
 	// is the card not in the network?
@@ -326,15 +306,8 @@ protected static boolean transfer (Player player, IcCard icCard, String station,
 	// confirmation
 	player.sendMessage(String.format(lang.getString("tapped-out"), entryStation, value));
 
-	// Logger
-	cardSql.logMaster(player.getUniqueId().toString());
-	cardSql.logTransfer(signLocation.getBlockX(), signLocation.getBlockY(), signLocation.getBlockZ(), entryStation, station);
-	cardSql.logJourney(fares.getCardFare(entryStation, station, records.getClass(serial)), fare, records.getClass(serial));
-	cardSql.logCardUse(serial);
-	icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
-	if (finalRailPass != null) {
-		cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
-	}
+	// TODO: Logger
+
 	player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }

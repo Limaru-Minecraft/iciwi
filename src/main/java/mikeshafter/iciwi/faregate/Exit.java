@@ -1,6 +1,8 @@
 package mikeshafter.iciwi.faregate;
 import mikeshafter.iciwi.api.SignInfo;
 import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.faregate.util.RailPass;
+import mikeshafter.iciwi.faregate.util.Ticket;
 import org.bukkit.SoundCategory;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.CardSql;
@@ -24,55 +26,19 @@ private final Owners owners = plugin.owners;
 private static final CardSql cardSql = new CardSql();
 
 public Exit () {
-	super("exit");
+	super("onExit");
 }
 
 @Override
 public void onTicket (Player player, SignInfo info) {
-	var lore = info.lore();
-	var sign = info.sign();
-
-	String station = info.station();
-	boolean entryPunched = lore.get(0).contains("•");
-	boolean exitPunched = lore.get(1).contains("•");
-	boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
-
-	// Invalid Ticket
-	if (entryPunched && exitPunched) {
-		player.sendMessage(lang.getString("invalid-ticket"));
-	}
-
-	// Exit
-	else if ((entryPunched || !entryPunchRequired) && (lore.get(1).equals(station) || owners.getOwners(station).contains(lore.get(1).replaceFirst("C:", "")))) {
-		IciwiUtil.punchTicket(info.item(), 1);
-		player.sendMessage(String.format(lang.getString("ticket-out"), station));
-		// Log exit
-		String entryStation = lore.get(0).replace(" •", "");
-		String fareClass = lore.get(2);
-		Fares fares = plugin.fares;
-
-		cardSql.logMaster(player.getUniqueId().toString());
-		cardSql.logExit(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), entryStation, station);
-		cardSql.logJourney(fares.getFare(entryStation, station, fareClass), fares.getFare(entryStation, station, fareClass), fareClass);
-		cardSql.logTicketUse(entryStation, station, fareClass);
-		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", entryStation, "station", station)));
+	Ticket ticket = new Ticket(player, info);
+	if (ticket.onExit()) {
 		super.setCloseGateArray(super.openGate());
-	}
-
-	// Ticket not used
-	else if (!entryPunched && entryPunchRequired) {
-		player.sendMessage(lang.getString("cannot-pass"));
-	}
-
-	else {
-		player.sendMessage(lang.getString("invalid-ticket"));
 	}
 }
 
 @Override
 public void onCard (Player player, SignInfo info) {
-	var sign = info.sign();
 
 	// Get card from item
 	IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
@@ -189,44 +155,17 @@ public void onCard (Player player, SignInfo info) {
 		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>=============</green>", Map.of("entry", nStation,"station", station, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
 		// player.sendMessage(String.format(lang.getString("tapped-out"), station, fare, icCard.getValue()));
 
-	// Logger
-	cardSql.logMaster(player.getUniqueId().toString());
-	cardSql.logExit(sign.getX(), sign.getY(), sign.getZ(), nStation, station);
-	cardSql.logJourney(fares.getCardFare(nStation, station, records.getClass(serial)), fare, records.getClass(serial));
-	cardSql.logCardUse(serial);
-	icCard.getRailPasses().forEach((name, start) -> cardSql.logRailpassStore(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), start, owners.getRailPassDuration(name), owners.getRailPassOperator(name)));
-	if (finalRailPass != null) {
-		cardSql.logRailpassUse(finalRailPass, owners.getRailPassPrice(finalRailPass), owners.getRailPassPercentage(finalRailPass), cardSql.getStart(serial, finalRailPass), owners.getRailPassDuration(finalRailPass), owners.getRailPassOperator(finalRailPass));
-	}
+	//TODO: Logger
 
-	// Finally exit
-	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+	// Finally onExit
+	player.playSound(player, plugin.getConfig().getString("onExit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	super.setCloseGateArray(super.openGate());
 }
 
 @Override
 public void onRailPass (Player player, SignInfo info) {
-	var lore = info.lore();
-	var sign = info.sign();
-
-	String station = info.station();
-	String name = lore.get(0);
-	String expiry = lore.get(1);
-
-	// check if expired
-	long e = Long.parseLong(expiry);
-	// if expired, return and do not open the gate
-	if (e < System.currentTimeMillis()) return;
-	// otherwise, check if issuing TOC is one of the station's owners
-	List<String> tocs = owners.getOwners(station);
-	if (tocs.contains(owners.getRailPassOperator(name))) {
-		// log
-		cardSql.logMaster(player.getUniqueId().toString());
-		cardSql.logFreePass(sign.getLocation().getBlockX(), sign.getLocation().getBlockY(), sign.getLocation().getBlockZ(), station, "transfer");
-		cardSql.logRailpassUse(name, owners.getRailPassPrice(name), owners.getRailPassPercentage(name), e - owners.getRailPassDuration(name), owners.getRailPassDuration(name), owners.getRailPassOperator(name));
-		//player.sendMessage(String.format(lang.getString("used-paper-pass"), name));
-		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>", Map.of("station", station, "name", name)));
-		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+	RailPass railPass = new RailPass(player, info);
+	if (railPass.onExit()) {
 		super.setCloseGateArray(super.openGate());
 	}
 }
