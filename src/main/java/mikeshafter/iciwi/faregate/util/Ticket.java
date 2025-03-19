@@ -55,8 +55,13 @@ public class Ticket extends PayType {
 		boolean wrongStation = !lore.get(1).equals(station);
 		String operator = lore.get(1).replaceFirst("C:", "");
 		boolean wrongOperator = !owners.getOwners(station).contains(operator);
+player.sendMessage(station); //TODO: debug
+player.sendMessage(String.valueOf(usedTicket)); //TODO: debug
+player.sendMessage(String.valueOf(unvalidatedTicket)); //TODO: debug
+player.sendMessage(String.valueOf(wrongStation)); //TODO: debug
+player.sendMessage(String.valueOf(wrongOperator)); //TODO: debug
 		// Invalid ticket
-		if (usedTicket || unvalidatedTicket || wrongStation	|| wrongOperator) {
+		if (usedTicket || unvalidatedTicket || (wrongStation	&& wrongOperator) ) {
 			player.sendMessage(lang.getString("invalid-ticket"));
 			return false;
 		}

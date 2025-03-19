@@ -25,8 +25,8 @@ public class GateCreateListener implements Listener {
 
     switch (createdSign) {
       case 0 -> player.sendMessage(lang.getString("create-entry-sign"));
-      case 1 -> player.sendMessage(lang.getString("create-onExit-sign"));
-      case 2 -> player.sendMessage(lang.getString("create-onMember-sign"));
+      case 1 -> player.sendMessage(lang.getString("create-exit-sign"));
+      case 2 -> player.sendMessage(lang.getString("create-member-sign"));
       case 3 -> player.sendMessage(lang.getString("create-payment-sign"));
       case 4 -> player.sendMessage(lang.getString("create-faregate-sign"));
       case 5 -> player.sendMessage(lang.getString("create-validator-sign"));

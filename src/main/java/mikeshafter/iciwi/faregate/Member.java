@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 public class Member extends ClosableFareGate {
 
 public Member() {
-	super("onMember");
+	super("member");
 }
 
 @Override

@@ -4,7 +4,6 @@ import mikeshafter.iciwi.config.Records;
 import mikeshafter.iciwi.faregate.util.RailPass;
 
 import org.bukkit.SoundCategory;
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
 import mikeshafter.iciwi.api.IcCard;

@@ -26,7 +26,7 @@ private final Owners owners = plugin.owners;
 private static final CardSql cardSql = new CardSql();
 
 public Exit () {
-	super("onExit");
+	super("exit");
 }
 
 @Override
@@ -98,11 +98,12 @@ public void onCard (Player player, SignInfo info) {
 
 	// Prepare each company's earnings
 	// TODO: Case where owners are not found
-	double nEarning = fare / (2 * nOwners.size());
-	double xEarning = fare / (2 * xOwners.size());
 
 	// Handle fare caps and earnings
 	double tFare = 0d;
+
+	if (!nOwners.isEmpty()) {
+	double nEarning = fare / (2 * nOwners.size());
 	for (var o : nOwners) {
 		final double fcAmt = owners.getFareCapAmt(o);
 		if (fcAmt == 0) {
@@ -121,8 +122,10 @@ public void onCard (Player player, SignInfo info) {
 		records.setCapRemAmt(serial, o, remAmt - earning);
 		owners.deposit(o, earning);
 		tFare += earning;
-	}
+	}}
 
+	if (!xOwners.isEmpty()) {
+	double xEarning = fare / (2 * xOwners.size());
 	for (var o : xOwners) {
 		final double fcAmt = owners.getFareCapAmt(o);
 		if (fcAmt == 0) {
@@ -141,7 +144,7 @@ public void onCard (Player player, SignInfo info) {
 		records.setCapRemAmt(serial, o, remAmt - earning);
 		owners.deposit(o, earning);
 		tFare += earning;
-	}
+	}}
 
 	// Set up transfer information
 	records.setTimestamp(serial, System.currentTimeMillis());
