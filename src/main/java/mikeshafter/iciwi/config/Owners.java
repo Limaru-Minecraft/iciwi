@@ -47,7 +47,7 @@ public void setOwners (String station, List<String> operators) {super.set("Opera
  @param operator The TOC */
 public void addOwner (String station, String operator) {
 	List<String> operators = getOwners(station);
-	operators.add(operator);
+	if (!operators.contains(operator)) operators.add(operator);
 	setOwners(station, operators);
 }
 
