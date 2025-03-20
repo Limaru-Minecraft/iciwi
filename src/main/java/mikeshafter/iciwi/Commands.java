@@ -238,11 +238,10 @@ public void owners_alias_unset(
 public void owners_operator_list(
 	final @NonNull CommandSender sender,
 	final Iciwi plugin,
-	final @NonNull @Argument(value = "station", suggestions = "start_list") String station,
+	final @NonNull @Argument(value = "station", suggestions = "start_list") String station
 ) {
 	List<String> o = owners.getOwners(station);
-	for (String s : o)
-	sender.sendMessage(formatString(s));
+	for (String s : o) sender.sendMessage(formatString(s));
 }
 
 @Command("iciwi owners operator <station> add <company>")
@@ -325,8 +324,7 @@ public void owners_railpass_list(
 	final Iciwi plugin
 ) {
 	Set<String> o = owners.getAllRailPasses();
-	for (String s : o) 
-	sender.sendMessage(formatString(s));
+	for (String s : o) sender.sendMessage(formatString(s));
 }
 
 @Command("iciwi railpass edit <name> operator <company>")
