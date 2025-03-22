@@ -46,7 +46,7 @@ public class IcLogger {
     }
     
     /**
-     * Initialize the log file with headers if it doesn't exist
+     * Initialize the log file
      */
     private void initLogFile () {
         Path path = Paths.get(logFilePath);
@@ -54,7 +54,6 @@ public class IcLogger {
         if (!Files.exists(path)) {
             try {
                 Files.createDirectories(path.getParent());
-                Files.write(path, header.getBytes(), StandardOpenOption.CREATE);
             } catch (IOException e) {
                 System.err.println("Failed to initialize log file: " + e.getMessage());
             }
