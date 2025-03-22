@@ -20,7 +20,7 @@ import java.util.Map;
  * Log entries are stored as JSON objects which makes them easily parseable by code
  * and allows for simple expansion of log entry fields in the future.
  */
-public class Logger {
+public class IcLogger {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String logFilePath;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -38,7 +38,7 @@ public class Logger {
     /**
      * Faster constructor
      */
-    public Logger() {
+    public IcLogger() {
         this.logFilePath = "iciwi.log";
         initLogFile();
     }

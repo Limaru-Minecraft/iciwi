@@ -25,6 +25,7 @@ public Lang lang;
 public Owners owners;
 public Records records;
 public Fares fares;
+public IcLogger icLogger;
 
 public void sendAll (String message) {getServer().getOnlinePlayers().forEach(p -> p.sendMessage(message));}
 
@@ -33,6 +34,7 @@ private void loadAllConfig () {
 	owners = new Owners();
 	records = new Records();
 	fares = new Fares();
+	icLogger = new IcLogger();
 
 	this.saveDefaultConfig();
 	this.getConfig().options().copyDefaults(true);
