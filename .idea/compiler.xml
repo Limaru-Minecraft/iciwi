@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="17" />
+    <bytecodeTargetLevel target="17">
+      <module name="Iciwi" target="22" />
+      <module name="Iciwi.test" target="22" />
+      <module name="mikeshafter.Iciwi.main" target="22" />
+    </bytecodeTargetLevel>
   </component>
 </project>
