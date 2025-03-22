@@ -36,12 +36,10 @@ public class Logger {
     }
     
     /**
-     * Constructor for MikeLogger
-     * 
-     * @param logFilePath Path where the log file should be created/appended to
+     * Faster constructor
      */
-    public MikeLogger(String logFilePath) {
-        this.logFilePath = logFilePath;
+    public Logger() {
+        this.logFilePath = "iciwi.log";
         initLogFile();
     }
     
