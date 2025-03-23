@@ -59,8 +59,8 @@ public void init (String station) {
 	this.clickables = new Clickable[9];
 
 	// Create buttons
-	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
-	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> selectCard());
+	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (_) -> newCard());
+	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (_) -> selectCard());
 
 	// Get operators
 	this.operators = this.owners.getOwners(station);
@@ -96,17 +96,17 @@ public void cardMenu () {
 	this.clickables = new Clickable[9];
 
 	// Card details
-	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValue())), (e) -> {});
+	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValue())), (_) -> {});
 
 	// Create buttons
-	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> newCard());
-	this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")), (event) -> topUpCard(icCard));
-	this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, lang.getComponent("menu-rail-pass")), (event) -> {
+	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (_) -> newCard());
+	this.clickables[3] = Clickable.of(makeItem(Material.LIGHT_BLUE_WOOL, 0, lang.getComponent("menu-top-up-card")), (_) -> topUpCard(icCard));
+	this.clickables[4] = Clickable.of(makeItem(Material.LIME_WOOL, 0, lang.getComponent("menu-rail-pass")), (_) -> {
 		SignInteractListener.putMachine(player, new RailPassMachine(player, this.operators));
 		((RailPassMachine) SignInteractListener.getMachine(player)).railPass(this.selectedItem);
 	});
-	this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")), (event) -> refundCard(icCard));
-	this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-select-other-card")), (event) -> selectCard());
+	this.clickables[5] = Clickable.of(makeItem(Material.ORANGE_WOOL, 0, lang.getComponent("menu-refund-card")), (_) -> refundCard(icCard));
+	this.clickables[6] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-select-other-card")), (_) -> selectCard());
 
 	// Set items
 	setItems(this.clickables, inv);
@@ -146,10 +146,8 @@ public void newCard () {
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
 
-				// Log card
+				// TODO: Log card
 
-				cardSql.logMaster(player.getUniqueId().toString());
-				cardSql.logCardCreate(serial, value);
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
@@ -195,10 +193,8 @@ public void topUpCard (IcCard icCard) {
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 
-				// Log card
+				// TODO: Log card
 
-				cardSql.logMaster(player.getUniqueId().toString());
-				cardSql.logCardTopup(serial, old, value, old + value);
 
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
@@ -243,10 +239,8 @@ public void refundCard (IcCard icCard) {
 			// send message and break out of loop
 			player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
-			// log refund
+			// TOOD: log refund
 
-			cardSql.logMaster(player.getUniqueId().toString());
-			cardSql.logCardRefund(serial, remainingValue);
 
 			// close inventory
 			player.closeInventory();
