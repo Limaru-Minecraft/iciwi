@@ -31,7 +31,7 @@ dependencies {
 
 tasks.withType(JavaCompile).configureEach {
   options.compilerArgs << '-Xlint:unchecked'
-  //options.deprecation = true
+  options.deprecation = true
 }
 
 shadowJar {

@@ -95,7 +95,7 @@ public class RailPassMachine implements Machine {
             String rpName = railPassNames.get(i);
             clickables[i] = Clickable.of(
                 makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))),
-                (event) -> {
+                (_) -> {
                 double price = this.owners.getRailPassPrice(rpName);
 
                 if (Iciwi.economy.getBalance(this.player) >= price) {
@@ -121,7 +121,6 @@ public class RailPassMachine implements Machine {
                     this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
                     // todo: log the transaction
-                    this.cardSql.logMaster(this.player.getUniqueId().toString());
                 }
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
@@ -181,7 +180,7 @@ public class RailPassMachine implements Machine {
             String rpName = railPassNames.get(i);
             this.clickables[i] = Clickable.of(
                 makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))),
-                (event) -> {
+                (_) -> {
                 double price = this.owners.getRailPassPrice(rpName);
 
                 if (Iciwi.economy.getBalance(this.player) >= price) {
@@ -204,8 +203,6 @@ public class RailPassMachine implements Machine {
                     this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
                     // in any case, log into railpassExtend
-                    this.cardSql.logMaster(this.player.getUniqueId().toString());
-                    this.cardSql.logRailpassExtend(serial, rpName, this.owners.getRailPassPrice(rpName), this.owners.getRailPassPercentage(rpName), this.cardSql.getStart(serial, rpName), this.owners.getRailPassDuration(rpName), this.owners.getRailPassOperator(rpName));
                 }
                 else this.player.sendMessage(this.lang.getString("not-enough-money"));
 
