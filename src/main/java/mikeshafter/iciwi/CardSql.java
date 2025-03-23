@@ -36,6 +36,17 @@ public void initTables () {
 	sql.add("CREATE TABLE IF NOT EXISTS cards (serial TEXT, value TEXT, PRIMARY KEY (serial) ); ");
 	sql.add("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial) ON UPDATE CASCADE, name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
 
+	createLoggingTables(sql);
+
+	try (Connection conn = this.connect(); Statement statement = conn.createStatement()) {
+		for (String s : sql) statement.execute(s);
+	} catch (SQLException e) {
+		plugin.getLogger().warning(e.getLocalizedMessage());
+	}
+}
+
+@Deprecated
+private static void createLoggingTables (ArrayList<String> sql) {
 	sql.add("CREATE TABLE IF NOT EXISTS log_master (id INTEGER NOT NULL UNIQUE,timestamp INTEGER NOT NULL,player_uuid TEXT NOT NULL,PRIMARY KEY(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_entry (id INTEGER NOT NULL,sign_x INTEGER, sign_y INTEGER, sign_z INTEGER,entry TEXT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_prevjourney (id INTEGER NOT NULL,entry TEXT,fare NUMERIC,class text,exittime INT,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
@@ -53,12 +64,6 @@ public void initTables () {
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_topup (id INTEGER NOT NULL,serial TEXT NOT NULL,old_value NUMERIC,added_value NUMERIC,new_value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_railpass_extend (id INTEGER NOT NULL,serial TEXT NOT NULL,name text NOT NULL,price NUMERIC NOT NULL,percentage NUMERIC NOT NULL,start INTEGER NOT NULL,duration INTEGER NOT NULL,operator TEXT NOT NULL,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
 	sql.add("CREATE TABLE IF NOT EXISTS log_card_refund (id INTEGER NOT NULL,serial TEXT NOT NULL,value NUMERIC,PRIMARY KEY(id),FOREIGN KEY(id) REFERENCES log_master(id));");
-
-	try (Connection conn = this.connect(); Statement statement = conn.createStatement()) {
-		for (String s : sql) statement.execute(s);
-	} catch (SQLException e) {
-		plugin.getLogger().warning(e.getLocalizedMessage());
-	}
 }
 
 /**
@@ -323,9 +328,10 @@ public int incrementAndGetCount () {
 
 /**
  * Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param player_uuid the UUID of the player
  */
+@Deprecated
 public void logMaster (String player_uuid) {
 	long timestamp = System.currentTimeMillis();
 	String sql = "INSERT INTO log_master (id, timestamp, player_uuid) VALUES ( ?, ?, ?)";
@@ -341,12 +347,13 @@ public void logMaster (String player_uuid) {
 
 /**
  * Inserts a new log entry with the current timestamp and the player's UUID into the log_master table.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param signX the x coordinate of the sign
  * @param signY the y coordinate of the sign
  * @param signZ the z coordinate of the sign
  * @param entry the log entry
  */
+@Deprecated
 public void logEntry (int signX, int signY, int signZ, String entry) {
 	String sql = "INSERT INTO log_entry (id, sign_x, sign_y, sign_z, entry) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -362,13 +369,15 @@ public void logEntry (int signX, int signY, int signZ, String entry) {
 }
 
 /**
- * Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and onExit time.
- *
+ * Inserts a new log entry into the log_prevjourney table with the specified log entry, fare, fare class, and exit time.
+ * @deprecated Replace with text-based logging system for non-programmer access
+
  * @param prev_entry     the log entry
  * @param prev_fare      the fare for the log entry
  * @param prev_fareClass the class of the fare
  * @param exitTime       the onExit time in seconds from the Java epoch of 1970-01-01T00:00:00Z
  */
+@Deprecated
 public void logPrevJourney (String prev_entry, double prev_fare, String prev_fareClass, long exitTime) {
 	String sql = "INSERT INTO log_prevjourney (id, entry, fare, class, exittime) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -384,14 +393,16 @@ public void logPrevJourney (String prev_entry, double prev_fare, String prev_far
 }
 
 /**
- * Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and onExit.
- *
+ * Inserts a new log entry into the log_exit table with the specified sign coordinates, entry, and exit.
+ * @deprecated Replace with text-based logging system for non-programmer access
+
  * @param signX the x coordinate of the sign
  * @param signY the y coordinate of the sign
  * @param signZ the z coordinate of the sign
  * @param entry the log entry
  * @param exit  the log onExit
  */
+@Deprecated
 public void logExit (int signX, int signY, int signZ, String entry, String exit) {
 	String sql = "INSERT INTO log_exit (id, sign_x, sign_y, sign_z, entry, onExit) VALUES ( ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -410,11 +421,12 @@ public void logExit (int signX, int signY, int signZ, String entry, String exit)
 
 /**
  * Inserts a new log entry into the log_journey table with the specified subtotal, total, and fare class
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param subtotal  the subtotal of the journey
  * @param total     the total cost of the journey
  * @param fareClass the class of the fare for the journey
  */
+@Deprecated
 public void logJourney (double subtotal, double total, String fareClass) {
 	String sql = "INSERT INTO log_journey (id, subtotal, total, class) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -431,12 +443,13 @@ public void logJourney (double subtotal, double total, String fareClass) {
 
 /**
  * Inserts a new log entry into the log_member table with the specified sign coordinates and station name.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param signX   the x coordinate of the sign
  * @param signY   the y coordinate of the sign
  * @param signZ   the z coordinate of the sign
  * @param station the station information
  */
+@Deprecated
 public void logMember (int signX, int signY, int signZ, String station) {
 	String sql = "INSERT INTO log_member (id, sign_x, sign_y, sign_z, station) VALUES ( ?, ?, ?, ?, ?)";
 
@@ -455,14 +468,15 @@ public void logMember (int signX, int signY, int signZ, String station) {
 
 /**
  * Inserts a new log entry when players use a paper rail pass.
- * This is separate from the normal gate-specific signs as all fare gates work as onMember signs when a paper pass is used.
- *
+ * This is separate from the normal gate-specific signs as all fare gates work as member signs when a paper pass is used.
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param signX    the x coordinate of the sign
  * @param signY    the y coordinate of the sign
  * @param signZ    the z coordinate of the sign
  * @param station  the station information
  * @param signType the type of sign
  */
+@Deprecated
 public void logFreePass (int signX, int signY, int signZ, String station, String signType) {
 	String sql = "INSERT INTO log_free_pass (id, sign_x, sign_y, sign_z, station, sign_type) VALUES ( ?, ?, ?, ?, ?, ?)";
 
@@ -482,13 +496,14 @@ public void logFreePass (int signX, int signY, int signZ, String station, String
 
 /**
  * Inserts a new log entry into the log_transfer table with the specified sign coordinates, entry station, and transfer station.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param signX    the x coordinate of the sign
  * @param signY    the y coordinate of the sign
  * @param signZ    the z coordinate of the sign
  * @param entry    the log entry
  * @param transfer the log transfer
  */
+@Deprecated
 public void logTransfer (int signX, int signY, int signZ, String entry, String transfer) {
 	String sql = "INSERT INTO log_transfer (id, sign_x, sign_y, sign_z, entry, transfer) VALUES ( ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -507,7 +522,7 @@ public void logTransfer (int signX, int signY, int signZ, String entry, String t
 
 /**
  * Inserts a new log entry into the log_railpass_store table with the specified name, price, percentage, start time, duration, and operator.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param name       the name of the rail pass
  * @param price      the price of the rail pass
  * @param percentage the percentage discount of the rail pass
@@ -515,6 +530,7 @@ public void logTransfer (int signX, int signY, int signZ, String entry, String t
  * @param duration   the duration of the rail pass in seconds
  * @param operator   the operator of the rail pass
  */
+@Deprecated
 public void logRailpassStore (String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_store (id, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -534,7 +550,7 @@ public void logRailpassStore (String name, double price, double percentage, long
 
 /**
  * Inserts a new log entry into the log_railpass_use table with the specified name, price, percentage, start time, duration, and operator.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param name       the name of the rail pass
  * @param price      the price of the rail pass
  * @param percentage the percentage discount of the rail pass
@@ -542,6 +558,7 @@ public void logRailpassStore (String name, double price, double percentage, long
  * @param duration   the duration of the rail pass in seconds
  * @param operator   the operator of the rail pass
  */
+@Deprecated
 public void logRailpassUse (String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_use (id, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -561,11 +578,12 @@ public void logRailpassUse (String name, double price, double percentage, long s
 
 /**
  * Inserts a new log entry into the log_ticket_use table with the specified from station, to station, and travel class.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param from        the starting station
  * @param to          the destination station
  * @param travelClass the class of the travel
  */
+@Deprecated
 public void logTicketUse (String from, String to, String travelClass) {
 	String sql = "INSERT INTO log_ticket_use (id, from, to, class) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -581,9 +599,10 @@ public void logTicketUse (String from, String to, String travelClass) {
 
 /**
  * Inserts a new log entry into the log_card_use table with the specified serial and value.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param serial Serial number of the card
  */
+@Deprecated
 public void logCardUse (String serial) {
 	String sql = "INSERT INTO log_card_use (id, serial, value) VALUES ( ?, ?, (SELECT value FROM cards WHERE serial = ?))";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -603,11 +622,12 @@ public void logCardUse (String serial) {
 
 /**
  * Inserts a new log entry into the log_ticket_create table with the specified from station, to station, and travel class.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param from        the starting station
  * @param to          the destination station
  * @param travelClass the class of the travel
  */
+@Deprecated
 public void logTicketCreate (String from, String to, String travelClass, double fare) {
 	String sql = "INSERT INTO log_ticket_create (id, from, to, class, fare) VALUES ( ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -624,10 +644,11 @@ public void logTicketCreate (String from, String to, String travelClass, double 
 
 /**
  * Inserts a new log entry into the log_card_create table with the specified serial and value.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param serial Serial number of the card
  * @param value  Value of the card
  */
+@Deprecated
 public void logCardCreate (String serial, double value) {
 	String sql = "INSERT INTO log_card_create (id, serial, value) VALUES ( ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -642,12 +663,13 @@ public void logCardCreate (String serial, double value) {
 
 /**
  * Inserts a new log entry into the log_card_topup table with the specified serial, old value, added value, and new value.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param serial     Serial number of the card
  * @param oldValue   Old value of the card
  * @param addedValue Value added to the card
  * @param newValue   New value of the card
  */
+@Deprecated
 public void logCardTopup (String serial, double oldValue, double addedValue, double newValue) {
 	String sql = "INSERT INTO log_card_topup (id, serial, old_value, added_value, new_value) VALUES ( ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -664,7 +686,7 @@ public void logCardTopup (String serial, double oldValue, double addedValue, dou
 
 /**
  * Inserts a new log entry into the log_railpass_extend table with the specified serial, name, price, percentage, start time, duration, and operator.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param serial     Serial number of the rail pass
  * @param name       Name of the rail pass
  * @param price      Price of the rail pass
@@ -673,6 +695,7 @@ public void logCardTopup (String serial, double oldValue, double addedValue, dou
  * @param duration   Duration of the rail pass in seconds
  * @param operator   Operator of the rail pass
  */
+@Deprecated
 public void logRailpassExtend (String serial, String name, double price, double percentage, long start, long duration, String operator) {
 	String sql = "INSERT INTO log_railpass_extend (id, serial, name, price, percentage, start, duration, operator) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
@@ -692,10 +715,11 @@ public void logRailpassExtend (String serial, String name, double price, double 
 
 /**
  * Inserts a new log entry into the log_card_refund table with the specified serial and value.
- *
+ * @deprecated Replace with text-based logging system for non-programmer access
  * @param serial Serial number of the card
  * @param value  Value of the card
  */
+@Deprecated
 public void logCardRefund (String serial, double value) {
 	String sql = "INSERT INTO log_card_refund (id, serial, value) VALUES ( ?, ?, ?)";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
