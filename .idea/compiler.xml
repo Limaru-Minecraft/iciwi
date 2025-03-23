@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="17">
-      <module name="Iciwi" target="22" />
-      <module name="Iciwi.test" target="22" />
-      <module name="mikeshafter.Iciwi.main" target="22" />
+      <module name="Iciwi" target="21" />
+      <module name="Iciwi.test" target="21" />
+      <module name="mikeshafter.Iciwi.main" target="21" />
     </bytecodeTargetLevel>
   </component>
 </project>
