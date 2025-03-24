@@ -3,15 +3,10 @@ import mikeshafter.iciwi.api.SignInfo;
 import mikeshafter.iciwi.faregate.util.RailPass;
 import mikeshafter.iciwi.faregate.util.Ticket;
 import mikeshafter.iciwi.faregate.util.Card;
-import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
-import mikeshafter.iciwi.config.Lang;
 import org.bukkit.entity.Player;
 
 public class Entry extends ClosableFareGate {
-
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = plugin.lang;
 
 public Entry() {
     super("entry");
@@ -40,6 +35,5 @@ public void onRailPass (Player player, SignInfo info) {
 		super.setCloseGateArray(super.openGate());
 	}
 }
-
 }
 

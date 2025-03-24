@@ -3,13 +3,10 @@ import mikeshafter.iciwi.api.SignInfo;
 import mikeshafter.iciwi.faregate.util.Card;
 import mikeshafter.iciwi.faregate.util.RailPass;
 import mikeshafter.iciwi.faregate.util.Ticket;
-import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.ClosableFareGate;
 import org.bukkit.entity.Player;
 
 public class Exit extends ClosableFareGate {
-
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 
 public Exit () {
 	super("exit");
