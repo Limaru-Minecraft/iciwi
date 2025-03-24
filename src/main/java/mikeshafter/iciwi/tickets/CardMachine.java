@@ -1,6 +1,7 @@
 package mikeshafter.iciwi.tickets;
 
 import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
@@ -32,6 +33,7 @@ private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final CardSql cardSql = new CardSql();
 private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
+private final IcLogger logger = plugin.icLogger;
 
 // Constructor and Menu Display
 public CardMachine (Player player) {this.player = player;}
@@ -146,8 +148,9 @@ public void newCard () {
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
 
-				// TODO: Log card
-
+				// log to icLogger
+				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value);
+				logger.info("newCard", lMap);
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
@@ -177,9 +180,6 @@ public void topUpCard (IcCard icCard) {
 	inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
 	clickables = new Clickable[invSize];
 
-	// get serial number
-	String serial = icCard.getSerial();
-
 	for (int i = 0; i < priceArray.size(); i++) {
 		clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
 			double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
@@ -193,13 +193,13 @@ public void topUpCard (IcCard icCard) {
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 
-				// TODO: Log card
-
+				// log to icLogger
+				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "old", old, "change", value);
+				logger.info("topUpCard", lMap);
 
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
 				player.sendMessage(String.format(lang.getString("card-topped-up"), value));
-
 			}
 			else {
 				player.closeInventory();
@@ -239,8 +239,9 @@ public void refundCard (IcCard icCard) {
 			// send message and break out of loop
 			player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
-			// TOOD: log refund
-
+			// log to icLogger
+			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "value", remainingValue);
+			logger.info("refundCard", lMap);
 
 			// close inventory
 			player.closeInventory();

@@ -2,6 +2,8 @@ package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
+
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -29,6 +31,7 @@ private final Fares fares = plugin.fares;
 private final Owners owners = plugin.owners;
 private ItemStack[] playerInv;
 private Clickable[] clickables;
+private final IcLogger logger = plugin.icLogger;
 
 
 public CustomMachine (Player player, String station) {
@@ -141,8 +144,9 @@ protected ItemStack generateTicket (String from, String to, String fareClass) {
 		Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
 		int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
-		// TODO: log into IcLogger
-
+		// log to icLogger
+		Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
+		logger.info("createTicket", lMap);
 
 		return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
 	}

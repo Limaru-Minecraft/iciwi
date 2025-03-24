@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.tickets;
 
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.util.IciwiUtil.*;
@@ -26,6 +28,7 @@ private boolean bottomInv;
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
+private final IcLogger logger = plugin.icLogger;
 
 // Constructor and Menu Display
 public TicketMachine (Player player) {this.player = player;}
@@ -108,7 +111,10 @@ protected void generateOperatorTicket (String owner) {
 	Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
 	int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
-	// TODO: log into IcLogger
+	// log into icLogger
+	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "operator", owner, "price", price);
+	logger.info("operatorTicket", lMap);
+
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
 	player.closeInventory();
 	SignInteractListener.removeMachine(player);
