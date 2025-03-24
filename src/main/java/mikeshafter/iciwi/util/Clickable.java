@@ -14,7 +14,7 @@ private Clickable (ItemStack item, Consumer<InventoryClickEvent> consumer) {
 	this.consumer = consumer;
 }
 
-public static Clickable empty (ItemStack item) {return of(item, e -> {});}
+public static Clickable empty (ItemStack item) {return of(item, (_) -> {});}
 
 public static Clickable of (ItemStack item, Consumer<InventoryClickEvent> consumer) {return new Clickable(item, consumer);}
 
