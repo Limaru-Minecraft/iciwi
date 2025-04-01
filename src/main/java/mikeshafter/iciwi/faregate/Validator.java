@@ -31,22 +31,15 @@ public void onTicket (Player player, SignInfo info) {
     boolean entryPunched = lore.get(0).contains("•");
     boolean exitPunched = lore.get(1).contains("•");
     boolean entryPunchRequired = plugin.getConfig().getBoolean("require-entry-punch");
+    boolean canEnter = lore.get(0).equals(station) || owners.getOwners(station).contains(lore.get(0).replaceFirst("C:", ""));
+    boolean canExit = (entryPunched || !entryPunchRequired) && (lore.get(1).equals(station) || owners.getOwners(station).contains(lore.get(1).replaceFirst("C:", "")));
 
     // Invalid Ticket
     if (entryPunched && exitPunched) {
         player.sendMessage(lang.getString("invalid-ticket"));
     }
-
-    // Exit
-    else if ((entryPunched || !entryPunchRequired) && (lore.get(1).equals(station) || owners.getOwners(station).contains(lore.get(1).replaceFirst("C:", "")))) {
-		ticket.onExit();
-    }
-
-    // Entry
-    else if (lore.get(0).equals(station) || owners.getOwners(station).contains(lore.get(0).replaceFirst("C:", ""))) {
-		ticket.onEntry();
-    }
-
+    else if (!entryPunched && canEnter) ticket.onEntry();
+    else if (!exitPunched && canExit) ticket.onExit();
     else {
         player.sendMessage(lang.getString("invalid-ticket"));
     }
