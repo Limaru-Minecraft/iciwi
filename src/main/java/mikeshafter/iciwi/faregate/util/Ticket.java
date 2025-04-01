@@ -76,7 +76,7 @@ public Ticket (Player player, SignInfo info) {
 	IciwiUtil.punchTicket(super.signInfo.item(), 1);
 	player.sendMessage(String.format(lang.getString("ticket-out"), station));
 	// Log onExit
-	String entryStation = lore.get(0).replace(" •", "");
+	String entryStation = lore.getFirst().replace(" •", "");
 
 	// TODO: logger
 
