@@ -4,7 +4,10 @@ import mikeshafter.iciwi.config.Owners;
 
 import java.util.Map;
 
-
+/**
+ * Interface for an Iciwi-compatible card.
+ * Iciwi-compatible plugins' cards must state their plugin name in lore[0]
+ */
 public interface IcCard {
 
 String serial = "";

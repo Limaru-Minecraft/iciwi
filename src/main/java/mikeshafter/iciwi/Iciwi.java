@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.security.NoSuchAlgorithmException;
 
-public final class Iciwi extends JavaPlugin implements IciwiPlugin {
+public final class Iciwi extends JavaPlugin {
 
 public static Economy economy = null;
 public Lang lang;
@@ -108,6 +108,7 @@ private boolean canStart () {
 @Override public void onEnable () {
 	if (setupEconomy() && canStart()) {
 		this.getLogger().info("§bIciwi has detected an economy and has been enabled!");
+		IciwiPlugin.registerCard("Iciwi", IciwiCard.class);
 		loadAllConfig();
 		Commands commands = new Commands();
 		commands.enable(this);
@@ -125,8 +126,6 @@ private boolean setupEconomy () {
 	}
 	return (economy != null);
 }
-
-@Override public Class<IciwiCard> getFareCardClass () {return IciwiCard.class;}
 
 @Override public void onDisable () {this.getLogger().info("§aIciwi: Made by Mineshafter61. Thanks for using!");}
 }

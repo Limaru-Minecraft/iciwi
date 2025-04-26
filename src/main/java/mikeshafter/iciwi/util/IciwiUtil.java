@@ -163,29 +163,38 @@ public static void punchTicket (ItemStack ticket, int line) {
 }
 
 /**
- * Gets an IcCard object from a compatible item.
+ * Gets an IcCard object from a compatible item. Iciwi-compatible plugins' cards must state the card's identifier in lore[0]
  *
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
 public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	// Iciwi-compatible plugins' cards must state their plugin name in lore[0]
 	if (!loreCheck(itemStack)) return null;
-	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
-	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-
-	// Get the plugin
-	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
-	// check for plugin compatibility
+	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
 	try {
-		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
-			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
-			// Create new card instance using the provided constructor and the item
-			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
-		}
-		return null;
-	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+		Class<?> icCardClass = IciwiPlugin.getCardType(n);
+		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+	}
+	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 		return null;
 	}
+
+
+//	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
+//	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+//
+//	// Get the plugin
+//	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
+//	// check for plugin compatibility
+//	try {
+//		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
+//			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
+//			// Create new card instance using the provided constructor and the item
+//			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+//		}
+//		return null;
+//	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+//		return null;
+//	}
 }
 }

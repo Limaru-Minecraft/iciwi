@@ -1,7 +1,6 @@
 package mikeshafter.iciwi.api;
 
 import mikeshafter.iciwi.Iciwi;
-import mikeshafter.iciwi.util.TicketType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -76,17 +75,14 @@ public void onInteract (Player player, SignInfo info) {
 	var i = item.getItemMeta().getCustomModelData();
 	var c = Iciwi.getPlugin(Iciwi.class).getConfig();
 
-	if (m.equalsIgnoreCase(c.getString("ticket.material")) && i == c.getInt("ticket.custom-model-data")) {
+	if (m.equalsIgnoreCase(c.getString("ticket.material"))) {
 		onTicket(player, info);
 	}
-	else if (m.equalsIgnoreCase(c.getString("card.material")) && i == c.getInt("card.custom-model-data")) {
+	else if (m.equalsIgnoreCase(c.getString("card.material"))) {
 		onCard(player, info);
 	}
-	else if (m.equalsIgnoreCase(c.getString("railpass.material")) && i == c.getInt("railpass.custom-model-data")) {
+	else if (m.equalsIgnoreCase(c.getString("railpass.material"))) {
 		onRailPass(player, info);
-	}
-	else {
-		throw new EnumConstantNotPresentException(TicketType.class, m);
 	}
 
 }
