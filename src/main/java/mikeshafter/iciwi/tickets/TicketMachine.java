@@ -50,13 +50,13 @@ public void init (String station) {
         if (this.owners.hasOperatorTicket(operator)) {
 			clickList.add(Clickable.of(
 				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)),
-				(_) -> generateOperatorTicket(operator)
+				(e) -> generateOperatorTicket(operator)
 			));
         }
         else if (addCustomTickets) {
             clickList.add(Clickable.of(
 				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-				(_) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
+				(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
 			));
             addCustomTickets = false;
         }
@@ -64,7 +64,7 @@ public void init (String station) {
 
 	// New card
     clickList.add(
-        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (_) -> {
+        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> {
             SignInteractListener.putMachine(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.getMachine(player)).newCard();
         })
@@ -72,7 +72,7 @@ public void init (String station) {
 
 	// Select card
     clickList.add(
-        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (_) -> {
+        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> {
             SignInteractListener.putMachine(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
         })
