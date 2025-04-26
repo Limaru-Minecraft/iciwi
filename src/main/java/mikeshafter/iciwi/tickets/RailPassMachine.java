@@ -97,7 +97,7 @@ for (int i = 0; i < railPassNames.size(); i++) {
 	String rpName = railPassNames.get(i);
 	clickables[i] = Clickable.of(
 		makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))),
-		(_) -> {
+		(e) -> {
 		double price = this.owners.getRailPassPrice(rpName);
 
 		if (Iciwi.economy.getBalance(this.player) >= price) {
@@ -183,7 +183,7 @@ this.clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0,
 for (int i = 1; i < railPassNames.size(); i++) {
 	String rpName = railPassNames.get(i);
 	this.clickables[i] = Clickable.of(
-		makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))), (_) -> {
+		makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))), (e) -> {
 		double price = this.owners.getRailPassPrice(rpName);
 
 		if (Iciwi.economy.getBalance(this.player) >= price) {

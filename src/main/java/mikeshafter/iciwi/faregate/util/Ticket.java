@@ -37,8 +37,8 @@ public Ticket (Player player, SignInfo info) {
  * @return Whether the operation was successful.
  */
 @Override public boolean onEntry () {
-	boolean wrongStation = !lore.getFirst().equals(station);
-	String operator = lore.getFirst().replaceFirst("C:", "");
+	boolean wrongStation = !lore.get(0).equals(station);
+	String operator = lore.get(0).replaceFirst("C:", "");
 	boolean wrongOperator = !owners.getOwners(station).contains(operator);
 
 	// Invalid Ticket
@@ -76,7 +76,7 @@ public Ticket (Player player, SignInfo info) {
 	IciwiUtil.punchTicket(super.signInfo.item(), 1);
 	player.sendMessage(String.format(lang.getString("ticket-out"), station));
 	// Log onExit
-	String entryStation = lore.getFirst().replace(" •", "");
+	String entryStation = lore.get(0).replace(" •", "");
 
 	// TODO: logger
 
