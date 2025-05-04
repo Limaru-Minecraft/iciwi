@@ -80,7 +80,7 @@ private void teleportFallingSand (Entity entity, Vector direction, int count, bo
 	else {
 		if (count > 0 && !entity.isDead()) {
 			Location newLoc = entity.getLocation().add(direction);
-			Entity passenger = entity.getPassengers().size() > 0 ? entity.getPassengers().get(0) : null;
+			Entity passenger = !entity.getPassengers().isEmpty() ? entity.getPassengers().get(0) : null;
 			if (passenger == null) return;
 
 			entity.removePassenger(passenger);
