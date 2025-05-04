@@ -461,6 +461,19 @@ public void fares_check(
 	s.forEach(sender::sendMessage);
 }
 
+@Command("iciwi fares check <start> <fareClass>")
+@CommandDescription("Checks all the fares from a station belonging to a certain class.")
+@Permission("iciwi.fares.check")
+public void fares_checkclass(
+	final @NonNull CommandSender sender,
+	final Iciwi plugin,
+	final @NonNull @Argument(value = "start", suggestions = "start_list") String start,
+	final @Argument(value = "fareClass", suggestions = "fareclass_list") String fareClass
+) {
+	var s = fares.getFares(start, fareClass);
+	s.forEach((a, b) -> sender.sendMessage(a, String.valueOf(b)));
+}
+
 @Command("iciwi fares unset <start> <end> <fareClass>")
 @CommandDescription("Deletes a fare.")
 @Permission("iciwi.fares.unset")

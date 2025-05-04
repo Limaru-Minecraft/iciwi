@@ -7,15 +7,16 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import java.lang.Runnable;
 import java.security.SecureRandom;
-import java.util.*;
-import static mikeshafter.iciwi.util.IciwiUtil.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class CardMachine implements Machine {
 
@@ -150,7 +151,7 @@ public void newCard () {
 
 				// log to icLogger
 				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value);
-				logger.info("newCard", lMap);
+				logger.info("new-card", lMap);
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
@@ -195,7 +196,7 @@ public void topUpCard (IcCard icCard) {
 
 				// log to icLogger
 				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "old", old, "change", value);
-				logger.info("topUpCard", lMap);
+				logger.info("top-up-card", lMap);
 
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
@@ -241,7 +242,7 @@ public void refundCard (IcCard icCard) {
 
 			// log to icLogger
 			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "value", remainingValue);
-			logger.info("refundCard", lMap);
+			logger.info("refund-card", lMap);
 
 			// close inventory
 			player.closeInventory();
