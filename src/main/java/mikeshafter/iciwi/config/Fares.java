@@ -1,8 +1,9 @@
 package mikeshafter.iciwi.config;
 
 import org.bukkit.configuration.ConfigurationSection;
-
-import java.util.*;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 // New fares: <class>.<start>.<end>
 public class Fares extends CustomConfig {
@@ -161,7 +162,7 @@ public TreeSet<String> getDestinations (String f) {
  Get all starting stations starting from a certain station.
  @return All starting stations
  */
-public Set<String> getAllStarts () {
+public TreeSet<String> getAllStarts () {
 	var set = new TreeSet<String>();
 	for (var c : getAllClasses()) {
 		set.addAll(super.getConfigurationSection(c).getKeys(false));
