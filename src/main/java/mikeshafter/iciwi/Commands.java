@@ -323,7 +323,7 @@ public void owners_railpass_list(
 	final @NonNull CommandSender sender,
 	final Iciwi plugin
 ) {
-	Set<String> o = owners.getAllRailPasses();
+	var o = owners.getAllRailPasses();
 	for (String s : o) sender.sendMessage(formatString(s));
 }
 

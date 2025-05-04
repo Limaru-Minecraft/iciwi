@@ -7,7 +7,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Date;
 
 
 public class Owners extends CustomConfig {
@@ -31,10 +35,10 @@ public @NotNull List<String> getOwners (String station) {
 
 /**
  Gets all registered TOCs
- @return Set of all TOCs */
-public Set<String> getAllCompanies () {
+ @return List of all TOCs */
+public List<String> getAllCompanies () {
 	var aliases = super.getConfigurationSection("Aliases");
-	return aliases == null ? new HashSet<>() : aliases.getKeys(false);
+	return aliases == null ? new ArrayList<>() : aliases.getKeys(false).stream().toList();
 }
 
 /**
@@ -153,21 +157,20 @@ public double getRailPassPrice (String name) { return super.getDouble(toPath("Ra
  @return The operator who sells the rail pass */
 public String getRailPassOperator (String name) { return super.getString(toPath("RailPasses", name, "operator")); }
 
-//todo: make these 2 return arrays
 /**
  Get the name of the rail pass that is sold by the operator
 
  @param operator TOC to search up
  @return Names of rail passes sold by the operator */
-public Set<String> getRailPassNames (String operator) {
+public List<String> getRailPassNames (String operator) {
 	// Loop through all names in RailPasses
 	ConfigurationSection railPassPrices = super.getConfigurationSection("RailPasses");
 	// Check if the name has the given operator
-	// If it has, add it to returnSet
-	HashSet<String> h = new HashSet<>();
+	// If it has, add it to h
+	ArrayList<String> h = new ArrayList<>();
 	// if there are no rail passes, return an empty set
 	if (railPassPrices == null) {
-		return new HashSet<>();
+		return new ArrayList<>();
 	}
 	for (String pass : railPassPrices.getKeys(false))
 		if (Objects.equals(railPassPrices.getString(pass + ".operator"), operator)) h.add(pass);
@@ -178,9 +181,9 @@ public Set<String> getRailPassNames (String operator) {
  Gets all the rail passes from a list of operators
 
  @param operators TOCs to search up
- @return Set of the rail passes */
-public Set<String> getRailPassNamesFromList (List<String> operators) {
-    HashSet<String> set = new HashSet<>();
+ @return List of the rail passes */
+public List<String> getRailPassNamesFromList (List<String> operators) {
+    ArrayList<String> set = new ArrayList<>();
     for (String operator : operators) {
         set.addAll(getRailPassNames(operator));
     }
@@ -190,10 +193,10 @@ public Set<String> getRailPassNamesFromList (List<String> operators) {
 /**
  Gets all the rail passes from all operators.
 
- @return Set of all rail passes */
-public Set<String> getAllRailPasses () {
+ @return List of all rail passes */
+public List<String> getAllRailPasses () {
 	var railPasses = super.getConfigurationSection("RailPasses");
-	return railPasses == null ? new HashSet<>() : railPasses.getKeys(false);
+	return railPasses == null ? new ArrayList<>() : railPasses.getKeys(false).stream().toList();
 }
 
 /**

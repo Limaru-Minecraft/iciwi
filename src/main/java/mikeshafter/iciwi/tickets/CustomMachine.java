@@ -2,13 +2,13 @@ package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
-
 import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -20,7 +20,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
-import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class CustomMachine implements Machine {
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
