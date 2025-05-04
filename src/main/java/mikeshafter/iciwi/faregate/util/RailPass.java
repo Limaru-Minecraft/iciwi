@@ -1,8 +1,8 @@
 package mikeshafter.iciwi.faregate.util;
 
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.SignInfo;
-import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.SoundCategory;
@@ -13,8 +13,9 @@ import java.util.Map;
 public class RailPass extends PayType {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Lang lang = plugin.lang;
 private final Owners owners = plugin.owners;
+private final IcLogger logger = plugin.icLogger;
+
 
 public RailPass (Player player, SignInfo info) {
 	super(player, info);
@@ -33,6 +34,9 @@ private boolean master (String string, String sound) {
     if (e < System.currentTimeMillis() || !tocs.contains(owners.getRailPassOperator(name))) return false;
 
 	player.sendRichMessage(IciwiUtil.format(string, Map.of("station", station, "name", name)));
+
+	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "station", station, "railPass", name, "rp-expiry", expiry);
+	logger.info("railpass-use", lMap);
 
 	player.playSound(player, sound, SoundCategory.MASTER, 1f, 1f);
 	return true;

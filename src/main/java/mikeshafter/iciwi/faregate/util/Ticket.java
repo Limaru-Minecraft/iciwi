@@ -1,5 +1,6 @@
 package mikeshafter.iciwi.faregate.util;
 
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.SignInfo;
 import mikeshafter.iciwi.config.Lang;
@@ -12,9 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Ticket extends PayType {
-private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
 private final Owners owners = plugin.owners;
+private final IcLogger logger = plugin.icLogger;
 
 private final List<String> lore;
 private final String station ;
@@ -49,7 +51,8 @@ public Ticket (Player player, SignInfo info) {
 
 	IciwiUtil.punchTicket(super.signInfo.item(), 0);
 
-	//TODO: logger
+	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", station);
+	logger.info("ticket-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 	player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>=============</green>", Map.of("station", station)));
@@ -74,12 +77,13 @@ public Ticket (Player player, SignInfo info) {
 	}
 
 	IciwiUtil.punchTicket(super.signInfo.item(), 1);
-	String entryStation = lore.get(0).replace(" •", "");
+	String nStation = lore.get(0).replace(" •", "");
 
-	// TODO: logger
+	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", nStation, "xStation", station);
+	logger.info("ticket-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-	player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", entryStation, "station", station)));
+	player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", nStation, "station", station)));
 	return true;
 }
 
