@@ -1,13 +1,16 @@
 package mikeshafter.iciwi.faregate.util;
-import mikeshafter.iciwi.api.IcCard;
-import mikeshafter.iciwi.util.IciwiUtil;
-import org.bukkit.SoundCategory;
-import mikeshafter.iciwi.config.*;
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.Iciwi;
+import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.SignInfo;
-import java.util.*;
+import mikeshafter.iciwi.config.Fares;
+import mikeshafter.iciwi.config.Lang;
+import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.config.Records;
+import mikeshafter.iciwi.util.IciwiUtil;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import java.util.*;
 
 public class Card extends PayType {
 private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -206,7 +209,7 @@ public boolean onExit () {
 
 	// TODO: Logger
 
-	player.playSound(player, plugin.getConfig().getString("onExit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	return true;
 }
 
@@ -229,11 +232,11 @@ public boolean onMember () {
 
 	// Check if the card has a rail pass belonging to the station's operator
 	if (railPasses.stream().anyMatch(r -> stationOwners.contains(owners.getRailPassOperator(r)))) {
-		player.sendMessage(lang.getString("onMember-gate"));
+		player.sendMessage(lang.getString("member-gate"));
 
 		// TODO: Logger
 
-		player.playSound(player, plugin.getConfig().getString("onMember-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
+		player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 		return true;
 	}
 	// If the player does not have such a rail pass, return false

@@ -5,10 +5,10 @@ import mikeshafter.iciwi.api.SignInfo;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.IciwiUtil;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import java.util.List;
+import java.util.Map;
 
 public class RailPass extends PayType {
 
@@ -20,7 +20,7 @@ public RailPass (Player player, SignInfo info) {
 	super(player, info);
 }
 
-private boolean master (String string) {
+private boolean master (String string, String sound) {
 	List<String> lore = super.signInfo.lore();
     String name = lore.get(0);
     String expiry = lore.get(1);
@@ -34,7 +34,7 @@ private boolean master (String string) {
 
 	player.sendRichMessage(IciwiUtil.format(string, Map.of("station", station, "name", name)));
 
-	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
+	player.playSound(player, sound, SoundCategory.MASTER, 1f, 1f);
 	return true;
 
 }
@@ -46,7 +46,9 @@ private boolean master (String string) {
  */
 @Override
 public boolean onEntry () {
-	return master("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>");
+	final String string = "<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String sound = plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown");
+	return master(string, sound);
 }
 
 /**
@@ -56,7 +58,9 @@ public boolean onEntry () {
  */
 @Override
 public boolean onExit () {
-	return master("<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>");
+	final String string = "<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String sound = plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step");
+	return master(string, sound);
 }
 
 /**
@@ -66,7 +70,9 @@ public boolean onExit () {
  */
 @Override
 public boolean onMember () {
-	return master("<green>=== Member ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>");
+	final String string = "<green>=== Member ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String sound = plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown");
+	return master(string, sound);
 }
 
 /**
@@ -76,7 +82,9 @@ public boolean onMember () {
  */
 @Override
 public boolean onTransfer () {
-	return master("<green>=== Transfer ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>");
+	final String string = "<green>=== Transfer ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String sound = plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step");
+	return master(string, sound);
 }
 
 }

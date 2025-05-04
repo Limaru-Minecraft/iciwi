@@ -74,13 +74,11 @@ public Ticket (Player player, SignInfo info) {
 	}
 
 	IciwiUtil.punchTicket(super.signInfo.item(), 1);
-	player.sendMessage(String.format(lang.getString("ticket-out"), station));
-	// Log onExit
 	String entryStation = lore.get(0).replace(" •", "");
 
 	// TODO: logger
 
-	player.playSound(player, plugin.getConfig().getString("onExit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 	player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", entryStation, "station", station)));
 	return true;
 }
