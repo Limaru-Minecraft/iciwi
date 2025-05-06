@@ -1,7 +1,11 @@
 package mikeshafter.iciwi.faregate;
 import mikeshafter.iciwi.api.SignInfo;
+
+import java.util.Map;
+
 import org.bukkit.SoundCategory;
 
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
@@ -14,6 +18,8 @@ public class ClassChange extends FareGate {
 
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Lang lang = plugin.lang;
+private final Records records = plugin.records;
+private final IcLogger logger = plugin.icLogger;
 
 public ClassChange() {
     super("classchange");
@@ -35,8 +41,11 @@ public void onCard (Player player, SignInfo info) {
     final IcCard icCard = IciwiUtil.IcCardFromItem(item);
 	if (icCard == null) return;
 	String serial = icCard.getSerial();
-	final Records records = plugin.records;
 	records.setClass(serial, newClass);
+
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "newClass", newClass);
+	logger.info("classChange", lMap);
+
 	player.sendMessage(String.format(lang.getString("class-changed"), newClass));
 	player.playSound(player, plugin.getConfig().getString("classchange-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 }

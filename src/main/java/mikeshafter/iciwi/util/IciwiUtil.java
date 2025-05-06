@@ -4,18 +4,28 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Nullable;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class IciwiUtil {
+
+/**
+ * Replaces named placeholders with their values
+ *
+ * @param template Initial template string
+ * @param values Keys and values to replace with
+ * @return A copy of the input string, without any coloring
+ */
+public static String format (String template, Map<String, String> values) {
+	for (Map.Entry<String, String> entry : values.entrySet()) {
+		template = template.replace("{" + entry.getKey() + "}", entry.getValue());
+	}
+	return template;
+}
 
 /**
  * Strips the given message of all color codes
@@ -149,29 +159,39 @@ public static void punchTicket (ItemStack ticket, int line) {
 }
 
 /**
- * Gets an IcCard object from a compatible item.
+ * Gets an IcCard object from a compatible item. Iciwi-compatible plugins' cards must state the card's identifier in lore[0]
  *
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
 public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	// Iciwi-compatible plugins' cards must state their plugin name in lore[0]
 	if (!loreCheck(itemStack)) return null;
-	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
-	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-
-	// Get the plugin
-	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
-	// check for plugin compatibility
+	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
 	try {
-		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
-			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
-			// Create new card instance using the provided constructor and the item
-			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
-		}
-		return null;
-	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+		Class<?> icCardClass = IciwiPlugin.getCardType(n);
+		if (icCardClass == null) return null;
+		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+	}
+	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 		return null;
 	}
+
+
+//	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
+//	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+//
+//	// Get the plugin
+//	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
+//	// check for plugin compatibility
+//	try {
+//		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
+//			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
+//			// Create new card instance using the provided constructor and the item
+//			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+//		}
+//		return null;
+//	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+//		return null;
+//	}
 }
 }

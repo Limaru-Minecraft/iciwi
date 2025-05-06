@@ -62,3 +62,9 @@ Caps:
   ExampleOperator1:
     amount: 0
     duration: ''
+
+# This section lets you create custom card designs for each company.
+# The value should be the custom-model-data of the card.
+CustomDesigns:
+  ExampleOperator: 1000
+  ExampleOperator1: 1001
