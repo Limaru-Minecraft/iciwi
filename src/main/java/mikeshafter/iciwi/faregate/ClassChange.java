@@ -43,7 +43,7 @@ public void onCard (Player player, SignInfo info) {
 	String serial = icCard.getSerial();
 	records.setClass(serial, newClass);
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId(), "card", icCard, "newClass", newClass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "newClass", newClass);
 	logger.info("classChange", lMap);
 
 	player.sendMessage(String.format(lang.getString("class-changed"), newClass));

@@ -71,7 +71,7 @@ public void log (LogLevel level, String message) {
  * @param message The message to log
  * @param data Additional data to include in the log entry
  */
-public void logWithData (LogLevel level, String message, Map<String, Object> data) {
+public void logWithData (LogLevel level, String message, Map<String, String> data) {
     JsonObject logEntry = new JsonObject();
     logEntry.addProperty("timestamp", LocalDateTime.now().format(dateFormatter));
     logEntry.addProperty("level", level.toString());
@@ -79,7 +79,7 @@ public void logWithData (LogLevel level, String message, Map<String, Object> dat
 
     if (data != null && !data.isEmpty()) {
         JsonObject dataObj = new JsonObject();
-        for (Map.Entry<String, Object> entry : data.entrySet()) {
+        for (Map.Entry<String, String> entry : data.entrySet()) {
             dataObj.add(entry.getKey(), convertToJsonElement(entry.getValue()));
         }
         logEntry.add("data", dataObj);
@@ -96,7 +96,11 @@ public void logWithData (LogLevel level, String message, Map<String, Object> dat
  */
 private JsonElement convertToJsonElement (Object value) {
     if (value == null) return null;
-    return gson.toJsonTree(value);
+
+    if (!(value instanceof String || value instanceof Character || value instanceof Boolean || value instanceof Number))
+        return gson.toJsonTree(value.toString());
+    else
+        return gson.toJsonTree(value);
 }
 
 /**
@@ -109,7 +113,7 @@ public void info (String message) {
 /**
  * Convenience method for INFO level logs with additional data
  */
-public void info (String message, Map<String, Object> data) {
+public void info (String message, Map<String, String> data) {
     logWithData(LogLevel.INFO, message, data);
 }
 
@@ -123,7 +127,7 @@ public void warning (String message) {
 /**
  * Convenience method for WARNING level logs with additional data
  */
-public void warning (String message, Map<String, Object> data) {
+public void warning (String message, Map<String, String> data) {
     logWithData(LogLevel.WARNING, message, data);
 }
 
@@ -137,7 +141,7 @@ public void error (String message) {
 /**
  * Convenience method for ERROR level logs with additional data
  */
-public void error (String message, Map<String, Object> data) {
+public void error (String message, Map<String, String> data) {
     logWithData(LogLevel.ERROR, message, data);
 }
 
@@ -151,7 +155,7 @@ public void debug (String message) {
 /**
  * Convenience method for DEBUG level logs with additional data
  */
-public void debug (String message, Map<String, Object> data) {
+public void debug (String message, Map<String, String> data) {
     logWithData(LogLevel.DEBUG, message, data);
 }
 

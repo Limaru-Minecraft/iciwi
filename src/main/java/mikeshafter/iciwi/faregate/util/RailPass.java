@@ -35,7 +35,7 @@ private boolean master (String string, String sound) {
 
 	player.sendRichMessage(IciwiUtil.format(string, Map.of("station", station, "name", name)));
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "station", station, "railPass", name, "rp-expiry", expiry);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "station", station, "railPass", name, "rp-expiry", expiry);
 	logger.info("railpass-use", lMap);
 
 	player.playSound(player, sound, SoundCategory.MASTER, 1f, 1f);

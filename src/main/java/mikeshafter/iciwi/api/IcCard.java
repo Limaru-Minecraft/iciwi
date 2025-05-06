@@ -1,7 +1,5 @@
 package mikeshafter.iciwi.api;
 import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.config.Owners;
-
 import java.util.Map;
 
 /**
@@ -49,7 +47,7 @@ default double getValue () {return Double.MAX_VALUE;}
  *
  * @return A map in the format of [name, start time]
  */
-Map<String, Long> getRailPasses () //{return cardSql.getAllDiscounts(serial);}
+Map<String, Long> getRailPasses (); //{return cardSql.getAllDiscounts(serial);}
 
 /**
  * Sets a rail pass for a certain card and operator
@@ -57,7 +55,7 @@ Map<String, Long> getRailPasses () //{return cardSql.getAllDiscounts(serial);}
  * @param name  Name of the rail pass
  * @param start Start time of the rail pass, as a long
  */
-void setRailPass (String name, long start)// {cardSql.setDiscount(serial, name, start);}
+void setRailPass (String name, long start);// {cardSql.setDiscount(serial, name, start);}
 
 /**
  * Gets the expiry time of a certain railpass belonging to a card
@@ -65,5 +63,5 @@ void setRailPass (String name, long start)// {cardSql.setDiscount(serial, name, 
  * @param name Name of the rail pass
  * @return The expiry time
  */
-long getExpiry (String name)// {return cardSql.getStart(serial, name) + new Owners().getRailPassDuration(name);}
+long getExpiry (String name);// {return cardSql.getStart(serial, name) + new Owners().getRailPassDuration(name);}
 }

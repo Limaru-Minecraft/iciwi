@@ -51,7 +51,7 @@ public Ticket (Player player, SignInfo info) {
 
 	IciwiUtil.punchTicket(super.signInfo.item(), 0);
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", station);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", station);
 	logger.info("ticket-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -79,7 +79,7 @@ public Ticket (Player player, SignInfo info) {
 	IciwiUtil.punchTicket(super.signInfo.item(), 1);
 	String nStation = lore.get(0).replace(" •", "");
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", nStation, "xStation", station);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "nStation", nStation, "xStation", station);
 	logger.info("ticket-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);

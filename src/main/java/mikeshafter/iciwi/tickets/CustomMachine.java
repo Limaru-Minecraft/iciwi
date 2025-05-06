@@ -144,7 +144,7 @@ protected ItemStack generateTicket (String from, String to, String fareClass) {
 		int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
 		// log to icLogger
-		Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
 		logger.info("createTicket", lMap);
 
 		return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));

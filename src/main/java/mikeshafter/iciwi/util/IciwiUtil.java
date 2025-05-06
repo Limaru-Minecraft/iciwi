@@ -169,6 +169,7 @@ public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
 	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
 	try {
 		Class<?> icCardClass = IciwiPlugin.getCardType(n);
+		if (icCardClass == null) return null;
 		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
 	}
 	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

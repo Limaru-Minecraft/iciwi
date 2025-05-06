@@ -90,7 +90,8 @@ public void selectCard () {
 public void cardMenu () {
 	// get card details
 	IcCard icCard = IcCardFromItem(this.selectedItem);
-	assert icCard != null;
+	if (icCard == null || this.selectedItem.getItemMeta().lore() == null) return;
+
 	Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
 	int cardModelData = plugin.getConfig().getInt("card.custom-model-data");
 
@@ -150,7 +151,7 @@ public void newCard () {
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
 
 				// log to icLogger
-				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value);
+				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value));
 				logger.info("new-card", lMap);
 
 				// Send confirmation message
@@ -195,7 +196,7 @@ public void topUpCard (IcCard icCard) {
 				SignInteractListener.removeMachine(player);
 
 				// log to icLogger
-				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "old", old, "change", value);
+				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "old", String.valueOf(old), "change", String.valueOf(value));
 				logger.info("top-up-card", lMap);
 
 				// Take money from player and send message
@@ -220,6 +221,7 @@ public void topUpCard (IcCard icCard) {
 public void refundCard (IcCard icCard) {
 	// get serial number
 	String serial = icCard.getSerial();
+	player.closeInventory();  // close first to prevent removing the item
 	for (ItemStack itemStack : player.getInventory().getContents()) {
 		// check if the lore matches
 		if (loreCheck(itemStack, 2) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
@@ -241,11 +243,11 @@ public void refundCard (IcCard icCard) {
 			player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
 			// log to icLogger
-			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "value", remainingValue);
+			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "value", String.valueOf(remainingValue));
 			logger.info("refund-card", lMap);
 
 			// close inventory
-			player.closeInventory();
+
 			SignInteractListener.removeMachine(player);
 			break;
 		}

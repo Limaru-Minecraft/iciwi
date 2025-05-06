@@ -36,7 +36,7 @@ private Connection connect () {
 public void initTables () {
 	try (Connection conn = this.connect(); Statement statement = conn.createStatement()) {
 		statement.execute("CREATE TABLE IF NOT EXISTS cards (serial TEXT, value TEXT, PRIMARY KEY (serial) ); ");
-		statement.execute("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial) ON UPDATE CASCADE, name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
+		statement.execute("CREATE TABLE IF NOT EXISTS discounts (serial TEXT REFERENCES cards(serial), name TEXT, start INTEGER, PRIMARY KEY (serial, name) ); ");
 	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}
@@ -65,9 +65,10 @@ public void newCard (String serial, double value) {
  * @param serial Serial number
  */
 public void deleteCard (String serial) {
-	String sql = "DELETE FROM cards WHERE serial = ? ;";
+	String sql = "DELETE FROM cards WHERE serial = ? ; DELETE FROM discounts WHERE serial = ? ;";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setString(1, serial);
+		statement.setString(2, serial);
 		statement.executeUpdate();
 	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());

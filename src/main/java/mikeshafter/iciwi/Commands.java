@@ -461,7 +461,7 @@ public void fares_check(
 	s.forEach(sender::sendMessage);
 }
 
-@Command("iciwi fares check <start> <fareClass>")
+@Command("iciwi fares checkclass <start> <fareClass>")
 @CommandDescription("Checks all the fares from a station belonging to a certain class.")
 @Permission("iciwi.fares.check")
 public void fares_checkclass(

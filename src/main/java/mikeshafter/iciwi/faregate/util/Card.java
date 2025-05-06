@@ -12,13 +12,13 @@ import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Card extends PayType {
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Records records = plugin.records;
 private final Lang lang = plugin.lang;
 private final Owners owners = plugin.owners;
-private final CardSql cardSql = new CardSql();
 private final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
 private final IcLogger logger = plugin.icLogger;
 
@@ -84,7 +84,7 @@ public boolean onEntry () {
 	// confirmation
     player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{value}</yellow><br>=============</green>", Map.of("station", super.signInfo.station(), "value", String.valueOf(value))));
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "nStation", nStation);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation);
 	logger.info("card-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -102,6 +102,8 @@ public boolean onExit () {
 	Fares fares = plugin.fares;
 	String xStation = super.signInfo.station();
 	String nStation = records.getStation(serial);
+	List<String> nOwners = owners.getOwners(nStation);
+	List<String> xOwners = owners.getOwners(xStation);
 
 	// is the card not in the network?
 	if (records.getStation(serial).isEmpty()) {
@@ -131,21 +133,30 @@ public boolean onExit () {
 	}
 
 	// Get cheapest rail pass
-	List<String> nOwners = owners.getOwners(nStation);
-	List<String> xOwners = owners.getOwners(xStation);
-	HashSet<String> railPasses = new HashSet<>();
-	for (String o : nOwners) railPasses.addAll(owners.getRailPassNames(o));
-	for (String o : xOwners) railPasses.addAll(owners.getRailPassNames(o));
-	railPasses.retainAll(cardSql.getAllDiscounts(serial).keySet());
+	var tOwners = Stream.concat(owners.getOwners(nStation).stream(), owners.getOwners(xStation).stream()).toList();
+	List<String> railPassNames = this.owners.getRailPassNamesFromList(tOwners);
+	var myPasses = icCard.getRailPasses().keySet();
+//	player.sendMessage("tOwners:"+ tOwners); //TODO: debug
+//	player.sendMessage("rpNames:"+ railPassNames); //TODO: debug
+	var finalPasses = myPasses.stream().filter(railPassNames::contains).toList();
+//	player.sendMessage("rpNames (after retain):"+ finalPasses); //TODO: debug
 	double pp = 1f;
 	String finalRailPass = null;
-	if (!railPasses.isEmpty()) {
-		finalRailPass = Collections.min(railPasses, Comparator.comparingDouble(owners::getRailPassPercentage));
-		pp = owners.getRailPassPercentage(finalRailPass);
+	if (!finalPasses.isEmpty()) {
+		if (finalPasses.size() == 1) {finalRailPass = finalPasses.get(0); pp = owners.getRailPassPercentage(finalRailPass);}
+		else for (String railPassName : finalPasses) {
+			if (pp >= owners.getRailPassPercentage(railPassName)) {
+				pp = owners.getRailPassPercentage(railPassName);
+				finalRailPass = railPassName;
+			}
+		}
+//		player.sendMessage("FRP:"+ finalRailPass); //TODO: debug
+//		player.sendMessage("PP:"+ pp); //TODO: debug
 	}
 
 	// Set final base fare
 	fare *= pp;
+//	player.sendMessage("Fare:"+ fare); //TODO: debug
 
 	if (icCard.getValue() < fare) {
 		player.sendMessage(lang.getString("value-low"));
@@ -211,7 +222,7 @@ public boolean onExit () {
 		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "nStation", nStation, "xStation", xStation, "osi", osi, "fare", tFare, "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(tFare), "railPass", finalRailPass);
 	logger.info("card-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
@@ -233,13 +244,13 @@ public boolean onMember () {
 	List<String> stationOwners = owners.getOwners(station);
 
 	// Get the owners of the card's rail passes
-	Set<String> railPasses = cardSql.getAllDiscounts(serial).keySet();
+	Set<String> railPasses = icCard.getRailPasses().keySet();
 
 	// Check if the card has a rail pass belonging to the station's operator
 	if (railPasses.stream().anyMatch(r -> stationOwners.contains(owners.getRailPassOperator(r)))) {
 		player.sendMessage(lang.getString("member-gate"));
 
-		Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "station", station);
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "station", station);
 		logger.info("card-member", lMap);
 
 		player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -268,7 +279,7 @@ public boolean onTransfer () {
 //		player.sendMessage(lang.getString("transfer-cancel-osi"));
 //		player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 
-//		Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "station", station);
+//		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "station", station);
 //		logger.info("card-transfer", lMap);
 //		return true;
 //	}
@@ -296,7 +307,7 @@ public boolean onTransfer () {
 	double payPercentage = 1d;
 
 	// Get cheapest discount
-	for (var r : cardSql.getAllDiscounts(serial).keySet()) {
+	for (var r : icCard.getRailPasses().keySet()) {
 		if ((entryStationOwners.contains(owners.getRailPassOperator(r)) || exitStationOwners.contains(owners.getRailPassOperator(r))) && owners.getRailPassPercentage(r) < payPercentage) {
 			finalRailPass = r;
 			payPercentage = owners.getRailPassPercentage(r);
@@ -348,7 +359,7 @@ public boolean onTransfer () {
 	player.sendMessage(String.format(lang.getString("tapped-out"), nStation, value));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value, "nStation", nStation, "station", station, "fare", fare, "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "station", station, "fare", String.valueOf(fare), "railPass", finalRailPass);
 	logger.info("card-transfer", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);

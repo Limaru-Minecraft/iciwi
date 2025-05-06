@@ -125,7 +125,7 @@ for (int i = 0; i < railPassNames.size(); i++) {
 			this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
 			// log the transaction
-			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "railPassName", rpName, "price", price);
+			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "railPassName", rpName, "price", String.valueOf(price));
 			logger.info("createPaperPass", lMap);
 		}
 		else this.player.sendMessage(this.lang.getString("not-enough-money"));
@@ -164,7 +164,7 @@ this.clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0,
 	event.setCancelled(true);
 	List<TextComponent> discountList = icCard.getRailPasses().entrySet().stream().sorted(Map.Entry.comparingByValue()).map(railPass -> Component.text().content(
 		// Show expiry date
-		"§6- §a" + railPass.getKey() + "§6 | Exp. " + String.format("§b%s\n", new Date(railPass.getValue() * 1000)))
+		"§6- §a" + railPass.getKey() + "§6 | Exp. " + String.format("§b%s\n", new Date(railPass.getValue())))
 		// Option to extend (currently disabled)
 		// .append(Component.text().content("§6 | Extend
 		// §a")).clickEvent(ClickEvent.runCommand("/iciwi railpass "+serial+"
@@ -183,7 +183,7 @@ this.clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0,
 
 // create all rail pass buttons
 for (int i = 1; i < railPassNames.size(); i++) {
-	String rpName = railPassNames.get(i);
+	String rpName = railPassNames.get(i-1);
 	this.clickables[i] = Clickable.of(
 		makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))), (e) -> {
 		double price = this.owners.getRailPassPrice(rpName);
@@ -193,7 +193,7 @@ for (int i = 1; i < railPassNames.size(); i++) {
 			Iciwi.economy.withdrawPlayer(this.player, price);
 
 			// check if the card already has the rail pass
-			if (this.cardSql.getAllDiscounts(serial).containsKey(rpName)) {
+			if (icCard.getRailPasses().containsKey(rpName)) {
 				// Extend existing rail pass
 				icCard.setRailPass(rpName, icCard.getExpiry(rpName));
 				this.player.sendMessage(String.format(this.lang.getString("extended-rail-pass"), rpName, this.owners.getRailPassPrice(rpName)));
@@ -208,7 +208,7 @@ for (int i = 1; i < railPassNames.size(); i++) {
 			this.owners.deposit(this.owners.getRailPassOperator(rpName), price);
 
 			// log to icLogger
-			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "railPassName", rpName, "start", System.currentTimeMillis());
+			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "railPassName", rpName, "start", String.valueOf(System.currentTimeMillis()));
 			logger.info("createRailPass", lMap);
 		}
 		else this.player.sendMessage(this.lang.getString("not-enough-money"));
