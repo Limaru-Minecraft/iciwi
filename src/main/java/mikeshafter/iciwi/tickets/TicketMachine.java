@@ -1,6 +1,6 @@
 package mikeshafter.iciwi.tickets;
 
-import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
@@ -12,6 +12,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static mikeshafter.iciwi.util.IciwiUtil.*;
@@ -25,9 +26,9 @@ private boolean bottomInv;
 
 // Constant helper classes
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final CardSql cardSql = new CardSql();
 private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
+private final IcLogger logger = plugin.icLogger;
 
 // Constructor and Menu Display
 public TicketMachine (Player player) {this.player = player;}
@@ -49,13 +50,13 @@ public void init (String station) {
         if (this.owners.hasOperatorTicket(operator)) {
 			clickList.add(Clickable.of(
 				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)),
-				(event) -> generateOperatorTicket(operator)
+				(e) -> generateOperatorTicket(operator)
 			));
         }
         else if (addCustomTickets) {
             clickList.add(Clickable.of(
 				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-				(event) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
+				(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
 			));
             addCustomTickets = false;
         }
@@ -63,7 +64,7 @@ public void init (String station) {
 
 	// New card
     clickList.add(
-        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (event) -> {
+        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> {
             SignInteractListener.putMachine(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.getMachine(player)).newCard();
         })
@@ -71,7 +72,7 @@ public void init (String station) {
 
 	// Select card
     clickList.add(
-        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (event) -> {
+        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> {
             SignInteractListener.putMachine(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
         })
@@ -110,8 +111,10 @@ protected void generateOperatorTicket (String owner) {
 	Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
 	int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
-	// log into IcLogger
-	cardSql.logMaster(player.getUniqueId().toString());
+	// log into icLogger
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "operator", owner, "price", String.valueOf(price));
+	logger.info("operatorTicket", lMap);
+
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
 	player.closeInventory();
 	SignInteractListener.removeMachine(player);

@@ -6,7 +6,7 @@ public Records () { super("records.yml"); }
 
 /**
  * Get the station at which the card entered the transit system.
- * This is used on both entry and exit.
+ * This is used on both entry and onExit.
  *
  * @param serial Serial number of card
  * @return The station at which the card entered the transit system.
@@ -15,7 +15,7 @@ public String getStation (String serial) {return super.getString(serial + ".stat
 
 /**
  * Set the station at which the card entered the transit system.
- * This is used on both entry and exit.
+ * This is used on both entry and onExit.
  * This should only be set to a non-null value when the card is in the transit system. Otherwise, set it to null.
  *
  * @param serial  Serial number of card
@@ -28,7 +28,7 @@ public void setStation (String serial, String station) {
 
 /**
  * Get the fare class of the journey taken by the card
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the fare class of the journey taken by the card
@@ -53,7 +53,7 @@ public void setClass (String serial, String fareClass) {
 
 /**
  * Get the entry station of the previous journey
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the station at which the card entered the transit system on the previous journey
@@ -64,7 +64,7 @@ public String getPreviousStation (String serial) {
 
 /**
  * Set the entry station of the previous journey
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial  Serial number of card
  * @param station the station at which the card entered the transit system on the previous journey
@@ -75,7 +75,7 @@ public void setPreviousStation (String serial, String station) {
 }
 
 /**
- * Gets whether the card is eligible for a transfer discount on exit
+ * Gets whether the card is eligible for a transfer discount on onExit
  * This is used on entry
  *
  * @param serial Serial number of card
@@ -84,7 +84,7 @@ public void setPreviousStation (String serial, String station) {
 public boolean getTransfer (String serial) {return super.getBoolean(serial + ".has-transfer");}
 
 /**
- * Sets whether the card is eligible for a transfer discount on exit.
+ * Sets whether the card is eligible for a transfer discount on onExit.
  * This is used on entry
  *
  * @param serial      Serial number of card
@@ -96,20 +96,20 @@ public void setTransfer (String serial, boolean hasTransfer) {
 }
 
 /**
- * Gets the exit timestamp of the previous journey.
+ * Gets the onExit timestamp of the previous journey.
  * This is used on entry
  *
  * @param serial Serial number of card
- * @return The timestamp of the previous time the card was used to exit the transit system.
+ * @return The timestamp of the previous time the card was used to onExit the transit system.
  */
 public long getTimestamp (String serial) {return super.getLong(serial + ".timestamp");}
 
 /**
- * Writes the last exit time to the records file.
- * This is used on exit
+ * Writes the last onExit time to the records file.
+ * This is used on onExit
  *
  * @param serial    Serial number of card
- * @param timestamp The timestamp at which the card was used to exit the transit system.
+ * @param timestamp The timestamp at which the card was used to onExit the transit system.
  */
 public void setTimestamp (String serial, long timestamp) {
 	super.set(serial + ".timestamp", timestamp);
@@ -118,7 +118,7 @@ public void setTimestamp (String serial, long timestamp) {
 
 /**
  * Gets the price of the previous journey.
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the final price of the previous journey
@@ -129,7 +129,7 @@ public double getPreviousFare (String serial) {
 
 /**
  * Writes the price of the journey to the records file
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @param fare   The final fare of the journey

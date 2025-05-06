@@ -2,12 +2,13 @@ package mikeshafter.iciwi.tickets;
 
 import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
 import com.bergerkiller.bukkit.common.utils.CommonUtil;
-import mikeshafter.iciwi.CardSql;
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -19,7 +20,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
-import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class CustomMachine implements Machine {
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
@@ -28,9 +28,9 @@ private final String station;
 private final Lang lang = plugin.lang;
 private final Fares fares = plugin.fares;
 private final Owners owners = plugin.owners;
-private static final CardSql cardSql = new CardSql();
 private ItemStack[] playerInv;
 private Clickable[] clickables;
+private final IcLogger logger = plugin.icLogger;
 
 
 public CustomMachine (Player player, String station) {
@@ -141,12 +141,11 @@ protected ItemStack generateTicket (String from, String to, String fareClass) {
 
 		// Get ticket materials
 		Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-		int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
+		int customModelData = owners.getCustomModel(ownersList.get(0));//plugin.getConfig().getInt("ticket.custom-model-data");
 
-		// log into IcLogger
-
-		cardSql.logMaster(player.getUniqueId().toString());
-		cardSql.logTicketCreate(from, to, fareClass, price);
+		// log to icLogger
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
+		logger.info("createTicket", lMap);
 
 		return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
 	}
