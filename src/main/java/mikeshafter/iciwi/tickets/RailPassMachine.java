@@ -1,6 +1,5 @@
 package mikeshafter.iciwi.tickets;
 
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
@@ -31,7 +30,6 @@ private final Player player;
 private boolean bottomInv;
 
 // Constant helper classes
-private final CardSql cardSql = new CardSql();
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
 private final Lang lang = plugin.lang;
@@ -155,7 +153,6 @@ if (icCard == null) {
 	this.player.closeInventory();SignInteractListener.removeMachine(player);
 	return;
 }
-String serial = icCard.getSerial();
 
 // rail pass viewer
 this.clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0, Component.text("View Rail Passes")), (event) -> {
@@ -182,9 +179,9 @@ this.clickables[0] = Clickable.of(makeItem(Material.WHITE_STAINED_GLASS_PANE, 0,
 });
 
 // create all rail pass buttons
-for (int i = 1; i < railPassNames.size(); i++) {
-	String rpName = railPassNames.get(i-1);
-	this.clickables[i] = Clickable.of(
+for (int i = 0; i < railPassNames.size(); i++) {
+	String rpName = railPassNames.get(i);
+	this.clickables[i+1] = Clickable.of(
 		makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(rpName), Component.text(this.owners.getRailPassPrice(rpName))), (e) -> {
 		double price = this.owners.getRailPassPrice(rpName);
 

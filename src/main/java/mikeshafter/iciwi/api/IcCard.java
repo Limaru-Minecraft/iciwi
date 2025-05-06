@@ -1,5 +1,4 @@
 package mikeshafter.iciwi.api;
-import mikeshafter.iciwi.CardSql;
 import java.util.Map;
 
 /**
@@ -7,8 +6,6 @@ import java.util.Map;
  * Iciwi-compatible plugins' cards must state their plugin name in lore[0]
  */
 public interface IcCard {
-
-CardSql cardSql = new CardSql();
 
 /**
  * Withdraws a certain amount

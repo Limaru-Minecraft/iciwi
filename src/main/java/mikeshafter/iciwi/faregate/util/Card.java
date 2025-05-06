@@ -1,5 +1,4 @@
 package mikeshafter.iciwi.faregate.util;
-import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
