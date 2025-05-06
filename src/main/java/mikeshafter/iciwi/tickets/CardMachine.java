@@ -93,7 +93,7 @@ public void cardMenu () {
 	if (icCard == null || this.selectedItem.getItemMeta().lore() == null) return;
 
 	Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
-	int cardModelData = plugin.getConfig().getInt("card.custom-model-data");
+	int cardModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
 
 	// setup inventory
 	inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
@@ -145,7 +145,7 @@ public void newCard () {
 
 				// Get card generator
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
-				int customModelData = plugin.getConfig().getInt("card.custom-model-data");
+				int customModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
 				// Generate card
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));

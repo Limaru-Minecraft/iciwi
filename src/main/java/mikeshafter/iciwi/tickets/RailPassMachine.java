@@ -106,7 +106,7 @@ for (int i = 0; i < railPassNames.size(); i++) {
 
 			// generate the rail pass paper ticket item
 			Material material = Material.valueOf(this.plugin.getConfig().getString("railpass.material"));
-			int customModelData = this.plugin.getConfig().getInt("railpass.custom-model-data");
+			int customModelData = owners.getCustomModel(operators.get(0));//this.plugin.getConfig().getInt("railpass.custom-model-data");
 			long time = System.currentTimeMillis();
 
 			/*

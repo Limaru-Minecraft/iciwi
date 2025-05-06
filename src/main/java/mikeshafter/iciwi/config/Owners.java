@@ -275,4 +275,8 @@ public void setFareCapAmt (String operator, double amt) {super.set(toPath("Caps"
  * @param duration the duration in which the fare cap is active
  */
 public void setFareCapDuration (String operator, String duration) {super.set(toPath("Caps" ,  operator ,  "duration"), duration);}
+
+public int getCustomModel (String operator) {return super.getInt(toPath("CustomDesigns" ,  operator));}
+
+public void setCustomModel (String operator, int model) {super.set(toPath("CustomDesigns" ,  operator), model);}
 }

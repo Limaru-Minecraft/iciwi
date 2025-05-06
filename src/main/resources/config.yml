@@ -50,7 +50,7 @@ payment-noise: minecraft:block.amethyst_block.step
 classchange-noise: minecraft:entity.allay.item_thrown
 transfer-noise: minecraft:block.amethyst_block.step
 
-# custom item usage
+# custom item usage (set default custom-model-data here)
 card:
   material: NAME_TAG
   custom-model-data: 0
