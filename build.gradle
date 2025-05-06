@@ -23,17 +23,17 @@ java { toolchain {
   languageVersion = JavaLanguageVersion.of(17)
 }}
 
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      groupId = 'mikeshafter'
-      artifactId = 'iciwi'
-      version = '2.20.5'
-
-      from components.java
-    }
-  }
-}
+//publishing {
+//  publications {
+//    mavenJava(MavenPublication) {
+//      groupId = 'mikeshafter'
+//      artifactId = 'iciwi'
+//      version = '2.20.5'
+//
+//      from components.java
+//    }
+//  }
+//}
 
 dependencies {
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'

@@ -1,5 +1,5 @@
 name: Iciwi
-version: "2.20.3"
+version: "2.20.5"
 api-version: "1.20"
 main: mikeshafter.iciwi.Iciwi
 depend:

@@ -104,9 +104,9 @@ select-class: 'Select class'
 # Sign creation messages
 # ====================================
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
-create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
-create-member-sign: '§aYou created a member sign! This sign is used to only allow passage to pass holders.'
-create-payment-sign: '§aYou created a member sign! This sign is used to get a one-time payment.'
+create-exit-sign: '§aYou created an onExit sign! This sign is used to end a journey.'
+create-member-sign: '§aYou created a onMember sign! This sign is used to only allow passage to pass holders.'
+create-payment-sign: '§aYou created a onMember sign! This sign is used to get a one-time payment.'
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
 create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
 create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'
