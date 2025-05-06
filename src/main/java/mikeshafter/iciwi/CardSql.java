@@ -65,10 +65,9 @@ public void newCard (String serial, double value) {
  * @param serial Serial number
  */
 public void deleteCard (String serial) {
-	String sql = "DELETE FROM cards WHERE serial = ? ; DELETE FROM discounts WHERE serial = ? ;";
+	String sql = "DELETE FROM cards WHERE serial = ?";
 	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
 		statement.setString(1, serial);
-		statement.setString(2, serial);
 		statement.executeUpdate();
 	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
