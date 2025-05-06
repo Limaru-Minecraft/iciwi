@@ -1,6 +1,7 @@
 plugins {
   id 'java'
   id "com.gradleup.shadow" version "9.0.0-beta4"
+  id 'maven-publish'
 }
 
 group 'mikeshafter'
@@ -16,6 +17,18 @@ repositories {
   maven { url 'https://repo.opencollab.dev/main/' }
   mavenLocal()
   mavenCentral()
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      groupId = 'mikeshafter'
+      artifactId = 'iciwi'
+      version = '2.20.5'
+
+      from components.java
+    }
+  }
 }
 
 dependencies {
