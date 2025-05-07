@@ -187,10 +187,10 @@ public void topUpCard (IcCard icCard) {
 			double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
 
 			if (Iciwi.economy.getBalance(player) >= value) {
-				// Get old value for later
+				Iciwi.economy.withdrawPlayer(player, value);
+				// Get old value for message
 				double old = icCard.getValue();
 
-				// Update value in SQL
 				icCard.deposit(value);
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
