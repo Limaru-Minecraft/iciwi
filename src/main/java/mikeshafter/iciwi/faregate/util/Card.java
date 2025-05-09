@@ -221,7 +221,7 @@ public boolean onExit () {
 		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(tFare), "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(fare), "railPass", finalRailPass);
 	logger.info("card-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
