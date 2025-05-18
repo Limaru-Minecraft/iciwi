@@ -90,12 +90,10 @@ public void selectCard () {
 
 public void paperPass () {
 	// get available railpasses
-	List<String> railPassNames = new ArrayList<>();
-	for (String railPassName : this.owners.getRailPassNamesFromList(this.operators)) {
-		if (this.owners.getRailPassPercentage(railPassName) == 0d) {
-			railPassNames.add(railPassName);
-		}
-	}
+	List<String> railPassNames = new ArrayList<>(this.owners.getRailPassNamesFromList(this.operators))
+		.stream()
+		.filter(name -> !name.startsWith("_") && this.owners.getRailPassPercentage(name) == 0d)
+		.toList();
 
 	int invSize = (railPassNames.size() / 9 + 1) * 9;
 	this.inv = plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
@@ -121,7 +119,10 @@ public void railPass (ItemStack item) {
 	if (!loreCheck(item)) return;
 
 	// get available railpasses
-	List<String> railPassNames = new ArrayList<>(this.owners.getRailPassNamesFromList(this.operators));
+	List<String> railPassNames = new ArrayList<>(this.owners.getRailPassNamesFromList(this.operators))
+		.stream()
+		.filter(name -> !name.startsWith("_"))
+		.toList();
 
 	int invSize = (railPassNames.size() / 9 + 1) * 9;
 	this.inv = this.plugin.getServer().createInventory(null, invSize, lang.getComponent("ticket-machine"));
