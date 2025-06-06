@@ -2,6 +2,7 @@ package mikeshafter.iciwi.faregate;
 import mikeshafter.iciwi.api.SignInfo;
 import org.bukkit.SoundCategory;
 
+import net.kyori.adventure.text.Component;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
@@ -51,6 +52,8 @@ public class Payment extends FareGate {
 				player.sendMessage(String.format(lang.getString("pay-success"), price));
 			}
 			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+			// Receipt
+			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(price)) ));
 		}
 
 		// Deposit money into owner's bank account

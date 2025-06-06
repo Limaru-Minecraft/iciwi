@@ -7,6 +7,8 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import mikeshafter.iciwi.util.IciwiUtil;
+
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -156,6 +158,8 @@ public void newCard () {
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
+				// Receipt
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(deposit+value)) ));
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 			}
@@ -201,6 +205,8 @@ public void topUpCard (IcCard icCard) {
 
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
+				// Receipt
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(value)) ));
 				player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 			}
 			else {
