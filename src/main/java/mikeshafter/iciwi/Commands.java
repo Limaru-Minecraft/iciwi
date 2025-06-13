@@ -11,6 +11,7 @@ import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.tickets.TicketMachine;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import com.bergerkiller.bukkit.common.utils.TimeUtil;
@@ -511,6 +512,19 @@ public void delete_station(
 ) {
 	fares.deleteStation(start);
 	sender.sendMessage(formatString("All fares to all stations from %s has been deleted.", start));
+}
+
+@Command("iciwi machine ticket <station>")
+@CommandDescription("Opens a ticket machine using commands")
+@Permission("iciwi.machine.ticket")
+public void machine_ticket(
+final @NonNull CommandSender sender,
+final Iciwi plugin,
+final @NonNull @Argument(value="station", suggestions="start_list") String station
+) {
+                final TicketMachine machine = new TicketMachine(player);
+                machine.init(station);
+                // putMachine(player, machine);  // (needed?)
 }
 
 @Command("iciwi debug sql <sql>")
