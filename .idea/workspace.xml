@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8965a29-91b3-4cdb-957a-0025b8794d28" name="Changes" comment="fix bug">
+    <list default="true" id="d8965a29-91b3-4cdb-957a-0025b8794d28" name="Changes" comment="If a rail pass starts with '_', it will no longer be buyable through a TM">
+      <change afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/util/FareGateDisplay.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/mikeshafter/iciwi/api/ClosableFareGate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,23 +33,6 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="Iciwi" type="f1a62948:ProjectNode" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Iciwi" type="f1a62948:ProjectNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Iciwi" type="f1a62948:ProjectNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-                <item name="testCompileClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="Iciwi" type="f1a62948:ProjectNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-                <item name="testRuntimeClasspath" type="62daadca:ExternalSystemViewDefaultContributor$DependencyScopeExternalSystemNode" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -59,9 +43,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -138,6 +122,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/build/libs" />
       <recent name="$PROJECT_DIR$/src/test/java/mikeshafter/iciwi/util" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
@@ -377,7 +362,79 @@
       <option name="project" value="LOCAL" />
       <updated>1723294836286</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Fix many bugs">
+      <option name="closed" value="true" />
+      <created>1746506989248</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1746506989248</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Clean up code">
+      <option name="closed" value="true" />
+      <created>1746507361352</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1746507361352</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Implement per-company card designs">
+      <option name="closed" value="true" />
+      <created>1746508762700</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1746508762700</updated>
+    </task>
+    <task id="LOCAL-00025" summary="Quick fix">
+      <option name="closed" value="true" />
+      <created>1746508841726</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1746508841726</updated>
+    </task>
+    <task id="LOCAL-00026" summary="yes im pushing to master u cant stop me">
+      <option name="closed" value="true" />
+      <created>1746514180376</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1746514180376</updated>
+    </task>
+    <task id="LOCAL-00027" summary="e">
+      <option name="closed" value="true" />
+      <created>1746514259723</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1746514259723</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Fix bug">
+      <option name="closed" value="true" />
+      <created>1746628185498</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1746628185499</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Refactor RailPassMachine.java and fix fare logger">
+      <option name="closed" value="true" />
+      <created>1746762111435</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1746762111435</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Card balance sign, finish #75">
+      <option name="closed" value="true" />
+      <created>1749193997801</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1749193997801</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -433,6 +490,16 @@
     <MESSAGE value="Merge new-fares" />
     <MESSAGE value="Deprecate SQL-based loggers" />
     <MESSAGE value="fix bug" />
+    <MESSAGE value="Fix many bugs" />
+    <MESSAGE value="Clean up code" />
+    <MESSAGE value="Implement per-company card designs" />
+    <MESSAGE value="Quick fix" />
+    <MESSAGE value="yes im pushing to master u cant stop me" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml" />
+    <MESSAGE value="e" />
+    <MESSAGE value="Fix bug" />
+    <MESSAGE value="Refactor RailPassMachine.java and fix fare logger" />
+    <MESSAGE value="Card balance sign, finish #75" />
     <option name="LAST_COMMIT_MESSAGE" value="fix bug" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
