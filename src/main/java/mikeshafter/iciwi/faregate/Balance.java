@@ -23,6 +23,7 @@ public void onTicket (Player player, SignInfo info) {}
 @Override
 public void onCard (Player player, SignInfo info) {
 	final IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
+	// Confirmation
 	if (icCard != null) player.sendMessage("Card value: " + icCard.getValue());
 }
 

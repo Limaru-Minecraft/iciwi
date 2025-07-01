@@ -10,6 +10,7 @@ member: Member
 payment: Payment
 classchange: Class
 transfer: Transfer
+balance: Balance
 
 # Error Messages
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
@@ -18,20 +19,23 @@ value-low: '§cYour card has insufficient value! Please top up your card!'
 invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
 
 # Success messages
+# == START UNUSED SECTION
 remaining: '§aRemaining value: §£%.2f'
-osi: '§aAn out-of-station interchange discount was applied.'
 tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
 tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
 ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
 ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
 used-paper-pass: '§aA paper rail passed was used: §e%s§a. Welcome aboard/Thank you for riding with us!'
 transfer-cancel-osi: '§aOut-of-station interchange discounts were cancelled.'
-
-# Member sign
 member-gate: '§aMembership valid. Welcome!'
-
-# ClassChange sign
 class-changed: '§aChanged fare class to §e%s§a!'
+# == END UNUSED SECTION ==
+
+# Fare gate messages
+osi: 'Transfer discount'
+balance: 'Balance'
+fare: 'Fare'
+
 
 # Payment sign
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'

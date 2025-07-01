@@ -35,14 +35,10 @@ public void onTicket (Player player, SignInfo info) {
     boolean canExit = (entryPunched || !entryPunchRequired) && (lore.get(1).equals(station) || owners.getOwners(station).contains(lore.get(1).replaceFirst("C:", "")));
 
     // Invalid Ticket
-    if (entryPunched && exitPunched) {
-        player.sendMessage(lang.getString("invalid-ticket"));
-    }
+    if (entryPunched && exitPunched) player.sendMessage(lang.getString("invalid-ticket"));
     else if (!entryPunched && canEnter) ticket.onEntry();
     else if (!exitPunched && canExit) ticket.onExit();
-    else {
-        player.sendMessage(lang.getString("invalid-ticket"));
-    }
+    else player.sendMessage(lang.getString("invalid-ticket"));
 }
 
 @Override

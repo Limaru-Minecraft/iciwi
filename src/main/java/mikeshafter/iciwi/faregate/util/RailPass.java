@@ -50,7 +50,7 @@ private boolean master (String string, String sound) {
  */
 @Override
 public boolean onEntry () {
-	final String string = "<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown");
 	return master(string, sound);
 }
@@ -62,7 +62,7 @@ public boolean onEntry () {
  */
 @Override
 public boolean onExit () {
-	final String string = "<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Exit ===<br>  <yellow> → {station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step");
 	return master(string, sound);
 }
@@ -86,7 +86,7 @@ public boolean onMember () {
  */
 @Override
 public boolean onTransfer () {
-	final String string = "<green>=== Transfer ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Transfer ===<br>  <yellow> → {station} →</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step");
 	return master(string, sound);
 }

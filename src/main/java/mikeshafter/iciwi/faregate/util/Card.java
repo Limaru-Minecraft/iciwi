@@ -81,7 +81,7 @@ public boolean onEntry () {
 	records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
 	// confirmation
-    player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{value}</yellow><br>=============</green>", Map.of("station", super.signInfo.station(), "value", String.valueOf(value))));
+    player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>  <yellow>{value}</yellow><br>=============</green>", Map.of("station", nStation, "value", String.valueOf(value))));
 
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation);
 	logger.info("card-entry", lMap);
@@ -135,10 +135,7 @@ public boolean onExit () {
 	var tOwners = Stream.concat(owners.getOwners(nStation).stream(), owners.getOwners(xStation).stream()).toList();
 	List<String> railPassNames = this.owners.getRailPassNamesFromList(tOwners);
 	var myPasses = icCard.getRailPasses().keySet();
-//	player.sendMessage("tOwners:"+ tOwners); //TODO: debug
-//	player.sendMessage("rpNames:"+ railPassNames); //TODO: debug
 	var finalPasses = myPasses.stream().filter(railPassNames::contains).toList();
-//	player.sendMessage("rpNames (after retain):"+ finalPasses); //TODO: debug
 	double pp = 1f;
 	String finalRailPass = null;
 	if (!finalPasses.isEmpty()) {
@@ -149,13 +146,10 @@ public boolean onExit () {
 				finalRailPass = railPassName;
 			}
 		}
-//		player.sendMessage("FRP:"+ finalRailPass); //TODO: debug
-//		player.sendMessage("PP:"+ pp); //TODO: debug
 	}
 
 	// Set final base fare
 	fare *= pp;
-//	player.sendMessage("Fare:"+ fare); //TODO: debug
 
 	if (icCard.getValue() < fare) {
 		player.sendMessage(lang.getString("value-low"));
@@ -215,10 +209,21 @@ public boolean onExit () {
 	records.setStation(serial, null);
 	records.setPreviousFare(serial, fare);
 
-	// Messages and logs
-	if (osi) player.sendMessage(lang.getString("osi"));
+	// Confirmation
 	if (icCard.withdraw(tFare))
-		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
+		player.sendRichMessage(lang.createRichMessage("Exit", "green", "yellow", List.of(
+			"{entry} → {station}", 
+			"Balance: {value}", 
+			"Fare: <red>{fare}</fare>", 
+			"Transfer: {osi}"), 
+		2, Map.of(
+			"entry", nStation, 
+			"station", xStation,
+			"value", String.valueOf(icCard.getValue()),
+			"fare", String.valueOf(fare), 
+			"osi", String.valueOf(osi) 
+		)));
+//		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare), "osi", String.valueOf(osi) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(fare), "railPass", finalRailPass);
@@ -356,6 +361,7 @@ public boolean onTransfer () {
 
 	// confirmation
 	player.sendMessage(String.format(lang.getString("tapped-out"), nStation, value));
+	player.sendRichMessage(IciwiUtil.format("<green>=== Transfer ===<br>  <yellow>{entry} → {station} →</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", station, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "station", station, "fare", String.valueOf(fare), "railPass", finalRailPass);

@@ -55,7 +55,7 @@ public Ticket (Player player, SignInfo info) {
 	logger.info("ticket-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-	player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station}</yellow><br>=============</green>", Map.of("station", station)));
+	player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>=============</green>", Map.of("station", station)));
 	return true;
 }
 
