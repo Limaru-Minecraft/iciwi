@@ -11,6 +11,7 @@ import org.incendo.cloud.annotations.suggestion.Suggestions;
 import org.incendo.cloud.context.CommandContext;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.tickets.SignInteractListener;
 import mikeshafter.iciwi.tickets.TicketMachine;
 import org.bukkit.command.CommandSender;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -522,9 +523,10 @@ final @NonNull CommandSender sender,
 final Iciwi plugin,
 final @NonNull @Argument(value="station", suggestions="start_list") String station
 ) {
-                final TicketMachine machine = new TicketMachine(player);
-                machine.init(station);
-                // putMachine(player, machine);  // (needed?)
+	if (!(sender instanceof Player player)) return;
+	final TicketMachine machine = new TicketMachine(player);
+	machine.init(station);
+	SignInteractListener.putMachine(player, machine);  // (needed?)
 }
 
 @Command("iciwi debug sql <sql>")

@@ -81,7 +81,11 @@ public boolean onEntry () {
 	records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
 	// confirmation
-    player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>  <yellow>{value}</yellow><br>=============</green>", Map.of("station", nStation, "value", String.valueOf(value))));
+	player.sendRichMessage(lang.createRichMessage("Entry", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("entry-message"), 
+	2, Map.of(
+		"entry-station", nStation, 
+		"value", String.valueOf(this.value)
+	)));
 
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation);
 	logger.info("card-entry", lMap);
@@ -151,7 +155,7 @@ public boolean onExit () {
 	// Set final base fare
 	fare *= pp;
 
-	if (icCard.getValue() < fare) {
+	if (this.value < fare) {
 		player.sendMessage(lang.getString("value-low"));
 		return false;
 	}
@@ -211,19 +215,15 @@ public boolean onExit () {
 
 	// Confirmation
 	if (icCard.withdraw(tFare))
-		player.sendRichMessage(lang.createRichMessage("Exit", "green", "yellow", List.of(
-			"{entry} → {station}", 
-			"Balance: {value}", 
-			"Fare: <red>{fare}</fare>", 
-			"Transfer: {osi}"), 
+		player.sendRichMessage(lang.createRichMessage("Exit", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("exit-message"), 
 		2, Map.of(
-			"entry", nStation, 
-			"station", xStation,
-			"value", String.valueOf(icCard.getValue()),
+			"entry-station", nStation, 
+			"exit-station", xStation,
+			"value", String.valueOf(this.value),
 			"fare", String.valueOf(fare), 
 			"osi", String.valueOf(osi) 
 		)));
-//		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare), "osi", String.valueOf(osi) )));
+//		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(this.value), "fare", String.valueOf(fare), "osi", String.valueOf(osi) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(fare), "railPass", finalRailPass);
@@ -253,6 +253,10 @@ public boolean onMember () {
 	// Check if the card has a rail pass belonging to the station's operator
 	if (railPasses.stream().anyMatch(r -> stationOwners.contains(owners.getRailPassOperator(r)))) {
 		player.sendMessage(lang.getString("member-gate"));
+		player.sendRichMessage(lang.createRichMessage("Member", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("member-message"), 
+		2, Map.of(
+			"station", station
+		)));
 
 		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "station", station);
 		logger.info("card-member", lMap);
@@ -360,8 +364,13 @@ public boolean onTransfer () {
 	records.setTransfer(serial, System.currentTimeMillis() - records.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 
 	// confirmation
-	player.sendMessage(String.format(lang.getString("tapped-out"), nStation, value));
-	player.sendRichMessage(IciwiUtil.format("<green>=== Transfer ===<br>  <yellow>{entry} → {station} →</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", station, "value", String.valueOf(icCard.getValue()), "fare", String.valueOf(fare) )));
+	player.sendRichMessage(lang.createRichMessage("Transfer", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("transfer-message"), 
+	2, Map.of(
+		"entry-station", nStation, 
+		"transfer-station", station, 
+		"value", String.valueOf(this.value),
+		"fare", String.valueOf(fare)
+	)));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
 	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "station", station, "fare", String.valueOf(fare), "railPass", finalRailPass);

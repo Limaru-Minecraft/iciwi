@@ -55,7 +55,7 @@ public Ticket (Player player, SignInfo info) {
 	logger.info("ticket-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
-	player.sendRichMessage(IciwiUtil.format("<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>=============</green>", Map.of("station", station)));
+	player.sendRichMessage(lang.createRichMessage("Entry", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("entry-message"), 2, Map.of( "entry-station", station)));
 	return true;
 }
 
@@ -83,7 +83,11 @@ public Ticket (Player player, SignInfo info) {
 	logger.info("ticket-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-	player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>=============</green>", Map.of("entry", nStation, "station", station)));
+		player.sendRichMessage(lang.createRichMessage("Exit", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("exit-message"), 
+		2, Map.of(
+			"entry-station", nStation, 
+			"exit-station", station
+		)));
 	return true;
 }
 
