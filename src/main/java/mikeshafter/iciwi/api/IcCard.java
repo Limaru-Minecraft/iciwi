@@ -40,6 +40,14 @@ boolean deposit (double amount);
 default double getValue () {return Double.MAX_VALUE;}
 
 /**
+ * Returns the value formatted as a currency string in British Pounds (£) 
+ * with two decimal places.
+ *
+ * @return a string representation of the value in the format "xx.xx"
+ */
+default String getValueStr () {return String.format("%.2f", this.getValue());}
+
+/**
  * Gets the railpasses on the card
  *
  * @return A map in the format of [name, start time]
