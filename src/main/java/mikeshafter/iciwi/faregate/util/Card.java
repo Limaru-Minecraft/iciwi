@@ -22,14 +22,12 @@ private final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
 private final IcLogger logger = plugin.icLogger;
 
 private final IcCard icCard;
-private double value = 0;
 private String serial = "";
 
 public Card (Player player, SignInfo info) {
 	super(player, info);
 	this.icCard = IciwiUtil.IcCardFromItem(info.item());
 	if (icCard != null) {
-		this.value = this.icCard.getValue();
 		this.serial = this.icCard.getSerial();
 	}
 }
@@ -56,7 +54,7 @@ public boolean onEntry () {
 	if (serial == null || serial.isEmpty() || serial.isBlank()) return false;
 
 	// reject entry if card has less than the minimum value
-	if (value < plugin.getConfig().getDouble("min-amount")) {
+	if (this.icCard.getValue() < plugin.getConfig().getDouble("min-amount")) {
 		player.sendMessage(lang.getString("value-low"));
 		return false;
 	}
@@ -84,10 +82,10 @@ public boolean onEntry () {
 	player.sendRichMessage(lang.createRichMessage("Entry", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("entry-message"), 
 	2, Map.of(
 		"entry-station", nStation, 
-		"value", String.valueOf(this.value)
+		"value", this.icCard.getValueStr()
 	)));
 
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "nStation", nStation);
 	logger.info("card-entry", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -155,7 +153,7 @@ public boolean onExit () {
 	// Set final base fare
 	fare *= pp;
 
-	if (this.value < fare) {
+	if (this.icCard.getValue() < fare) {
 		player.sendMessage(lang.getString("value-low"));
 		return false;
 	}
@@ -219,14 +217,13 @@ public boolean onExit () {
 		2, Map.of(
 			"entry-station", nStation, 
 			"exit-station", xStation,
-			"value", String.valueOf(this.value),
-			"fare", String.valueOf(fare), 
+			"value", this.icCard.getValueStr(),
+			"fare", String.format("%.2f", fare), 
 			"osi", String.valueOf(osi) 
 		)));
-//		player.sendRichMessage(IciwiUtil.format("<green>=== Exit ===<br>  <yellow>{entry} → {station}</yellow><br>  <yellow>{value}</yellow><br>  <red>{fare}</red><br>  <yellow>{osi}</yellow><br>=============</green>", Map.of("entry", nStation,"station", xStation, "value", String.valueOf(this.value), "fare", String.valueOf(fare), "osi", String.valueOf(osi) )));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.valueOf(fare), "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.format("%.2f", fare), "railPass", finalRailPass);
 	logger.info("card-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
@@ -258,7 +255,7 @@ public boolean onMember () {
 			"station", station
 		)));
 
-		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "station", station);
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "station", station);
 		logger.info("card-member", lMap);
 
 		player.playSound(player, plugin.getConfig().getString("member-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
@@ -326,7 +323,7 @@ public boolean onTransfer () {
 	fare *= payPercentage;
 
 	// check if card value is low
-	if (value < fare) {
+	if (this.icCard.getValue() < fare) {
 		player.sendMessage(lang.getString("value-low"));
 		return false;
 	}
@@ -344,7 +341,7 @@ public boolean onTransfer () {
 
 	// Perform entry sequence
 	// reject entry if card has less than the minimum value
-	if (value < plugin.getConfig().getDouble("min-amount")) return false;
+	if (this.icCard.getValue() < plugin.getConfig().getDouble("min-amount")) return false;
 
 	// was the card already used to enter the network?
 	if (records.getStation(serial).isEmpty()) {
@@ -368,12 +365,12 @@ public boolean onTransfer () {
 	2, Map.of(
 		"entry-station", nStation, 
 		"transfer-station", station, 
-		"value", String.valueOf(this.value),
-		"fare", String.valueOf(fare)
+		"value", this.icCard.getValueStr(),
+		"fare", String.format("%.2f", fare)
 	)));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value), "nStation", nStation, "station", station, "fare", String.valueOf(fare), "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "nStation", nStation, "station", station, "fare", String.format("%.2f", fare), "railPass", finalRailPass);
 	logger.info("card-transfer", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
