@@ -35,7 +35,7 @@ private boolean master (String string, String sound) {
 
 	player.sendRichMessage(IciwiUtil.format(string, Map.of("station", station, "name", name)));
 
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "station", station, "railPass", name, "rp-expiry", expiry);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "station", station, "railPass", name, "rp-expiry", expiry);
 	logger.info("railpass-use", lMap);
 
 	player.playSound(player, sound, SoundCategory.MASTER, 1f, 1f);
@@ -50,7 +50,7 @@ private boolean master (String string, String sound) {
  */
 @Override
 public boolean onEntry () {
-	final String string = "<green>=== Entry ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Entry ===<br>  <yellow>{station} →</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("entry-noise", "minecraft:entity.allay.item_thrown");
 	return master(string, sound);
 }
@@ -62,7 +62,7 @@ public boolean onEntry () {
  */
 @Override
 public boolean onExit () {
-	final String string = "<green>=== Exit ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Exit ===<br>  <yellow> → {station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step");
 	return master(string, sound);
 }
@@ -86,7 +86,7 @@ public boolean onMember () {
  */
 @Override
 public boolean onTransfer () {
-	final String string = "<green>=== Transfer ===<br>  <yellow>{station}</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
+	final String string = "<green>=== Transfer ===<br>  <yellow> → {station} →</yellow><br>  <yellow>{name}</yellow><br>=============</green>";
 	final String sound = plugin.getConfig().getString("transfer-noise", "minecraft:block.amethyst_block.step");
 	return master(string, sound);
 }

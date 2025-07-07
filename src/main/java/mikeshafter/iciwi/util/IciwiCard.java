@@ -2,7 +2,9 @@ package mikeshafter.iciwi.util;
 
 import mikeshafter.iciwi.CardSql;
 import mikeshafter.iciwi.api.IcCard;
+import mikeshafter.iciwi.config.Owners;
 import org.bukkit.inventory.ItemStack;
+import java.util.Map;
 import java.util.Objects;
 
 
@@ -43,6 +45,34 @@ public IciwiCard (ItemStack item) {this.serial = IciwiUtil.parseComponent(Object
 /**
  Gets the amount in the card
  */
-@Override public double getValue () {return cardSql.getCardValue(serial);}
+@Override public double getValue () { return cardSql.getCardValue(serial); }
 
+/**
+ * Gets the railpasses on the card
+ *
+ * @return A map in the format of [name, start time]
+ */
+@Override
+public Map<String, Long> getRailPasses () { return cardSql.getAllDiscounts(serial); }
+
+/**
+ * Sets a rail pass for a certain card and operator
+ *
+ * @param name  Name of the rail pass
+ * @param start Start time of the rail pass, as a long
+ */
+@Override
+public void setRailPass (String name, long start) { cardSql.setDiscount(serial, name, start); }
+
+/**
+ * Gets the expiry time of a certain railpass belonging to a card
+ *
+ * @param name Name of the rail pass
+ * @return The expiry time
+ */
+@Override
+public long getExpiry (String name) { return cardSql.getStart(serial, name) + new Owners().getRailPassDuration(name); }
+
+@Override
+public String toString () {	return this.serial; }
 }

@@ -112,7 +112,7 @@ protected void generateOperatorTicket (String owner) {
 	int customModelData = plugin.getConfig().getInt("ticket.custom-model-data");
 
 	// log into icLogger
-	Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "operator", owner, "price", price);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "operator", owner, "price", String.valueOf(price));
 	logger.info("operatorTicket", lMap);
 
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));

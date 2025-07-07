@@ -51,7 +51,6 @@ classchange-noise: minecraft:entity.allay.item_thrown
 transfer-noise: minecraft:block.amethyst_block.step
 
 # custom item usage (set default custom-model-data here)
-# for per-company custom cards, see owners.yml
 card:
   material: NAME_TAG
   custom-model-data: 0

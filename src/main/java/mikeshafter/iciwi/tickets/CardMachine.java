@@ -7,6 +7,8 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.util.Clickable;
+import mikeshafter.iciwi.util.IciwiUtil;
+
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
@@ -90,16 +92,17 @@ public void selectCard () {
 public void cardMenu () {
 	// get card details
 	IcCard icCard = IcCardFromItem(this.selectedItem);
-	assert icCard != null;
+	if (icCard == null || this.selectedItem.getItemMeta().lore() == null) return;
+
 	Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
-	int cardModelData = plugin.getConfig().getInt("card.custom-model-data");
+	int cardModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
 
 	// setup inventory
 	inv = plugin.getServer().createInventory(null, 9, lang.getComponent("ticket-machine"));
 	this.clickables = new Clickable[9];
 
 	// Card details
-	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValue())), (e) -> {});
+	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValue())), (e) -> e.setCancelled(true));
 
 	// Create buttons
 	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> newCard());
@@ -144,17 +147,19 @@ public void newCard () {
 
 				// Get card generator
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
-				int customModelData = plugin.getConfig().getInt("card.custom-model-data");
+				int customModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
 				// Generate card
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
 
 				// log to icLogger
-				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", value);
+				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value));
 				logger.info("new-card", lMap);
 
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
+				// Receipt
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(deposit+value)) ));
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 			}
@@ -186,20 +191,22 @@ public void topUpCard (IcCard icCard) {
 			double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
 
 			if (Iciwi.economy.getBalance(player) >= value) {
-				// Get old value for later
+				Iciwi.economy.withdrawPlayer(player, value);
+				// Get old value for message
 				double old = icCard.getValue();
 
-				// Update value in SQL
 				icCard.deposit(value);
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 
 				// log to icLogger
-				Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "old", old, "change", value);
+				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "old", String.valueOf(old), "change", String.valueOf(value));
 				logger.info("top-up-card", lMap);
 
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
+				// Receipt
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(value)) ));
 				player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 			}
 			else {
@@ -220,6 +227,7 @@ public void topUpCard (IcCard icCard) {
 public void refundCard (IcCard icCard) {
 	// get serial number
 	String serial = icCard.getSerial();
+	player.closeInventory();  // close first to prevent removing the item
 	for (ItemStack itemStack : player.getInventory().getContents()) {
 		// check if the lore matches
 		if (loreCheck(itemStack, 2) && Objects.requireNonNull(itemStack.getItemMeta().lore()).get(1).equals(Component.text(serial))) {
@@ -241,11 +249,11 @@ public void refundCard (IcCard icCard) {
 			player.sendMessage(String.format(lang.getString("card-refunded"), serial, remainingValue + deposit));
 
 			// log to icLogger
-			Map<String, Object> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard, "value", remainingValue);
+			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "value", String.valueOf(remainingValue));
 			logger.info("refund-card", lMap);
 
 			// close inventory
-			player.closeInventory();
+
 			SignInteractListener.removeMachine(player);
 			break;
 		}

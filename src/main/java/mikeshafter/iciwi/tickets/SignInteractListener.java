@@ -24,7 +24,7 @@ private final Lang lang = plugin.lang;
 private static final HashMap<Player, Machine> machineHashMap = new HashMap<>();
 
 protected static Machine getMachine (Player player) { return machineHashMap.get(player); }
-protected static void putMachine (Player player, Machine machine) { machineHashMap.put(player, machine); }
+public static void putMachine (Player player, Machine machine) { machineHashMap.put(player, machine); }
 protected static void removeMachine (Player player) { machineHashMap.remove(player); }
 protected static boolean hasMachine (Player player) { return machineHashMap.containsKey(player); }
 

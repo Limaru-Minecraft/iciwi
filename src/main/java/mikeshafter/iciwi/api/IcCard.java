@@ -1,7 +1,4 @@
 package mikeshafter.iciwi.api;
-import mikeshafter.iciwi.CardSql;
-import mikeshafter.iciwi.config.Owners;
-
 import java.util.Map;
 
 /**
@@ -9,9 +6,6 @@ import java.util.Map;
  * Iciwi-compatible plugins' cards must state their plugin name in lore[0]
  */
 public interface IcCard {
-
-String serial = "";
-CardSql cardSql = new CardSql();
 
 /**
  * Withdraws a certain amount
@@ -46,11 +40,19 @@ boolean deposit (double amount);
 default double getValue () {return Double.MAX_VALUE;}
 
 /**
+ * Returns the value formatted as a currency string in British Pounds (£) 
+ * with two decimal places.
+ *
+ * @return a string representation of the value in the format "xx.xx"
+ */
+default String getValueStr () {return String.format("%.2f", this.getValue());}
+
+/**
  * Gets the railpasses on the card
  *
  * @return A map in the format of [name, start time]
  */
-default Map<String, Long> getRailPasses () {return cardSql.getAllDiscounts(serial);}
+Map<String, Long> getRailPasses (); //{return cardSql.getAllDiscounts(serial);}
 
 /**
  * Sets a rail pass for a certain card and operator
@@ -58,7 +60,7 @@ default Map<String, Long> getRailPasses () {return cardSql.getAllDiscounts(seria
  * @param name  Name of the rail pass
  * @param start Start time of the rail pass, as a long
  */
-default void setRailPass (String name, long start) {cardSql.setDiscount(serial, name, start);}
+void setRailPass (String name, long start);// {cardSql.setDiscount(serial, name, start);}
 
 /**
  * Gets the expiry time of a certain railpass belonging to a card
@@ -66,5 +68,5 @@ default void setRailPass (String name, long start) {cardSql.setDiscount(serial, 
  * @param name Name of the rail pass
  * @return The expiry time
  */
-default long getExpiry (String name) {return cardSql.getStart(serial, name) + new Owners().getRailPassDuration(name);}
+long getExpiry (String name);// {return cardSql.getStart(serial, name) + new Owners().getRailPassDuration(name);}
 }
