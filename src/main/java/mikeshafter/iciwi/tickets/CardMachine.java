@@ -102,7 +102,7 @@ public void cardMenu () {
 	this.clickables = new Clickable[9];
 
 	// Card details
-	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValue())), (e) -> e.setCancelled(true));
+	this.clickables[0] = Clickable.of(makeItem(cardMaterial, cardModelData, lang.getComponent("menu-card-details"), Component.text("Plugin: §b").append(Objects.requireNonNull(this.selectedItem.getItemMeta().lore()).get(0)), Component.text("Serial: §a" + icCard.getSerial()), Component.text("Value: §6" + icCard.getValueStr() )), (e) -> e.setCancelled(true));
 
 	// Create buttons
 	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> newCard());
@@ -159,7 +159,7 @@ public void newCard () {
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
 				// Receipt
-				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(deposit+value)) ));
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+ (deposit + value)) ));
 				player.closeInventory();
 				SignInteractListener.removeMachine(player);
 			}
@@ -206,7 +206,7 @@ public void topUpCard (IcCard icCard) {
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
 				// Receipt
-				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(value)) ));
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+ value) ));
 				player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 			}
 			else {

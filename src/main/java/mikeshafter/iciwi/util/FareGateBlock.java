@@ -7,13 +7,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingBlock;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.joml.Vector3f;
 
 
 public class FareGateBlock {
@@ -23,8 +23,7 @@ private final BlockData blockData;
 private final Location blockLoc;
 private final BlockFace openDirection;
 private final long openTime;
-private ArmorStand armorStand;
-private Entity fallingBlock;
+private BlockDisplay blockDisplay;
 private BukkitTask task = null;
 private boolean gateClosing = false;
 private int remainCount = 0;
@@ -41,66 +40,105 @@ private BlockFace getOpenDirection () {return this.openDirection;}
 
 private long getOpenTime () {return this.openTime;}
 
-private Entity getArmorStand () {return this.armorStand;}
+private BlockDisplay getBlockDisplay () {return this.blockDisplay;}
 
 public Block getBlock () {return this.block;}
 
-private void spawnFallingBlock () {
-	this.armorStand = this.block.getWorld().spawn(this.blockLoc.add(0.5d, -1.9805d, 0.5d), ArmorStand.class);
-	this.armorStand.setVisible(false);
-	this.armorStand.setGravity(false);
-	this.armorStand.setInvulnerable(true);
-
-	this.fallingBlock = this.block.getWorld().spawnFallingBlock(this.blockLoc, this.blockData);
-	this.armorStand.addPassenger(this.fallingBlock);
-	this.fallingBlock.setInvulnerable(true);
-	this.fallingBlock.setGravity(false);
-	this.resetCountdown();
-	FallingBlock fallingBlock = (FallingBlock) this.fallingBlock;
-	fallingBlock.setDropItem(false);
+private void spawnBlockDisplay () {
+	// Spawn BlockDisplay at the block's center location (centered on block)
+	Location displayLoc = this.blockLoc.clone().add(0.5d, 0.5d, 0.5d);
+	this.blockDisplay = (BlockDisplay) this.block.getWorld().spawnEntity(displayLoc, EntityType.BLOCK_DISPLAY);
+	
+	// Configure the BlockDisplay
+	this.blockDisplay.setBlock(this.blockData);
+	this.blockDisplay.setGravity(false);
+	this.blockDisplay.setInvulnerable(true);
+	this.blockDisplay.setPersistent(false);
+	
+	// Center the display properly on the block using transformation
+	org.bukkit.util.Transformation initialTransform = new org.bukkit.util.Transformation(
+		new Vector3f(-0.5f, -0.5f, -0.5f),
+		new org.joml.Quaternionf(),
+		new Vector3f(1f, 1f, 1f),
+		new org.joml.Quaternionf()
+	);
+	this.blockDisplay.setTransformation(initialTransform);
+	
+	// Optional: Set brightness to match the original block
+	// this.blockDisplay.setBrightness(new Display.Brightness(15, 15));
 }
 
-private void killFallingSand () {
-	this.block.getWorld().getNearbyEntities(this.armorStand.getLocation(), 1, 1, 1, (entity) -> entity.getType() == EntityType.ARMOR_STAND || entity.getType() == EntityType.FALLING_BLOCK).forEach(Entity::remove);
-	this.armorStand.remove();
-	this.fallingBlock.remove();
+private void killBlockDisplay () {
+	if (this.blockDisplay != null && !this.blockDisplay.isDead()) {
+		this.blockDisplay.remove();
+	}
+	// Clean up any lingering BlockDisplay entities near the location
+	this.block.getWorld().getNearbyEntities(this.blockLoc, 1.5, 1.5, 1.5, 
+		(entity) -> entity.getType() == EntityType.BLOCK_DISPLAY)
+		.forEach(Entity::remove);
 }
 
 private void onGateClose () {
 	int ticksToClose = plugin.getConfig().getInt("ticks-to-close");
-	this.teleportFallingSand(this.getArmorStand(), this.getOpenDirection().getOppositeFace().getDirection().multiply(1d / ticksToClose), ticksToClose - this.remainCount, false);
+	// Use smaller steps for smoother movement (move every tick instead of large jumps)
+	Vector moveDirection = this.getOpenDirection().getOppositeFace().getDirection().multiply(1d / ticksToClose);
+	this.moveBlockDisplaySmooth(this.getBlockDisplay(), moveDirection, ticksToClose - this.remainCount, false);
+	
 	Bukkit.getScheduler().runTaskLater(plugin, () -> {
-		this.killFallingSand();
+		this.killBlockDisplay();
 		this.getBlock().setBlockData(this.blockData);
 	}, (ticksToClose + 5 - this.remainCount));
 }
 
-private void teleportFallingSand (Entity entity, Vector direction, int count, boolean canCancel) {
-	if (canCancel && this.task.isCancelled()) this.remainCount = count;
-	else {
-		if (count > 0 && !entity.isDead()) {
-			Location newLoc = entity.getLocation().add(direction);
-			Entity passenger = !entity.getPassengers().isEmpty() ? entity.getPassengers().get(0) : null;
-			if (passenger == null) return;
-
-			entity.removePassenger(passenger);
-			entity.teleport(newLoc);
-			entity.addPassenger(passenger);
-			Bukkit.getScheduler().runTaskLater(plugin, () -> this.teleportFallingSand(entity, direction, count - 1, canCancel), 1L);
+private void moveBlockDisplaySmooth (BlockDisplay display, Vector direction, int count, boolean canCancel) {
+	if (canCancel && this.task.isCancelled()) {
+		this.remainCount = count;
+	} else {
+		if (count > 0 && display != null && !display.isDead()) {
+			// Use transformation for smoother movement instead of teleporting
+			org.bukkit.util.Transformation currentTransform = display.getTransformation();
+			Vector3f currentTranslation = currentTransform.getTranslation();
+			
+			Vector3f newTranslation = new Vector3f(
+				currentTranslation.x + (float)direction.getX(),
+				currentTranslation.y + (float)direction.getY(),
+				currentTranslation.z + (float)direction.getZ()
+			);
+			
+			org.bukkit.util.Transformation newTransform = new org.bukkit.util.Transformation(
+				newTranslation,
+				currentTransform.getLeftRotation(),
+				currentTransform.getScale(),
+				currentTransform.getRightRotation()
+			);
+			
+			display.setTransformation(newTransform);
+			display.setInterpolationDelay(0);
+			display.setInterpolationDuration(1);
+			
+			Bukkit.getScheduler().runTaskLater(plugin, () -> 
+				this.moveBlockDisplaySmooth(display, direction, count - 1, canCancel), 1L);
 		}
-
 	}
 }
 
 public void openGate () {
 	int ticksToOpen = plugin.getConfig().getInt("ticks-to-open");
-	this.spawnFallingBlock();
-	Bukkit.getScheduler().runTaskLater(plugin, () -> this.getBlock().setType(Material.AIR), 5L);
+	this.spawnBlockDisplay();
+	
+	// Remove the physical block after a short delay
+	Bukkit.getScheduler().runTaskLater(plugin, () -> 
+		this.getBlock().setType(Material.AIR), 5L);
+	
+	// Schedule gate closing
 	this.task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
 		this.gateClosing = true;
 		this.onGateClose();
 	}, (this.getOpenTime() + ticksToOpen + 5));
-	this.teleportFallingSand(this.armorStand, this.getOpenDirection().getDirection().multiply(1d / ticksToOpen), ticksToOpen, true);
+	
+	// Move the BlockDisplay in the opening direction with smooth movement
+	Vector moveDirection = this.getOpenDirection().getDirection().multiply(1d / ticksToOpen);
+	this.moveBlockDisplaySmooth(this.blockDisplay, moveDirection, ticksToOpen, true);
 }
 
 public void closeGate () {closeGate(false);}
@@ -113,13 +151,8 @@ public void closeGate (boolean force) {
 		}
 	}
 	else {
-		this.killFallingSand();
+		this.killBlockDisplay();
 		this.getBlock().setBlockData(this.blockData);
 	}
-}
-
-private void resetCountdown () {
-	if (!this.fallingBlock.isDead()) this.fallingBlock.setTicksLived(1);
-	Bukkit.getScheduler().runTaskLater(plugin, this::resetCountdown, 20L);
 }
 }
