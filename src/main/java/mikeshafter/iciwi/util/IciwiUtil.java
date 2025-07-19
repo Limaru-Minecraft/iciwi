@@ -35,7 +35,7 @@ public static String format (String template, Map<String, String> values) {
  */
 public static String stripColor (final String input) {
 	if (input == null) return null;
-	return input.replaceAll("(?i)§[0-9A-FK-ORX]", "");
+	return input.replaceAll("(?i)§(?:[0-9A-FK-ORX]|#[0-9A-F]{6})", "");
 }
 
 /**
