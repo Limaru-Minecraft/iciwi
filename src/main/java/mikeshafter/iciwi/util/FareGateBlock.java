@@ -12,7 +12,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 
@@ -93,33 +95,37 @@ private void onGateClose () {
 private void moveBlockDisplaySmooth (BlockDisplay display, Vector direction, int count, boolean canCancel) {
 	if (canCancel && this.task.isCancelled()) {
 		this.remainCount = count;
-	} else {
-		if (count > 0 && display != null && !display.isDead()) {
-			// Use transformation for smoother movement instead of teleporting
-			org.bukkit.util.Transformation currentTransform = display.getTransformation();
-			Vector3f currentTranslation = currentTransform.getTranslation();
-			
-			Vector3f newTranslation = new Vector3f(
-				currentTranslation.x + (float)direction.getX(),
-				currentTranslation.y + (float)direction.getY(),
-				currentTranslation.z + (float)direction.getZ()
-			);
-			
-			org.bukkit.util.Transformation newTransform = new org.bukkit.util.Transformation(
-				newTranslation,
-				currentTransform.getLeftRotation(),
-				currentTransform.getScale(),
-				currentTransform.getRightRotation()
-			);
-			
-			display.setTransformation(newTransform);
-			display.setInterpolationDelay(0);
-			display.setInterpolationDuration(1);
-			
-			Bukkit.getScheduler().runTaskLater(plugin, () -> 
-				this.moveBlockDisplaySmooth(display, direction, count - 1, canCancel), 1L);
-		}
 	}
+	else if (count > 0 && display != null && !display.isDead()) {
+		// Use transformation for smoother movement instead of teleporting
+		org.bukkit.util.Transformation currentTransform = display.getTransformation();
+		final Transformation newTransform = getTransformation(direction, currentTransform);
+
+		display.setTransformation(newTransform);
+		display.setInterpolationDelay(0);
+		display.setInterpolationDuration(1);
+
+		Bukkit.getScheduler().runTaskLater(plugin, () ->
+			this.moveBlockDisplaySmooth(display, direction, count - 1, canCancel), 1L);
+	}
+}
+
+private static @NotNull Transformation getTransformation (Vector direction, Transformation currentTransform) {
+	Vector3f currentTranslation = currentTransform.getTranslation();
+
+	Vector3f newTranslation = new Vector3f(
+		currentTranslation.x + (float) direction.getX(),
+		currentTranslation.y + (float) direction.getY(),
+		currentTranslation.z + (float) direction.getZ()
+	);
+
+	Transformation newTransform = new Transformation(
+		newTranslation,
+		currentTransform.getLeftRotation(),
+		currentTransform.getScale(),
+		currentTransform.getRightRotation()
+	);
+	return newTransform;
 }
 
 public void openGate () {
