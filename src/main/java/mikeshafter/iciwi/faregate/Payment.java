@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.api.SignInfo;
 import org.bukkit.SoundCategory;
 
@@ -10,13 +11,15 @@ import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import java.util.Map;
 
 public class Payment extends FareGate {
 
-	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = plugin.lang;
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Lang lang = plugin.lang;
+private final IcLogger logger = plugin.icLogger;
 
-	public Payment() {
+public Payment() {
 		super("payment");
 	}
 
@@ -53,8 +56,17 @@ public class Payment extends FareGate {
 			}
 			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 			// Receipt
-			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(price)) ));
+			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: " + price) ));
 		}
+
+		else {
+			Iciwi.economy.withdrawPlayer(player, price);
+			player.sendMessage(String.format(lang.getString("pay-success"), price));
+		}
+
+		// logger
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "price", String.valueOf(price));
+		logger.info("payment", lMap);
 
 		// Deposit money into owner's bank account
 		var stationOwners = plugin.owners.getOwners(station);
