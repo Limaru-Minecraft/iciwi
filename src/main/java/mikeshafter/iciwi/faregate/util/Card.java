@@ -209,7 +209,7 @@ public boolean onExit () {
 	records.setTimestamp(serial, System.currentTimeMillis());
 	records.setPreviousStation(serial, nStation);
 	records.setStation(serial, null);
-	records.setPreviousFare(serial, fare);
+	records.setPreviousFare(serial, tFare);
 
 	// Confirmation
 	if (icCard.withdraw(tFare))
@@ -218,12 +218,12 @@ public boolean onExit () {
 			"entry-station", nStation, 
 			"exit-station", xStation,
 			"value", this.icCard.getValueStr(),
-			"fare", String.format("%.2f", fare), 
+			"fare", String.format("%.2f", tFare),
 			"osi", String.valueOf(osi) 
 		)));
 
 	finalRailPass = finalRailPass == null ? "" : finalRailPass;
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.format("%.2f", fare), "railPass", finalRailPass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", this.icCard.getValueStr(), "nStation", nStation, "xStation", xStation, "osi", String.valueOf(osi), "fare", String.format("%.2f", tFare), "railPass", finalRailPass);
 	logger.info("card-exit", lMap);
 
 	player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
