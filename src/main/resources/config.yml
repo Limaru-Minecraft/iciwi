@@ -14,7 +14,10 @@ min-amount: 3.0
 price-array: [10.0, 20.0, 30.0, 50.0, 100.0]
 
 # database
-database: jdbc:sqlite:IciwiCards.db
+use-mysql: false
+database-url: jdbc:sqlite:IciwiCards.db
+database-username:
+database-password:
 
 # max time allowed for transfer
 max-transfer-time: 300000
