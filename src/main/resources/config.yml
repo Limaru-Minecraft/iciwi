@@ -65,6 +65,9 @@ ticket:
 railpass:
   material: BOOK
   custom-model-data: 0
+
+# logger path
+logger: iciwi.log
   
 # usage passwords
 a: password
