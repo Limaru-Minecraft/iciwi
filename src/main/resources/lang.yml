@@ -30,6 +30,7 @@ body-color: yellow
 entry-message:
   - '{entry-station} →'
   - 'Balance: £ {value}'
+  - 'Transfer: {osi}'
 exit-message:
   - '{entry-station} → {exit-station}'
   - 'Balance: £ {value}'
