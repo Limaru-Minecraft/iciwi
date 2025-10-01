@@ -8,6 +8,9 @@ import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
+
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -41,16 +44,19 @@ public class Payment extends FareGate {
 
 			// Try paying with card
 			IcCard icCard = IciwiUtil.IcCardFromItem(item);
-			if (icCard != null && icCard.withdraw(price)) {
-				player.sendMessage(String.format(lang.getString("pay-success-card"), price, icCard.getValue()));
-			}
-
+			var cashDivert = icCard != null && icCard.withdraw(price);
 			// If there is no card, pay with cash
-			else {
+			if (!cashDivert) {
 				Iciwi.economy.withdrawPlayer(player, price);
-				player.sendMessage(lang.getString("cash-divert"));
-				player.sendMessage(String.format(lang.getString("pay-success"), price));
 			}
+			player.sendRichMessage(lang.createRichMessage(
+				"Payment",
+				lang.getString("head-color"),
+				lang.getString("body-color"),
+				lang.getStringList("payment-message"),
+				2,
+				Map.of("station", station, "fare", Iciwi.economy.format(price), "cash-divert", String.valueOf(cashDivert))
+			));
 			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 			// Receipt
 			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(price)) ));

@@ -130,7 +130,7 @@ public void newCard () {
 	this.clickables = new Clickable[priceArray.size()];
 
 	for (int i = 0; i < priceArray.size(); i++) {
-		this.clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE, 0, Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
+		this.clickables[i] = Clickable.of(makeItem(Material.PURPLE_STAINED_GLASS_PANE, 0, Component.text(Iciwi.economy.format(priceArray.get(i)))), (event) -> {
 			double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
 			double deposit = plugin.getConfig().getDouble("deposit");
 
@@ -187,7 +187,7 @@ public void topUpCard (IcCard icCard) {
 	clickables = new Clickable[invSize];
 
 	for (int i = 0; i < priceArray.size(); i++) {
-		clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(String.format(lang.getString("currency") + "%.2f", priceArray.get(i)))), (event) -> {
+		clickables[i] = Clickable.of(makeItem(Material.LIME_STAINED_GLASS_PANE, 0, Component.text(Iciwi.economy.format(priceArray.get(i)))), (event) -> {
 			double value = Double.parseDouble(parseComponent(Objects.requireNonNull(event.getCurrentItem()).getItemMeta().displayName()).replaceAll("[^\\d.]", ""));
 
 			if (Iciwi.economy.getBalance(player) >= value) {
