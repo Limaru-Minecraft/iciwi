@@ -47,7 +47,11 @@ public void onCard (Player player, SignInfo info) {
 	logger.info("classChange", lMap);
 
 	// confirmation
-	player.sendMessage(String.format(lang.getString("class-changed"), newClass));
+	player.sendRichMessage(lang.createRichMessage(
+		"Class change",
+		lang.getStringList("classchange-message"),
+		Map.of("class", newClass)
+	));
 	player.playSound(player, plugin.getConfig().getString("classchange-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 }
 

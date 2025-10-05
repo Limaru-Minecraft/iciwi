@@ -18,12 +18,6 @@ cannot-pass: '§cThere is a problem with your card/ticket, please approach the t
 value-low: '§cYour card has insufficient value! Please top up your card!'
 invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
 
-# Success messages
-# == START UNUSED SECTION
-member-gate: '§aMembership valid. Welcome!'
-class-changed: '§aChanged fare class to §e%s§a!'
-# == END UNUSED SECTION ==
-
 # Fare gate messages (without header)
 head-color: green
 body-color: yellow
@@ -50,11 +44,10 @@ payment-message:
   - '{station}'
   - 'Paid <red>{fare}</red>'
   - '{cash-divert}'
-
-# Payment sign
-cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
-pay-success: '§aPaid §e£%.2f§a.'
-pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
+classchange-message:
+  - 'New travel class: {class}'
+balance-message:
+  - 'Balance: {value}'
 
 # =====================================
 # These options control the ticket machines.

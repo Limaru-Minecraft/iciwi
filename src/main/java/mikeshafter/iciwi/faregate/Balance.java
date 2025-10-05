@@ -6,6 +6,9 @@ import mikeshafter.iciwi.api.FareGate;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.util.IciwiUtil;
+
+import java.util.Map;
+
 import org.bukkit.entity.Player;
 
 public class Balance extends FareGate {
@@ -24,7 +27,13 @@ public void onTicket (Player player, SignInfo info) {}
 public void onCard (Player player, SignInfo info) {
 	final IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
 	// Confirmation
-	if (icCard != null) player.sendMessage("Card value: " + icCard.getValue());
+	if (icCard == null) return;
+
+	player.sendRichMessage(lang.createRichMessage(
+		"Balance",
+		lang.getStringList("balance-message"),
+		Map.of("value", icCard.getValue())
+	));
 }
 
 @Override
