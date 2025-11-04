@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
@@ -44,23 +45,24 @@ public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = select
 
 public void init (String station) {
     List<String> operators = this.owners.getOwners(station);
+	int card_model = this.owners.getCustomModel(operators.get(0));
     ArrayList<Clickable> clickList = new ArrayList<>();
-    boolean addCustomTickets = true;
-    for (String operator : operators) {
-        if (this.owners.hasOperatorTicket(operator)) {
-			clickList.add(Clickable.of(
-				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-flat-ticket"), Component.text(operator)),
-				(e) -> generateOperatorTicket(operator)
-			));
-        }
-        else if (addCustomTickets) {
-            clickList.add(Clickable.of(
-				makeItem(Material.PAPER, 0, lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-				(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
-			));
-            addCustomTickets = false;
-        }
-    }
+	boolean flatTix = operators.stream().anyMatch(o -> this.owners.hasOperatorTicket(o));
+	boolean customTix = !operators.stream().allMatch(o -> this.owners.hasOperatorTicket(o));
+
+	// Paper ticket
+	if (flatTix) {
+		clickList.add(Clickable.of(
+			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-flat-ticket"), Component.text("Tickets are non-refundable")),
+			(e) -> selectTicket(operators.stream().filter(o -> this.owners.hasOperatorTicket(o)).toList())
+		));
+	}
+	 if (customTix) {
+		clickList.add(Clickable.of(
+			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
+			(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
+		));
+	}
 
 	// New card
     clickList.add(
@@ -72,7 +74,7 @@ public void init (String station) {
 
 	// Select card
     clickList.add(
-        Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> {
+        Clickable.of(makeItem(Material.valueOf(plugin.getConfig().getString("card.material")), card_model, lang.getComponent("menu-insert-card")), (e) -> {
             SignInteractListener.putMachine(player, new CardMachine(player, station));
             ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
         })
@@ -84,6 +86,24 @@ public void init (String station) {
 	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
 	setItems(clickables, inv);
 	// Start listening and open inventory
+	player.openInventory(inv);
+}
+
+private void selectTicket (List<String> operators) {
+	List<Clickable> items = operators.stream().map(o -> {
+		int modelId = this.owners.getCustomModel(o);
+		return Clickable.of(
+			makeItem(
+				Material.PAPER,
+				modelId,
+				Component.text(o),
+				Component.text(owners.getOperatorTicket(o))
+			), e -> generateOperatorTicket(o)
+		);
+	}).collect(Collectors.toList());
+	Clickable[] clickables = alignLeft(9, new ArrayList<Clickable>(items));
+	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("select-ticket"));
+	setItems(clickables, inv);
 	player.openInventory(inv);
 }
 
@@ -118,23 +138,6 @@ protected void generateOperatorTicket (String owner) {
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
 	player.closeInventory();
 	SignInteractListener.removeMachine(player);
-}
-
-/**
- * Spread items evenly across n slots in an array
- *
- * @param n     Number of slots
- * @param items Items to spread
- * @return Final spreaded array
- */
-private Clickable[] justify (int n, ArrayList<Clickable> items) {
-	// optimisation
-	int l = items.size();
-	if (n == l) return items.toArray(new Clickable[l]);
-	// Create an array with n elements
-	Clickable[] arr = new Clickable[n];
-	for (int i = 1; i <= l; i++) arr[i * n / (l + 1)] = items.get(i - 1);
-	return arr;
 }
 
 

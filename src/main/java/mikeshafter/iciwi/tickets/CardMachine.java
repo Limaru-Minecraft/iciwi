@@ -62,13 +62,13 @@ public void init (String station) {
 	// setup inventory
 	inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
 	this.clickables = new Clickable[9];
+	// Get operators
+	this.operators = this.owners.getOwners(station);
 
 	// Create buttons
 	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> newCard());
 	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> selectCard());
 
-	// Get operators
-	this.operators = this.owners.getOwners(station);
 	// Set items
 	setItems(clickables, inv);
 	// Start listening and open inventory
