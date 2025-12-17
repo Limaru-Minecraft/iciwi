@@ -4,5 +4,7 @@ api-version: "1.21.8"
 main: mikeshafter.iciwi.Iciwi
 depend:
   - Vault
+softdepend:
+  - Geyser-Spigot
 description: Iciwi plugin for Limaru
 prefix: Iciwi
