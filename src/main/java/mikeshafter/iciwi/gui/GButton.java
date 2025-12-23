@@ -71,7 +71,7 @@ public ActionButton asJava () {
 	DialogAction dialogAction = DialogAction.staticAction(ClickEvent.callback(audience -> {
 		if (audience instanceof Player player) action.accept(player);
 	}));
-	return ActionButton.create(this.content, this.tooltip, 100, dialogAction);
+	return ActionButton.create(this.content, this.tooltip, 150, dialogAction);
 }
 
 public ButtonComponent asBedrock () {
