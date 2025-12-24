@@ -1,24 +1,29 @@
 package mikeshafter.iciwi.tickets;
 
-import com.bergerkiller.bukkit.common.block.InputDialogSubmitText;
-import com.bergerkiller.bukkit.common.utils.CommonUtil;
 import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.gui.FInput;
+import mikeshafter.iciwi.gui.GForm;
+import mikeshafter.iciwi.gui.GBranch;
+import mikeshafter.iciwi.gui.GButton;
 import mikeshafter.iciwi.util.Clickable;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
+//import org.bukkit.event.EventHandler;
+//import org.bukkit.event.EventPriority;
+//import org.bukkit.event.Listener;
+//import org.bukkit.event.inventory.InventoryClickEvent;
+//import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
 import java.util.*;
 
 public class CustomMachine implements Machine {
@@ -28,7 +33,7 @@ private final String station;
 private final Lang lang = plugin.lang;
 private final Fares fares = plugin.fares;
 private final Owners owners = plugin.owners;
-private ItemStack[] playerInv;
+//private ItemStack[] playerInv;
 private Clickable[] clickables;
 private final IcLogger logger = plugin.icLogger;
 
@@ -37,53 +42,32 @@ public CustomMachine (Player player, String station) {
 	this.player = player;
 	this.station = station;
 	final Set<String> stationList = fares.getDestinations(station);
-	Listener listener = new EventListener();
-	var submitText = new InputDialogSubmitText(plugin, player) {
-
-		@Override public void onTextChanged () {
-
-			// Clear the player's upper inventory
-			for (int i = 3; i < 30; i++) {
-				player.getInventory().setItem(i, null);
-			}
-
-			// Get the string keyed in by the player
-			String text = super.getText();
-
-			// Sort stations based on relevance
-			String[] stations = relevanceSort(text, stationList.toArray(String[]::new));
-
-			// Place each station the player's inventory
-			if (stations != null) {
-				for (int i = 9; i < 36; i++) {
-					player.getInventory().setItem(i, makeItem(Material.GLOBE_BANNER_PATTERN, 0, Component.text(stations[i - 9])));
+	GForm form = new GForm.Builder()
+		.title("Ticket Machine")
+		.item(new FInput("Destination", "", "Enter destination station here..."))
+		.action(ctx -> {
+				String dest = ctx.getString("Destination");
+				if (!stationList.contains(dest)) {
+				// get 9 closest stations
+				String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);
+				GBranch.Builder suggestGui = new GBranch.Builder()
+				.title("Ticket Machine")
+				.content("Select station...");
+				for (String suggestion : suggestions) {
+				suggestGui.button(GButton.builder()
+						.content(Component.text(suggestion))
+						.onClick(p -> selectClass(suggestion))
+						.build()
+						);
 				}
-			}
-		}
-
-		@Override public void onOpen () {
-			super.onOpen();
-			this.setDescription(lang.getString("enter-text-description"));
-
-			// Save player's inventory
-			playerInv = player.getInventory().getContents();
-		}
-
-		@Override public void onAccept (String text) {onClose();}
-
-		@Override public void onCancel () {onClose();}
-
-		@Override public void onClose () {
-			for (int i = 0; i < playerInv.length; i++)
-				player.getInventory().setItem(i, playerInv[i]);
-		}
-	};
-
-	// Start listening
-	Bukkit.getPluginManager().registerEvents(listener, plugin);
-
-	// Open anvil on next tick due to problems with same-tick opening
-	CommonUtil.nextTick(submitText::open);
+				suggestGui.build().open(player);
+				}
+				else {
+				selectClass(dest);
+				}
+				})
+	.build();
+	form.open(player);
 }
 
 public void selectClass (String end) {
@@ -95,30 +79,60 @@ public void selectClass (String end) {
 		return;
 	}
 
-	int invSize = roundUp(fareClasses.size(), 9);
-	Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
-	this.clickables = new Clickable[invSize];
+	GBranch.Builder classSelect = new GBranch.Builder()
+		.title("Ticket machine")
+		.content("Select class");
 
 	var fareIterator = fareClasses.entrySet().iterator();
-
-	for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
+	for (int i = 0; i < fareClasses.size() && fareIterator.hasNext(); i++) {
 		var fareClass = fareIterator.next();
-		// ignore card-only classes
 		if (fareClass.getKey().startsWith("_")) continue;
-		// make clickable item
-		var item = makeItem(Material.PAPER, 0, Component.text(fareClass.getKey()), Component.text(fareClass.getValue()));
-		this.clickables[i] = Clickable.of(item, (event) -> {
-			// generate ticket
-			ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
-			// add item to player's inventory
-			if (ticket != null) player.getInventory().addItem(ticket);
-			// the drill on last step
-			event.setCancelled(true);
-			player.closeInventory();SignInteractListener.removeMachine(player);
-		});
+		TextComponent btnText = Component.text().append(
+			Component.text(fareClass.getKey()).color(TextColor.color(0x7cfc00)), 
+			Component.text(" : ").color(TextColor.color(0xffffff)), 
+			Component.text(fareClass.getValue()).color(TextColor.color(0xffc40c)))
+		.build();
+
+		classSelect.button(
+			GButton.builder()
+				.content(btnText)
+				.onClick(p -> {
+					ItemStack ticket = generateTicket(station, end, fareClass.getKey());
+					if (ticket != null) player.getInventory().addItem(ticket);
+					SignInteractListener.removeMachine(player);
+				})
+				.build()
+		);
 	}
-	setItems(this.clickables, inventory);
-	player.openInventory(inventory);
+
+	classSelect.build().open(player);
+
+
+	// == Start old code ==
+	//int invSize = roundUp(fareClasses.size(), 9);
+	//Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
+	//this.clickables = new Clickable[invSize];
+
+	//for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
+	//	var fareClass = fareIterator.next();
+	//	// ignore card-only classes
+	//	if (fareClass.getKey().startsWith("_")) continue;
+	//	// make clickable item
+	//	var item = makeItem(Material.PAPER, 0, Component.text(fareClass.getKey()), Component.text(fareClass.getValue()));
+	//	this.clickables[i] = Clickable.of(item, (event) -> {
+	//			// generate ticket
+	//			ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
+	//			// add item to player's inventory
+	//			if (ticket != null) player.getInventory().addItem(ticket);
+	//			// the drill on last step
+	//			event.setCancelled(true);
+	//			player.closeInventory();SignInteractListener.removeMachine(player);
+	//			});
+	//}
+	//setItems(this.clickables, inventory);
+	//player.openInventory(inventory);
+
+	// == End old code ==
 }
 
 protected ItemStack generateTicket (String from, String to, String fareClass) {
@@ -157,39 +171,39 @@ protected ItemStack generateTicket (String from, String to, String fareClass) {
 	}
 }
 
-private class EventListener implements Listener {
-
-	@EventHandler (priority = EventPriority.LOWEST) public void onInventoryClick (InventoryClickEvent event) {
-		Inventory inventory = event.getClickedInventory();
-		ItemStack item = event.getCurrentItem();
-		if (inventory == null) return;
-
-		if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
-			inventory.close();
-			//setTerminal(item.getItemMeta().displayName());
-			CommonUtil.unregisterListener(this);
-			selectClass(parseComponent(item.getItemMeta().displayName()));
-		}
-	}
-}
+//private class EventListener implements Listener {
+//
+//	@EventHandler (priority = EventPriority.LOWEST) public void onInventoryClick (InventoryClickEvent event) {
+//		Inventory inventory = event.getClickedInventory();
+//		ItemStack item = event.getCurrentItem();
+//		if (inventory == null) return;
+//
+//		if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
+//			inventory.close();
+//			//setTerminal(item.getItemMeta().displayName());
+//			//CommonUtil.unregisterListener(this);
+//			selectClass(parseComponent(item.getItemMeta().displayName()));
+//		}
+//	}
+//}
 
 /**
- Sort an array based on each string's relevance.
+  Sort an array based on each string's relevance.
 
- @param pattern The pattern to compare relevance with
- @param values  The array to sort
- @return Sorted array */
+  @param pattern The pattern to compare relevance with
+  @param values  The array to sort
+  @return Sorted array */
 public String[] relevanceSort (String pattern, String[] values) {
 	Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
 	return values;
 }
 
 /**
- Relevance function
+  Relevance function
 
- @param pattern The pattern (search) term
- @param term    The term that contains the pattern term
- @return Relevance value */
+  @param pattern The pattern (search) term
+  @param term    The term that contains the pattern term
+  @return Relevance value */
 public float relevance (String pattern, String term) {
 	// Ignore case
 	pattern = pattern.toLowerCase();
