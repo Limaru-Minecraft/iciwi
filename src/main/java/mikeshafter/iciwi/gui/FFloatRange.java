@@ -36,4 +36,5 @@ public DialogInput asJava () {
 public Component asBedrock () {
     return SliderComponent.of(id, min, max, step, def);
 }
+public Class<Float> returnType () {return Float.class;}
 }

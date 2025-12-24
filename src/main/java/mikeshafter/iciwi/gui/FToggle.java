@@ -23,5 +23,5 @@ public DialogInput asJava () {
 public Component asBedrock () {
     return ToggleComponent.of(id, def);
 }
+public Class<Boolean> returnType () {return Boolean.class;}
 }
-

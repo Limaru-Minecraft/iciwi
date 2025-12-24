@@ -21,6 +21,10 @@ public String getId () {
     return this.id;
 }
 
+public ArrayList<String> getOptions () {
+    return this.options;
+}
+
 public DialogInput asJava () {
     List<OptionEntry> entries = options.stream().map(o -> OptionEntry.create(o, net.kyori.adventure.text.Component.text(o), false)).toList();
     return DialogInput.singleOption(id, net.kyori.adventure.text.Component.text(id), entries).labelVisible(true).build();
@@ -29,4 +33,5 @@ public DialogInput asJava () {
 public Component asBedrock () {
     return StepSliderComponent.of(id, options, 0);
 }
+public Class<String> returnType () {return String.class;}
 }

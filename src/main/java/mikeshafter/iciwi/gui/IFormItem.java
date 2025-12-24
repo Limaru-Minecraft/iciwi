@@ -7,4 +7,5 @@ public interface IFormItem {
 String getId();
 DialogInput asJava();
 Component asBedrock();
+Class<?> returnType();
 }

@@ -27,4 +27,5 @@ public DialogInput asJava () {
 public Component asBedrock () {
     return InputComponent.of(id, placeholder, def);
 }
+public Class<String> returnType () {return String.class;}
 }

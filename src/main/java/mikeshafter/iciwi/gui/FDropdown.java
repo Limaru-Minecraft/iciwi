@@ -23,6 +23,10 @@ public String getId () {
     return this.id;
 }
 
+public ArrayList<String> getOptions () {
+    return this.options;
+}
+
 public DialogInput asJava () {
     List<OptionEntry> entries = options.stream().map(o -> {
         return OptionEntry.create(o, net.kyori.adventure.text.Component.text(o), false);
@@ -33,4 +37,6 @@ public DialogInput asJava () {
 public Component asBedrock () {
     return DropdownComponent.of(id, options, 0);
 }
+
+public Class<String> returnType () {return String.class;}
 }
