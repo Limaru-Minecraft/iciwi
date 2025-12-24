@@ -3,24 +3,16 @@ package mikeshafter.iciwi.gui;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
 import io.papermc.paper.dialog.Dialog;
-
-import org.geysermc.cumulus.component.DropdownComponent;
 import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.Form;
-
-import com.google.common.collect.HashMultimap;
-
 import org.bukkit.entity.Player;
-
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickCallback;
 import net.kyori.adventure.text.format.TextColor;
@@ -30,19 +22,21 @@ public class GForm implements IGui {
 
 private final String title;
 private final String content;
-private final ArrayList<IFormItem> formItem;
+private final ArrayList<IFormItem> formItems;
+private final Consumer<GuiContext> submitAction;
 
 private GForm (Builder builder) {
 	this.title = builder.title;
 	this.content = builder.content;
-	this.formItem = builder.formItem;
+	this.formItems = builder.formItems;
+	this.submitAction = builder.submitAction;
 }
 
 public static class Builder {
 	private String title;
 	private String content;
-	private final ArrayList<IFormItem> formItem = new ArrayList<>();
-	//private final Consumer<> submitAction = null;
+	private final ArrayList<IFormItem> formItems = new ArrayList<>();
+	private Consumer<GuiContext> submitAction = null;
 
 	public Builder title (String title) {
 		this.title = title;
@@ -55,19 +49,24 @@ public static class Builder {
 	}
 
 	public Builder item (IFormItem formItem) {
-		this.formItem.add(formItem);
+		this.formItems.add(formItem);
 		return this;
 	}
 
-	// public Builder action (Consumer<> action) {
-	// 	this.submitAction = action;
-	// }
+	public Builder action (Consumer<GuiContext> action) {
+		this.submitAction = action;
+		return this;
+	}
+
+	public GForm build () {
+		return new GForm(this);
+	}
 }
 
 @Override
 public Dialog asJava () {
-	List<DialogInput> inputs = this.formItem.stream().map(IFormItem::asJava).toList();
-	formItem.get(0).getId();
+	List<DialogInput> inputs = this.formItems.stream().map(IFormItem::asJava).toList();
+	formItems.get(0).getId();
 	return Dialog.create(builder -> builder.empty()
 		.base(DialogBase.builder(Component.text(title))
 			.body(List.of(DialogBody.plainMessage(Component.text(content))))
@@ -84,6 +83,10 @@ public Dialog asJava () {
 					(view, audience) -> {
 						if (audience instanceof Player) {
 							// TODO: handle form submission
+							formItems.get(0).asJava();
+							view.getFloat(content);
+							view.getBoolean(content);
+							view.getText(content);
 						}
 					},
 					ClickCallback.Options.builder()
@@ -104,7 +107,7 @@ public Dialog asJava () {
 
 @Override
 public Form asBedrock (Player player) {
-	List<org.geysermc.cumulus.component.Component> inputs = this.formItem.stream().map(IFormItem::asBedrock).toList();
+	List<org.geysermc.cumulus.component.Component> inputs = this.formItems.stream().map(IFormItem::asBedrock).toList();
 	CustomForm.Builder formBuilder = CustomForm.builder()
 		.title(title);
 	for (org.geysermc.cumulus.component.Component input : inputs) {
