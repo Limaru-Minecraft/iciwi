@@ -34,8 +34,8 @@ public static Builder builder() {
 }
 
 public static class Builder {
-	private Component title;
-	private Component content;
+	private Component title = Component.empty();
+	private Component content = Component.empty();
 	private final ArrayList<GButton> buttons = new ArrayList<>();
 
 	public Builder title(Component title) {

@@ -67,7 +67,7 @@ public CustomMachine (Player player, String station) {
 				}
 				}
 				)
-		.content(Component.text(""))
+		.content(Component.empty())
 	.build();
 	form.open(player);
 }

@@ -61,9 +61,11 @@ public boolean useBottomInv () {return bottomInv;}
 
 // initial menu
 public void init (String station) {
+	this.operators = owners.getOwners(station);
 
 	GBranch gui = GBranch.builder()
 		.title(lang.getComponent("ticket-machine"))
+		.content(Component.empty())
 		.button(GButton.builder()
 			.content(lang.getComponent("menu-new-card"))
 			.onClick(p -> newCard())
