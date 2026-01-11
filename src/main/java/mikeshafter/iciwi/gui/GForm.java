@@ -1,5 +1,7 @@
 package mikeshafter.iciwi.gui;
 
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,8 +22,8 @@ import net.kyori.adventure.text.format.TextColor;
 @SuppressWarnings("UnstableApiUsage")
 public class GForm implements IGui {
 
-private final String title;
-private final String content;
+private final Component title;
+private final Component content;
 private final ArrayList<IFormItem> formItems;
 private final Consumer<GuiContext> submitAction;
 
@@ -32,18 +34,22 @@ private GForm (Builder builder) {
 	this.submitAction = builder.submitAction;
 }
 
+public static Builder builder() {
+	return new Builder();
+}
+
 public static class Builder {
-	private String title;
-	private String content;
+	private Component title;
+	private Component content;
 	private final ArrayList<IFormItem> formItems = new ArrayList<>();
 	private Consumer<GuiContext> submitAction = null;
 
-	public Builder title (String title) {
+	public Builder title (Component title) {
 		this.title = title;
 		return this;
 	}
 
-	public Builder content (String content) {
+	public Builder content (Component content) {
 		this.content = content;
 		return this;
 	}
@@ -68,10 +74,11 @@ public Dialog asJava () {
 	List<DialogInput> inputs = this.formItems.stream().map(IFormItem::asJava).toList();
 	formItems.get(0).getId();
 	return Dialog.create(builder -> builder.empty()
-		.base(DialogBase.builder(Component.text(title))
-			.body(List.of(DialogBody.plainMessage(Component.text(content))))
+		.base(DialogBase.builder(title)
+			.body(List.of(DialogBody.plainMessage(content)))
 			.inputs(inputs)
 			.canCloseWithEscape(true)
+			.afterAction(DialogBase.DialogAfterAction.CLOSE)
 			.build()
 		)
 		.type(DialogType.confirmation(
@@ -82,11 +89,8 @@ public Dialog asJava () {
 				DialogAction.customClick(
 					(view, audience) -> {
 						if (audience instanceof Player) {
-							// TODO: handle form submission
-							formItems.get(0).asJava();
-							view.getFloat(content);
-							view.getBoolean(content);
-							view.getText(content);
+GuiContext ctx = GuiContext.fromJava(formItems, view);
+this.submitAction.accept(ctx);
 						}
 					},
 					ClickCallback.Options.builder()
@@ -99,7 +103,11 @@ public Dialog asJava () {
 				Component.text("Cancel", TextColor.color(0xFFA0B1)),
 				Component.text("Click to discard your input."),
 				150,
-				null // If we set the action to null, it doesn't do anything and closes the dialog
+				DialogAction.customClick((view, audience) -> {}, ClickCallback.Options.builder()
+					.uses(1) // Set the number of uses for this callback. Defaults to 1
+					.lifetime(ClickCallback.DEFAULT_LIFETIME) // Set the lifetime of the callback. Defaults to 12 hours
+					.build()
+				)
 			)
 		))
 	);
@@ -109,27 +117,13 @@ public Dialog asJava () {
 public Form asBedrock (Player player) {
 	List<org.geysermc.cumulus.component.Component> inputs = this.formItems.stream().map(IFormItem::asBedrock).toList();
 	CustomForm.Builder formBuilder = CustomForm.builder()
-		.title(title);
+		.title(parseComponent(title));
 	for (org.geysermc.cumulus.component.Component input : inputs) {
 		formBuilder.component(input);
 	}
 	formBuilder.validResultHandler((f, response) -> {
-		while (response.isNextPresent()) {
-			var next = response.next();
-			if (next instanceof Integer) {
-
-			}
-			else if (next instanceof Float) {
-
-			}
-			else if (next instanceof Boolean) {
-
-			}
-			else if (next instanceof String) {
-
-			}
-		}
-		// TODO: handle form submission
+GuiContext ctx = GuiContext.fromBedrock(formItems, response);
+this.submitAction.accept(ctx);
 	});
 	return formBuilder.build();
 }

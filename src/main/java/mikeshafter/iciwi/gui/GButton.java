@@ -2,17 +2,19 @@ package mikeshafter.iciwi.gui;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.action.DialogAction;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.util.FormImage;
+
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
+
 import java.util.function.Consumer;
 
 @SuppressWarnings("UnstableApiUsage")
 public class GButton {
-private final TextComponent content;
-private final TextComponent tooltip;
+private final Component content;
+private final Component tooltip;
 private final FormImage.Type imageType;
 private final String imageUri;
 
@@ -35,18 +37,18 @@ public static Builder builder() {
 }
 
 public static class Builder {
-	private TextComponent content = Component.empty();
-	private TextComponent tooltip = Component.empty();
+	private Component content = Component.empty();
+	private Component tooltip = Component.empty();
 	private FormImage.Type imageType = FormImage.Type.PATH;
 	private String imageUri = "";
 	private Consumer<Player> action = (p) -> {};
 
-	public Builder content(TextComponent content) {
+	public Builder content(Component content) {
 		this.content = content;
 		return this;
 	}
 
-	public Builder tooltip(TextComponent tooltip) {
+	public Builder tooltip(Component tooltip) {
 		this.tooltip = tooltip;
 		return this;
 	}
@@ -76,8 +78,8 @@ public ActionButton asJava () {
 
 public ButtonComponent asBedrock () {
 	if (this.imageType == null || this.imageUri == null) {
-		return ButtonComponent.of(this.content.content());
+		return ButtonComponent.of(parseComponent(this.content));
 	}
-	return ButtonComponent.of(this.content.content(), this.imageType, this.imageUri);
+	return ButtonComponent.of(parseComponent(this.content), this.imageType, this.imageUri);
 }
 }

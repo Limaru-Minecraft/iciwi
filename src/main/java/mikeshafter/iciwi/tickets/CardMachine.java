@@ -6,6 +6,8 @@ import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
+import mikeshafter.iciwi.gui.GBranch;
+import mikeshafter.iciwi.gui.GButton;
 import mikeshafter.iciwi.util.Clickable;
 import mikeshafter.iciwi.util.IciwiUtil;
 
@@ -59,20 +61,39 @@ public boolean useBottomInv () {return bottomInv;}
 
 // initial menu
 public void init (String station) {
-	// setup inventory
-	inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
-	this.clickables = new Clickable[9];
-	// Get operators
-	this.operators = this.owners.getOwners(station);
 
-	// Create buttons
-	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> newCard());
-	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> selectCard());
+	GBranch gui = GBranch.builder()
+		.title(lang.getComponent("ticket-machine"))
+		.button(GButton.builder()
+			.content(lang.getComponent("menu-new-card"))
+			.onClick(p -> newCard())
+			.build()
+		)
+		.button(GButton.builder()
+			.content(lang.getComponent("menu-insert-card"))
+			.onClick(p -> selectCard())
+			.build()
+		)
+		.build();
 
-	// Set items
-	setItems(clickables, inv);
-	// Start listening and open inventory
-	player.openInventory(inv);
+	gui.open(this.player);
+
+//	// == old ==
+//	// setup inventory
+//	inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
+//	this.clickables = new Clickable[9];
+//	// Get operators
+//	this.operators = this.owners.getOwners(station);
+//
+//	// Create buttons
+//	this.clickables[2] = Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> newCard());
+//	this.clickables[6] = Clickable.of(makeItem(Material.NAME_TAG, 0, lang.getComponent("menu-insert-card")), (e) -> selectCard());
+//
+//	// Set items
+//	setItems(clickables, inv);
+//	// Start listening and open inventory
+//	player.openInventory(inv);
+//	// == end old ==
 }
 
 // card selection menu. player clicks in their own inventory to select a card

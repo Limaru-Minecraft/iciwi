@@ -43,7 +43,7 @@ public CustomMachine (Player player, String station) {
 	this.station = station;
 	final Set<String> stationList = fares.getDestinations(station);
 	GForm form = new GForm.Builder()
-		.title("Ticket Machine")
+		.title(lang.getComponent("ticket-machine"))
 		.item(new FInput("Destination", "", "Enter destination station here..."))
 		.action(ctx -> {
 				String dest = ctx.getString("Destination");
@@ -51,8 +51,8 @@ public CustomMachine (Player player, String station) {
 				// get 9 closest stations
 				String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);
 				GBranch.Builder suggestGui = new GBranch.Builder()
-				.title("Ticket Machine")
-				.content("Select station...");
+				.title(lang.getComponent("ticket-machine"))
+				.content(Component.text("Select station..."));
 				for (String suggestion : suggestions) {
 				suggestGui.button(GButton.builder()
 						.content(Component.text(suggestion))
@@ -65,7 +65,9 @@ public CustomMachine (Player player, String station) {
 				else {
 				selectClass(dest);
 				}
-				})
+				}
+				)
+		.content(Component.text(""))
 	.build();
 	form.open(player);
 }
@@ -80,8 +82,8 @@ public void selectClass (String end) {
 	}
 
 	GBranch.Builder classSelect = new GBranch.Builder()
-		.title("Ticket machine")
-		.content("Select class");
+		.title(lang.getComponent("ticket-machine"))
+		.content(lang.getComponent("select-class"));
 
 	var fareIterator = fareClasses.entrySet().iterator();
 	for (int i = 0; i < fareClasses.size() && fareIterator.hasNext(); i++) {

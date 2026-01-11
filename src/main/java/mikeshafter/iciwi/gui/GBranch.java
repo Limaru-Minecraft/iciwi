@@ -1,5 +1,8 @@
 package mikeshafter.iciwi.gui;
 
+import io.papermc.paper.registry.data.dialog.input.DialogInput;
+import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
+
 import java.util.ArrayList;
 import java.util.List;
 import io.papermc.paper.dialog.Dialog;
@@ -16,8 +19,8 @@ import io.papermc.paper.registry.data.dialog.ActionButton;
 
 @SuppressWarnings("UnstableApiUsage")
 public class GBranch implements IGui {
-private final String title;
-private final String content;
+private final Component title;
+private final Component content;
 private final ArrayList<GButton> buttons;
 
 private GBranch (Builder builder) {
@@ -26,17 +29,21 @@ private GBranch (Builder builder) {
 	this.buttons = builder.buttons;
 }
 
+public static Builder builder() {
+	return new Builder();
+}
+
 public static class Builder {
-	private String title;
-	private String content;
+	private Component title;
+	private Component content;
 	private final ArrayList<GButton> buttons = new ArrayList<>();
 
-	public Builder title(String title) {
+	public Builder title(Component title) {
 		this.title = title;
 		return this;
 	}
 
-	public Builder content(String content) {
+	public Builder content(Component content) {
 		this.content = content;
 		return this;
 	}
@@ -54,9 +61,10 @@ public static class Builder {
 public Dialog asJava () {
 	List<ActionButton> buttons = this.buttons.stream().map(GButton::asJava).toList();
 	return Dialog.create(builder -> builder.empty()
-		.base(DialogBase.builder(Component.text(title))
-			.body(List.of(DialogBody.plainMessage(Component.text(content))))
+		.base(DialogBase.builder(title)
+			.body(List.of(DialogBody.plainMessage(content)))
 			.canCloseWithEscape(true)
+			.afterAction(DialogBase.DialogAfterAction.CLOSE)
 			.build()
 		)
 		.type(DialogType.multiAction(buttons).build())
@@ -65,8 +73,8 @@ public Dialog asJava () {
 
 public Form asBedrock (Player player) {
 	SimpleForm.Builder form = SimpleForm.builder()
-		.title(title)
-		.content(content);
+		.title  (parseComponent(this.title))
+		.content(parseComponent(this.content));
 	for (GButton btn : buttons) {
 		form.button(btn.asBedrock());
 	}
