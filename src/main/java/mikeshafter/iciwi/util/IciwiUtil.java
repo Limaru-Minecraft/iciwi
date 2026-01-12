@@ -164,16 +164,16 @@ public static void punchTicket (ItemStack ticket, int line) {
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
-public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	if (!loreCheck(itemStack)) return null;
+public static Optional<IcCard> IcCardFromItem (ItemStack itemStack) {
+	if (!loreCheck(itemStack)) return Optional.empty();
 	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
 	try {
 		Class<?> icCardClass = IciwiPlugin.getCardType(n);
-		if (icCardClass == null) return null;
-		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+		if (icCardClass == null) return Optional.empty();
+		return Optional.of((IcCard)icCardClass.getConstructor(ItemStack.class).newInstance(itemStack));
 	}
 	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		return null;
+		return Optional.empty();
 	}
 
 

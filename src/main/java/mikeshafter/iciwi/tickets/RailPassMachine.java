@@ -115,7 +115,7 @@ public void paperPass () {
 	this.player.openInventory(this.inv);
 }
 
-public void railPass (ItemStack item) {
+public void railPass (IcCard item) {
 	if (!loreCheck(item)) return;
 
 	// get available railpasses

@@ -14,7 +14,6 @@ import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 //import org.bukkit.event.EventHandler;
@@ -23,80 +22,79 @@ import org.bukkit.entity.Player;
 //import org.bukkit.event.inventory.InventoryClickEvent;
 //import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.*;
 
 public class CustomMachine implements Machine {
-private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-private final Player player;
-private final String station;
-private final Lang lang = plugin.lang;
-private final Fares fares = plugin.fares;
-private final Owners owners = plugin.owners;
-//private ItemStack[] playerInv;
-private Clickable[] clickables;
-private final IcLogger logger = plugin.icLogger;
+	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+	private final Player player;
+	private final String station;
+	private final Lang lang = plugin.lang;
+	private final Fares fares = plugin.fares;
+	private final Owners owners = plugin.owners;
+	//private ItemStack[] playerInv;
+	private Clickable[] clickables;
+	private final IcLogger logger = plugin.icLogger;
 
 
-public CustomMachine (Player player, String station) {
-	this.player = player;
-	this.station = station;
-	final Set<String> stationList = fares.getDestinations(station);
-	GForm form = new GForm.Builder()
-		.title(lang.getComponent("ticket-machine"))
-		.item(new FInput("Destination", "", "Enter destination station here..."))
-		.action(ctx -> {
+	public CustomMachine (Player player, String station) {
+		this.player = player;
+		this.station = station;
+		final Set<String> stationList = fares.getDestinations(station);
+
+		GForm form = new GForm.Builder()
+			.title(lang.getComponent("ticket-machine"))
+			.item(new FInput("Destination", ""))
+			.action(ctx -> {
 				String dest = ctx.getString("Destination");
 				if (!stationList.contains(dest)) {
-				// get 9 closest stations
-				String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);
-				GBranch.Builder suggestGui = new GBranch.Builder()
-				.title(lang.getComponent("ticket-machine"))
-				.content(Component.text("Select station..."));
-				for (String suggestion : suggestions) {
-				suggestGui.button(GButton.builder()
-						.content(Component.text(suggestion))
-						.onClick(p -> selectClass(suggestion))
-						.build()
+					// get 9 closest stations
+					String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);
+					GBranch.Builder suggestGui = new GBranch.Builder()
+						.title(lang.getComponent("ticket-machine"))
+						.content(Component.text("Select station..."));
+					for (String suggestion : suggestions) {
+						suggestGui.button(GButton.builder()
+							.content(Component.text(suggestion))
+							.onClick(p -> selectClass(suggestion))
+							.build()
 						);
-				}
-				suggestGui.build().open(player);
+					}
+					suggestGui.build().open(player);
 				}
 				else {
-				selectClass(dest);
+					selectClass(dest);
 				}
-				}
-				)
-		.content(Component.empty())
-	.build();
-	form.open(player);
-}
-
-public void selectClass (String end) {
-	// Create inventory and create clickables
-	TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);
-
-	if (fareClasses == null) {
-		player.sendMessage(lang.getString("no-tickets-found"));
-		return;
+			})
+			.content(Component.empty())
+			.build();
+		form.open(player);
 	}
 
-	GBranch.Builder classSelect = new GBranch.Builder()
-		.title(lang.getComponent("ticket-machine"))
-		.content(lang.getComponent("select-class"));
+	public void selectClass (String end) {
+		// Create inventory and create clickables
+		TreeMap<String, Double> fareClasses = fares.getFaresFromDestinations(station, end);
 
-	var fareIterator = fareClasses.entrySet().iterator();
-	for (int i = 0; i < fareClasses.size() && fareIterator.hasNext(); i++) {
-		var fareClass = fareIterator.next();
-		if (fareClass.getKey().startsWith("_")) continue;
-		TextComponent btnText = Component.text().append(
-			Component.text(fareClass.getKey()).color(TextColor.color(0x7cfc00)), 
-			Component.text(" : ").color(TextColor.color(0xffffff)), 
-			Component.text(fareClass.getValue()).color(TextColor.color(0xffc40c)))
-		.build();
+		if (fareClasses == null) {
+			player.sendMessage(lang.getString("no-tickets-found"));
+			return;
+		}
 
-		classSelect.button(
-			GButton.builder()
+		GBranch.Builder classSelect = new GBranch.Builder()
+			.title(lang.getComponent("ticket-machine"))
+			.content(lang.getComponent("select-class"));
+
+		var fareIterator = fareClasses.entrySet().iterator();
+		for (int i = 0; i < fareClasses.size() && fareIterator.hasNext(); i++) {
+			var fareClass = fareIterator.next();
+			if (fareClass.getKey().startsWith("_")) continue;
+			TextComponent btnText = Component.text().append(
+					Component.text(fareClass.getKey()).color(TextColor.color(0x7cfc00)),
+					Component.text(" : ").color(TextColor.color(0xffffff)),
+					Component.text(fareClass.getValue()).color(TextColor.color(0xffc40c)))
+				.build();
+
+			classSelect.button(
+				GButton.builder()
 				.content(btnText)
 				.onClick(p -> {
 					ItemStack ticket = generateTicket(station, end, fareClass.getKey());
@@ -104,153 +102,153 @@ public void selectClass (String end) {
 					SignInteractListener.removeMachine(player);
 				})
 				.build()
-		);
+			);
+		}
+
+		classSelect.build().open(player);
+
+
+		// == Start old code ==
+		//int invSize = roundUp(fareClasses.size(), 9);
+		//Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
+		//this.clickables = new Clickable[invSize];
+
+		//for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
+		//	var fareClass = fareIterator.next();
+		//	// ignore card-only classes
+		//	if (fareClass.getKey().startsWith("_")) continue;
+		//	// make clickable item
+		//	var item = makeItem(Material.PAPER, 0, Component.text(fareClass.getKey()), Component.text(fareClass.getValue()));
+		//	this.clickables[i] = Clickable.of(item, (event) -> {
+		//			// generate ticket
+		//			ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
+		//			// add item to player's inventory
+		//			if (ticket != null) player.getInventory().addItem(ticket);
+		//			// the drill on last step
+		//			event.setCancelled(true);
+		//			player.closeInventory();SignInteractListener.removeMachine(player);
+		//			});
+		//}
+		//setItems(this.clickables, inventory);
+		//player.openInventory(inventory);
+
+		// == End old code ==
 	}
 
-	classSelect.build().open(player);
+	protected ItemStack generateTicket (String from, String to, String fareClass) {
+		// Find the price
+		double price = fares.getFare(from, to, fareClass);
 
+		// Let the player pay for the ticket
+		if (Iciwi.economy.getBalance(this.player) >= price) {
+			Iciwi.economy.withdrawPlayer(this.player, price);
 
-	// == Start old code ==
-	//int invSize = roundUp(fareClasses.size(), 9);
-	//Inventory inventory = plugin.getServer().createInventory(null, invSize, Component.text(lang.getString("select-class")));
-	//this.clickables = new Clickable[invSize];
+			// find owners of the current station and deposit accordingly
+			List<String> ownersList = owners.getOwners(from);
+			for (String owner : ownersList)
+				owners.deposit(owner, price / 2 / ownersList.size());
 
-	//for (int i = 0; i < fareClasses.size() && i < 54 && fareIterator.hasNext(); i++) {
-	//	var fareClass = fareIterator.next();
-	//	// ignore card-only classes
-	//	if (fareClass.getKey().startsWith("_")) continue;
-	//	// make clickable item
-	//	var item = makeItem(Material.PAPER, 0, Component.text(fareClass.getKey()), Component.text(fareClass.getValue()));
-	//	this.clickables[i] = Clickable.of(item, (event) -> {
-	//			// generate ticket
-	//			ItemStack ticket = generateTicket(station, end, parseComponent(item.getItemMeta().displayName()));
-	//			// add item to player's inventory
-	//			if (ticket != null) player.getInventory().addItem(ticket);
-	//			// the drill on last step
-	//			event.setCancelled(true);
-	//			player.closeInventory();SignInteractListener.removeMachine(player);
-	//			});
-	//}
-	//setItems(this.clickables, inventory);
-	//player.openInventory(inventory);
+			// find owners of the station the ticket goes to and deposit accordingly
+			ownersList = owners.getOwners(to);
+			for (String owner : ownersList)
+				owners.deposit(owner, price / 2 / ownersList.size());
 
-	// == End old code ==
-}
+			// Get ticket materials
+			Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
+			int customModelData = owners.getCustomModel(ownersList.get(0));//plugin.getConfig().getInt("ticket.custom-model-data");
 
-protected ItemStack generateTicket (String from, String to, String fareClass) {
-	// Find the price
-	double price = fares.getFare(from, to, fareClass);
+			// log to icLogger
+			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
+			logger.info("createTicket", lMap);
 
-	// Let the player pay for the ticket
-	if (Iciwi.economy.getBalance(this.player) >= price) {
-		Iciwi.economy.withdrawPlayer(this.player, price);
+			return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
+		}
 
-		// find owners of the current station and deposit accordingly
-		List<String> ownersList = owners.getOwners(from);
-		for (String owner : ownersList)
-			owners.deposit(owner, price / 2 / ownersList.size());
-
-		// find owners of the station the ticket goes to and deposit accordingly
-		ownersList = owners.getOwners(to);
-		for (String owner : ownersList)
-			owners.deposit(owner, price / 2 / ownersList.size());
-
-		// Get ticket materials
-		Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-		int customModelData = owners.getCustomModel(ownersList.get(0));//plugin.getConfig().getInt("ticket.custom-model-data");
-
-		// log to icLogger
-		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
-		logger.info("createTicket", lMap);
-
-		return makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text(from), Component.text(to), Component.text(fareClass));
-	}
-
-	else {
-		// Not enough money
-		player.sendMessage(lang.getString("not-enough-money"));
-		return null;
-	}
-}
-
-//private class EventListener implements Listener {
-//
-//	@EventHandler (priority = EventPriority.LOWEST) public void onInventoryClick (InventoryClickEvent event) {
-//		Inventory inventory = event.getClickedInventory();
-//		ItemStack item = event.getCurrentItem();
-//		if (inventory == null) return;
-//
-//		if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
-//			inventory.close();
-//			//setTerminal(item.getItemMeta().displayName());
-//			//CommonUtil.unregisterListener(this);
-//			selectClass(parseComponent(item.getItemMeta().displayName()));
-//		}
-//	}
-//}
-
-/**
-  Sort an array based on each string's relevance.
-
-  @param pattern The pattern to compare relevance with
-  @param values  The array to sort
-  @return Sorted array */
-public String[] relevanceSort (String pattern, String[] values) {
-	Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
-	return values;
-}
-
-/**
-  Relevance function
-
-  @param pattern The pattern (search) term
-  @param term    The term that contains the pattern term
-  @return Relevance value */
-public float relevance (String pattern, String term) {
-	// Ignore case
-	pattern = pattern.toLowerCase();
-	term = term.toLowerCase();
-
-	// Optimisation
-	if (term.equals(pattern)) return 1f;
-
-	// Required variables
-	int searchLength = pattern.length();
-	int matchLength = term.length();
-
-	// If the term contains the pattern term, it is relevant, thus we give a full score
-	if (term.contains(pattern)) return ((float) searchLength) / matchLength;
-
-	// If the term does not contain the pattern term, but contains parts of it, we give a divided score
-	// The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
-	//   and m is the term length.
-
-	/* At this point term does not contain pattern */
-	for (int i = searchLength; i >= 2; i--) { // i is length of substring
-		for (int j = 0; j + i <= searchLength; j++) {
-			String subSearch = pattern.substring(j, j + i);
-			if (term.contains(subSearch)) {
-				// found term, calculate relevance
-				return ((float) i) / (searchLength - i) / matchLength;
-			}
+		else {
+			// Not enough money
+			player.sendMessage(lang.getString("not-enough-money"));
+			return null;
 		}
 	}
 
-	// if no term found, return 0f (pattern failed)
-	return 0f;
-}
+	//private class EventListener implements Listener {
+	//
+	//	@EventHandler (priority = EventPriority.LOWEST) public void onInventoryClick (InventoryClickEvent event) {
+	//		Inventory inventory = event.getClickedInventory();
+	//		ItemStack item = event.getCurrentItem();
+	//		if (inventory == null) return;
+	//
+	//		if (item != null && item.hasItemMeta() && item.getItemMeta() != null) {
+	//			inventory.close();
+	//			//setTerminal(item.getItemMeta().displayName());
+	//			//CommonUtil.unregisterListener(this);
+	//			selectClass(parseComponent(item.getItemMeta().displayName()));
+	//		}
+	//	}
+	//}
 
-//public void setTerminal(Component terminal) { this.terminal = terminal; }
+	/**
+	  Sort an array based on each string's relevance.
 
-//public void setTerminal(Component terminal) { this.terminal = terminal; }
-@Override public Clickable[] getClickables () {return clickables;}
+	  @param pattern The pattern to compare relevance with
+	  @param values  The array to sort
+	  @return Sorted array */
+	public String[] relevanceSort (String pattern, String[] values) {
+		Arrays.sort(values, (v1, v2) -> Float.compare(relevance(pattern, v2), relevance(pattern, v1)));
+		return values;
+	}
 
-@Override public boolean useBottomInv () {return false;}
+	/**
+	  Relevance function
 
-@Override public void setSelectedItem (ItemStack selectedItem) {}
+	  @param pattern The pattern (search) term
+	  @param term    The term that contains the pattern term
+	  @return Relevance value */
+	public float relevance (String pattern, String term) {
+		// Ignore case
+		pattern = pattern.toLowerCase();
+		term = term.toLowerCase();
 
-@Override public ItemStack getSelectedItem () {return null;}
+		// Optimisation
+		if (term.equals(pattern)) return 1f;
 
-@Override public void setBottomInv (boolean b) {}
+		// Required variables
+		int searchLength = pattern.length();
+		int matchLength = term.length();
+
+		// If the term contains the pattern term, it is relevant, thus we give a full score
+		if (term.contains(pattern)) return ((float) searchLength) / matchLength;
+
+		// If the term does not contain the pattern term, but contains parts of it, we give a divided score
+		// The score is calculated by s_x/x*m where s is the pattern term length, x is the number of characters in the pattern term not matched,
+		//   and m is the term length.
+
+		/* At this point term does not contain pattern */
+		for (int i = searchLength; i >= 2; i--) { // i is length of substring
+			for (int j = 0; j + i <= searchLength; j++) {
+				String subSearch = pattern.substring(j, j + i);
+				if (term.contains(subSearch)) {
+					// found term, calculate relevance
+					return ((float) i) / (searchLength - i) / matchLength;
+				}
+			}
+		}
+
+		// if no term found, return 0f (pattern failed)
+		return 0f;
+	}
+
+	//public void setTerminal(Component terminal) { this.terminal = terminal; }
+
+	//public void setTerminal(Component terminal) { this.terminal = terminal; }
+	@Override public Clickable[] getClickables () {return clickables;}
+
+	@Override public boolean useBottomInv () {return false;}
+
+	@Override public void setSelectedItem (ItemStack selectedItem) {}
+
+	@Override public ItemStack getSelectedItem () {return null;}
+
+	@Override public void setBottomInv (boolean b) {}
 
 }

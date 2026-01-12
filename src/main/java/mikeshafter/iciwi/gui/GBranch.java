@@ -1,7 +1,7 @@
 package mikeshafter.iciwi.gui;
 
-import io.papermc.paper.registry.data.dialog.input.DialogInput;
-import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
+//import io.papermc.paper.registry.data.dialog.input.DialogInput;
+//import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +11,9 @@ import io.papermc.paper.registry.data.dialog.body.DialogBody;
 import io.papermc.paper.registry.data.dialog.type.DialogType;
 import net.kyori.adventure.text.*;
 
-import org.bukkit.entity.Player;
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.SimpleForm;
+//import org.bukkit.entity.Player;
+//import org.geysermc.cumulus.form.Form;
+//import org.geysermc.cumulus.form.SimpleForm;
 
 import io.papermc.paper.registry.data.dialog.ActionButton;
 
@@ -71,15 +71,15 @@ public Dialog asJava () {
 	);
 }
 
-public Form asBedrock (Player player) {
-	SimpleForm.Builder form = SimpleForm.builder()
-		.title  (parseComponent(this.title))
-		.content(parseComponent(this.content));
-	for (GButton btn : buttons) {
-		form.button(btn.asBedrock());
-	}
-	form.validResultHandler((f, response) -> buttons.get(response.clickedButtonId()).getAction().accept(player));
-	return form.build();
-}
+//public Form asBedrock (Player player) {
+//	SimpleForm.Builder form = SimpleForm.builder()
+//		.title  (parseComponent(this.title))
+//		.content(parseComponent(this.content));
+//	for (GButton btn : buttons) {
+//		form.button(btn.asBedrock());
+//	}
+//	form.validResultHandler((f, response) -> buttons.get(response.clickedButtonId()).getAction().accept(player));
+//	return form.build();
+//}
 	
 }

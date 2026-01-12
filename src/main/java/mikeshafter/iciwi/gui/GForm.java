@@ -1,13 +1,13 @@
 package mikeshafter.iciwi.gui;
 
-import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
+//import static mikeshafter.iciwi.util.IciwiUtil.parseComponent;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import io.papermc.paper.dialog.Dialog;
-import org.geysermc.cumulus.form.CustomForm;
-import org.geysermc.cumulus.form.Form;
+//import org.geysermc.cumulus.form.CustomForm;
+//import org.geysermc.cumulus.form.Form;
 import org.bukkit.entity.Player;
 import io.papermc.paper.registry.data.dialog.ActionButton;
 import io.papermc.paper.registry.data.dialog.DialogBase;
@@ -113,19 +113,19 @@ this.submitAction.accept(ctx);
 	);
 }
 
-@Override
-public Form asBedrock (Player player) {
-	List<org.geysermc.cumulus.component.Component> inputs = this.formItems.stream().map(IFormItem::asBedrock).toList();
-	CustomForm.Builder formBuilder = CustomForm.builder()
-		.title(parseComponent(title));
-	for (org.geysermc.cumulus.component.Component input : inputs) {
-		formBuilder.component(input);
-	}
-	formBuilder.validResultHandler((f, response) -> {
-GuiContext ctx = GuiContext.fromBedrock(formItems, response);
-this.submitAction.accept(ctx);
-	});
-	return formBuilder.build();
-}
-
+//@Override
+//public Form asBedrock (Player player) {
+//	//List<org.geysermc.cumulus.component.Component> inputs = this.formItems.stream().map(IFormItem::asBedrock).toList();
+//	CustomForm.Builder formBuilder = CustomForm.builder()
+//		.title(parseComponent(title));
+//	//for (org.geysermc.cumulus.component.Component input : inputs) {
+//		formBuilder.component(input);
+//	}
+//	formBuilder.validResultHandler((f, response) -> {
+//GuiContext ctx = GuiContext.fromBedrock(formItems, response);
+//this.submitAction.accept(ctx);
+//	});
+//	return formBuilder.build();
+//}
+//
 }

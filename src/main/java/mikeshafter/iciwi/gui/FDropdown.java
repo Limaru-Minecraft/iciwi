@@ -3,8 +3,8 @@ package mikeshafter.iciwi.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geysermc.cumulus.component.Component;
-import org.geysermc.cumulus.component.DropdownComponent;
+//import org.geysermc.cumulus.component.Component;
+//import org.geysermc.cumulus.component.DropdownComponent;
 
 import io.papermc.paper.registry.data.dialog.input.DialogInput;
 import io.papermc.paper.registry.data.dialog.input.SingleOptionDialogInput.OptionEntry;
@@ -34,9 +34,9 @@ public DialogInput asJava () {
     return DialogInput.singleOption(id, net.kyori.adventure.text.Component.text(id), entries).labelVisible(true).build();
 }
 
-public Component asBedrock () {
-    return DropdownComponent.of(id, options, 0);
-}
+//public Component asBedrock () {
+    //return DropdownComponent.of(id, options, 0);
+//}
 
 public Class<String> returnType () {return String.class;}
 }
