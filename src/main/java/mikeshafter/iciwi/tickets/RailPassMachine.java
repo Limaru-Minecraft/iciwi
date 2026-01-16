@@ -50,8 +50,9 @@ private final Lang lang = plugin.lang;
 private final IcLogger logger = plugin.icLogger;
 
 public RailPassMachine (Player player) { this.player = player; }
-public RailPassMachine (Player player, List<String> operators) {
+public RailPassMachine (Player player, IcCard card, List<String> operators) {
 	this.player = player;
+	this.insertedCard = card;
 	this.operators = operators;
 }
 

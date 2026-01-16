@@ -69,8 +69,8 @@ no-tickets-found: '§cNo tickets were found for your selected journey!'
 ticket-machine: 'Ticket Machine'
 
 # == Main page item names ==
-menu-new-ticket: '§aNew Single Journey Ticket (Key in the station)'
-menu-new-flat-ticket: '§aNew Single Journey Ticket (Flat Fare)'
+menu-new-ticket: '§aNew Paper Ticket'
+menu-new-flat-ticket: '§aNew Flat Fare Ticket'
 menu-insert-card: '§eInsert Card'
 
 # == Paper ticket subpage ==

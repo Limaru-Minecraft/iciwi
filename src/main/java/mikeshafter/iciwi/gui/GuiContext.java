@@ -54,13 +54,13 @@ public class GuiContext {
         //}
         //return guiContext;
     //}
-    public String getString (String label) {
-        return stringItems.get(label);
+    public String getString (String id) {
+        return stringItems.get(id);
     }
-    public float getFloat (String label) {
-        return floatItems.get(label);
+    public float getFloat (String id) {
+        return floatItems.get(id);
     }
-    public boolean getBoolean (String label) {
-        return booleanItems.get(label);
+    public boolean getBoolean (String id) {
+        return booleanItems.get(id);
     }
 }

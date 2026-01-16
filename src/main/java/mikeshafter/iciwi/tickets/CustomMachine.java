@@ -36,9 +36,9 @@ public class CustomMachine implements Machine {
 
 		GForm form = new GForm.Builder()
 			.title(lang.getComponent("ticket-machine"))
-			.item(new FInput("Destination", ""))
+			.item(new FInput("destination", "Destination", ""))
 			.action(ctx -> {
-				String dest = ctx.getString("Destination");
+				String dest = ctx.getString("destination");
 				if (!stationList.contains(dest)) {
 					// get 9 closest stations
 					String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);

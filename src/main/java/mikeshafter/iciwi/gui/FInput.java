@@ -7,12 +7,13 @@ import io.papermc.paper.registry.data.dialog.input.DialogInput;
 public class FInput implements IFormItem {
 
 private final String id;
+private final String name;
 private final String def;
 //private final String placeholder;
 
-public FInput (String id, String def/*, String placeholder*/) {
+public FInput (String id, String name, String def) {
     this.id = id;
-    //this.placeholder = placeholder;
+    this.name = name;
     this.def = def;
 }
 
@@ -21,7 +22,7 @@ public String getId () {
 }
 
 public DialogInput asJava () {
-    return DialogInput.text(id, net.kyori.adventure.text.Component.text(id)).initial(def).build();
+    return DialogInput.text(id, net.kyori.adventure.text.Component.text(name)).initial(def).build();
 }
 
 //public Component asBedrock () {

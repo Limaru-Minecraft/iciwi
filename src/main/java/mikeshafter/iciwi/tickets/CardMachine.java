@@ -110,13 +110,14 @@ public void cardMenu () {
 	GBranch branch = GBranch.builder().title(lang.getComponent("ticket-machine"))
 		.content(
 			Component.text("Serial: ").color(TextColor.color(0x55aaaa)).append(
-			Component.text(this.insertedCard.getSerial()).color(TextColor.color(0x55aaaa))).append(
-			Component.text("Value: ").color(TextColor.color(0xFFAA00))).append(
-			Component.text(this.insertedCard.getValueStr()).color(TextColor.color(0x55aaaa)))
+			Component.text(this.insertedCard.getSerial()).color(TextColor.color(0x55aaaa)),
+			Component.text(" | ").color(TextColor.color(0xFFffff)),
+			Component.text("Value: ").color(TextColor.color(0xFFAA00)),
+			Component.text(this.insertedCard.getValueStr()).color(TextColor.color(0xFFAA00)))
 		)
 		.button(GButton.builder().content(lang.getComponent("menu-new-card")).onClick(player -> newCard()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-top-up-card")).onClick(player -> topUpCard()).build())
-		.button(GButton.builder().content(lang.getComponent("menu-rail-pass")).onClick(player -> new RailPassMachine(player, operators).railPass()).build())
+		.button(GButton.builder().content(lang.getComponent("menu-rail-pass")).onClick(player -> new RailPassMachine(player, this.insertedCard, operators).railPass()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-refund-card")).onClick(player -> refundCard()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-select-other-card")).onClick(player -> selectCard()).build())
 		.build();
@@ -156,9 +157,9 @@ public void cardMenu () {
 // new iciwi card menu
 public void newCard () {
 	GForm form = GForm.builder().title(lang.getComponent("ticket-machine"))
-		.item(new FInput("Initial Price", "0"))
+		.item(new FInput("value", "Initial Value", ""))
 		.action(ctx -> {
-			double value = Double.parseDouble(ctx.getString("Initial Price"));
+			double value = Double.parseDouble(ctx.getString("value"));
 			double deposit = plugin.getConfig().getDouble("deposit");
 			if (Iciwi.economy.getBalance(player) >= deposit + value) {
 				// Take money from player and send message
@@ -248,9 +249,9 @@ public void newCard () {
 // top up menu
 public void topUpCard () {
 	GForm form = GForm.builder().title(lang.getComponent("ticket-machine"))
-		.item(new FInput("Value", "0"))
+		.item(new FInput("value", "Value", "0"))
 		.action(ctx -> {
-			double value = Double.parseDouble(ctx.getString("Value"));
+			double value = Double.parseDouble(ctx.getString("value"));
 
 			if (Iciwi.economy.getBalance(player) >= value) {
 				Iciwi.economy.withdrawPlayer(player, value);
