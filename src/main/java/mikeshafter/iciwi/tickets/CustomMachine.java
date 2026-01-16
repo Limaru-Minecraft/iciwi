@@ -9,18 +9,12 @@ import mikeshafter.iciwi.gui.FInput;
 import mikeshafter.iciwi.gui.GForm;
 import mikeshafter.iciwi.gui.GBranch;
 import mikeshafter.iciwi.gui.GButton;
-import mikeshafter.iciwi.util.Clickable;
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-//import org.bukkit.event.EventHandler;
-//import org.bukkit.event.EventPriority;
-//import org.bukkit.event.Listener;
-//import org.bukkit.event.inventory.InventoryClickEvent;
-//import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
@@ -32,7 +26,6 @@ public class CustomMachine implements Machine {
 	private final Fares fares = plugin.fares;
 	private final Owners owners = plugin.owners;
 	//private ItemStack[] playerInv;
-	private Clickable[] clickables;
 	private final IcLogger logger = plugin.icLogger;
 
 
@@ -99,7 +92,7 @@ public class CustomMachine implements Machine {
 				.onClick(p -> {
 					ItemStack ticket = generateTicket(station, end, fareClass.getKey());
 					if (ticket != null) player.getInventory().addItem(ticket);
-					SignInteractListener.removeMachine(player);
+					//SignInteractListener.removeMachine(player);
 				})
 				.build()
 			);
@@ -155,7 +148,7 @@ public class CustomMachine implements Machine {
 
 			// Get ticket materials
 			Material ticketMaterial = Material.valueOf(plugin.getConfig().getString("ticket.material"));
-			int customModelData = owners.getCustomModel(ownersList.get(0));//plugin.getConfig().getInt("ticket.custom-model-data");
+			int customModelData = owners.getCustomModel(ownersList.getFirst());//plugin.getConfig().getInt("ticket.custom-model-data");
 
 			// log to icLogger
 			Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "from", from, "to", to, "fareClass", fareClass);
@@ -241,14 +234,5 @@ public class CustomMachine implements Machine {
 	//public void setTerminal(Component terminal) { this.terminal = terminal; }
 
 	//public void setTerminal(Component terminal) { this.terminal = terminal; }
-	@Override public Clickable[] getClickables () {return clickables;}
-
-	@Override public boolean useBottomInv () {return false;}
-
-	@Override public void setSelectedItem (ItemStack selectedItem) {}
-
-	@Override public ItemStack getSelectedItem () {return null;}
-
-	@Override public void setBottomInv (boolean b) {}
 
 }

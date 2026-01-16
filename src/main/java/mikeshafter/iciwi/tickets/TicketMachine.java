@@ -4,27 +4,20 @@ import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.Lang;
 import mikeshafter.iciwi.config.Owners;
-import mikeshafter.iciwi.util.Clickable;
+import mikeshafter.iciwi.gui.GBranch;
+import mikeshafter.iciwi.gui.GButton;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static mikeshafter.iciwi.util.IciwiUtil.*;
 
 public class TicketMachine implements Machine {
 
-private Clickable[] clickables;
-private ItemStack selectedItem;
 private final Player player;
-private boolean bottomInv;
-
 // Constant helper classes
 private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private final Owners owners = plugin.owners;
@@ -34,77 +27,114 @@ private final IcLogger logger = plugin.icLogger;
 // Constructor and Menu Display
 public TicketMachine (Player player) {this.player = player;}
 
-// getters
-public Clickable[] getClickables () {return clickables;}
-public ItemStack getSelectedItem () {return selectedItem;}
-public boolean useBottomInv () {return bottomInv;}
-
-// setters
-@Override
-public void setSelectedItem (ItemStack selectedItem) {this.selectedItem = selectedItem;}
-
 public void init (String station) {
     List<String> operators = this.owners.getOwners(station);
-	int card_model = this.owners.getCustomModel(operators.get(0));
-    ArrayList<Clickable> clickList = new ArrayList<>();
-	boolean flatTix = operators.stream().anyMatch(o -> this.owners.hasOperatorTicket(o));
-	boolean customTix = !operators.stream().allMatch(o -> this.owners.hasOperatorTicket(o));
+	boolean flatTix = operators.stream().anyMatch(this.owners::hasOperatorTicket);
+	boolean customTix = !operators.stream().allMatch(this.owners::hasOperatorTicket);
 
-	// Paper ticket
+	GBranch.Builder guiBuilder = GBranch.builder()
+		.title(this.lang.getComponent("ticket-machine"));
 	if (flatTix) {
-		clickList.add(Clickable.of(
-			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-flat-ticket"), Component.text("Tickets are non-refundable")),
-			(e) -> selectTicket(operators.stream().filter(o -> this.owners.hasOperatorTicket(o)).toList())
-		));
+		guiBuilder.button(GButton.builder()
+			.content(lang.getComponent("menu-new-flat-ticket"))
+			.tooltip(Component.text("Tickets are non-refundable"))
+			.onClick(p -> selectTicket(operators.stream().filter(this.owners::hasOperatorTicket).toList()))
+			.build()
+		);
 	}
-	 if (customTix) {
-		clickList.add(Clickable.of(
-			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
-			(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
-		));
+	if (customTix) {
+		guiBuilder.button(GButton.builder()
+			.content(lang.getComponent("menu-new-ticket"))
+			.tooltip(Component.text("Tickets are non-refundable"))
+			.onClick(p -> new CustomMachine(p, station))
+			.build()
+		);
 	}
 
-	// New card
-    clickList.add(
-        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> {
-            SignInteractListener.putMachine(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
-        })
-    );
+	guiBuilder.button(GButton.builder()
+		.content(lang.getComponent("menu-new-card"))
+		.onClick(p -> new CardMachine(p, station).newCard())
+		.build()
+	);
 
-	// Select card
-    clickList.add(
-        Clickable.of(makeItem(Material.valueOf(plugin.getConfig().getString("card.material")), card_model, lang.getComponent("menu-insert-card")), (e) -> {
-            SignInteractListener.putMachine(player, new CardMachine(player, station));
-            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
-        })
-    );
+	guiBuilder.button(GButton.builder()
+		.content(lang.getComponent("menu-insert-card"))
+		.onClick(p -> new CardMachine(p, station).selectCard())
+		.build()
+	);
 
-	this.clickables = justify(9, clickList);
+	guiBuilder.build().open(player);
 
-	// Attributes
-	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
-	setItems(clickables, inv);
-	// Start listening and open inventory
-	player.openInventory(inv);
+//	// Paper ticket
+//	if (flatTix) {
+//		clickList.add(Clickable.of(
+//			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-flat-ticket"), Component.text("Tickets are non-refundable")),
+//			(e) -> selectTicket(operators.stream().filter(o -> this.owners.hasOperatorTicket(o)).toList())
+//		));
+//	}
+//	 if (customTix) {
+//		clickList.add(Clickable.of(
+//			makeItem(Material.valueOf(plugin.getConfig().getString("ticket.material")), plugin.getConfig().getInt("ticket.custom-model-data"), lang.getComponent("menu-new-ticket"), Component.text("Tickets are non-refundable")),
+//			(e) -> SignInteractListener.putMachine(this.player, new CustomMachine(player, station))
+//		));
+//	}
+//
+//	// New card
+//    clickList.add(
+//        Clickable.of(makeItem(Material.PURPLE_WOOL, 0, lang.getComponent("menu-new-card")), (e) -> {
+//            SignInteractListener.putMachine(player, new CardMachine(player, station));
+//            ((CardMachine) SignInteractListener.getMachine(player)).newCard();
+//        })
+//    );
+//
+//	// Select card
+//    clickList.add(
+//        Clickable.of(makeItem(Material.valueOf(plugin.getConfig().getString("card.material")), card_model, lang.getComponent("menu-insert-card")), (e) -> {
+//            SignInteractListener.putMachine(player, new CardMachine(player, station));
+//            ((CardMachine) SignInteractListener.getMachine(player)).selectCard();
+//        })
+//    );
+//
+//	this.clickables = justify(9, clickList);
+//
+//	// Attributes
+//	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("ticket-machine"));
+//	setItems(clickables, inv);
+//	// Start listening and open inventory
+//	player.openInventory(inv);
 }
 
 private void selectTicket (List<String> operators) {
-	List<Clickable> items = operators.stream().map(o -> {
-		int modelId = this.owners.getCustomModel(o);
-		return Clickable.of(
-			makeItem(
-				Material.PAPER,
-				modelId,
-				Component.text(o),
-				Component.text(owners.getOperatorTicket(o))
-			), e -> generateOperatorTicket(o)
-		);
-	}).collect(Collectors.toList());
-	Clickable[] clickables = alignLeft(9, new ArrayList<Clickable>(items));
-	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("select-ticket"));
-	setItems(clickables, inv);
-	player.openInventory(inv);
+	List<GButton> buttons = operators.stream().map(o -> GButton.builder().content(
+		Component.text(o).append(Component.text(" - "), Component.text(owners.getOperatorTicket(o))))
+		.tooltip(Component.text("Click to buy this ticket"))
+		.onClick(p -> generateOperatorTicket(o))
+		.build())
+	.toList();
+
+	GBranch gui = GBranch.builder()
+		.buttons(buttons)
+		.title(this.lang.getComponent("ticket-machine"))
+		.content(lang.getComponent("select-ticket"))
+		.build();
+
+	gui.open(player);
+
+//	List<Clickable> items = operators.stream().map(o -> {
+//		int modelId = this.owners.getCustomModel(o);
+//		return Clickable.of(
+//			makeItem(
+//				Material.PAPER,
+//				modelId,
+//				Component.text(o),
+//				Component.text(owners.getOperatorTicket(o))
+//			), e -> generateOperatorTicket(o)
+//		);
+//	}).collect(Collectors.toList());
+//	Clickable[] clickables = alignLeft(9, new ArrayList<Clickable>(items));
+//	Inventory inv = plugin.getServer().createInventory(this.player, 9, lang.getComponent("select-ticket"));
+//	setItems(clickables, inv);
+//	player.openInventory(inv);
 }
 
 /**
@@ -136,12 +166,5 @@ protected void generateOperatorTicket (String owner) {
 	logger.info("operatorTicket", lMap);
 
 	player.getInventory().addItem(makeItem(ticketMaterial, customModelData, lang.getComponent("train-ticket"), Component.text("C:" + owner), Component.text("C:" + owner), Component.text(Objects.requireNonNull(plugin.getConfig().getString("default-class")))));
-	player.closeInventory();
-	SignInteractListener.removeMachine(player);
 }
-
-
-@Override
-public void setBottomInv (boolean b) {this.bottomInv = b;}
-
 }

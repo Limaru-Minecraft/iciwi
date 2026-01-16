@@ -44,9 +44,6 @@ public CardMachine (Player player, String station) {
 	this.operators = this.owners.getOwners(station);
 }
 
-public void insertCard (IcCard card) {this.insertedCard = card;}
-public IcCard getInsertedCard () {return insertedCard;}
-
 public void init (String station) {
 	this.operators = owners.getOwners(station);
 
@@ -119,10 +116,7 @@ public void cardMenu () {
 		)
 		.button(GButton.builder().content(lang.getComponent("menu-new-card")).onClick(player -> newCard()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-top-up-card")).onClick(player -> topUpCard()).build())
-		.button(GButton.builder().content(lang.getComponent("menu-rail-pass")).onClick(player -> {
-			SignInteractListener.putMachine(player, new RailPassMachine(player, this.operators));
-			((RailPassMachine) SignInteractListener.getMachine(player)).railPass(this.insertedCard);
-		}).build())
+		.button(GButton.builder().content(lang.getComponent("menu-rail-pass")).onClick(player -> new RailPassMachine(player, operators).railPass()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-refund-card")).onClick(player -> refundCard()).build())
 		.button(GButton.builder().content(lang.getComponent("menu-select-other-card")).onClick(player -> selectCard()).build())
 		.build();
@@ -177,7 +171,7 @@ public void newCard () {
 
 				// Get card generator
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
-				int customModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
+				int customModelData = owners.getCustomModel(operators.getFirst());//plugin.getConfig().getInt("card.custom-model-data");
 				// Generate card
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
@@ -265,7 +259,7 @@ public void topUpCard () {
 
 				this.insertedCard.deposit(value);
 				player.closeInventory();
-				SignInteractListener.removeMachine(player);
+				//SignInteractListener.removeMachine(player);
 
 				// log to icLogger
 				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", this.insertedCard.getSerial(), "old", String.valueOf(old), "change", String.valueOf(value));
@@ -279,7 +273,7 @@ public void topUpCard () {
 			}
 			else {
 				player.closeInventory();
-				SignInteractListener.removeMachine(player);
+				//SignInteractListener.removeMachine(player);
 				player.sendMessage(lang.getString("not-enough-money"));
 			}
 		}).build();
@@ -318,7 +312,7 @@ public void refundCard () {
 
 			// close inventory
 
-			SignInteractListener.removeMachine(player);
+			//SignInteractListener.removeMachine(player);
 			break;
 		}
 	}

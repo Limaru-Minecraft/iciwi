@@ -21,7 +21,7 @@ import io.papermc.paper.registry.data.dialog.ActionButton;
 public class GBranch implements IGui {
 private final Component title;
 private final Component content;
-private final ArrayList<GButton> buttons;
+private final List<GButton> buttons;
 
 private GBranch (Builder builder) {
 	this.title = builder.title;
@@ -36,7 +36,7 @@ public static Builder builder() {
 public static class Builder {
 	private Component title = Component.empty();
 	private Component content = Component.empty();
-	private final ArrayList<GButton> buttons = new ArrayList<>();
+	private List<GButton> buttons = new ArrayList<>();
 
 	public Builder title(Component title) {
 		this.title = title;
@@ -50,6 +50,11 @@ public static class Builder {
 
 	public Builder button(GButton button) {
 		this.buttons.add(button);
+		return this;
+	}
+
+	public Builder buttons (List<GButton> buttons) {
+		this.buttons = buttons;
 		return this;
 	}
 
