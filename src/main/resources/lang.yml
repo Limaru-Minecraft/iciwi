@@ -66,11 +66,11 @@ not-enough-money: '§cYou do not have enough money!'
 no-tickets-found: '§cNo tickets were found for your selected journey!'
 
 # Ticket Machine's menu text
-ticket-machine: '§1Ticket Machine'
+ticket-machine: 'Ticket Machine'
 
 # == Main page item names ==
-menu-new-ticket: '§aNew Single Journey Ticket (Key in the station)'
-menu-new-flat-ticket: '§aNew Single Journey Ticket (Flat Fare)'
+menu-new-ticket: '§aNew Paper Ticket'
+menu-new-flat-ticket: '§aNew Flat Fare Ticket'
 menu-insert-card: '§eInsert Card'
 
 # == Paper ticket subpage ==

@@ -10,6 +10,7 @@ import mikeshafter.iciwi.util.IciwiUtil;
 import java.util.Map;
 
 import org.bukkit.entity.Player;
+import java.util.Optional;
 
 public class Balance extends FareGate {
 
@@ -25,14 +26,14 @@ public void onTicket (Player player, SignInfo info) {}
 
 @Override
 public void onCard (Player player, SignInfo info) {
-	final IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
+	final Optional<IcCard> icCard = IciwiUtil.IcCardFromItem(info.item());
 	// Confirmation
-	if (icCard == null) return;
+	if (icCard.isEmpty()) return;
 
 	player.sendRichMessage(lang.createRichMessage(
 		"Balance",
 		lang.getStringList("balance-message"),
-		Map.of("value", icCard.getValue())
+		Map.of("value", icCard.get().getValue())
 	));
 }
 
