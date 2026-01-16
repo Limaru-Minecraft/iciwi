@@ -48,13 +48,15 @@ public Payment() {
 
 			// Try paying with card
 			Optional<IcCard> cardOpt = IciwiUtil.IcCardFromItem(item);
+			boolean cashDivert;
 			if (cardOpt.isPresent() && cardOpt.get().withdraw(price)) {
 				player.sendMessage(String.format(lang.getString("pay-success-card"), price, cardOpt.get().getValue()));
+				cashDivert = false;
 			}
-
 			// If there is no card, pay with cash
 			else {
 				Iciwi.economy.withdrawPlayer(player, price);
+				cashDivert = true;
 			}
 			player.sendRichMessage(lang.createRichMessage(
 				"Payment",
