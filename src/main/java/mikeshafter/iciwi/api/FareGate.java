@@ -72,7 +72,6 @@ public void onInteract (Player player, SignInfo info) {
 	var item = info.item();
 	if (!IciwiUtil.loreCheck(item)) return;
 	var m = item.getType().toString();
-	var i = item.getItemMeta().getCustomModelData();
 	var c = Iciwi.getPlugin(Iciwi.class).getConfig();
 
 	if (m.equalsIgnoreCase(c.getString("ticket.material"))) {

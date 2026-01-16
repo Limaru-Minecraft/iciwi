@@ -26,10 +26,12 @@ private String serial = "";
 
 public Card (Player player, SignInfo info) {
 	super(player, info);
-	this.icCard = IciwiUtil.IcCardFromItem(info.item());
-	if (icCard != null) {
-		this.serial = this.icCard.getSerial();
+	Optional<IcCard> cardOption = IciwiUtil.IcCardFromItem(info.item());
+	if (cardOption.isPresent()) {
+		this.icCard = cardOption.get();
+		this.serial = cardOption.get().getSerial();
 	}
+	else this.icCard = null;
 }
 
 /**
@@ -141,7 +143,7 @@ public boolean onExit () {
 	double pp = 1f;
 	String finalRailPass = null;
 	if (!finalPasses.isEmpty()) {
-		if (finalPasses.size() == 1) {finalRailPass = finalPasses.get(0); pp = owners.getRailPassPercentage(finalRailPass);}
+		if (finalPasses.size() == 1) {finalRailPass = finalPasses.getFirst(); pp = owners.getRailPassPercentage(finalRailPass);}
 		else for (String railPassName : finalPasses) {
 			if (pp >= owners.getRailPassPercentage(railPassName)) {
 				pp = owners.getRailPassPercentage(railPassName);

@@ -12,6 +12,7 @@ import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import java.util.Map;
+import java.util.Optional;
 
 public class Payment extends FareGate {
 
@@ -43,9 +44,9 @@ public Payment() {
 		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
 
 			// Try paying with card
-			IcCard icCard = IciwiUtil.IcCardFromItem(item);
-			if (icCard != null && icCard.withdraw(price)) {
-				player.sendMessage(String.format(lang.getString("pay-success-card"), price, icCard.getValue()));
+			Optional<IcCard> cardOpt = IciwiUtil.IcCardFromItem(item);
+			if (cardOpt.isPresent() && cardOpt.get().withdraw(price)) {
+				player.sendMessage(String.format(lang.getString("pay-success-card"), price, cardOpt.get().getValue()));
 			}
 
 			// If there is no card, pay with cash
