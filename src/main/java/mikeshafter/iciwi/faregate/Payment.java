@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.faregate;
+import mikeshafter.iciwi.IcLogger;
 import mikeshafter.iciwi.api.SignInfo;
 import org.bukkit.SoundCategory;
 
@@ -13,13 +14,16 @@ import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import java.util.Map;
+import java.util.Optional;
 
 public class Payment extends FareGate {
 
-	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Lang lang = plugin.lang;
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Lang lang = plugin.lang;
+private final IcLogger logger = plugin.icLogger;
 
-	public Payment() {
+public Payment() {
 		super("payment");
 	}
 
@@ -43,11 +47,16 @@ public class Payment extends FareGate {
 		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
 
 			// Try paying with card
-			IcCard icCard = IciwiUtil.IcCardFromItem(item);
-			var cashDivert = icCard != null && icCard.withdraw(price);
+			Optional<IcCard> cardOpt = IciwiUtil.IcCardFromItem(item);
+			boolean cashDivert;
+			if (cardOpt.isPresent() && cardOpt.get().withdraw(price)) {
+				player.sendMessage(String.format(lang.getString("pay-success-card"), price, cardOpt.get().getValue()));
+				cashDivert = false;
+			}
 			// If there is no card, pay with cash
-			if (!cashDivert) {
+			else {
 				Iciwi.economy.withdrawPlayer(player, price);
+				cashDivert = true;
 			}
 			player.sendRichMessage(lang.createRichMessage(
 				"Payment",
@@ -59,8 +68,17 @@ public class Payment extends FareGate {
 			));
 			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
 			// Receipt
-			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+String.valueOf(price)) ));
+			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: " + price) ));
 		}
+
+		else {
+			Iciwi.economy.withdrawPlayer(player, price);
+			player.sendMessage(String.format(lang.getString("pay-success"), price));
+		}
+
+		// logger
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "price", String.valueOf(price));
+		logger.info("payment", lMap);
 
 		// Deposit money into owner's bank account
 		var stationOwners = plugin.owners.getOwners(station);

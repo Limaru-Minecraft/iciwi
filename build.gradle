@@ -1,17 +1,17 @@
 plugins {
   id 'java'
-  id "com.gradleup.shadow" version "9.0.0-beta4"
+  //id "com.gradleup.shadow" version "9.0.0-beta4"
   id 'maven-publish'
 }
 
 group 'mikeshafter'
-version '2.20.5'
+version '2.21.801'
 
 compileJava.options.encoding 'UTF-8'
 
 repositories {
   maven { url 'https://repo.papermc.io/repository/maven-public/' }
-  maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
+  maven { url 'https://ci.mg-dev.eu/plugin/repository/everything/' }
   maven { url 'https://jitpack.io' }
   maven { url 'https://oss.sonatype.org/content/groups/public/' }
   maven { url 'https://repo.opencollab.dev/main/' }
@@ -20,7 +20,7 @@ repositories {
 }
 
 java { toolchain {
-  languageVersion = JavaLanguageVersion.of(17)
+  languageVersion = JavaLanguageVersion.of(21)
 }}
 
 publishing {
@@ -28,7 +28,7 @@ publishing {
     mavenJava(MavenPublication) {
       groupId = 'mikeshafter'
       artifactId = 'iciwi'
-      version = '2.20.5'
+      version = '2.21.801'
 
       from components.java
     }
@@ -37,29 +37,17 @@ publishing {
 
 dependencies {
   compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
-  compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.20.6-v1'
-  //compileOnly 'org.geysermc.geyser:api:2.2.0-SNAPSHOT'
-  compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
+  //compileOnly 'com.bergerkiller.bukkit:BKCommonLib:1.21.10-v1'
+  compileOnly 'io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT'
 
-  compileOnly 'org.incendo:cloud-paper'
-  compileOnly 'org.incendo:cloud-annotations'
-  compileOnly 'org.incendo:cloud-minecraft-extras'
+  //compileOnly 'org.incendo:cloud-paper:2.0.0-beta.10'
+  //compileOnly 'org.incendo:cloud-annotations:2.0.0'
+  //compileOnly 'org.incendo:cloud-minecraft-extras:2.0.0-beta.10'
 }
 
 tasks.withType(JavaCompile).configureEach {
   options.compilerArgs << '-Xlint:unchecked'
   options.deprecation = true
-}
-
-shadowJar {
-  minimize {}
-  relocate ('org.incendo.cloud', 'com.bergerkiller.bukkit.common.dep.cloud')
-  //relocate ('io.leangen.geantyref', 'com.bergerkiller.bukkit.common.dep.typetoken')
-  //relocate ('me.lucko.commodore', 'com.bergerkiller.bukkit.common.dep.me.lucko.commodore')
-}
-
-assemble {
-  dependsOn shadowJar
 }
 
 test {

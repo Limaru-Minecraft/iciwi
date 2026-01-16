@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import mikeshafter.iciwi.Iciwi;
 import mikeshafter.iciwi.config.*;
 import mikeshafter.iciwi.util.IciwiUtil;
+import java.util.Optional;
 
 public class Validator extends FareGate {
 
@@ -43,9 +44,9 @@ public void onTicket (Player player, SignInfo info) {
 
 @Override
 public void onCard (Player player, SignInfo info) {
-    IcCard icCard = IciwiUtil.IcCardFromItem(info.item());
-    if (icCard == null) return;
-    String serial = icCard.getSerial();
+    Optional<IcCard> icCard = IciwiUtil.IcCardFromItem(info.item());
+    if (icCard.isEmpty()) return;
+    String serial = icCard.get().getSerial();
     Card card = new Card(player, info);
     if (plugin.records.getStation(serial).isEmpty()) card.onEntry();
     else card.onExit();
