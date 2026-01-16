@@ -527,7 +527,6 @@ private final LiteralArgumentBuilder<CommandSourceStack> machineTicket = Command
             String station = ctx.getArgument("station", String.class);
             final TicketMachine machine = new TicketMachine(player);
             machine.init(station);
-            SignInteractListener.putMachine(player, machine);
             return 1;
         }));
 
@@ -539,7 +538,6 @@ private final LiteralArgumentBuilder<CommandSourceStack> machineCard = Commands.
             String station = ctx.getArgument("station", String.class);
             final CardMachine machine = new CardMachine(player);
             machine.init(station);
-            SignInteractListener.putMachine(player, machine);
             return 1;
         }));
 
@@ -550,7 +548,6 @@ private final LiteralArgumentBuilder<CommandSourceStack> machineCustom = Command
             if (!(ctx.getSource().getSender() instanceof Player player)) return 0;
             String station = ctx.getArgument("station", String.class);
             final CustomMachine machine = new CustomMachine(player, station);
-            SignInteractListener.putMachine(player, machine);
             return 1;
         }));
 
@@ -562,7 +559,6 @@ private final LiteralArgumentBuilder<CommandSourceStack> machineRailPass = Comma
             String station = ctx.getArgument("station", String.class);
             final RailPassMachine machine = new RailPassMachine(player);
             machine.init(station);
-            SignInteractListener.putMachine(player, machine);
             return 1;
         }));
 
