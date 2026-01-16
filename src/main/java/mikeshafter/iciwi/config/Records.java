@@ -1,5 +1,10 @@
 package mikeshafter.iciwi.config;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import it.unimi.dsi.fastutil.longs.LongList;
+
 public class Records extends CustomConfig {
 
 public Records () { super("records.yml"); }
@@ -96,6 +101,17 @@ public void setTransfer (String serial, boolean hasTransfer) {
 }
 
 /**
+ * Sets whether the card is eligible for a transfer discount on onExit based on the time elapsed since the previous journey.
+ * This is used on entry to determine if a transfer discount can be applied.
+ *
+ * @param serial Serial number of card
+ */
+public void setTransfer (String serial) {
+    super.set(serial + ".has-transfer", System.currentTimeMillis() - this.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
+	super.save();
+}
+
+/**
  * Gets the onExit timestamp of the previous journey.
  * This is used on entry
  *
@@ -183,5 +199,28 @@ public void setCapExpiry (String serial, String operator, long exp) {
 public void setCapRemAmt (String serial, String operator, double amt) {
 	super.set(toPath(serial, operator, "rem-amt"), amt);
 	super.save();
+}
+
+public double touchCap (String serial, String operator) {
+    Owners owners = plugin.owners;
+
+    if (owners.getFareCapAmt(operator) == 0) return Long.MAX_VALUE;
+    if (System.currentTimeMillis() < this.getCapExpiry(serial, operator))
+        return this.getCapRemAmt(serial, operator);
+
+    this.setCapExpiry(serial, operator, owners.getFareCapDuration(operator) + System.currentTimeMillis());
+    this.setCapRemAmt(serial, operator, owners.getFareCapAmt(operator));
+
+    return this.getCapRemAmt(serial, operator);
+}
+
+public List<Long> deductCaps (String serial, long payout, List<String> operators) {
+    return operators.stream().mapToLong(operator -> {
+        long capRem = Math.round(this.touchCap(serial, operator) * 10000);
+        long minum = Math.min(capRem, payout);
+        long newCapRem = capRem - minum;
+        this.setCapRemAmt(serial, operator, newCapRem / 10000d);
+        return newCapRem;
+    }).boxed().toList();
 }
 }

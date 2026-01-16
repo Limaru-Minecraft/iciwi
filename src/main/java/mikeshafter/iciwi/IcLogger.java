@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,20 +37,16 @@ public enum LogLevel {
  * Faster constructor
  */
 public IcLogger () {
-    this.logFilePath = "iciwi.log";
-    initLogFile();
-}
-
-/**
- * Initialize the log file
- */
-private void initLogFile () {
-    File file = new File(plugin.getDataFolder(), logFilePath);
+    this.logFilePath = plugin.getConfig().getString("logger", "iciwi.log");
+    File loggerFile = new File(this.logFilePath);
     Logger logger = plugin.getLogger();
-    if (!file.exists()) {
-        logger.log(Level.INFO, file.getParentFile().mkdirs() ? "[Iciwi] Logger file created!" : "[Iciwi] Logger file already exists, initialising...");
-        plugin.saveResource(logFilePath, false);
-    }
+    try {
+		boolean created = loggerFile.createNewFile();
+		if (created) logger.info("New logger file created at " + this.logFilePath);
+		else logger.info("Logger file already exists at " + this.logFilePath);
+	} catch (IOException e) {
+        logger.warning("Logger file could not be created at: " + this.logFilePath);
+	}
 }
 
 /**

@@ -1,7 +1,5 @@
 package mikeshafter.iciwi.faregate.util;
-import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.SignInfo;
-import mikeshafter.iciwi.util.IciwiUtil;
 
 import org.bukkit.entity.Player;
 

@@ -29,19 +29,27 @@ head-color: green
 body-color: yellow
 entry-message:
   - '{entry-station} →'
-  - 'Balance: £ {value}'
+  - 'Balance: {value}'
+  - 'Transfer: {osi}'
 exit-message:
   - '{entry-station} → {exit-station}'
-  - 'Balance: £ {value}'
-  - 'Fare: <red>£ {fare}</red>'
+  - 'Balance: {value}'
+  - 'Fare: <red>{fare}</red>'
   - 'Transfer: {osi}'
+  - 'Rail Pass: {rail-pass}'
 transfer-message:
   - '{entry-station} → {transfer-station} →'
-  - 'Balance: £ {value}'
-  - 'Fare: <red>£ {fare}</red>'
+  - 'Balance: {value}'
+  - 'Fare: <red>{fare}</red>'
+  - 'Transfer: {osi}'
+  - 'Rail Pass: {rail-pass}'
 member-message:
   - Membership valid. Welcome!
   - 'Station: {station}'
+payment-message:
+  - '{station}'
+  - 'Paid <red>{fare}</red>'
+  - '{cash-divert}'
 
 # Payment sign
 cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
@@ -57,7 +65,6 @@ cards: Cards  # card vending machine sign text
 passes: Passes  # rail pass machine sign text
 custom-tickets: CustomTickets  # custom paper ticket machine sign text
 plugin-name: '§aIciwi Card'  # Default card name
-currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
 serial-prefix: 'B'  # 1 char only!
 
@@ -113,9 +120,9 @@ select-class: 'Select class'
 # Sign creation messages
 # ====================================
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
-create-exit-sign: '§aYou created an onExit sign! This sign is used to end a journey.'
-create-member-sign: '§aYou created a onMember sign! This sign is used to only allow passage to pass holders.'
-create-payment-sign: '§aYou created a onMember sign! This sign is used to get a one-time payment.'
+create-exit-sign: '§aYou created an Exit sign! This sign is used to end a journey.'
+create-member-sign: '§aYou created a Member sign! This sign is used to only allow passage to pass holders.'
+create-payment-sign: '§aYou created a Payment sign! This sign is used to get a one-time payment.'
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
 create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
 create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'
