@@ -7,7 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -93,12 +93,15 @@ public static List<Component> toComponents (List<String> sList) {
  * @param lore            Lore of the item
  * @return The new item
  */
-public static ItemStack makeItem (final Material material, final int customModelData, final Component displayName, final Component... lore) {
+@SuppressWarnings("UnstableApiUsage")
+public static ItemStack makeItem (final Material material, final float customModelData, final Component displayName, final Component... lore) {
 	ItemStack item = new ItemStack(material);
 	ItemMeta itemMeta = item.getItemMeta();
 	assert itemMeta != null;
 	itemMeta.displayName(displayName);
-	itemMeta.setCustomModelData(customModelData);
+	CustomModelDataComponent dataComponent = itemMeta.getCustomModelDataComponent();
+	dataComponent.setFloats(List.of(customModelData));
+	itemMeta.setCustomModelDataComponent(dataComponent);
 	itemMeta.lore(Arrays.asList(lore));
 	item.setItemMeta(itemMeta);
 	return item;
@@ -164,16 +167,16 @@ public static void punchTicket (ItemStack ticket, int line) {
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
-public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	if (!loreCheck(itemStack)) return null;
+public static Optional<IcCard> IcCardFromItem (ItemStack itemStack) {
+	if (!loreCheck(itemStack)) return Optional.empty();
 	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
 	try {
 		Class<?> icCardClass = IciwiPlugin.getCardType(n);
-		if (icCardClass == null) return null;
-		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+		if (icCardClass == null) return Optional.empty();
+		return Optional.of((IcCard)icCardClass.getConstructor(ItemStack.class).newInstance(itemStack));
 	}
 	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		return null;
+		return Optional.empty();
 	}
 }
 

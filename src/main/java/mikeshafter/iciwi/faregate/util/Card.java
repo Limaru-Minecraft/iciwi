@@ -16,6 +16,35 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
 public class Card extends PayType {
+private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
+private final Records records = plugin.records;
+private final Lang lang = plugin.lang;
+private final Owners owners = plugin.owners;
+private final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
+private final IcLogger logger = plugin.icLogger;
+
+private final IcCard icCard;
+private String serial = "";
+
+public Card (Player player, SignInfo info) {
+	super(player, info);
+	Optional<IcCard> cardOption = IciwiUtil.IcCardFromItem(info.item());
+	if (cardOption.isPresent()) {
+		this.icCard = cardOption.get();
+		this.serial = cardOption.get().getSerial();
+	}
+	else this.icCard = null;
+}
+
+	/**
+	 Prevent code from registering multiple accidental clicks
+	@param player Player who clicked
+	@return true if the player has clicked within the last 10 ticks, false otherwise
+	*/
+	private boolean onClick (Player player) {
+		plugin.getServer().getScheduler().runTaskLater(plugin, () -> clickBuffer.remove(player), 10);
+		return !clickBuffer.add(player);
+	}
 
 	private class ExitDetails {
 		double fare;
@@ -26,38 +55,7 @@ public class Card extends PayType {
 		}
 	}
 
-	private final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
-	private final Records records = plugin.records;
-	private final Lang lang = plugin.lang;
-	private final Owners owners = plugin.owners;
-	private final LinkedHashSet<Player> clickBuffer = new LinkedHashSet<>();
-	private final IcLogger logger = plugin.icLogger;
-
-	private final IcCard icCard;
-	private String serial = "";
-
-	public Card(Player player, SignInfo info) {
-		super(player, info);
-		this.icCard = IciwiUtil.IcCardFromItem(info.item());
-		if (icCard != null) {
-			this.serial = this.icCard.getSerial();
-		}
-	}
-
-	/**
-	  Prevent code from registering multiple accidental clicks
-	  @param player Player who clicked
-	  @return true if the player has clicked within the last 10 ticks, false otherwise
-	 */
-	private boolean onClick(Player player) {
-		plugin
-			.getServer()
-			.getScheduler()
-			.runTaskLater(plugin, () -> clickBuffer.remove(player), 10);
-		return !clickBuffer.add(player);
-	}
-
-private boolean handleEntry (String nStation) {
+	private boolean handleEntry (String nStation) {
 		// write the entry station and fare class
 		records.setStation(serial, nStation);
 		records.setClass(serial, plugin.getConfig().getString("default-class"));

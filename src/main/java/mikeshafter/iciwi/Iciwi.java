@@ -110,7 +110,8 @@ private boolean canStart () {
 }
 
 @Override public void onEnable () {
-	if (setupEconomy() && canStart()) {
+	boolean a = setupEconomy(); boolean b = canStart();
+	if (a && b) {
 		this.getLogger().info("§bIciwi has detected an economy and has been enabled!");
 		IciwiPlugin.registerCard("Iciwi", IciwiCard.class);
 		loadAllConfig();
@@ -121,6 +122,15 @@ private boolean canStart () {
 		registerEvents();
 		registerStations();
 		saveAllConfig();
+	}
+	else if (a) {
+		this.getLogger().info("§bIciwi has detected an economy, but your password is incorrect!");
+	}
+	else if (b) {
+		this.getLogger().info("§bYour password is correct, but please install Vault!");
+	}
+	else {
+		this.getLogger().info("§bBad boi, no Iciwi for u!");
 	}
 }
 
