@@ -46,6 +46,10 @@ public Payment() {
 
 		// Pay
 		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
+
+		/**
+ 		* TO-DO: if pay by hand it can't check for item's lore
+ 		*/
 		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
 
 			// Try paying with card
