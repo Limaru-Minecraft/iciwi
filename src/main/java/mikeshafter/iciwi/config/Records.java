@@ -211,13 +211,13 @@ public double touchCap (String serial, String operator) {
     return this.getCapRemAmt(serial, operator);
 }
 
-public List<Long> deductCaps (String serial, long payout, List<String> operators) {
-    return operators.stream().mapToLong(operator -> {
-        long capRem = Math.round(this.touchCap(serial, operator) * 10000);
-        long minum = Math.min(capRem, payout);
-        long newCapRem = capRem - minum;
-        this.setCapRemAmt(serial, operator, newCapRem / 10000d);
-        return newCapRem;
+public List<Double> deductCaps (String serial, double payout, List<String> operators) {
+    return operators.stream().mapToDouble(operator -> {
+        double capRem = Math.round(this.touchCap(serial, operator));
+        double minum = Math.min(capRem, payout);
+        double newCapRem = capRem - minum;
+        this.setCapRemAmt(serial, operator, newCapRem);
+        return minum;
     }).boxed().toList();
 }
 }

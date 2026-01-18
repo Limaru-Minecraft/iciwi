@@ -86,7 +86,7 @@ public Card (Player player, SignInfo info) {
 			}
 		}
 
-boolean osi = handleEntry(nStation);
+	boolean osi = handleEntry(nStation);
 		// confirmation
 		player.sendRichMessage(
 				lang.createRichMessage(
@@ -121,18 +121,18 @@ boolean osi = handleEntry(nStation);
 		return true;
 	}
 
-	private ExitDetails handleExit(int fare, String nStation, String xStation, int osi) {
+	private ExitDetails handleExit(double fare, String nStation, String xStation) {
 		List<String> operators = Stream.concat(owners.getOwners(nStation).stream(), owners.getOwners(xStation).stream()).toList();
 
 		// rail passes
 		List<String> validPasses = owners.getRailPassNamesFromList(operators);
-		int basePayout = fare / operators.size();
+		double basePayout = fare / operators.size();
 		Map<String, Long> railPasses = this.icCard.getRailPasses();
 
 		// ascending order (first element has smallest percentage)
-		long payout = basePayout;
-		String pass = null;
-		if (railPasses != null) {
+		double payout = basePayout;
+		String pass = "";
+		if (railPasses != null && !railPasses.isEmpty()) {
 			List<String> sortedPasses = railPasses.keySet().stream().filter(validPasses::contains).sorted(Comparator.comparing(owners::getRailPassPercentage)).toList();
 
 			double finalPercentage = owners.getRailPassPercentage(sortedPasses.getFirst());
@@ -141,11 +141,15 @@ boolean osi = handleEntry(nStation);
 		}
 
 		// fare caps
-		final List<Long> finalPayouts = records.deductCaps(this.serial, payout, operators);
+//		player.sendMessage("FARE-"+fare);//todo:debug
+//		player.sendMessage("OPERATOR_COUNT-"+operators.size());//todo:debug
+//		player.sendMessage("PAYOUT-"+payout);//todo:debug
+		final List<Double> finalPayouts = records.deductCaps(this.serial, payout, operators);
 		// pay operators
 		double total = 0d;
 		for (int i = 0; i < operators.size(); ++i) {
-			double remapped = finalPayouts.get(i) / 10000d;
+			double remapped = finalPayouts.get(i);
+//			player.sendMessage(operators.get(i)+"-"+remapped);//todo:debug
 			owners.deposit(operators.get(i), remapped);
 			total += remapped;
 		}
@@ -179,48 +183,38 @@ boolean osi = handleEntry(nStation);
 		final String xStation = super.signInfo.station();
 		final String nStation = records.getStation(serial);
 
-		final int rFare = (int) ((fares.getCardFare( records.getPreviousStation(serial), xStation, records.getClass(serial)) - records.getPreviousFare(serial)) * 10000);
-		final int xFare = (int) (fares.getCardFare(nStation, xStation, records.getClass(serial)) * 10000);
+		final double rFare = (fares.getCardFare( records.getPreviousStation(serial), xStation, records.getClass(serial)) - records.getPreviousFare(serial));
+		final double xFare = fares.getCardFare(nStation, xStation, records.getClass(serial));
 
-		final int osi = (records.getTransfer(serial) && rFare > 0) ? 1 : 0;
-		final int fare = osi * (~(rFare >> 31) * rFare) + (~osi & 1) * xFare;
+		final boolean osi = records.getTransfer(serial) && rFare > 0;
+		final double fare = osi ? rFare : xFare;
 		// =====
-		final ExitDetails details = handleExit(fare, nStation, xStation, osi);
+		final ExitDetails details = handleExit(fare, nStation, xStation);
 		final double total = details.fare;
 		final String pass = details.pass;
 		// Confirmation
-		if (icCard.withdraw(total)) player.sendRichMessage(
-				lang.createRichMessage(
-					"Exit",
-					lang.getString("head-color"),
-					lang.getString("body-color"),
-					lang.getStringList("exit-message"),
-					2,
-					Map.of(
-						"entry-station", nStation,
-						"exit-station", xStation,
-						"value", Iciwi.economy.format(this.icCard.getValue()),
-						"fare", String.format("%.2f", ((double) fare)/10000),
-						"rail-pass", pass,
-						"osi", String.valueOf(osi)
-						)
-					)
-				);
-
-		Map<String, String> lMap = Map.of(
+		if (icCard.withdraw(total)) {
+			player.sendRichMessage(lang.createRichMessage("Exit", lang.getString("head-color"), lang.getString("body-color"), lang.getStringList("exit-message"), 2, Map.of("entry-station", nStation, "exit-station", xStation, "value", Iciwi.economy.format(this.icCard.getValue()), "fare", String.format("%.2f", total), "rail-pass", pass, "osi", String.valueOf(osi))));
+			Map<String, String> lMap = Map.of(
 				"player", player.getUniqueId().toString(),
 				"serial", serial,
 				"value", this.icCard.getValueStr(),
 				"nStation", nStation,
 				"xStation", xStation,
 				"osi", String.valueOf(osi),
-				"fare", String.format("%.2f", ((double) fare)/10000),
+				"fare", String.format("%.2f", total),
 				"rail-pass", pass
-				);
-		logger.info("card-exit", lMap);
+			);
+			logger.info("card-exit", lMap);
 
-		player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-		return true;
+			player.playSound(player, plugin.getConfig().getString("exit-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+			return true;
+		}
+		else {
+			player.sendMessage("Ur card no has money. Fare is "+String.format("%.2f", total)+", ur card balance is "+icCard.getValueStr());
+			return false;
+		}
+
 	}
 
 /**
@@ -322,8 +316,8 @@ boolean osi = handleEntry(nStation);
 			}
 		}
 
-		final int fare = (int) (fares.getCardFare(nStation, station, records.getClass(serial)) * 10000);
-		final ExitDetails details = handleExit(fare, nStation, station, 0);
+		final double fare = (fares.getCardFare(nStation, station, records.getClass(serial)));
+		final ExitDetails details = handleExit(fare, nStation, station);
 
 		// Perform entry sequence
 		boolean osi = handleEntry(station);

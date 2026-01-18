@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'mikeshafter'
-version '2.21.801'
+version '2.21.802'
 
 compileJava.options.encoding 'UTF-8'
 
@@ -28,7 +28,7 @@ publishing {
     mavenJava(MavenPublication) {
       groupId = 'mikeshafter'
       artifactId = 'iciwi'
-      version = '2.21.801'
+      version = '2.21.802'
 
       from components.java
     }

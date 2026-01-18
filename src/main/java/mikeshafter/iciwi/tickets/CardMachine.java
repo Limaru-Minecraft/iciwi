@@ -88,6 +88,7 @@ public void selectCard () {
 	GBranch.Builder guiBuilder = GBranch.builder().title(lang.getComponent("ticket-machine"))
 		.content(lang.getComponent("select-card"));
 
+	boolean quickReturn = true;
 	for (ItemStack item : playerInv) {
 		Optional<IcCard> card = IcCardFromItem(item);
 		if (card.isPresent()) {
@@ -99,8 +100,10 @@ public void selectCard () {
 					this.cardMenu();
 				})
 				.build());
+			quickReturn = false;
 		}
 	}
+	if (quickReturn) return;
 	guiBuilder.build().open(player);
 }
 
