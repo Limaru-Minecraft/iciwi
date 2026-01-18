@@ -69,7 +69,7 @@ public Payment() {
 		else {
 			Iciwi.economy.withdrawPlayer(player, price);
 			// player.sendMessage(String.format(lang.getString("pay-success"), price));
-			cashDivert = true;
+			cashDivert = false;
 		}
 
 		player.sendRichMessage(lang.createRichMessage(
