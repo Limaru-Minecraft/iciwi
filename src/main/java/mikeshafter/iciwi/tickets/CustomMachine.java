@@ -41,7 +41,7 @@ public class CustomMachine implements Machine {
 				String dest = ctx.getString("destination");
 				if (!stationList.contains(dest)) {
 					// get 9 closest stations
-					String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 9);
+					String[] suggestions = Arrays.copyOfRange(relevanceSort(dest, stationList.toArray(String[]::new)), 0, 16);
 					GBranch.Builder suggestGui = new GBranch.Builder()
 						.title(lang.getComponent("ticket-machine"))
 						.content(Component.text("Select station..."));
