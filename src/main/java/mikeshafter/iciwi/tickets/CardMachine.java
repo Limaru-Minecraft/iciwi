@@ -180,7 +180,7 @@ public void newCard () {
 
 				// Generate card
 				cardSql.newCard(serial, value);
-				player.getInventory().addItem(makeItem(cardMaterial, customModelData, customCardName, Component.text(plugin.getName()), Component.text(serial)));
+				player.getInventory().addItem(makeItem(cardMaterial, customModelData, Component.text(customCardName), Component.text(plugin.getName()), Component.text(serial)));
 
 				// log to icLogger
 				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value));
