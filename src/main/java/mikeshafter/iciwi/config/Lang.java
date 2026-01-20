@@ -20,7 +20,7 @@ public Component getComponent (String path) {
 }
 
 public String createRichMessage (String header, List<String> body, Map<String, Object> values) {
-	Map<String, String> newValues = values.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> {
+	Map<String, String> newValues = values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 		if (e.getValue() instanceof Double d) return Iciwi.economy.format(d);
 		else return String.valueOf(e.getValue());
 	}));
