@@ -173,9 +173,11 @@ public void newCard () {
 				// Get card generator
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
 				int customModelData = owners.getCustomModel(operators.getFirst());//plugin.getConfig().getInt("card.custom-model-data");
+				String customCardName = owners.getCustomCardName(operators.getFirst());
+				
 				// Generate card
 				cardSql.newCard(serial, value);
-				player.getInventory().addItem(makeItem(cardMaterial, customModelData, lang.getComponent("plugin-name"), Component.text(plugin.getName()), Component.text(serial)));
+				player.getInventory().addItem(makeItem(cardMaterial, customModelData, customCardName, Component.text(plugin.getName()), Component.text(serial)));
 
 				// log to icLogger
 				Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "serial", serial, "value", String.valueOf(value));
