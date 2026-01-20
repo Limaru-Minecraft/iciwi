@@ -174,7 +174,7 @@ public void newCard () {
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
 				int customModelData = owners.getCustomModel(operators.getFirst());//plugin.getConfig().getInt("card.custom-model-data");
 				String customCardName = owners.getCustomCardName(operators.getFirst());
-				
+
 				// Generate card
 				cardSql.newCard(serial, value);
 				player.getInventory().addItem(makeItem(cardMaterial, customModelData, customCardName, Component.text(plugin.getName()), Component.text(serial)));
@@ -186,7 +186,7 @@ public void newCard () {
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
 				// Receipt
-				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+ (deposit + value)) ));
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.FILLED_MAP, 0, Component.text("§7Receipt"), Component.text("Issues new card: " + serial), Component.text("Deposit: " + deposit), Component.text("Pre top-up: " + value), Component.text("Total: " + ( deposit + value )) ));
 				player.closeInventory();
 			}
 		}).build();
@@ -271,7 +271,7 @@ public void topUpCard () {
 				// Take money from player and send message
 				Iciwi.economy.withdrawPlayer(player, value);
 				// Receipt
-				player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: "+ value) ));
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.FILLED_MAP, 0, Component.text("Receipt"), Component.text("Top-up card: " + this.insertedCard.getSerial()), Component.text("Top-up value: " + value) ));
 				player.sendMessage(String.format(lang.getString("card-topped-up"), value));
 			}
 			else {
