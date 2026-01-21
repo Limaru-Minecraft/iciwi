@@ -134,10 +134,11 @@ public Card (Player player, SignInfo info) {
 		String pass = "";
 		if (railPasses != null && !railPasses.isEmpty()) {
 			List<String> sortedPasses = railPasses.keySet().stream().filter(validPasses::contains).sorted(Comparator.comparing(owners::getRailPassPercentage)).toList();
-
-			double finalPercentage = owners.getRailPassPercentage(sortedPasses.getFirst());
-			payout = Math.round(basePayout * finalPercentage);
-			pass = sortedPasses.getFirst();
+			if (!sortedPasses.isEmpty()) {
+				double finalPercentage = owners.getRailPassPercentage(sortedPasses.getFirst());
+				payout = Math.round(basePayout * finalPercentage);
+				pass = sortedPasses.getFirst();
+			}
 		}
 
 		// fare caps
