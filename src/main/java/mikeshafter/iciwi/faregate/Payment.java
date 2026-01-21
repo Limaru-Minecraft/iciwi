@@ -34,6 +34,7 @@ public Payment() {
 		var item = info.item();
 		// Get station
 		String station = info.station();
+		String logSerial = "null";
 
 		// Wax sign
 		sign.setWaxed(true);
@@ -43,6 +44,7 @@ public Payment() {
 		double price = Double.parseDouble(IciwiUtil.stripColor(signText[2]));
 
 		boolean cashDivert;
+		boolean payByCash;
 
 		// Pay
 		Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
@@ -50,26 +52,32 @@ public Payment() {
 		/**
  		* TO-DO: if pay by hand it can't check for item's lore
  		*/
-		if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) {
+		if (item == null || item.getType() == Material.AIR) { // if pay by hand
+    		Iciwi.economy.withdrawPlayer(player, price);
+			cashDivert = false;
+			payByCash = true;
+
+		} else if (item.getType() == cardMaterial && IciwiUtil.loreCheck(item)) { // if tap card
 
 			// Try paying with card
 			Optional<IcCard> cardOpt = IciwiUtil.IcCardFromItem(item);
 			
 			if (cardOpt.isPresent() && cardOpt.get().withdraw(price)) {
-				// player.sendMessage(String.format(lang.getString("pay-success-card"), price, cardOpt.get().getValue()));
 				cashDivert = false;
+				payByCash = false;
+				logSerial = cardOpt.get().getSerial();
 			}
 			// If there is no card, pay with cash
 			else {
 				Iciwi.economy.withdrawPlayer(player, price);
 				cashDivert = true;
+				payByCash = true;
 			}
-		}
 
-		else {
+		} else { // else pay by cash
 			Iciwi.economy.withdrawPlayer(player, price);
-			// player.sendMessage(String.format(lang.getString("pay-success"), price));
 			cashDivert = false;
+			payByCash = true;
 		}
 
 		player.sendRichMessage(lang.createRichMessage(
@@ -80,12 +88,13 @@ public Payment() {
 				2,
 				Map.of("station", station, "fare", Iciwi.economy.format(price), "cash-divert", String.valueOf(cashDivert))
 			));
-			player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
-			// Receipt
-			player.getInventory().addItem(IciwiUtil.makeItem(Material.BOOK, 0, Component.text("Receipt"), Component.text("Total: " + price) ));
+		player.playSound(player, plugin.getConfig().getString("payment-noise", "minecraft:block.amethyst_block.step"), SoundCategory.MASTER, 1f, 1f);
+
+		// Receipt if pay by cash
+		if (payByCash) player.getInventory().addItem(IciwiUtil.makeItem(Material.FILLED_MAP, 0, Component.text("§7Receipt"), Component.text("Ticket/Receipt"), Component.text("Location: " + station), Component.text("Fare: " + price) ));
 
 		// logger
-		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "price", String.valueOf(price));
+		Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "price", String.valueOf(price), "station", station, "serial", logSerial);
 		logger.info("payment", lMap);
 
 		// Deposit money into owner's bank account

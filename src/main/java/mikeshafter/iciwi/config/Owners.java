@@ -276,7 +276,9 @@ public void setFareCapAmt (String operator, double amt) {super.set(toPath("Caps"
  */
 public void setFareCapDuration (String operator, long duration) {super.set(toPath("Caps" ,  operator ,  "duration"), duration);}
 
-public int getCustomModel (String operator) {return super.getInt(toPath("CustomDesigns" ,  operator));}
+public int getCustomModel (String operator) {return super.getInt(toPath("CustomDesigns" ,  operator , "id"));}
+
+public String getCustomCardName (String operator) {return super.getString(toPath("CustomDesigns" ,  operator ,  "name"));}
 
 public void setCustomModel (String operator, int model) {super.set(toPath("CustomDesigns" ,  operator), model);}
 }
