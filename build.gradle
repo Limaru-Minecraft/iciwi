@@ -4,17 +4,17 @@ plugins {
   id 'maven-publish'
 }
 
-group 'mikeshafter'
-version '2.21.802'
+group = 'mikeshafter'
+version = '2.21.802'
 
-compileJava.options.encoding 'UTF-8'
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
-  maven { url 'https://repo.papermc.io/repository/maven-public/' }
-  maven { url 'https://ci.mg-dev.eu/plugin/repository/everything' }
-  maven { url 'https://jitpack.io' }
-  maven { url 'https://oss.sonatype.org/content/groups/public/' }
-  maven { url 'https://repo.opencollab.dev/main/' }
+  maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+  maven { url = 'https://ci.mg-dev.eu/plugin/repository/everything' }
+  maven { url = 'https://jitpack.io' }
+  maven { url = 'https://oss.sonatype.org/content/groups/public/' }
+  maven { url = 'https://repo.opencollab.dev/main/' }
   mavenLocal()
   mavenCentral()
 }
