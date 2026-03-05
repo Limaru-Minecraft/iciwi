@@ -10,8 +10,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Owners;
 import mikeshafter.iciwi.tickets.*;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.entity.Player;
@@ -27,8 +25,6 @@ public class IciwiCommands {
 private static final Iciwi plugin = Iciwi.getPlugin(Iciwi.class);
 private static final Owners owners = plugin.owners;
 private static final Fares fares = plugin.fares;
-private final MiniMessage miniMessage = MiniMessage.miniMessage();
-private final PlainTextComponentSerializer plain = PlainTextComponentSerializer.plainText();
 
 private String formatString (String message, String... items) {
     message = "§a" + message.replace("%s", "§e%s§a");
@@ -547,7 +543,7 @@ private final LiteralArgumentBuilder<CommandSourceStack> machineCustom = Command
         .executes(ctx -> {
             if (!(ctx.getSource().getSender() instanceof Player player)) return 0;
             String station = ctx.getArgument("station", String.class);
-            final CustomMachine machine = new CustomMachine(player, station);
+            new CustomMachine(player, station);
             return 1;
         }));
 

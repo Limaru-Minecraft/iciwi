@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import java.util.Map;
 import java.util.Optional;
 
 public class Payment extends FareGate {
@@ -61,7 +60,7 @@ public Payment() {
 
 			// Try paying with card
 			Optional<IcCard> cardOpt = IciwiUtil.IcCardFromItem(item);
-			
+
 			if (cardOpt.isPresent() && cardOpt.get().withdraw(price)) {
 				cashDivert = false;
 				payByCash = false;

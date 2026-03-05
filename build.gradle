@@ -19,6 +19,91 @@ repositories {
   mavenCentral()
 }
 
+
+def srcDir = file("src/main/java")
+
+task preprocessJava {
+  doLast {
+    println "=== Renaming .java → -u.java ==="
+
+    fileTree(srcDir).matching {
+      include "**/*.java"
+      exclude "**/*-u.java"
+    }.files.each { File f ->
+      def renamed = new File(f.parentFile, f.name.replace(".java", "-u.java"))
+      if (!f.renameTo(renamed)) {
+        throw new GradleException("Failed to rename $f")
+      }
+    }
+
+    println "=== Running cpp and cleaning output ==="
+
+    fileTree(srcDir).matching {
+      include "**/*-u.java"
+    }.files.each { File f ->
+      def output = new File(f.parentFile, f.name.replace("-u.java", ".java"))
+
+      // Run cpp
+      exec {
+        commandLine "cpp", f.absolutePath, output.absolutePath
+      }
+
+      // Remove lines starting with #
+      def cleaned = output.readLines()
+              .findAll { !it.trim().startsWith("#") }
+
+      output.text = cleaned.join(System.lineSeparator())
+    }
+  }
+}
+
+task cleanupPreprocessed {
+  doLast {
+    println "=== Cleaning generated .java files ==="
+
+    // Delete generated .java files (NOT ending with -u.java)
+    fileTree(srcDir).matching {
+      include "**/*.java"
+      exclude "**/*-u.java"
+    }.files.each { File f ->
+      if (!f.delete()) {
+        throw new GradleException("Failed to delete $f")
+      }
+    }
+
+    println "=== Cleaning and restoring original sources ==="
+
+    // Clean and restore -u.java back to .java
+    fileTree(srcDir).matching {
+      include "**/*-u.java"
+    }.files.each { File f ->
+
+      // Remove lines starting with #
+      def cleaned = f.readLines()
+              .findAll { !it.trim().startsWith("#") }
+
+      f.text = cleaned.join(System.lineSeparator())
+
+      // Rename back to original
+      def restored = new File(f.parentFile, f.name.replace("-u.java", ".java"))
+      if (!f.renameTo(restored)) {
+        throw new GradleException("Failed to restore $f")
+      }
+    }
+  }
+}
+
+tasks.named("compileJava", JavaCompile) {
+  dependsOn preprocessJava
+  finalizedBy cleanupPreprocessed
+
+  // Only compile generated .java files (not -u.java)
+  source = fileTree(srcDir).matching {
+    include "**/*.java"
+    exclude "**/*-u.java"
+  }
+}
+
 java { toolchain {
   languageVersion = JavaLanguageVersion.of(21)
 }}
