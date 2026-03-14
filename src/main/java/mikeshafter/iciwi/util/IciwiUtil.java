@@ -7,7 +7,6 @@ import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -164,18 +163,54 @@ public static void punchTicket (ItemStack ticket, int line) {
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
-public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	if (!loreCheck(itemStack)) return null;
-	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
+public static Optional<IcCard> IcCardFromItem (ItemStack itemStack) {
+	if (!loreCheck(itemStack)) return Optional.empty();
+	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
 	try {
 		Class<?> icCardClass = IciwiPlugin.getCardType(n);
-		if (icCardClass == null) return null;
-		return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+		if (icCardClass == null) return Optional.empty();
+		return Optional.of((IcCard)icCardClass.getConstructor(ItemStack.class).newInstance(itemStack));
 	}
 	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-		return null;
+		return Optional.empty();
 	}
+}
 
+/**
+ * Returns the time value based on a name<br>
+ * Returns -1 if no time format was detected<br>
+ * Some credits go to CommandBook for their name&lt;&gt;time table!
+ * Rest of the credits go to BergerHealer's BKCommonLib, I literally copied their function.
+ *
+ * @param timeName time string
+ */
+public static long getTime(String timeName) {
+	try {
+		String[] bits = timeName.split(":");
+		if (bits.length == 2) {
+			long hours = 1000 * (Long.parseLong(bits[0]) - 8);
+			long minutes = 1000 * Long.parseLong(bits[1]) / 60;
+			return hours + minutes;
+		} else {
+			return (long) ((Double.parseDouble(timeName) - 8) * 1000);
+		}
+	} catch (Exception ex) {
+		// No one uses shortcuts for durations!
+		return -1;
+	}
+}
+
+/**
+ * CommandBook getTime function, credit go to them for this!
+ *
+ * @param time The time to parse
+ * @return The name of this time
+ */
+public static String getTimeString(long time) {
+	int hours = (int) ((time / 1000 + 8) % 24);
+	int minutes = (int) (60 * (time % 1000) / 1000);
+	return String.format("%02d:%02d (%d:%02d %s)", hours, minutes, (hours % 12) == 0 ? 12 : hours % 12, minutes, hours < 12 ? "am" : "pm");
+}
 
 //	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
 //	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
@@ -193,5 +228,5 @@ public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
 //	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
 //		return null;
 //	}
-}
+
 }

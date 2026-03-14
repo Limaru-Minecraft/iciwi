@@ -27,7 +27,7 @@ public IciwiCard (ItemStack item) {this.serial = IciwiUtil.parseComponent(Object
  @param amount The amount to withdraw from the card
  @return Whether the withdrawal is successful */
 @Override public boolean withdraw (double amount) {
-	if (getValue() < amount) return false;
+	if (this.getValue() < amount) return false;
 	cardSql.subtractValueFromCard(serial, amount);
 	return true;
 }

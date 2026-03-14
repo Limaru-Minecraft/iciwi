@@ -20,7 +20,7 @@ public Component getComponent (String path) {
 }
 
 public String createRichMessage (String header, List<String> body, Map<String, Object> values) {
-	Map<String, String> newValues = values.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), e -> {
+	Map<String, String> newValues = values.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
 		if (e.getValue() instanceof Double d) return Iciwi.economy.format(d);
 		else return String.valueOf(e.getValue());
 	}));
@@ -32,7 +32,7 @@ public String createRichMessage (String header, String mainColor, String varColo
 	StringBuilder varClrStart = new StringBuilder("<>").insert(1, varColor);
 	StringBuilder varClrEnd = new StringBuilder("</>").insert(2, varColor);
 	StringBuilder fHeader = new StringBuilder("===  ===").insert(4, header);
-	String footer = "=".repeat(fHeader.length());
+	String footer = "=".repeat(fHeader.length()-1);
 
 	StringBuilder main = new StringBuilder().append(mainClrStart).append(fHeader).append("<br>");
 	for (String item : body) {

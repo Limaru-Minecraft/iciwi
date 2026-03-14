@@ -15,10 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RailPassMachine implements Machine {
 
@@ -129,8 +126,8 @@ public void railPass (ItemStack item) {
 	this.clickables = new Clickable[invSize];
 
 	// get serial number
-	IcCard icCard = IcCardFromItem(item);
-	if (icCard == null) {
+	Optional<IcCard> icCard = IcCardFromItem(item);
+	if (icCard.isEmpty()) {
 		this.player.closeInventory();SignInteractListener.removeMachine(player);
 		return;
 	}
@@ -141,7 +138,7 @@ public void railPass (ItemStack item) {
 			Material.WHITE_STAINED_GLASS_PANE,
 			0,
 			Component.text("View Rail Passes")
-		), e -> view(e, icCard)
+		), e -> view(e, icCard.get())
 	);
 
 	// create all rail pass buttons
@@ -154,7 +151,7 @@ public void railPass (ItemStack item) {
 				Component.text(rpName),
 				Component.text(this.owners.getRailPassPrice(rpName))
 			),
-			e -> buy(rpName, icCard)
+			e -> buy(rpName, icCard.get())
 		);
 	}
 

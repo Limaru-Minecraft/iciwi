@@ -1,6 +1,7 @@
 package mikeshafter.iciwi;
 
 import com.bergerkiller.bukkit.common.cloud.CloudSimpleHandler;
+import mikeshafter.iciwi.util.IciwiUtil;
 import org.bukkit.entity.Player;
 import org.incendo.cloud.annotation.specifier.Quoted;
 import org.incendo.cloud.annotations.Argument;
@@ -422,8 +423,9 @@ public void owners_farecap(
 	final @NonNull @Argument(value = "amount") Double amount,
 	final @NonNull @Argument(value = "duration") String duration
 ) {
+	long d = IciwiUtil.getTime(duration);
 	owners.setFareCapAmt(company, amount);
-	owners.setFareCapDuration(company, duration);
+	owners.setFareCapDuration(company, d);
 	owners.save();
 	sender.sendMessage(formatString("The fare cap for %s has been set to %s, valid for %s.", company, String.valueOf(amount), duration));
 }

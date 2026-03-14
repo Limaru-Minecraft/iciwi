@@ -242,7 +242,7 @@ public double getFareCapAmt (String operator) {return super.getDouble(toPath("Ca
  * @param operator Name of the company
  * @return the duration in which the fare cap is active
  */
-public long getFareCapDuration (String operator) {return Long.parseLong(super.getString(toPath("Caps" ,  operator ,  "duration")));}
+public long getFareCapDuration (String operator) {return super.getLong(toPath("Caps" ,  operator ,  "duration"));}
 
 /**
  * Gets the duration of the fare cap of a company as a string
@@ -274,9 +274,11 @@ public void setFareCapAmt (String operator, double amt) {super.set(toPath("Caps"
  * @param operator Name of the company
  * @param duration the duration in which the fare cap is active
  */
-public void setFareCapDuration (String operator, String duration) {super.set(toPath("Caps" ,  operator ,  "duration"), duration);}
+public void setFareCapDuration (String operator, long duration) {super.set(toPath("Caps" ,  operator ,  "duration"), duration);}
 
-public int getCustomModel (String operator) {return super.getInt(toPath("CustomDesigns" ,  operator));}
+public int getCustomModel (String operator) {return super.getInt(toPath("CustomDesigns" ,  operator , "id"));}
+
+public String getCustomCardName (String operator) {return super.getString(toPath("CustomDesigns" ,  operator ,  "name"));}
 
 public void setCustomModel (String operator, int model) {super.set(toPath("CustomDesigns" ,  operator), model);}
 }

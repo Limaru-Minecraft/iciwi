@@ -36,4 +36,3 @@ public void onRailPass (Player player, SignInfo info) {
 	}
 }
 }
-

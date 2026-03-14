@@ -1,4 +1,5 @@
 package mikeshafter.iciwi.api;
+import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
@@ -52,6 +53,7 @@ default String getValueStr () {return String.format("%.2f", this.getValue());}
  *
  * @return A map in the format of [name, start time]
  */
+@Nullable
 Map<String, Long> getRailPasses (); //{return cardSql.getAllDiscounts(serial);}
 
 /**

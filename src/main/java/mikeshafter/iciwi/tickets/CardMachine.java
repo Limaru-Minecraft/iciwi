@@ -19,6 +19,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 public class CardMachine implements Machine {
 
@@ -91,8 +92,9 @@ public void selectCard () {
 // main menu after inserting iciwi card
 public void cardMenu () {
 	// get card details
-	IcCard icCard = IcCardFromItem(this.selectedItem);
-	if (icCard == null || this.selectedItem.getItemMeta().lore() == null) return;
+	Optional<IcCard> i = IcCardFromItem(this.selectedItem);
+	if (i.isEmpty() || this.selectedItem.getItemMeta().lore() == null) return;
+	IcCard icCard = i.get();
 
 	Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
 	int cardModelData = owners.getCustomModel(operators.get(0));//plugin.getConfig().getInt("card.custom-model-data");
