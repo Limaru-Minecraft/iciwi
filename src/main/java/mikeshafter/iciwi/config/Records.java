@@ -37,7 +37,7 @@ public void setStation (String serial, String station) {
  */
 public String getClass (String serial) {
 	String c = super.getString(serial + ".fareclass");
-	if (c.isEmpty()) {return plugin.getConfig().getString("default-class");}
+	if (c.isEmpty()) {return plugin.getConfig().getString("default-fare-class");}
 	else {return c;}
 }
 
