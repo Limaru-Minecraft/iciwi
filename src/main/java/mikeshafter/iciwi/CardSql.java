@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class CardSql {
 
@@ -20,10 +19,13 @@ private final Owners owners = plugin.owners;
 private Connection connect () {
 	// SQLite connection string
 	// "jdbc:sqlite:IciwiCards.db"
-	String url = plugin.getConfig().getString("database");
+	boolean useMySql = plugin.getConfig().getBoolean("use-mysql", false);
+	String url = plugin.getConfig().getString("database-url", "jdbc:sqlite:IciwiCards.db");
+	String user = plugin.getConfig().getString("database-username", "");
+	String password = plugin.getConfig().getString("database-password", "");
 	Connection conn = null;
 	try {
-		conn = DriverManager.getConnection(Objects.requireNonNull(url));
+		conn = useMySql ? DriverManager.getConnection(url, user, password) : DriverManager.getConnection(url);
 	} catch (SQLException e) {
 		plugin.getLogger().warning(e.getLocalizedMessage());
 	}

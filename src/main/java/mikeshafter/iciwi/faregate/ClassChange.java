@@ -2,6 +2,7 @@ package mikeshafter.iciwi.faregate;
 import mikeshafter.iciwi.api.SignInfo;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.SoundCategory;
 
@@ -38,15 +39,20 @@ public void onCard (Player player, SignInfo info) {
     sign.setWaxed(true);
     sign.update(true);
 
-    final IcCard icCard = IciwiUtil.IcCardFromItem(item);
-	if (icCard == null) return;
-	String serial = icCard.getSerial();
+    final Optional<IcCard> icCard = IciwiUtil.IcCardFromItem(item);
+	if (icCard.isEmpty()) return;
+	String serial = icCard.get().getSerial();
 	records.setClass(serial, newClass);
 
-	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.getSerial(), "newClass", newClass);
+	Map<String, String> lMap = Map.of("player", player.getUniqueId().toString(), "card", icCard.get().getSerial(), "newClass", newClass);
 	logger.info("classChange", lMap);
 
-	player.sendMessage(String.format(lang.getString("class-changed"), newClass));
+	// confirmation
+	player.sendRichMessage(lang.createRichMessage(
+		"Class change",
+		lang.getStringList("classchange-message"),
+		Map.of("class", newClass)
+	));
 	player.playSound(player, plugin.getConfig().getString("classchange-noise", "minecraft:entity.allay.item_thrown"), SoundCategory.MASTER, 1f, 1f);
 }
 

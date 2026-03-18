@@ -1,5 +1,7 @@
 package mikeshafter.iciwi;
 
+import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import mikeshafter.iciwi.config.Fares;
 import mikeshafter.iciwi.config.Lang;
@@ -10,6 +12,7 @@ import mikeshafter.iciwi.tickets.SignInteractListener;
 import mikeshafter.iciwi.util.GateCreateListener;
 import mikeshafter.iciwi.util.IciwiCard;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.security.MessageDigest;
@@ -67,6 +70,7 @@ private void registerEvents () {
 	getServer().getPluginManager().registerEvents(new Transfer(), this);
 	getServer().getPluginManager().registerEvents(new Member(), this);
 	getServer().getPluginManager().registerEvents(new Payment(), this);
+	getServer().getPluginManager().registerEvents(new Balance(), this);
 	getServer().getPluginManager().registerEvents(new Validator(), this);
 
 	getServer().getPluginManager().registerEvents(new GateCreateListener(), this);
@@ -106,16 +110,27 @@ private boolean canStart () {
 }
 
 @Override public void onEnable () {
-	if (setupEconomy() && canStart()) {
+	boolean a = setupEconomy(); boolean b = canStart();
+	if (a && b) {
 		this.getLogger().info("§bIciwi has detected an economy and has been enabled!");
 		IciwiPlugin.registerCard("Iciwi", IciwiCard.class);
 		loadAllConfig();
-		Commands commands = new Commands();
-		commands.enable(this);
+		IciwiCommands iciwiCommands = new IciwiCommands();
+		LifecycleEventManager<@org.jetbrains.annotations.NotNull Plugin> manager = this.getLifecycleManager();
+		manager.registerEventHandler(LifecycleEvents.COMMANDS, cmd -> cmd.registrar().register(iciwiCommands.main));
 		loadSql();
 		registerEvents();
 		registerStations();
 		saveAllConfig();
+	}
+	else if (a) {
+		this.getLogger().info("§bIciwi has detected an economy, but your password is incorrect!");
+	}
+	else if (b) {
+		this.getLogger().info("§bYour password is correct, but please install Vault!");
+	}
+	else {
+		this.getLogger().info("§bBad boi, no Iciwi for u!");
 	}
 }
 

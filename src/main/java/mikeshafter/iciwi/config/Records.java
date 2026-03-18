@@ -1,5 +1,7 @@
 package mikeshafter.iciwi.config;
 
+import java.util.List;
+
 public class Records extends CustomConfig {
 
 public Records () { super("records.yml"); }
@@ -35,7 +37,7 @@ public void setStation (String serial, String station) {
  */
 public String getClass (String serial) {
 	String c = super.getString(serial + ".fareclass");
-	if (c.isEmpty()) {return plugin.getConfig().getString("default-class");}
+	if (c.isEmpty()) {return plugin.getConfig().getString("default-fare-class");}
 	else {return c;}
 }
 
@@ -92,6 +94,17 @@ public boolean getTransfer (String serial) {return super.getBoolean(serial + ".h
  */
 public void setTransfer (String serial, boolean hasTransfer) {
 	super.set(serial + ".has-transfer", hasTransfer);
+	super.save();
+}
+
+/**
+ * Sets whether the card is eligible for a transfer discount on onExit based on the time elapsed since the previous journey.
+ * This is used on entry to determine if a transfer discount can be applied.
+ *
+ * @param serial Serial number of card
+ */
+public void setTransfer (String serial) {
+    super.set(serial + ".has-transfer", System.currentTimeMillis() - this.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
 	super.save();
 }
 
@@ -183,5 +196,28 @@ public void setCapExpiry (String serial, String operator, long exp) {
 public void setCapRemAmt (String serial, String operator, double amt) {
 	super.set(toPath(serial, operator, "rem-amt"), amt);
 	super.save();
+}
+
+public double touchCap (String serial, String operator) {
+    Owners owners = plugin.owners;
+
+    if (owners.getFareCapAmt(operator) == 0) return Long.MAX_VALUE;
+    if (System.currentTimeMillis() < this.getCapExpiry(serial, operator))
+        return this.getCapRemAmt(serial, operator);
+
+    this.setCapExpiry(serial, operator, owners.getFareCapDuration(operator) + System.currentTimeMillis());
+    this.setCapRemAmt(serial, operator, owners.getFareCapAmt(operator));
+
+    return this.getCapRemAmt(serial, operator);
+}
+
+public List<Double> deductCaps (String serial, double payout, List<String> operators) {
+    return operators.stream().mapToDouble(operator -> {
+        double capRem = Math.round(this.touchCap(serial, operator));
+        double minum = Math.min(capRem, payout);
+        double newCapRem = capRem - minum;
+        this.setCapRemAmt(serial, operator, newCapRem);
+        return minum;
+    }).boxed().toList();
 }
 }
