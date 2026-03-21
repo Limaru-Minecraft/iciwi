@@ -1,12 +1,14 @@
 package mikeshafter.iciwi.config;
 
+import java.util.List;
+
 public class Records extends CustomConfig {
 
 public Records () { super("records.yml"); }
 
 /**
  * Get the station at which the card entered the transit system.
- * This is used on both entry and exit.
+ * This is used on both entry and onExit.
  *
  * @param serial Serial number of card
  * @return The station at which the card entered the transit system.
@@ -15,7 +17,7 @@ public String getStation (String serial) {return super.getString(serial + ".stat
 
 /**
  * Set the station at which the card entered the transit system.
- * This is used on both entry and exit.
+ * This is used on both entry and onExit.
  * This should only be set to a non-null value when the card is in the transit system. Otherwise, set it to null.
  *
  * @param serial  Serial number of card
@@ -28,14 +30,14 @@ public void setStation (String serial, String station) {
 
 /**
  * Get the fare class of the journey taken by the card
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the fare class of the journey taken by the card
  */
 public String getClass (String serial) {
 	String c = super.getString(serial + ".fareclass");
-	if (c.isEmpty()) {return plugin.getConfig().getString("default-class");}
+	if (c.isEmpty()) {return plugin.getConfig().getString("default-fare-class");}
 	else {return c;}
 }
 
@@ -53,7 +55,7 @@ public void setClass (String serial, String fareClass) {
 
 /**
  * Get the entry station of the previous journey
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the station at which the card entered the transit system on the previous journey
@@ -64,7 +66,7 @@ public String getPreviousStation (String serial) {
 
 /**
  * Set the entry station of the previous journey
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial  Serial number of card
  * @param station the station at which the card entered the transit system on the previous journey
@@ -75,7 +77,7 @@ public void setPreviousStation (String serial, String station) {
 }
 
 /**
- * Gets whether the card is eligible for a transfer discount on exit
+ * Gets whether the card is eligible for a transfer discount on onExit
  * This is used on entry
  *
  * @param serial Serial number of card
@@ -84,7 +86,7 @@ public void setPreviousStation (String serial, String station) {
 public boolean getTransfer (String serial) {return super.getBoolean(serial + ".has-transfer");}
 
 /**
- * Sets whether the card is eligible for a transfer discount on exit.
+ * Sets whether the card is eligible for a transfer discount on onExit.
  * This is used on entry
  *
  * @param serial      Serial number of card
@@ -96,20 +98,31 @@ public void setTransfer (String serial, boolean hasTransfer) {
 }
 
 /**
- * Gets the exit timestamp of the previous journey.
+ * Sets whether the card is eligible for a transfer discount on onExit based on the time elapsed since the previous journey.
+ * This is used on entry to determine if a transfer discount can be applied.
+ *
+ * @param serial Serial number of card
+ */
+public void setTransfer (String serial) {
+    super.set(serial + ".has-transfer", System.currentTimeMillis() - this.getTimestamp(serial) < plugin.getConfig().getLong("max-transfer-time"));
+	super.save();
+}
+
+/**
+ * Gets the onExit timestamp of the previous journey.
  * This is used on entry
  *
  * @param serial Serial number of card
- * @return The timestamp of the previous time the card was used to exit the transit system.
+ * @return The timestamp of the previous time the card was used to onExit the transit system.
  */
 public long getTimestamp (String serial) {return super.getLong(serial + ".timestamp");}
 
 /**
- * Writes the last exit time to the records file.
- * This is used on exit
+ * Writes the last onExit time to the records file.
+ * This is used on onExit
  *
  * @param serial    Serial number of card
- * @param timestamp The timestamp at which the card was used to exit the transit system.
+ * @param timestamp The timestamp at which the card was used to onExit the transit system.
  */
 public void setTimestamp (String serial, long timestamp) {
 	super.set(serial + ".timestamp", timestamp);
@@ -118,7 +131,7 @@ public void setTimestamp (String serial, long timestamp) {
 
 /**
  * Gets the price of the previous journey.
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @return the final price of the previous journey
@@ -129,7 +142,7 @@ public double getPreviousFare (String serial) {
 
 /**
  * Writes the price of the journey to the records file
- * This is used on exit
+ * This is used on onExit
  *
  * @param serial Serial number of card
  * @param fare   The final fare of the journey
@@ -183,5 +196,28 @@ public void setCapExpiry (String serial, String operator, long exp) {
 public void setCapRemAmt (String serial, String operator, double amt) {
 	super.set(toPath(serial, operator, "rem-amt"), amt);
 	super.save();
+}
+
+public double touchCap (String serial, String operator) {
+    Owners owners = plugin.owners;
+
+    if (owners.getFareCapAmt(operator) == 0) return Long.MAX_VALUE;
+    if (System.currentTimeMillis() < this.getCapExpiry(serial, operator))
+        return this.getCapRemAmt(serial, operator);
+
+    this.setCapExpiry(serial, operator, owners.getFareCapDuration(operator) + System.currentTimeMillis());
+    this.setCapRemAmt(serial, operator, owners.getFareCapAmt(operator));
+
+    return this.getCapRemAmt(serial, operator);
+}
+
+public List<Double> deductCaps (String serial, double payout, List<String> operators) {
+    return operators.stream().mapToDouble(operator -> {
+        double capRem = Math.round(this.touchCap(serial, operator));
+        double minum = Math.min(capRem, payout);
+        double newCapRem = capRem - minum;
+        this.setCapRemAmt(serial, operator, newCapRem);
+        return minum;
+    }).boxed().toList();
 }
 }

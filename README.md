@@ -1,12 +1,18 @@
 # iciwi
 Universal transportation ticket plugin.
 
-
 # Development
-1. Use JDK 17 & Gradle 8
+1. Use JDK 21 & Gradle 8
 2. Fork or clone this project locally
-3. Checkout "alpha" branch
+3. Checkout any branch other than "master" (If you're unsure, checkout the "alpha" branch.)
 4. Start developing!
+
+## A note on branches
+- "alpha" is the main development branch.
+- "(version)-backport" are backports of newer features to older versions of the game. This usually happens after Mojang/Microsoft introduces a plugin-breaking mechanic (happens every few months!)
+- Other branches introduce experimental features to the base plugin.
+
+**Current active backports**: Use the 1.20 backport for **all versions from 1.20.1 to 1.21.7.**
 
 # Terminology used in this README
 **Station**: A valid station defined in Iciwi's config.<br>
@@ -14,7 +20,7 @@ Universal transportation ticket plugin.
 
 # Usage
 ## Fare Gates
-Fare gates are the contraptions to let players in and out of a transit network. They form the bulk of the signs on a server. To use them as a player, simply right-click on their sign or block, depending on the type of gate. However, for server admins, setting up may be a bit harder.
+Fare gates are the contraptions to let players in and out of a transit network. They form the bulk of the signs on a server. To use them as a player, simply right-click on their sign. However, for server admins, setting up may be a bit harder.
 
 ### Flags
 Flags mostly determine which block the fare gate looks at for opening or closing. Here are the flags included with Iciwi:
@@ -52,15 +58,14 @@ Each sign should follow the following syntax:
 ```
 Mandatory fields are in <> while optional fields are in []. [anything] refers to literally anything.
 
-### Using fare gates
+**Example:**
 
-There are two types of activation methods, explained below. In both cases, the plugin will check if the sign is valid and if the player fulfils all conditions to open the gate (things like whether the player has a valid ticket or card) before opening the gate. If there is no sign or if the sign is invalid, the second check will not happen and the handling will be passed back to the server; otherwise, the gate will continue to be closed.
-
-- [Faregate] signs and signs with the F flag:
-> Players should right-click on an openable block (i.e. fence gates and trapdoors) located two blocks above the sign.
-
-- All other signs:
-> Players should right-click on the sign itself.
+```
+[EntrySLDE]
+ExampleStation
+Click here
+to enter!
+```
 
 ## Ticket Machine
 Ticket machines form up the other half of Iciwi. There are 4 types of ticket machines:
@@ -268,5 +273,4 @@ Commands can be used to modify most parts of Iciwi's config files.
 | `iciwi fares deletestation <start>` | Removes a station and all its associated fares from the data. | `iciwi.fares.deletestation` |
 
 ## Dependencies
-- BKCommonLib (you should already have this installed if you have TrainCarts installed.)
 - Vault

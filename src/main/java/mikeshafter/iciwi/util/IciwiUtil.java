@@ -4,18 +4,28 @@ import mikeshafter.iciwi.api.IcCard;
 import mikeshafter.iciwi.api.IciwiPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.Nullable;
-
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class IciwiUtil {
+
+/**
+ * Replaces named placeholders with their values
+ *
+ * @param template Initial template string
+ * @param values Keys and values to replace with
+ * @return A copy of the input string, without any coloring
+ */
+public static String format (String template, Map<String, String> values) {
+	for (Map.Entry<String, String> entry : values.entrySet()) {
+		template = template.replace("{" + entry.getKey() + "}", entry.getValue());
+	}
+	return template;
+}
 
 /**
  * Strips the given message of all color codes
@@ -25,7 +35,7 @@ public class IciwiUtil {
  */
 public static String stripColor (final String input) {
 	if (input == null) return null;
-	return input.replaceAll("(?i)§[0-9A-FK-ORX]", "");
+	return input.replaceAll("(?i)§(?:[0-9A-FK-ORX]|#[0-9A-F]{6})", "");
 }
 
 /**
@@ -83,12 +93,15 @@ public static List<Component> toComponents (List<String> sList) {
  * @param lore            Lore of the item
  * @return The new item
  */
-public static ItemStack makeItem (final Material material, final int customModelData, final Component displayName, final Component... lore) {
+@SuppressWarnings("UnstableApiUsage")
+public static ItemStack makeItem (final Material material, final float customModelData, final Component displayName, final Component... lore) {
 	ItemStack item = new ItemStack(material);
 	ItemMeta itemMeta = item.getItemMeta();
 	assert itemMeta != null;
 	itemMeta.displayName(displayName);
-	itemMeta.setCustomModelData(customModelData);
+	CustomModelDataComponent dataComponent = itemMeta.getCustomModelDataComponent();
+	dataComponent.setFloats(List.of(customModelData));
+	itemMeta.setCustomModelDataComponent(dataComponent);
 	itemMeta.lore(Arrays.asList(lore));
 	item.setItemMeta(itemMeta);
 	return item;
@@ -149,29 +162,75 @@ public static void punchTicket (ItemStack ticket, int line) {
 }
 
 /**
- * Gets an IcCard object from a compatible item.
+ * Gets an IcCard object from a compatible item. Iciwi-compatible plugins' cards must state the card's identifier in lore[0]
  *
  * @param itemStack the item to convert
  * @return an IcCard if convertible, null if an exception is reached.
  */
-public static @Nullable IcCard IcCardFromItem (ItemStack itemStack) {
-	// Iciwi-compatible plugins' cards must state their plugin name in lore[0]
-	if (!loreCheck(itemStack)) return null;
-	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).get(0));
-	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-
-	// Get the plugin
-	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
-	// check for plugin compatibility
+public static Optional<IcCard> IcCardFromItem (ItemStack itemStack) {
+	if (!loreCheck(itemStack)) return Optional.empty();
+	String n = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
 	try {
-		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
-			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
-			// Create new card instance using the provided constructor and the item
-			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
-		}
-		return null;
-	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-		return null;
+		Class<?> icCardClass = IciwiPlugin.getCardType(n);
+		if (icCardClass == null) return Optional.empty();
+		return Optional.of((IcCard)icCardClass.getConstructor(ItemStack.class).newInstance(itemStack));
+	}
+	catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+		return Optional.empty();
 	}
 }
+
+/**
+ * Returns the time value based on a name<br>
+ * Returns -1 if no time format was detected<br>
+ * Some credits go to CommandBook for their name&lt;&gt;time table!
+ * Rest of the credits go to BergerHealer's BKCommonLib, I literally copied their function.
+ *
+ * @param timeName time string
+ */
+public static long getTime(String timeName) {
+	try {
+		String[] bits = timeName.split(":");
+		if (bits.length == 2) {
+			long hours = 1000 * (Long.parseLong(bits[0]) - 8);
+			long minutes = 1000 * Long.parseLong(bits[1]) / 60;
+			return hours + minutes;
+		} else {
+			return (long) ((Double.parseDouble(timeName) - 8) * 1000);
+		}
+	} catch (Exception ex) {
+		// No one uses shortcuts for durations!
+		return -1;
+	}
+}
+
+/**
+ * CommandBook getTime function, credit go to them for this!
+ *
+ * @param time The time to parse
+ * @return The name of this time
+ */
+public static String getTimeString(long time) {
+	int hours = (int) ((time / 1000 + 8) % 24);
+	int minutes = (int) (60 * (time % 1000) / 1000);
+	return String.format("%02d:%02d (%d:%02d %s)", hours, minutes, (hours % 12) == 0 ? 12 : hours % 12, minutes, hours < 12 ? "am" : "pm");
+}
+
+//	String cardPluginName = parseComponent(Objects.requireNonNull(itemStack.getItemMeta().lore()).getFirst());
+//	PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+//
+//	// Get the plugin
+//	Plugin providingPlugin = pluginManager.getPlugin(cardPluginName);
+//	// check for plugin compatibility
+//	try {
+//		if (providingPlugin instanceof IciwiPlugin iciwiPlugin && iciwiPlugin.getFareCardClass() != null) {
+//			Class<?> icCardClass = iciwiPlugin.getFareCardClass();
+//			// Create new card instance using the provided constructor and the item
+//			return (IcCard) icCardClass.getConstructor(ItemStack.class).newInstance(itemStack);
+//		}
+//		return null;
+//	} catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+//		return null;
+//	}
+
 }

@@ -62,3 +62,13 @@ Caps:
   ExampleOperator1:
     amount: 0
     duration: ''
+
+# This section lets you create custom card designs for each company.
+# The value should be the custom-model-data of the card.
+CustomDesigns:
+  ExampleOperator: 
+    id: 1000
+    name: "§aExample ICIWI Card"
+  ExampleOperator1:
+    id: 1001
+    name: "§aExample ICIWI Card 1"

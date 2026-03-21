@@ -10,6 +10,7 @@ member: Member
 payment: Payment
 classchange: Class
 transfer: Transfer
+balance: Balance
 
 # Error Messages
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
@@ -17,26 +18,36 @@ cannot-pass: '§cThere is a problem with your card/ticket, please approach the t
 value-low: '§cYour card has insufficient value! Please top up your card!'
 invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
 
-# Success messages
-remaining: '§aRemaining value: §£%.2f'
-osi: '§aAn out-of-station interchange discount was applied.'
-tapped-in: '§aTapped in at §e%1$s§a. Remaining value: §e£%2$.2f§a. Welcome aboard!'
-tapped-out: '§aTapped out at §e%1$s§a. Fare: §e£%2$.2f§a. Remaining value: §e£%3$.2f§a. Thank you for riding with us!'
-ticket-in: '§aTicket from §e%s§a punched. Welcome aboard!'
-ticket-out: '§aTicket punched out at §e%s§a. Thank you for riding with us!'
-used-paper-pass: '§aA paper rail passed was used: §e%s§a. Welcome aboard/Thank you for riding with us!'
-transfer-cancel-osi: '§aOut-of-station interchange discounts were cancelled.'
-
-# Member sign
-member-gate: '§aMembership valid. Welcome!'
-
-# ClassChange sign
-class-changed: '§aChanged fare class to §e%s§a!'
-
-# Payment sign
-cash-divert: '§cCard either not present or has not enough value! Paid using cash.'
-pay-success: '§aPaid §e£%.2f§a.'
-pay-success-card: '§aPaid §e£%1$.2f§a. Remaining value: §e£%2$.2f§a'
+# Fare gate messages (without header)
+head-color: green
+body-color: yellow
+entry-message:
+  - '{entry-station} →'
+  - 'Balance: {value}'
+  - 'Transfer: {osi}'
+exit-message:
+  - '{entry-station} → {exit-station}'
+  - 'Balance: {value}'
+  - 'Fare: <red>{fare}</red>'
+  - 'Transfer: {osi}'
+  - 'Rail Pass: {rail-pass}'
+transfer-message:
+  - '{entry-station} → {transfer-station} →'
+  - 'Balance: {value}'
+  - 'Fare: <red>{fare}</red>'
+  - 'Transfer: {osi}'
+  - 'Rail Pass: {rail-pass}'
+member-message:
+  - Membership valid. Welcome!
+  - 'Station: {station}'
+payment-message:
+  - '{station}'
+  - 'Paid <red>{fare}</red>'
+  - '{cash-divert}'
+classchange-message:
+  - 'New travel class: {class}'
+balance-message:
+  - 'Balance: {value}'
 
 # =====================================
 # These options control the ticket machines.
@@ -47,7 +58,6 @@ cards: Cards  # card vending machine sign text
 passes: Passes  # rail pass machine sign text
 custom-tickets: CustomTickets  # custom paper ticket machine sign text
 plugin-name: '§aIciwi Card'  # Default card name
-currency: £
 serial-number: 'Serial number:'  # First line of the lore on a card
 serial-prefix: 'B'  # 1 char only!
 
@@ -56,16 +66,15 @@ not-enough-money: '§cYou do not have enough money!'
 no-tickets-found: '§cNo tickets were found for your selected journey!'
 
 # Ticket Machine's menu text
-ticket-machine: '§1Ticket Machine'
+ticket-machine: 'Ticket Machine'
 
 # == Main page item names ==
-menu-new-ticket: '§aNew Single Journey Ticket (Key in the station)'
-menu-new-flat-ticket: '§aNew Single Journey Ticket (Flat Fare)'
+menu-new-ticket: '§aNew Paper Ticket'
+menu-new-flat-ticket: '§aNew Flat Fare Ticket'
 menu-insert-card: '§eInsert Card'
 
 # == Paper ticket subpage ==
 new-ticket: '§1New Ticket - '
-clear: 'CLEAR'
 enter: 'ENTER'
 train-ticket: '§aTrain Ticket'
 paper-rail-pass: '§bRail Pass'
@@ -104,9 +113,9 @@ select-class: 'Select class'
 # Sign creation messages
 # ====================================
 create-entry-sign: '§aYou created an entry sign! This sign is used to start a journey.'
-create-exit-sign: '§aYou created an exit sign! This sign is used to end a journey.'
-create-member-sign: '§aYou created a member sign! This sign is used to only allow passage to pass holders.'
-create-payment-sign: '§aYou created a member sign! This sign is used to get a one-time payment.'
+create-exit-sign: '§aYou created an Exit sign! This sign is used to end a journey.'
+create-member-sign: '§aYou created a Member sign! This sign is used to only allow passage to pass holders.'
+create-payment-sign: '§aYou created a Payment sign! This sign is used to get a one-time payment.'
 create-faregate-sign: '§aYou created a fare gate sign! Place a trapdoor 2 blocks above this sign to make a fare gate.'
 create-validator-sign: '§aYou created a validator sign! This sign is used to validate tickets and for payments.'
 create-ticket-machine: '§aYou created a ticket machine! This sign is used to buy tickets.'
