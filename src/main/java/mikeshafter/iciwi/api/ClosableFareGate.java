@@ -91,8 +91,13 @@ protected Object[] openGate () {
 		((Location[]) closeGate[0])[i] = referenceBlock.getLocation().clone().add(relativePositions[i]);
 		Block currentBlock = ((Location[]) closeGate[0])[i].getBlock();
 
+		// If air, do nothing!
+		if (currentBlock.getType().isAir()) {
+			((Runnable[]) closeGate[1])[i] = () -> {};
+		}
+
 		// If openable, open it!
-		if (currentBlock.getBlockData() instanceof Openable openable) {
+		else if (currentBlock.getBlockData() instanceof Openable openable) {
 			openable.setOpen(true);
 			currentBlock.setBlockData(openable);
 
