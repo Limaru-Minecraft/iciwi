@@ -16,7 +16,7 @@ balance: Balance
 fare-evade: '§cYou have been caught fare evading! We’ve fined you this time, don’t do it again!'
 cannot-pass: '§cThere is a problem with your card/ticket, please approach the ticket counter.'
 value-low: '§cYour card has insufficient value! Please top up your card!'
-invalid-ticket: '§cYour ticket is not valid for this station! Please use a valid ticket.'
+invalid-ticket: '§cYou have an invalid ticket!'
 
 # Fare gate messages (without header)
 head-color: green
