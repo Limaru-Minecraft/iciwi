@@ -206,6 +206,25 @@ public void subtractValueFromCard (String serial, double value) {updateCard(seri
 
 
 /**
+ * Check if a card exists
+ * @param serial Serial number
+ * @return Whether the card with the serial number exists
+ */
+public boolean cardExists (String serial) {
+	String sql = "SELECT EXISTS (SELECT 1 FROM cards WHERE serial = ?)";
+	try (Connection conn = this.connect(); PreparedStatement statement = conn.prepareStatement(sql)) {
+		statement.setString(1, serial);
+		ResultSet rs = statement.executeQuery();
+		return rs.getBoolean(1);
+
+	} catch (SQLException e) {
+		plugin.getLogger().warning(e.getLocalizedMessage());
+		return false;
+	}
+}
+
+
+/**
  * Method to debug database
  *
  * @param sql SQL to run

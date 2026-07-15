@@ -125,6 +125,7 @@ public void cardMenu () {
 		.button(GButton.builder().content(lang.getComponent("menu-select-other-card")).onClick(player -> selectCard()).build())
 		.build();
 	branch.open(this.player);
+}
 
 // old
 	//// get card details
@@ -155,7 +156,6 @@ public void cardMenu () {
 	//setItems(this.clickables, inv);
 	//// Start listening and open inventory
 	//player.openInventory(inv);
-}
 
 // new iciwi card menu
 public void newCard () {
@@ -169,9 +169,15 @@ public void newCard () {
 				Iciwi.economy.withdrawPlayer(player, deposit + value);
 
 				// Prepare card
-				int s = new SecureRandom().nextInt(100000);
-				char sum = new char[]{'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}[((s % 10) * 2 + (s / 10 % 10) * 3 + (s / 100 % 10) * 5 + (s / 1000 % 10) * 7 + (s / 10000) * 9) % 19];
-				String serial = lang.getString("serial-prefix") + sum + "-" + s;
+				String serial;
+				int exp = 15;
+				SecureRandom sr = new SecureRandom();
+				do {
+					int s = sr.nextInt(2 << exp++);
+					char sum = new char[]{'Z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'V', 'J', 'K', 'N', 'P', 'U', 'R', 'S', 'T', 'Y'}
+						[((s % 10) * 2 + (s / 10 % 10) * 3 + (s / 100 % 10) * 5 + (s / 1000 % 10) * 7 + (s / 10000) * 9) % 19];
+					serial = lang.getString("serial-prefix") + sum + "-" + s;
+				} while (cardSql.cardExists(serial) && exp < 31);
 
 				// Get card generator
 				Material cardMaterial = Material.valueOf(plugin.getConfig().getString("card.material"));
@@ -189,12 +195,12 @@ public void newCard () {
 				// Send confirmation message
 				player.sendMessage(String.format(lang.getString("new-card-created"), deposit, value));
 				// Receipt
-				player.getInventory().addItem(IciwiUtil.makeItem(Material.FILLED_MAP, 0, Component.text("§7Receipt"), Component.text("Issues new card: " + serial), Component.text("Deposit: " + deposit), Component.text("Pre top-up: " + value), Component.text("Total: " + ( deposit + value )) ));
+				player.getInventory().addItem(IciwiUtil.makeItem(Material.FILLED_MAP, 0, Component.text("§7Receipt"), Component.text("New card serial: " + serial), Component.text("Deposit: " + deposit), Component.text("Pre top-up: " + value), Component.text("Total: " + ( deposit + value )) ));
 				player.closeInventory();
 			}
 		}).build();
-		form.open(player);
-
+	form.open(player);
+}
 // == old ==
 //	// Setup listener
 //	// setup inventory
@@ -249,7 +255,6 @@ public void newCard () {
 //	setItems(this.clickables, inv);
 //	// Start listening and open inventory
 //	player.openInventory(inv);
-}
 
 // top up menu
 public void topUpCard () {
